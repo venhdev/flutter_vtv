@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/page/home_page.dart';
 import 'package:go_router/go_router.dart';
 
 class IntroPage extends StatefulWidget {
@@ -16,15 +15,6 @@ class _IntroPageState extends State<IntroPage> {
   void initState() {
     super.initState();
 
-    // Timer(
-    //   const Duration(seconds: 10),
-    //   () => Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => const HomePage(),
-    //     ),
-    //   ),
-    // );
     Timer(
       const Duration(seconds: 10),
       () => context.go('/'),
