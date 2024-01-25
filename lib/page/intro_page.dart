@@ -1,41 +1,70 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
-class IntroPage extends StatefulWidget {
+import '../app_state.dart';
+
+class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
 
   @override
-  State<IntroPage> createState() => _IntroPageState();
-}
-
-class _IntroPageState extends State<IntroPage> {
-  @override
-  void initState() {
-    super.initState();
-
-    Timer(
-      const Duration(seconds: 10),
-      () => context.go('/'),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Nhóm 1'),
-            Text('Thành viên nhóm 1:'),
-            Text('Hà Nhật Vềnh - 20110599'),
-            Text('Tô Duy Vượng - 20110053'),
-            Text('Nguyễn Quốc Trung - 20110588'),
-          ],
-        ),
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          SvgPicture.asset(
+            alignment: Alignment.topCenter,
+            fit: BoxFit.fitWidth,
+            'assets/images/intro_background.svg',
+            semanticsLabel: 'Decorative background',
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              height: 200,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Column(
+                children: [
+                  const Text(
+                    "Khám phá ứng dụng",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Text(
+                    "VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () async => await Provider.of<AppState>(context, listen: false).started(),
+                    child: Container(
+                      width: 328,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: const Color(0xffffc600),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "Bắt đầu",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

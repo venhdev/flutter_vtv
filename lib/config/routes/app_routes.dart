@@ -6,7 +6,7 @@ import '../../page/home_page.dart';
 
 class AppRoutes {
   static GoRouter router = GoRouter(
-    initialLocation: '/intro',
+    initialLocation: '/',
     routes: <RouteBase>[
       GoRoute(
         path: '/',
