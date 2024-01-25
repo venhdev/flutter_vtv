@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/page/intro_page.dart';
+import 'package:flutter_vtv/core/pages/intro_page.dart';
 import 'package:provider/provider.dart';
 
-import '../app_state.dart';
+import '../../../app_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

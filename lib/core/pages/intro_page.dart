@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../app_state.dart';
+import '../../app_state.dart';
 
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
@@ -41,30 +41,34 @@ class IntroPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: () async => await Provider.of<AppState>(context, listen: false).started(),
-                    child: Container(
-                      width: 328,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: const Color(0xffffc600),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        "Bắt đầu",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  )
+                  _buildStartButton(context)
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  GestureDetector _buildStartButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () async => await Provider.of<AppState>(context, listen: false).started(),
+      child: Container(
+        width: 328,
+        height: 48,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: const Color(0xffffc600),
+        ),
+        alignment: Alignment.center,
+        child: const Text(
+          "Bắt đầu",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
