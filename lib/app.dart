@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'config/routes/app_routes.dart';
+import 'config/themes/theme_provider.dart';
 
 class VTVApp extends StatelessWidget {
   const VTVApp({super.key});
@@ -16,7 +18,7 @@ class VTVApp extends StatelessWidget {
       // ),
       // home: const HomePage(title: 'Flutter Demo Home Page'),
       routerConfig: AppRoutes.router,
-      theme: ThemeData.light(),
+      theme: Provider.of<ThemeProvider>(context).themeData,
     );
   }
 }
