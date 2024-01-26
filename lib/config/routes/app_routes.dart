@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/features/auth/presentation/pages/change_password_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/pages/intro_page.dart';
 import '../../core/pages/main_page.dart';
-import '../../features/auth/presentation/screens/user_page.dart';
+import '../../features/auth/presentation/pages/forgot_password_page.dart';
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/user_page.dart';
 import '../../features/home/presentation/home_page.dart';
 
 part 'routes.dart';
@@ -15,8 +18,12 @@ class AppRoutes {
   static GoRouter router = GoRouter(
     debugLogDiagnostics: true, // NOTE: Set to true for debugging
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: '/home',
     routes: <RouteBase>[
+      GoRoute(
+        path: '/',
+        redirect: (context, state) => '/home',
+      ),
       // Application Shell
       ShellRoute(
         navigatorKey: _shellNavigatorKey,

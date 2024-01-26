@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/config/themes/light_theme.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeData _themeData = ThemeData.light();
+  ThemeData _themeData = lightTheme;
   bool _isDarkMode = false;
 
   ThemeData get themeData => _themeData;

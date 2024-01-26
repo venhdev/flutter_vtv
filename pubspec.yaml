@@ -2,7 +2,7 @@ name: flutter_vtv
 description: "VTV is an E-commerce App using Flutter"
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 0.0.3-pre
 
 environment:
   sdk: ">=3.2.3 <4.0.0"
@@ -11,6 +11,7 @@ dependencies:
   # ui
   flutter_svg: ^2.0.9
   flutter_native_splash: ^2.3.9
+  google_fonts: ^6.1.0
 
   # navigation + state management
   go_router: ^13.0.1
@@ -57,6 +58,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - google_fonts/
     - assets/
     - assets/images/
 
