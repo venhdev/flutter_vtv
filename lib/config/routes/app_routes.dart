@@ -30,7 +30,14 @@ class AppRoutes {
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return MainPage(child: child);
         },
-        routes: _routes,
+        routes: _routes, // config in routes.dart
+      ),
+      // Other Route
+      GoRoute(
+        path: '/intro',
+        builder: (BuildContext context, GoRouterState state) {
+          return const IntroPage();
+        },
       ),
     ],
   );

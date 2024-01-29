@@ -104,6 +104,20 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           // do something
+                          if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
+                            context.go('/home');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đăng nhập thành công!'),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Tài khoản hoặc mật khẩu không đúng!'),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: const Text(

@@ -31,11 +31,4 @@ final _routes = <RouteBase>[
       ),
     ],
   ),
-  // Other Route
-  GoRoute(
-    path: '/intro',
-    builder: (BuildContext context, GoRouterState state) {
-      return const IntroPage();
-    },
-  ),
 ];

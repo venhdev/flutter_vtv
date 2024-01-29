@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Flash screen, icon launcher
+
 ## [v0.0.3-pre] - 26-01-2024
 
 ### Added
