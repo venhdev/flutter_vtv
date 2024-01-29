@@ -10,43 +10,46 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          SvgPicture.asset(
-            alignment: Alignment.topCenter,
-            fit: BoxFit.fitWidth,
-            'assets/images/intro_background.svg',
-            semanticsLabel: 'Decorative background',
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              height: 200,
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Column(
-                children: [
-                  const Text(
-                    "Khám phá ứng dụng",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SvgPicture.asset(
+              alignment: Alignment.topCenter,
+              fit: BoxFit.fitWidth,
+              'assets/images/intro_background.svg',
+              semanticsLabel: 'Decorative background',
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: 200,
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Column(
+                  children: [
+                    const Text(
+                      "Khám phá ứng dụng",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const Text(
-                    "VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
+                    const Text(
+                      "VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStartButton(context)
-                ],
+                    const SizedBox(height: 16),
+                    _buildStartButton(context)
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
