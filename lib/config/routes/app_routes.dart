@@ -6,7 +6,7 @@ import '../../core/pages/intro_page.dart';
 import '../../core/pages/main_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/pages/user_page.dart';
+import '../../features/auth/presentation/pages/user_home.dart';
 import '../../features/home/presentation/home_page.dart';
 
 part 'routes.dart';
@@ -16,7 +16,7 @@ final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(d
 
 class AppRoutes {
   static GoRouter router = GoRouter(
-    debugLogDiagnostics: true, // NOTE: Set to true for debugging
+    debugLogDiagnostics: true, // NOTE: Only set this to true for debugging
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/home',
     routes: <RouteBase>[

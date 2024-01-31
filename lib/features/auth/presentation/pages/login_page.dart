@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../bloc/auth_bloc.dart';
 import '../components/text_field_custom.dart';
 
 class LoginPage extends StatefulWidget {
@@ -66,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                     label: 'Tài khoản',
                     hint: 'Nhập tên tài khoản',
                     isRequired: true,
+                    prefixIcon: const Icon(Icons.person),
                   ),
                   const SizedBox(height: 12),
                   TextFieldCustom(
@@ -74,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                     hint: 'Nhập mật khẩu',
                     isRequired: true,
                     obscureText: true,
+                    prefixIcon: const Icon(Icons.lock),
                   ),
                   // forgot password
                   Align(
@@ -91,48 +95,70 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 18),
                   // btn login
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // do something
-                          if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
-                            context.go('/home');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đăng nhập thành công!'),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Tài khoản hoặc mật khẩu không đúng!'),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: const Text(
-                        'Đăng nhập',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildLoginButton(context),
                 ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox _buildLoginButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        ),
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            // add event to bloc
+            context.read<AuthBloc>().add(LoggedInEvent(
+                  username: _usernameController.text,
+                  password: _passwordController.text,
+                ));
+
+            // if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
+            //   context.go('/home');
+            //   ScaffoldMessenger.of(context).showSnackBar(
+            //     const SnackBar(
+            //       content: Text('Đăng nhập thành công!'),
+            //     ),
+            //   );
+            // } else {
+            //   ScaffoldMessenger.of(context).showSnackBar(
+            //     const SnackBar(
+            //       content: Text('Tài khoản hoặc mật khẩu không đúng!'),
+            //     ),
+            //   );
+            // }
+          }
+        },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state.status == AuthStatus.authenticating) {
+              return const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              );
+            }
+            return const Text(
+              'Đăng nhập',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          },
         ),
       ),
     );

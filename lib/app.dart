@@ -11,12 +11,7 @@ class VTVApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      // title: 'Nhóm 1',
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      //   useMaterial3: true,
-      // ),
-      // home: const HomePage(title: 'Flutter Demo Home Page'),
+      title: 'VTV Shop',
       routerConfig: AppRoutes.router,
       theme: Provider.of<ThemeProvider>(context).themeData,
     );

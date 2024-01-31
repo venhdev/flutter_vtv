@@ -63,7 +63,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     label: 'Email xác nhận',
                     hint: 'Nhập email',
                     isRequired: true,
-                    suffix: IconButton(
+                    suffixIcon: IconButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(

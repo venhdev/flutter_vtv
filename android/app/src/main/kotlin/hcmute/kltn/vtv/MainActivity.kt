@@ -1,4 +1,4 @@
-package com.example.flutter_vtv
+package hcmute.kltn.vtv
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -13,6 +13,7 @@ class IntroPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.max,
           children: [
             SvgPicture.asset(
               alignment: Alignment.topCenter,
