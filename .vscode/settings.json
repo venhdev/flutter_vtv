@@ -2,6 +2,10 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "cSpell.words": [
         "autovalidate",
-        "ribeye"
-    ]
+        "mocktail",
+        "prefs",
+        "ribeye",
+        "Schyler"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

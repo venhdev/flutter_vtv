@@ -7,7 +7,8 @@ class TextFieldCustom extends StatelessWidget {
     required this.label,
     required this.hint,
     this.borderColor,
-    this.suffix,
+    this.suffixIcon,
+    this.prefixIcon,
     this.isRequired = false,
     this.obscureText = false,
     this.checkEmpty = true,
@@ -19,7 +20,8 @@ class TextFieldCustom extends StatelessWidget {
   final String label;
   final String hint;
   final Color? borderColor;
-  final Widget? suffix;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
 
   final bool isRequired;
   final bool obscureText;
@@ -60,7 +62,8 @@ class TextFieldCustom extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           decoration: InputDecoration(
-            suffixIcon: suffix,
+            suffixIcon: suffixIcon,
+            prefixIcon: prefixIcon,
             hintText: hint,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

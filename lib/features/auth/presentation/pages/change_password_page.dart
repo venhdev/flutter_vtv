@@ -49,6 +49,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     label: 'Mật khẩu hiện tại',
                     hint: 'Nhập  mật khẩu hiện tại',
                     obscureText: true,
+                    prefixIcon: const Icon(Icons.lock),
                   ),
                   const SizedBox(height: 24),
                   TextFieldCustom(
@@ -56,7 +57,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     label: 'Mật khẩu mới',
                     hint: 'Nhập mật khẩu mới',
                     obscureText: true,
-                    
+                    prefixIcon: const Icon(Icons.lock),
                   ),
                   const SizedBox(height: 24),
                   TextFieldCustom(
@@ -64,6 +65,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     label: 'Xác nhận mật khẩu mới',
                     hint: 'Nhập lại mật khẩu mới',
                     obscureText: true,
+                    prefixIcon: const Icon(Icons.lock),
                     validator: (value) {
                       if (value != _newPasswordController.text) {
                         return 'Mật khẩu không khớp';

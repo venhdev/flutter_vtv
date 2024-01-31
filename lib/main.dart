@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_vtv/config/themes/theme_provider.dart';
-import 'package:flutter_vtv/core/services/shared_preferences_service.dart';
+import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
+import 'package:flutter_vtv/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
@@ -12,11 +14,8 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await configureDependencies();
-  final pref = di<SharedPreferencesService>();
-
-  // wait for 2 seconds
-  // await Future.delayed(const Duration(seconds: 2));
+  await initialLocator();
+  final authBloc = sl<AuthBloc>()..add(AuthStarted());
 
   FlutterNativeSplash.remove();
   runApp(MultiProvider(
@@ -25,8 +24,9 @@ void main() async {
         create: (context) => ThemeProvider(),
       ),
       ChangeNotifierProvider(
-        create: (context) => AppState(pref.isStarted, pref),
+        create: (context) => AppState(sl<SharedPreferencesHelper>()),
       ),
+      BlocProvider(create: (context) => authBloc),
     ],
     child: const VTVApp(),
   ));

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class UserPage extends StatelessWidget {
-  const UserPage({super.key});
+class NotLoggedWidget extends StatelessWidget {
+  const NotLoggedWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +31,15 @@ class UserPage extends StatelessWidget {
             const SizedBox(height: 12),
 
             // login button
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
-                borderRadius: BorderRadius.circular(10),
+            TextButton(
+              onPressed: () => context.go('/user/login'),
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: TextButton(
-                onPressed: () => context.go('/user/login'),
-                child: const Text(
-                  'Đăng nhập',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+              child: const Text(
+                'Đăng nhập',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
