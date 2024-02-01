@@ -170,6 +170,39 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
           ),
         )),
       ) as _i8.Future<_i2.Either<_i9.Failure, void>>);
+
+  @override
+  _i8.Future<_i2.Either<_i9.Failure, void>> deleteAuth() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteAuth,
+          [],
+        ),
+        returnValue: _i8.Future<_i2.Either<_i9.Failure, void>>.value(
+            _FakeEither_0<_i9.Failure, void>(
+          this,
+          Invocation.method(
+            #deleteAuth,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i2.Either<_i9.Failure, void>>);
+
+  @override
+  _i8.Future<_i2.Either<_i9.Failure, void>> logout(String? refreshToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #logout,
+          [refreshToken],
+        ),
+        returnValue: _i8.Future<_i2.Either<_i9.Failure, void>>.value(
+            _FakeEither_0<_i9.Failure, void>(
+          this,
+          Invocation.method(
+            #logout,
+            [refreshToken],
+          ),
+        )),
+      ) as _i8.Future<_i2.Either<_i9.Failure, void>>);
 }
 
 /// A class which mocks [AuthDataSource].
@@ -206,10 +239,11 @@ class MockAuthDataSource extends _i1.Mock implements _i10.AuthDataSource {
       ) as _i8.Future<_i3.AuthModel>);
 
   @override
-  _i8.Future<void> logout() => (super.noSuchMethod(
+  _i8.Future<void> disableRefreshToken(String? refreshToken) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #logout,
-          [],
+          #disableRefreshToken,
+          [refreshToken],
         ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
@@ -260,6 +294,16 @@ class MockSecureStorageHelper extends _i1.Mock
         Invocation.method(
           #cacheAuth,
           [jsonData],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> deleteAuth() => (super.noSuchMethod(
+        Invocation.method(
+          #deleteAuth,
+          [],
         ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),

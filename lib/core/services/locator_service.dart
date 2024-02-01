@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/auth/data/data_sources/auth_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/domain/usecase/logout.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../helpers/secure_storage_helper.dart';
 import '../helpers/shared_preferences_helper.dart';
@@ -38,9 +39,10 @@ Future<void> initialLocator() async {
   //! UseCase
   sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
   sl.registerLazySingleton<RetrieveAuthUC>(() => RetrieveAuthUC(sl()));
+  sl.registerLazySingleton<LogoutUC>(() => LogoutUC(sl()));
   
   //! Bloc
-  sl.registerFactory(() => AuthBloc(sl(), sl()));
+  sl.registerFactory(() => AuthBloc(sl(), sl(), sl()));
 }
 
 // <https://pub.dev/packages/get_it>

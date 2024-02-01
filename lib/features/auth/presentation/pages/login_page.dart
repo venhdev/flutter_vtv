@@ -9,6 +9,8 @@ import '../components/text_field_custom.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  static const String routeName = 'login';
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -83,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => context.go('/user/login/forgot-password'),
+                      onPressed: () => context.go('/user/forgot-password'),
                       child: const Text(
                         'Quên mật khẩu?',
                         style: TextStyle(
@@ -119,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             // add event to bloc
-            context.read<AuthBloc>().add(LoggedInEvent(
+            context.read<AuthBloc>().add(LoginEvent(
                   username: _usernameController.text,
                   password: _passwordController.text,
                 ));

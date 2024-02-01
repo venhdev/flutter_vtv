@@ -27,5 +27,7 @@ class SecureStorageHelper {
     await _storage.write(key: _key, value: jsonData);
   }
 
+  Future<void> deleteAuth() async => await _storage.delete(key: _key);
+
   Future<void> deleteAll() async => await _storage.deleteAll();
 }

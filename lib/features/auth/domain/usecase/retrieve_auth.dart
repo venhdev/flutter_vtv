@@ -9,7 +9,7 @@ class RetrieveAuthUC extends UseCaseNoParam<FResult<AuthEntity>> {
 
   RetrieveAuthUC(this._authRepository);
   @override
-  FResult<AuthEntity> call() {
-    return _authRepository.retrieveAuth();
+  FResult<AuthEntity> call() async {
+    return await _authRepository.retrieveAuth();
   }
 }

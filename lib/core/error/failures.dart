@@ -7,6 +7,7 @@ const String failureMessage = 'Something went wrong !!!';
 const String serverFailureFailureMessage = 'Server Failure';
 const String clientFailureFailureMessage = 'Client Failure';
 const String connectionFailureMessage = 'Connection Failure';
+const String cacheFailureMessage = 'Cache Failure';
 
 class Failure extends Equatable {
   const Failure({
@@ -39,6 +40,12 @@ class ServerFailure extends Failure {
 class ConnectionFailure extends Failure {
   const ConnectionFailure({
     super.message = connectionFailureMessage,
+  });
+}
+
+class CacheFailure extends Failure {
+  const CacheFailure({
+    super.message = cacheFailureMessage,
   });
 }
 

@@ -2,7 +2,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
-
 import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -30,10 +29,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(model.toEntity());
     } on ClientException catch (e) {
       return Left(ClientFailure(code: e.code, message: e.message));
-    } on CacheException {
-      return const Left(UnexpectedFailure(message: 'Lỗi ứng dụng!'));
-    } catch (e) {
-      return const Left(UnexpectedFailure(message: 'Lỗi không xác định! [loginWithUsernameAndPassword]'));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(code: e.code, message: e.message));
     }
   }
 
@@ -55,10 +52,32 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final authData = await _secureStorageHelper.readAuth();
       return Right(authData);
-    } on CacheException {
-      return const Left(UnexpectedFailure(message: 'Lỗi lấy thông tin người dùng!'));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
     } catch (e) {
       return const Left(UnexpectedFailure(message: 'Lỗi không xác định! [retrieveAuth]'));
+    }
+  }
+
+  @override
+  FResultVoid logout(String refreshToken) async {
+    try {
+      return Right(await _authDataSource.disableRefreshToken(refreshToken));
+    } on ClientException catch (e) {
+      return Left(ClientFailure(code: e.code, message: e.message));
+    } catch (e) {
+      return const Left(UnexpectedFailure(message: 'Lỗi không xác định! [logout]'));
+    }
+  }
+
+  @override
+  FResultVoid deleteAuth() async {
+    try {
+      return Right(await _secureStorageHelper.deleteAuth());
+    } on CacheException {
+      return const Left(CacheFailure(message: 'Lỗi xóa thông tin người dùng!'));
+    } catch (e) {
+      return const Left(UnexpectedFailure(message: 'Lỗi không xác định! [deleteAuth]'));
     }
   }
 }

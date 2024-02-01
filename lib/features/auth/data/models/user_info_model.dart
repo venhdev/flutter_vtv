@@ -69,7 +69,7 @@ class UserInfoModel extends UserInfoEntity {
       'fullName': fullName,
       'gender': gender,
       'email': email,
-      'birthday': birthday.millisecondsSinceEpoch,
+      'birthday': birthday.toIso8601String(),
       'status': status.name,
       'roles': roles.map((e) => e.name).toList(),
     };

@@ -10,11 +10,11 @@ sealed class AuthEvent extends Equatable {
 
 class AuthStarted extends AuthEvent {}
 
-class LoggedInEvent extends AuthEvent {
+class LoginEvent extends AuthEvent {
   final String username;
   final String password;
 
-  const LoggedInEvent({
+  const LoginEvent({
     required this.username,
     required this.password,
   });
@@ -23,4 +23,13 @@ class LoggedInEvent extends AuthEvent {
   List<Object> get props => [username, password];
 }
 
-class AuthLoggedOut extends AuthEvent {}
+class LogoutEvent extends AuthEvent {
+  final String refreshToken;
+
+  const LogoutEvent({
+    required this.refreshToken,
+  });
+
+  @override
+  List<Object> get props => [refreshToken];
+}
