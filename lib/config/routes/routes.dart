@@ -3,29 +3,33 @@ part of 'app_routes.dart';
 final _routes = <RouteBase>[
   // Home Route
   GoRoute(
-    path: '/home',
+    path: '/${HomePage.routeName}',
     builder: (BuildContext context, GoRouterState state) {
       return const HomePage();
     },
   ),
   // User Route
   GoRoute(
-    path: '/user',
+    path: '/${UserHome.routeName}',
     builder: (BuildContext context, GoRouterState state) {
       return const UserHome(); // contain login page
     },
     routes: [
       GoRoute(
-        path: 'login',
+        path: LoginPage.routeName,
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: 'change-password',
+        path: ChangePasswordPage.routeName,
         builder: (context, state) => const ChangePasswordPage(),
       ),
       GoRoute(
-        path: 'forgot-password',
+        path: ForgotPasswordPage.routeName,
         builder: (context, state) => const ForgotPasswordPage(),
+      ),
+      GoRoute(
+        path: SettingsPage.routeName,
+        builder: (context, state) => const SettingsPage(),
       ),
     ],
   ),

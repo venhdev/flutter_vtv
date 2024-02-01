@@ -5,6 +5,8 @@ import '../components/text_field_custom.dart';
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
 
+  static const String routeName = 'change-password';
+
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }

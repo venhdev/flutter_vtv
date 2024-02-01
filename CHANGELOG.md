@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Login Feature + cache login credentials
+- Login
+- Logout
 - Flash screen and icon launcher
 - Base functions and widgets
 
@@ -14,6 +15,10 @@ All notable changes to this project will be documented in this file.
 
 - App package name
 - GetIt package instead using Injectable
+
+### Fixed
+
+- Utf-8 decode
 
 ## [v0.0.3-pre] - 26-01-2024
 

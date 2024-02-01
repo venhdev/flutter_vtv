@@ -1,5 +1,5 @@
 const String kPORT = '8585';
-const String kDOMAIN = '192.168.1.8';
+const String kDOMAIN = '192.168.1.7';
 const String kAPIBaseURL = 'http://$kDOMAIN:$kPORT/api';
 
 //! Auth

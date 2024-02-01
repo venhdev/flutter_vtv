@@ -15,7 +15,7 @@ class LoginWithUsernameAndPasswordUC extends UseCaseHasParams<FResult<AuthEntity
 
     //> when login success, cache auth into secure storage
     await result.fold(
-      (l) => null,
+      (failure) async => null, // do nothing
       (authEntity) => _authRepository.cacheAuth(authEntity),
     );
     return result;

@@ -69,6 +69,7 @@ flutter:
     - google_fonts/
     - assets/
     - assets/images/
+    - assets/images/placeholders/
     - assets/svg/
     - assets/icons/
 

@@ -17,14 +17,14 @@ Future<T?> showMyDialogToConfirm<T>({
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            child: const Text('No'),
+            child: const Text('Không'),
           ),
           TextButton(
             onPressed: () async {
               onConfirm?.call();
               Navigator.of(context).pop(true);
             },
-            child: const Text('Yes'),
+            child: const Text('Có'),
           ),
         ],
       );

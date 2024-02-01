@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
+
 DateTime getToday() {
   DateTime now = DateTime.now();
   return DateTime(now.year, now.month, now.day);
@@ -8,4 +13,9 @@ DateTime getToday() {
 /// => yyyy-MM-dd : 00:00:00.000
 DateTime getDate(DateTime dateTime) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day);
+}
+
+/// use to check if the user is logged in or not
+bool isLogin(BuildContext context) {
+  return context.read<AuthBloc>().state.status == AuthStatus.authenticated;
 }

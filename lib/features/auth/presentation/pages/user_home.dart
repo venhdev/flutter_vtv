@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/components/custom_widgets.dart';
 import 'package:flutter_vtv/features/auth/presentation/components/not_logged_widget.dart';
+import 'package:go_router/go_router.dart';
 
 import '../bloc/auth_bloc.dart';
 import '../components/logged_widget.dart';
 
 class UserHome extends StatelessWidget {
   const UserHome({super.key});
+
+  static const String routeName = 'user';
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class UserHome extends StatelessWidget {
               ),
             );
           }
+          context.go('/user');
         }
       },
       builder: (context, state) {
@@ -43,4 +47,3 @@ class UserHome extends StatelessWidget {
     );
   }
 }
-

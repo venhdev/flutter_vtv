@@ -40,9 +40,9 @@ class AuthModel extends AuthEntity {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'accessToken': accessToken,
-      'refreshToken': refreshToken,
-      'userInfo': UserInfoModel.fromEntity(userInfo).toMap(),
+      'access_token': accessToken,
+      'refresh_token': refreshToken,
+      'customerDTO': UserInfoModel.fromEntity(userInfo).toMap(),
     };
   }
 

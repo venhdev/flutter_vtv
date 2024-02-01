@@ -12,4 +12,7 @@ ThemeData lightTheme = ThemeData(
       primaryContainer: Color(0xFFFFC600),
     ),
   ),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFFF0DF9E),
+  ),
 );

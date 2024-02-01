@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_vtv/core/error/exceptions.dart';
 import 'package:flutter_vtv/core/error/failures.dart';
 import 'package:flutter_vtv/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:mockito/mockito.dart';
@@ -27,7 +28,7 @@ void main() {
     );
   });
 
-  group('loginWithUsernameAndPassword', () {
+  group('login', () {
     test('should return [AuthEntity] when login success', () async {
       // Arrange (setup @mocks)
       when(mockAuthDataSource.loginWithUsernameAndPassword(
@@ -68,9 +69,6 @@ void main() {
       // --expect something equals, isA, throwsA
       expect(result, equals(const Left(ConnectionFailure(message: 'Không có kết nối mạng. Vui lòng kiểm tra lại.'))));
     });
-  });
-
-  group('cache Auth', () {
     test('should return [void] when cache success', () async {
       // Arrange (setup @mocks)
       when(mockSecureStorageHelper.cacheAuth(any)).thenAnswer((_) async {});
@@ -86,7 +84,7 @@ void main() {
   });
 
   group('retrieve auth', () {
-    test('should return [AuthEntity] when retrieve success', () async {
+    test('should return [AuthEntity] when retrieving data successfully', () async {
       // Arrange (setup @mocks)
       when(mockSecureStorageHelper.readAuth()).thenAnswer((_) async => tAuthEntity);
 
@@ -98,5 +96,30 @@ void main() {
       // --expect something equals, isA, throwsA
       expect(result, equals(Right(tAuthEntity)));
     });
+    test('should return [UnexpectedFailure] when retrieving data unsuccessfully', () async {
+      // Arrange (setup @mocks)
+      when(mockSecureStorageHelper.readAuth()).thenThrow(CacheException());
+
+      // Act
+      final result = await authRepositoryImpl.retrieveAuth();
+
+      // Assert
+      // --verify something should(not) happen/call
+      // --expect something equals, isA, throwsA
+      expect(result, equals(const Left(CacheFailure(message: 'Lỗi lấy thông tin người dùng!'))));
+    });
+  });
+
+  test('should return [void] when logout successfully', () async {
+    // Arrange (setup @mocks)
+    when(mockAuthDataSource.disableRefreshToken(tRefreshToken)).thenAnswer((_) async {});
+
+    // Act
+    final result = await authRepositoryImpl.logout(tRefreshToken);
+
+    // Assert
+    // --verify something should(not) happen/call
+    // --expect something equals, isA, throwsA
+    expect(result, equals(const Right(null)));
   });
 }

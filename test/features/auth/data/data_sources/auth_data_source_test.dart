@@ -105,4 +105,24 @@ void main() {
       expect(result, isA<AuthModel>());
     });
   });
+
+  group('logout', () {
+    test('should not throw any E when logout is successful', () async {
+      // Arrange (setup @mocks)
+      when(mockHttpClient.post(
+        Uri.parse(kAPIAuthLogoutURL),
+        headers: testHeaders,
+        body: jsonEncode({
+          'refreshToken': tRefreshToken,
+        }),
+      )).thenAnswer((_) async => http.Response(jsonEncode(dummyLogoutSuccessRes), 200));
+      // Act
+      final future = authDataSourceImpl.disableRefreshToken(tRefreshToken);
+
+      // Assert
+      // --verify something should(not) happen/call
+      // --expect something equals, isA, throwsA
+      expect(future, completes);
+    });
+  });
 }

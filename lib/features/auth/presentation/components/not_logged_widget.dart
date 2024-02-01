@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_vtv/features/auth/presentation/components/user_app_bar.dart';
 import 'package:go_router/go_router.dart';
 
 class NotLoggedWidget extends StatelessWidget {
@@ -10,11 +11,7 @@ class NotLoggedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
+      appBar: buildUserAppBar(context),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

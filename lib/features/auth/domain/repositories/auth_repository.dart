@@ -5,4 +5,6 @@ abstract class AuthRepository {
   FResult<AuthEntity> retrieveAuth();
   FResult<AuthEntity> loginWithUsernameAndPassword(String username, String password);
   FResultVoid cacheAuth(AuthEntity authEntity);
+  FResultVoid deleteAuth();
+  FResultVoid logout(String refreshToken);
 }
