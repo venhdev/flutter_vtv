@@ -8,7 +8,7 @@ class SharedPreferencesHelper {
 
   final SharedPreferences _prefs;
 
-  bool get isStarted => _prefs.getBool(_keyStarted) ?? true;
+  bool get isFirstRun => _prefs.getBool(_keyStarted) ?? true;
 
   Future<void> setStarted(bool value) async {
     await _prefs.setBool(_keyStarted, value);

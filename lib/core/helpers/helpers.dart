@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/auth/presentation/bloc/auth_cubit.dart';
 
 DateTime getToday() {
   DateTime now = DateTime.now();
@@ -17,5 +17,5 @@ DateTime getDate(DateTime dateTime) {
 
 /// use to check if the user is logged in or not
 bool isLogin(BuildContext context) {
-  return context.read<AuthBloc>().state.status == AuthStatus.authenticated;
+  return context.read<AuthCubit>().state.status == AuthStatus.authenticated;
 }

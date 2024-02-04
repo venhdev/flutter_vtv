@@ -22,12 +22,50 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppState>(
       builder: (context, appState, _) {
-        if (appState.isStarted == true) {
+        // the first run of the app
+        if (appState.isFirstRun == true) {
           return const IntroPage();
         }
 
+        // the app is not connected to the internet
+
+        // if (appState.hasConnection == false) {
+        //   return const Scaffold(
+        //     body: Center(
+        //       child: Column(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           // icon
+        //           Icon(Icons.wifi_off),
+        //           Text('Không có kết nối mạng'),
+        //         ],
+        //       ),
+        //     ),
+        //   );
+        // }
+
         return Scaffold(
           body: child,
+          // if the app is not connected to the internet, show a bottom sheet
+          bottomSheet: appState.hasConnection == false
+              ? BottomSheet(
+                  onClosing: () {},
+                  enableDrag: false,
+                  builder: (context) {
+                    return Container(
+                      color: Colors.red,
+                      padding: const EdgeInsets.all(16),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.wifi_off),
+                          SizedBox(width: 8),
+                          Text('Không có kết nối mạng'),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              : null,
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -49,7 +87,7 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  static int _calculateSelectedIndex(BuildContext context) {
+  int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/home')) {
       return 0;

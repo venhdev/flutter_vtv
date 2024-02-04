@@ -2,14 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter_vtv/core/constants/api.dart';
 import 'package:flutter_vtv/core/error/exceptions.dart';
-import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
+import 'package:http/http.dart' as http show Client;
 
+import '../../domain/dto/register_params.dart';
 import '../models/auth_model.dart';
+
+// <https://pub.dev/packages/jwt_decoder>
 
 abstract class AuthDataSource {
   Future<AuthModel> loginWithUsernameAndPassword(String username, String password);
-  Future<void> disableRefreshToken(String refreshToken);
+  Future<void> register(RegisterParams registerDTO);
+  Future<void> disableRefreshToken(String refreshToken); // use for logout
+  Future<String> getNewAccessToken(String refreshToken); // handing expired token
 }
 
 class AuthDataSourceImpl implements AuthDataSource {
@@ -19,10 +23,6 @@ class AuthDataSourceImpl implements AuthDataSource {
 
   @override
   Future<AuthModel> loginWithUsernameAndPassword(String username, String password) async {
-    // prepare headers
-    final headers = {
-      'Content-Type': 'application/json',
-    };
     // prepare body
     final body = {
       'username': username,
@@ -32,61 +32,97 @@ class AuthDataSourceImpl implements AuthDataSource {
     // send request
     final response = await _client.post(
       Uri.parse(kAPIAuthLoginURL),
-      headers: headers,
+      headers: baseHeaders,
       body: jsonEncode(body),
     );
+
     // decode response using utf8
-    final utf8Body = utf8.decode(response.bodyBytes);
+    final utf8BodyMap = utf8.decode(response.bodyBytes);
 
     // handle response
     if (response.statusCode == 200) {
-      final model = AuthModel.fromJson(utf8Body);
-
-      return model;
-    } else if (response.statusCode == 400) {
-      throw ClientException(
-        code: 400,
-        message: jsonDecode(utf8Body)['message'],
-        uri: Uri.parse(kAPIAuthLoginURL),
-      );
-    } else if (response.statusCode == 404) {
-      throw ClientException(
-        code: 404,
-        message: jsonDecode(utf8Body)['message'],
-        uri: Uri.parse(kAPIAuthLoginURL),
-      );
+      return AuthModel.fromJson(utf8BodyMap);
     } else {
-      throw ServerException(message: 'Lỗi không xác định. [loginWithUsernameAndPassword]');
+      throwException(
+        code: response.statusCode,
+        message: jsonDecode(utf8BodyMap)['message'],
+        url: kAPIAuthLoginURL,
+      );
     }
   }
 
   @override
   Future<void> disableRefreshToken(String refreshToken) async {
     // prepare headers
-    final headers = {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cookie': 'refreshToken=$refreshToken',
-    };
 
     // send request
     final response = await _client.post(
       Uri.parse(kAPIAuthLogoutURL),
-      headers: headers,
+      headers: headersWithRefreshToken(refreshToken),
     );
-
-    // decode response using utf8
-    final utf8Body = utf8.decode(response.bodyBytes);
 
     // handle response
     if (response.statusCode == 200) {
       return;
-    } else if (response.statusCode == 403 || response.statusCode == 400) {
-      final message = jsonDecode(utf8Body)['message'];
-      Logger().i('logout message: $message');
-      throw ClientException(
+    } else {
+      // decode response using utf8
+      final utf8BodyMap = utf8.decode(response.bodyBytes);
+      final decodedBody = jsonDecode(utf8BodyMap);
+      throwException(
         code: response.statusCode,
-        message: jsonDecode(utf8Body)['message'],
-        uri: Uri.parse(kAPIAuthLogoutURL),
+        message: decodedBody['message'],
+        url: kAPIAuthRegisterURL,
+      );
+    }
+  }
+
+  @override
+  Future<String> getNewAccessToken(String refreshToken) async {
+    // send request
+    final response = await _client.post(
+      Uri.parse(kAPIAuthRefreshTokenURL),
+      headers: headersWithRefreshToken(refreshToken),
+    );
+
+    // decode response using utf8
+    final utf8BodyMap = utf8.decode(response.bodyBytes);
+    final decodedBody = jsonDecode(utf8BodyMap);
+
+    // handle response
+    if (response.statusCode == 200) {
+      return decodedBody['accessToken'];
+    } else {
+      throwException(
+        code: response.statusCode,
+        message: decodedBody['message'],
+        url: kAPIAuthRegisterURL,
+      );
+    }
+  }
+
+  @override
+  Future<void> register(RegisterParams registerParams) async {
+    // prepare body
+    final body = registerParams.toJson();
+
+    // send request
+    final response = await _client.post(
+      Uri.parse(kAPIAuthRegisterURL),
+      headers: baseHeaders,
+      body: body,
+    );
+
+    // handle response
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      // decode response using utf8
+      final utf8BodyMap = utf8.decode(response.bodyBytes);
+      final decodedBody = jsonDecode(utf8BodyMap);
+      throwException(
+        code: response.statusCode,
+        message: decodedBody['message'],
+        url: kAPIAuthRegisterURL,
       );
     }
   }

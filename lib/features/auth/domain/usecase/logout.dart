@@ -3,7 +3,7 @@ import 'package:flutter_vtv/core/usecase/base_usecase.dart';
 
 import '../repositories/auth_repository.dart';
 
-class LogoutUC extends UseCaseHasParams<FResultVoid, String> {
+class LogoutUC implements UseCaseHasParams<FResultVoid, String> {
   final AuthRepository _authRepository;
 
   LogoutUC(this._authRepository);

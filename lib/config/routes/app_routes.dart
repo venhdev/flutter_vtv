@@ -7,6 +7,7 @@ import '../../core/pages/intro_page.dart';
 import '../../core/pages/main_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/user_home.dart';
 import '../../features/home/presentation/home_page.dart';
 

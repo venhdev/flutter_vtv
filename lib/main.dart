@@ -1,21 +1,26 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_vtv/config/bloc_config.dart';
 import 'package:flutter_vtv/config/themes/theme_provider.dart';
 import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
-import 'package:flutter_vtv/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter_vtv/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'app_state.dart';
-import 'core/services/locator_service.dart';
+import 'locator_service.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await initialLocator();
-  final authBloc = sl<AuthBloc>()..add(AuthStarted());
+  await initializeLocator();
+  Bloc.observer = GlobalBlocObserver(); // NOTE: debug
+  final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());
+  await appState.checkConnection();
+  appState.subscribeConnection();
 
   FlutterNativeSplash.remove();
   runApp(MultiProvider(
@@ -24,9 +29,9 @@ void main() async {
         create: (context) => ThemeProvider(),
       ),
       ChangeNotifierProvider(
-        create: (context) => AppState(sl<SharedPreferencesHelper>()),
+        create: (context) => appState,
       ),
-      BlocProvider(create: (context) => authBloc),
+      BlocProvider(create: (context) => sl<AuthCubit>()..onStarted()),
     ],
     child: const VTVApp(),
   ));
