@@ -6,7 +6,7 @@ class AuthEntity extends Equatable {
   final String accessToken;
   final String refreshToken;
   final UserInfoEntity userInfo;
-  
+
   const AuthEntity({
     required this.accessToken,
     required this.refreshToken,
@@ -15,4 +15,16 @@ class AuthEntity extends Equatable {
 
   @override
   List<Object> get props => [accessToken, refreshToken, userInfo];
+
+  AuthEntity copyWith({
+    String? accessToken,
+    String? refreshToken,
+    UserInfoEntity? userInfo,
+  }) {
+    return AuthEntity(
+      accessToken: accessToken ?? this.accessToken,
+      refreshToken: refreshToken ?? this.refreshToken,
+      userInfo: userInfo ?? this.userInfo,
+    );
+  }
 }
