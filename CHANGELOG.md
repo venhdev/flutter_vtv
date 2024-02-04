@@ -6,8 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Login
+- Login & Auto get new accessToken if expired
 - Logout
+- Register
 - Flash screen and icon launcher
 - Base functions and widgets
 

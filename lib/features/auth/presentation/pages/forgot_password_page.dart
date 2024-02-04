@@ -51,7 +51,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 children: <Widget>[
                   const SizedBox(height: 24),
                   const Text(
-                    "Vui lòng nhập email của bạn để lấy lại mật khẩu",
+                    'Vui lòng nhập email của bạn để lấy lại mật khẩu',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
