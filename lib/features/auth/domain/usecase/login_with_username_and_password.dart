@@ -4,7 +4,7 @@ import '../../../../core/constants/typedef.dart';
 import '../entities/auth_entity.dart';
 import '../repositories/auth_repository.dart';
 
-class LoginWithUsernameAndPasswordUC extends UseCaseHasParams<FResult<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
+class LoginWithUsernameAndPasswordUC implements UseCaseHasParams<FResult<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
   final AuthRepository _authRepository;
 
   LoginWithUsernameAndPasswordUC(this._authRepository);

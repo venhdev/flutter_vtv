@@ -14,9 +14,25 @@ void main() {
 
   test('should return a valid model from json', () async {
     //arrange
-
+    const tResLoginSuccess = {
+      "status": "string",
+      "message": "string",
+      "code": 0,
+      "customerDTO": {
+        "customerId": 0,
+        "username": "username",
+        "email": "email",
+        "gender": true,
+        "fullName": "fullName",
+        "birthday": "2000-01-01",
+        "status": "ACTIVE",
+        "roles": ["CUSTOMER"]
+      },
+      "access_token": "accessToken",
+      "refresh_token": "refreshToken"
+    };
     //act
-    final result = AuthModel.fromJson(json.encode(dummyLoginSuccessRes));
+    final result = AuthModel.fromJson(json.encode(tResLoginSuccess));
 
     //assert
     expect(result, equals(tAuthModel));

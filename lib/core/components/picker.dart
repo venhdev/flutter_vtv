@@ -13,8 +13,8 @@ Future<DateTime?> showMyDatePicker(
     showDatePicker(
       context: context,
       initialDate: initDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
     );
 
 Future<TimeOfDay?> showMyTimePicker(

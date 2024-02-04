@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart';
 
 import '../../domain/entities/auth_entity.dart';
-import '../../domain/entities/user_info_entity.dart';
 
 class AuthModel extends AuthEntity {
   const AuthModel({
@@ -25,18 +24,6 @@ class AuthModel extends AuthEntity {
         refreshToken: entity.refreshToken,
         userInfo: entity.userInfo,
       );
-
-  AuthModel copyWith({
-    String? accessToken,
-    String? refreshToken,
-    UserInfoEntity? userInfo,
-  }) {
-    return AuthModel(
-      accessToken: accessToken ?? this.accessToken,
-      refreshToken: refreshToken ?? this.refreshToken,
-      userInfo: userInfo ?? this.userInfo,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

@@ -5,7 +5,7 @@ import 'package:flutter_vtv/core/components/custom_widgets.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:go_router/go_router.dart';
 
-import '../bloc/auth_bloc.dart';
+import '../bloc/auth_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -39,8 +39,8 @@ class SettingsPage extends StatelessWidget {
             title: 'Đăng xuất',
             content: 'Bạn có chắc chắn muốn đăng xuất?',
             onConfirm: () {
-              final refreshToken = context.read<AuthBloc>().state.auth!.refreshToken;
-              context.read<AuthBloc>().add(LogoutEvent(refreshToken: refreshToken));
+              final refreshToken = context.read<AuthCubit>().state.auth!.refreshToken;
+              context.read<AuthCubit>().logout(refreshToken);
               // redirect to user home
               context.go('/user');
             });
@@ -50,7 +50,7 @@ class SettingsPage extends StatelessWidget {
         backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: BlocBuilder<AuthBloc, AuthState>(
+      child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state.status == AuthStatus.authenticating) {
             return loadingWidget;
