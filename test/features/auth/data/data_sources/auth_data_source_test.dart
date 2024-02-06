@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_vtv/core/constants/api.dart';
+import 'package:flutter_vtv/core/error/exceptions.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
+import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
-
-import 'package:flutter_vtv/core/constants/api.dart';
-import 'package:flutter_vtv/core/error/exceptions.dart';
-import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart';
-import 'package:flutter_vtv/features/auth/data/models/auth_model.dart';
 
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 import '../../../../helpers/test_helper.mocks.dart';
@@ -126,7 +125,7 @@ void main() {
       // --verify something should(not) happen/call
       // verify(mockSecureStorageHelper.cacheAuth(result)); // should call secure storage
       // --expect something equals, isA, throwsA
-      expect(result, isA<AuthModel>());
+      expect(result, isA<DataResponse>());
     });
   });
 
@@ -150,7 +149,7 @@ void main() {
     expect(future, completes);
   });
 
-  test('should return new accessToken [String] when call {getAccessToken}', () async {
+  test('should return new respOK with data [String] when call {getAccessToken}', () async {
     // Arrange (setup @mocks)
     var tRes = {
       "accessToken": "string",
@@ -170,7 +169,9 @@ void main() {
     // Assert
     // --verify something should(not) happen/call
     // --expect something equals, isA, throwsA
-    expect(result, isA<String>());
+    expect(result, isA<SuccessResponse>());
+    // has data
+    expect(result.data, isA<String>());
   });
 
   group('register', () {

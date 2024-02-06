@@ -19,3 +19,7 @@ DateTime getDate(DateTime dateTime) {
 bool isLogin(BuildContext context) {
   return context.read<AuthCubit>().state.status == AuthStatus.authenticated;
 }
+
+bool isValidEmail(String email) {
+  return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+}

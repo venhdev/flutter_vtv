@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../../core/constants/typedef.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/helpers/secure_storage_helper.dart';
+import '../../../../core/network/base_response.dart';
 import '../../domain/dto/register_params.dart';
+import '../../domain/entities/auth_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_sources/auth_data_source.dart';
 import '../models/auth_model.dart';
@@ -21,29 +22,29 @@ class AuthRepositoryImpl implements AuthRepository {
   final SecureStorageHelper _secureStorageHelper;
 
   @override
-  FResult<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
+  RespEitherData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
     try {
-      final model = await _authDataSource.loginWithUsernameAndPassword(username, password);
-      return Right(model.toEntity());
+      final result = await _authDataSource.loginWithUsernameAndPassword(username, password);
+      return Right(DataResponse(result.data.toEntity()));
     } on SocketException {
-      return const Left(ServerFailure(message: kMsgNetworkError));
+      return const Left(ClientError(message: kMsgNetworkError));
     } on ClientException catch (e) {
-      return Left(ClientFailure(code: e.code, message: e.message));
+      return Left(ClientError(code: e.code, message: e.message));
     } on ServerException catch (e) {
-      return Left(ServerFailure(code: e.code, message: e.message));
+      return Left(ServerError(code: e.code, message: e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(message: e.toString()));
+      return Left(UnexpectedError(message: e.toString()));
     }
   }
 
   @override
-  FResultVoid cacheAuth(AuthEntity authEntity) async {
+  FResult<void> cacheAuth(AuthEntity authEntity) async {
     try {
       final jsonAuthData = AuthModel.fromEntity(authEntity).toJson();
       await _secureStorageHelper.cacheAuth(jsonAuthData);
       return const Right(null);
-    } on CacheException {
-      return const Left(UnexpectedFailure(message: 'Lỗi lưu thông tin người dùng!'));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
     } catch (e) {
       return Left(UnexpectedFailure(message: e.toString()));
     }
@@ -62,22 +63,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResultVoid logout(String refreshToken) async {
+  RespEither logout(String refreshToken) async {
     try {
-      return Right(await _authDataSource.disableRefreshToken(refreshToken));
+      final resOK = await _authDataSource.disableRefreshToken(refreshToken);
+      return Right(resOK);
     } on SocketException {
-      return const Left(ServerFailure(message: kMsgNetworkError));
+      return const Left(ClientError(message: kMsgNetworkError));
     } on ClientException catch (e) {
-      return Left(ClientFailure(code: e.code, message: e.message));
+      return Left(ClientError(code: e.code, message: e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(message: e.toString()));
+      return Left(UnexpectedError(message: e.toString()));
     }
   }
 
   @override
-  FResultVoid deleteAuth() async {
+  FResult<void> deleteAuth() async {
     try {
-      return Right(await _secureStorageHelper.deleteAuth());
+      await _secureStorageHelper.deleteAuth();
+      return const Right(null);
     } on CacheException {
       return const Left(CacheFailure(message: 'Lỗi xóa thông tin người dùng!'));
     } catch (e) {
@@ -86,19 +89,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResult<String> getNewAccessToken() async {
+  RespEitherData<String> getNewAccessToken() async {
     try {
-      final auth = await _secureStorageHelper.readAuth();
-      final newAccessToken = await _authDataSource.getNewAccessToken(auth.refreshToken);
+      final localAuth = await _secureStorageHelper.readAuth();
+      final newAccessToken = await _authDataSource.getNewAccessToken(localAuth.refreshToken);
       return Right(newAccessToken);
     } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
+      return Left(UnexpectedError(message: e.message));
     } on SocketException {
-      return const Left(ServerFailure(message: kMsgNetworkError));
+      return const Left(ClientError(message: kMsgNetworkError));
     } on ServerException catch (e) {
-      return Left(ServerFailure(code: e.code, message: e.message));
+      return Left(ServerError(code: e.code, message: e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(message: e.toString()));
+      return Left(UnexpectedError(message: e.toString()));
     }
   }
 
@@ -116,18 +119,23 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResult<void> register(RegisterParams registerParams) async {
+  RespEither register(RegisterParams registerParams) async {
     try {
-      await _authDataSource.register(registerParams);
-      return const Right(null);
+      final resOK = await _authDataSource.register(registerParams);
+      return Right(resOK);
     } on SocketException {
-      return const Left(ServerFailure(message: kMsgNetworkError));
+      return const Left(ClientError(message: kMsgNetworkError));
     } on ClientException catch (e) {
-      return Left(ClientFailure(code: e.code, message: e.message));
+      return Left(ClientError(code: e.code, message: e.message));
     } on ServerException catch (e) {
-      return Left(ServerFailure(code: e.code, message: e.message));
+      return Left(ServerError(code: e.code, message: e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(message: e.toString()));
+      return Left(UnexpectedError(message: e.toString()));
     }
+  }
+
+  @override
+  RespEither sendCode(String username) {
+    throw UnimplementedError();
   }
 }

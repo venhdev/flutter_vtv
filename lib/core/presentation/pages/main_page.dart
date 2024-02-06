@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../app_state.dart';
+import '../../../app_state.dart';
 import 'intro_page.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
@@ -26,23 +26,6 @@ class MainPage extends StatelessWidget {
         if (appState.isFirstRun == true) {
           return const IntroPage();
         }
-
-        // the app is not connected to the internet
-
-        // if (appState.hasConnection == false) {
-        //   return const Scaffold(
-        //     body: Center(
-        //       child: Column(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           // icon
-        //           Icon(Icons.wifi_off),
-        //           Text('Không có kết nối mạng'),
-        //         ],
-        //       ),
-        //     ),
-        //   );
-        // }
 
         return Scaffold(
           body: child,

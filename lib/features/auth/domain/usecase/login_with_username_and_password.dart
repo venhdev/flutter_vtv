@@ -1,24 +1,24 @@
-import 'package:flutter_vtv/core/usecase/base_usecase.dart';
-
+import '../../../../core/constants/base_usecase.dart';
 import '../../../../core/constants/typedef.dart';
 import '../entities/auth_entity.dart';
 import '../repositories/auth_repository.dart';
 
-class LoginWithUsernameAndPasswordUC implements UseCaseHasParams<FResult<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
+class LoginWithUsernameAndPasswordUC
+    implements UseCaseHasParams<RespEitherData<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
   final AuthRepository _authRepository;
 
   LoginWithUsernameAndPasswordUC(this._authRepository);
 
   @override
-  FResult<AuthEntity> call(LoginWithUsernameAndPasswordUCParams params) async {
-    final result = await _authRepository.loginWithUsernameAndPassword(params.username, params.password);
+  RespEitherData<AuthEntity> call(LoginWithUsernameAndPasswordUCParams params) async {
+    final resEither = await _authRepository.loginWithUsernameAndPassword(params.username, params.password);
 
     //> when login success, cache auth into secure storage
-    await result.fold(
-      (failure) async => null, // do nothing
-      (authEntity) => _authRepository.cacheAuth(authEntity),
+    await resEither.fold(
+      (error) async => null, // do nothing
+      (ok) async => await _authRepository.cacheAuth(ok.data),
     );
-    return result;
+    return resEither;
   }
 }
 

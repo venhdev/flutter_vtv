@@ -77,10 +77,10 @@ class TextFieldCustom extends StatelessWidget {
             prefixIcon: prefixIcon,
             hintText: hint,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: borderColor ?? Theme.of(context).colorScheme.primaryContainer,
                 width: 2.0,
