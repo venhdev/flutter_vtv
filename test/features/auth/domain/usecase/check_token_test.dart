@@ -1,27 +1,28 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_vtv/core/error/failures.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/domain/usecase/check_token.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../../helpers/test_helper.mocks.dart';
 
 void main() {
-  late CheckTokenUC usecase;
+  late CheckTokenUC checkTokenUC;
   late MockAuthRepository mockAuthRepository;
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
-    usecase = CheckTokenUC(mockAuthRepository);
+    checkTokenUC = CheckTokenUC(mockAuthRepository);
   });
 
   test('should return new token when get refresh token success', () async {
     // Arrange (setup @mocks)
     when(mockAuthRepository.isValidToken(any)).thenAnswer((_) async => const Right(false));
-    when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right('new_token'));
+    when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right(DataResponse('new_token')));
     // Act
 
-    final result = await usecase('any');
+    final result = await checkTokenUC('any');
 
     // Assert
     // --verify something should(not) happen/call
@@ -35,7 +36,7 @@ void main() {
     when(mockAuthRepository.isValidToken(any)).thenAnswer((_) async => const Right(true));
     // Act
 
-    final result = await usecase('any');
+    final result = await checkTokenUC('any');
 
     // Assert
     // --verify something should(not) happen/call
@@ -49,7 +50,7 @@ void main() {
     when(mockAuthRepository.isValidToken(any)).thenAnswer((_) async => const Left(UnexpectedFailure()));
     // Act
 
-    final result = await usecase('any');
+    final result = await checkTokenUC('any');
 
     // Assert
     // --verify something should(not) happen/call

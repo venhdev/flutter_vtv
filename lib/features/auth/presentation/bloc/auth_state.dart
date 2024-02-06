@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'auth_cubit.dart';
 
 enum AuthStatus {
@@ -54,4 +55,18 @@ class AuthState extends Equatable {
         auth,
         message,
       ];
+
+  AuthState copyWith({
+    AuthStatus? status,
+    AuthEntity? auth,
+    String? message,
+    int? code,
+  }) {
+    return AuthState._(
+      status: status ?? this.status,
+      auth: auth ?? this.auth,
+      message: message ?? this.message,
+      code: code ?? this.code,
+    );
+  }
 }

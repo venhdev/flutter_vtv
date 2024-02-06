@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/config/themes/light_theme.dart';
+
+import 'light_theme.dart';
 
 bool isDarkMode(BuildContext context) {
   return Theme.of(context).brightness == Brightness.dark;

@@ -5,3 +5,7 @@
 - Hà Nhật Vềnh
 - Tô Duy Vượng
 - Nguyễn Quốc Trung
+
+## Abbreviations
+
+- Res: Response

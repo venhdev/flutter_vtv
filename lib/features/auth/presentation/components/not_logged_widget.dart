@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_vtv/features/auth/presentation/components/user_app_bar.dart';
 import 'package:go_router/go_router.dart';
+
+import 'user_app_bar.dart';
 
 class NotLoggedWidget extends StatelessWidget {
   const NotLoggedWidget({
