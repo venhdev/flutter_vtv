@@ -20,7 +20,7 @@ abstract class AuthRepository {
 
   //* token expired
   /// check if token is valid, return true if valid (not expired)
-  FResult<bool> isValidToken(String accessToken);
+  FResult<bool> isExpiredToken(String accessToken);
 
   /// get new access token base on refresh token stored in local
   RespEitherData<String> getNewAccessToken();

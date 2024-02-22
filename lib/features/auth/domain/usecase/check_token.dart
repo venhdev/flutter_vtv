@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/constants/base_usecase.dart';
@@ -14,12 +16,14 @@ class CheckTokenUC implements UseCaseHasParams<FResult<String?>, String> {
 
   @override
   FResult<String?> call(String params) async {
-    final isValidToken = await _authRepository.isValidToken(params);
+    final isExpiredToken = await _authRepository.isExpiredToken(params);
 
-    return isValidToken.fold(
+    log('isValidToken: $isExpiredToken');
+
+    return isExpiredToken.fold(
       (failure) => Left(failure),
       (isValid) async {
-        if (isValid) {
+        if (!isValid) {
           // the token is valid
           return const Right(null);
         } else {
