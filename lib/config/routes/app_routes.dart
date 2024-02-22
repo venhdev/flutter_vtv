@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/features/auth/presentation/pages/change_password_page.dart';
-import 'package:flutter_vtv/features/auth/presentation/pages/settings_page.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/pages/intro_page.dart';
-import '../../core/pages/main_page.dart';
+import '../../core/presentation/pages/intro_page.dart';
+import '../../core/presentation/pages/main_page.dart';
+import '../../features/auth/presentation/pages/change_password_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/pages/user_home.dart';
 import '../../features/home/presentation/home_page.dart';
 

@@ -1,42 +1,36 @@
 import 'package:equatable/equatable.dart';
 
+import '../network/base_response.dart';
+
 enum Code { unknown, unauthorized, unauthenticated, notFound }
 
 // General failure message
 const String failureMessage = 'Something went wrong !!!';
-const String serverFailureFailureMessage = 'Server Failure';
-const String clientFailureFailureMessage = 'Client Failure';
 const String connectionFailureMessage = 'Connection Failure';
 const String cacheFailureMessage = 'Cache Failure';
 
 class Failure extends Equatable {
+  factory Failure.fromResp(ErrorResponse resp) {
+    return Failure(message: resp.message ?? 'Lỗi không xác định từ server');
+  }
   const Failure({
-    this.code,
     this.message = failureMessage,
   });
 
-  final int? code;
   final String message;
 
   @override
-  List<Object?> get props => [code, message];
+  List<Object?> get props => [message];
 }
 
 // General failure message
-class ClientFailure extends Failure {
-  const ClientFailure({
-    super.code,
-    super.message = clientFailureFailureMessage,
+class UnexpectedFailure extends Failure {
+  const UnexpectedFailure({
+    super.message = failureMessage,
   });
 }
 
-class ServerFailure extends Failure {
-  const ServerFailure({
-    super.code,
-    super.message = serverFailureFailureMessage,
-  });
-}
-
+// No code failure
 class ConnectionFailure extends Failure {
   const ConnectionFailure({
     super.message = connectionFailureMessage,
@@ -46,11 +40,5 @@ class ConnectionFailure extends Failure {
 class CacheFailure extends Failure {
   const CacheFailure({
     super.message = cacheFailureMessage,
-  });
-}
-
-class UnexpectedFailure extends Failure {
-  const UnexpectedFailure({
-    super.message = failureMessage,
   });
 }

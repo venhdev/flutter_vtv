@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/components/custom_dialogs.dart';
-import 'package:flutter_vtv/core/components/custom_widgets.dart';
-import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 
-import '../bloc/auth_bloc.dart';
+import '../../../../core/helpers/helpers.dart';
+import '../../../../core/presentation/components/custom_dialogs.dart';
+import '../../../../core/presentation/components/custom_widgets.dart';
+import '../bloc/auth_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -38,19 +39,20 @@ class SettingsPage extends StatelessWidget {
             context: context,
             title: 'Đăng xuất',
             content: 'Bạn có chắc chắn muốn đăng xuất?',
-            onConfirm: () {
-              final refreshToken = context.read<AuthBloc>().state.auth!.refreshToken;
-              context.read<AuthBloc>().add(LogoutEvent(refreshToken: refreshToken));
-              // redirect to user home
-              context.go('/user');
+            onConfirm: () async {
+              final refreshToken = context.read<AuthCubit>().state.auth!.refreshToken;
+              Logger().e('refreshToken: $refreshToken');
+              await context.read<AuthCubit>().logout(refreshToken).then((_) {
+                // redirect to user home
+                GoRouter.of(context).go('/user');
+              });
             });
       },
-      // fill Width
       style: TextButton.styleFrom(
         backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: BlocBuilder<AuthBloc, AuthState>(
+      child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state.status == AuthStatus.authenticating) {
             return loadingWidget;

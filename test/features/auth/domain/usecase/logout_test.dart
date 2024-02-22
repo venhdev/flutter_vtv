@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/core/error/failures.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/domain/usecase/logout.dart';
 import 'package:mockito/mockito.dart';
 
@@ -18,7 +18,7 @@ void main() {
 
   test('should return [void] when logout is successful', () async {
     // Arrange (setup @mocks)
-    when(mockAuthRepository.logout(tRefreshToken)).thenAnswer((_) async => const Right(null));
+    when(mockAuthRepository.logout(tRefreshToken)).thenAnswer((_) async => const Right(SuccessResponse()));
     when(mockAuthRepository.deleteAuth()).thenAnswer((_) async => const Right(null));
     // Act
     final result = await logoutUC(tRefreshToken);
@@ -27,12 +27,12 @@ void main() {
     // --verify something should(not) happen/call
     verify(mockAuthRepository.logout(tRefreshToken));
     verify(mockAuthRepository.deleteAuth());
-    // --expect something equals, isA, throwsA
-    expect(result, const Right(null));
+    // --expect something equals, isA, throwsA()
+    expect(result, const Right(SuccessResponse()));
   });
   test('should return [ClientFailure] when logout is unsuccessful --Res code !=200', () async {
     // Arrange (setup @mocks)
-    when(mockAuthRepository.logout(tRefreshToken)).thenAnswer((_) async => const Left(ClientFailure()));
+    when(mockAuthRepository.logout(tRefreshToken)).thenAnswer((_) async => const Left(ClientError()));
     when(mockAuthRepository.deleteAuth()).thenAnswer((_) async => const Right(null));
     // Act
     final result = await logoutUC(tRefreshToken);
@@ -42,6 +42,6 @@ void main() {
     verify(mockAuthRepository.logout(tRefreshToken));
     verifyNever(mockAuthRepository.deleteAuth());
     // --expect something equals, isA, throwsA
-    expect(result, const Left(ClientFailure()));
+    expect(result, const Left(ClientError()));
   });
 }

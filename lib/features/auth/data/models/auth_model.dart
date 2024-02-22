@@ -1,9 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart';
-
 import '../../domain/entities/auth_entity.dart';
-import '../../domain/entities/user_info_entity.dart';
+import 'user_info_model.dart';
 
 class AuthModel extends AuthEntity {
   const AuthModel({
@@ -26,18 +24,6 @@ class AuthModel extends AuthEntity {
         userInfo: entity.userInfo,
       );
 
-  AuthModel copyWith({
-    String? accessToken,
-    String? refreshToken,
-    UserInfoEntity? userInfo,
-  }) {
-    return AuthModel(
-      accessToken: accessToken ?? this.accessToken,
-      refreshToken: refreshToken ?? this.refreshToken,
-      userInfo: userInfo ?? this.userInfo,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'access_token': accessToken,
@@ -56,5 +42,7 @@ class AuthModel extends AuthEntity {
 
   String toJson() => json.encode(toMap());
 
+  /// - [source] is Json String
   factory AuthModel.fromJson(String source) => AuthModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AuthModel.fromJsonMap(Map<String, dynamic> source) => AuthModel.fromMap(source);
 }

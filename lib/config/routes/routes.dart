@@ -20,6 +20,10 @@ final _routes = <RouteBase>[
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
+        path: RegisterPage.routeName,
+        builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
         path: ChangePasswordPage.routeName,
         builder: (context, state) => const ChangePasswordPage(),
       ),

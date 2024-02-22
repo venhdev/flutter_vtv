@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../../app_state.dart';
+import '../../../app_state.dart';
 
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
@@ -30,14 +30,14 @@ class IntroPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Text(
-                      "Khám phá ứng dụng",
+                      'Khám phá ứng dụng',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const Text(
-                      "VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng",
+                      'VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
@@ -67,7 +67,7 @@ class IntroPage extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: const Text(
-          "Bắt đầu",
+          'Bắt đầu',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,

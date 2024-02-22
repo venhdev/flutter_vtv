@@ -7,14 +7,22 @@ class ServerException implements Exception {
   ServerException({
     this.code = 500,
     this.message = serverExceptionMessage,
+    this.uri,
   });
 
   final int code;
   final String message;
 
+  /// The URL of the HTTP request or response that failed.
+  final Uri? uri;
+
   @override
   String toString() {
-    return 'ServerException: $message';
+    if (uri != null) {
+      return 'ServerException: $message, uri=$uri';
+    } else {
+      return 'ServerException: $message';
+    }
   }
 }
 
