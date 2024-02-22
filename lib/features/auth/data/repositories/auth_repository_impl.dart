@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/typedef.dart';
@@ -65,7 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   RespEither logout(String refreshToken) async {
     try {
-      final resOK = await _authDataSource.disableRefreshToken(refreshToken);
+      final resOK = await _authDataSource.revokeRefreshToken(refreshToken);
       return Right(resOK);
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
@@ -105,11 +106,19 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// Tells whether a token is expired.
+  ///
   /// Returns true if the token is valid, false if it is expired.
+  ///
   /// When some error occurs, it returns a [Failure].
   @override
-  FResult<bool> isValidToken(String accessToken) async {
+  FResult<bool> isExpiredToken(String accessToken) async {
     try {
+      final rs = JwtDecoder.isExpired(accessToken);
+
+      Logger().e('token: $accessToken');
+      Logger().e('isValidToken: $rs');
+
       return Right(JwtDecoder.isExpired(accessToken));
     } on FormatException catch (e) {
       return Left(UnexpectedFailure(message: e.message));

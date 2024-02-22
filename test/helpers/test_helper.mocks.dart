@@ -351,7 +351,7 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
       ) as _i8.Future<_i3.SuccessResponse>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> disableRefreshToken(String? refreshToken) =>
+  _i8.Future<_i3.SuccessResponse> revokeRefreshToken(String? refreshToken) =>
       (super.noSuchMethod(
         Invocation.method(
           #disableRefreshToken,
