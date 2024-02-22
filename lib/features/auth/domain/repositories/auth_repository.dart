@@ -1,10 +1,33 @@
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart';
+import '../../../../core/constants/typedef.dart';
+import '../dto/register_params.dart';
+import '../entities/auth_entity.dart';
 
 abstract class AuthRepository {
-  FResult<AuthEntity> retrieveAuth();
-  FResult<AuthEntity> loginWithUsernameAndPassword(String username, String password);
-  FResultVoid cacheAuth(AuthEntity authEntity);
-  FResultVoid deleteAuth();
-  FResultVoid logout(String refreshToken);
+  // ----------------- Auth -----------------
+  //* start app
+  FResult<AuthEntity> retrieveAuth(); // local storage
+
+  //* login
+  RespEitherData<AuthEntity> loginWithUsernameAndPassword(String username, String password);
+  FResult<void> cacheAuth(AuthEntity authEntity);
+
+  //* logout
+  RespEither logout(String refreshToken);
+  FResult<void> deleteAuth();
+
+  //* register
+  RespEither register(RegisterParams registerParams);
+
+  //* token expired
+  /// check if token is valid, return true if valid (not expired)
+  FResult<bool> isExpiredToken(String accessToken);
+
+  /// get new access token base on refresh token stored in local
+  RespEitherData<String> getNewAccessToken();
+
+  //* forgot password
+  /// send code to email that match with [username]
+  RespEither sendCode(String username);
+
+  // ----------------- Auth -----------------
 }

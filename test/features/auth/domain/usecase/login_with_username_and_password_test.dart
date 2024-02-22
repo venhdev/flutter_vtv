@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/core/error/failures.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/domain/usecase/login_with_username_and_password.dart';
 import 'package:mockito/mockito.dart';
 
@@ -22,7 +22,7 @@ void main() {
       tUsername,
       tPassword,
     )).thenAnswer(
-      (_) async => Right(tAuthEntity),
+      (_) async => Right(DataResponse(tAuthEntity)),
     );
     when(mockAuthRepository.cacheAuth(tAuthEntity)).thenAnswer(
       (_) async => const Right(null),
@@ -39,7 +39,7 @@ void main() {
     verify(mockAuthRepository.loginWithUsernameAndPassword(tUsername, tPassword));
     verify(mockAuthRepository.cacheAuth(tAuthEntity));
     // --expect something equals, isA, throwsA
-    expect(result, Right(tAuthEntity));
+    expect(result, Right(DataResponse(tAuthEntity)));
   });
   test('should return [Failure] when login is unsuccessful', () async {
     // Arrange (setup @mocks)
@@ -47,9 +47,9 @@ void main() {
       any,
       any,
     )).thenAnswer(
-      (_) async => const Left(ServerFailure()),
+      (_) async => const Left(ClientError()),
     );
-    
+
     // Act
     final result = await loginWithUsernameAndPasswordUC(
       LoginWithUsernameAndPasswordUCParams(username: 'testUsername', password: 'testPassword'),
@@ -59,6 +59,6 @@ void main() {
     // --verify something should(not) happen/call
     verify(mockAuthRepository.loginWithUsernameAndPassword('testUsername', 'testPassword'));
     // --expect something equals, isA, throwsA
-    expect(result, const Left(ServerFailure()));
+    expect(result, const Left(ClientError()));
   });
 }

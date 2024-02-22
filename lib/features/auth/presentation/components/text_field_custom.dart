@@ -9,14 +9,17 @@ class TextFieldCustom extends StatelessWidget {
     this.borderColor,
     this.suffixIcon,
     this.prefixIcon,
-    this.isRequired = false,
+    this.isRequired = true,
     this.obscureText = false,
     this.checkEmpty = true,
     this.validator,
     this.keyboardType,
+    this.readOnly = false,
+    this.onTap,
+    this.initialValue,
   });
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String label;
   final String hint;
   final Color? borderColor;
@@ -29,6 +32,11 @@ class TextFieldCustom extends StatelessWidget {
   final TextInputType? keyboardType;
 
   final String? Function(String?)? validator;
+
+  // properties for touchable text field
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +65,9 @@ class TextFieldCustom extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         TextFormField(
+          readOnly: readOnly,
+          onTap: onTap,
+          initialValue: initialValue,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           obscureText: obscureText,
@@ -66,7 +77,7 @@ class TextFieldCustom extends StatelessWidget {
             prefixIcon: prefixIcon,
             hintText: hint,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

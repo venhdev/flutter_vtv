@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../bloc/auth_bloc.dart';
+import '../bloc/auth_cubit.dart';
 import '../components/text_field_custom.dart';
 
 class LoginPage extends StatefulWidget {
@@ -98,6 +98,22 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 18),
                   // btn login
                   _buildLoginButton(context),
+
+                  // register
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: () => context.go('/user/register'),
+                      child: const Text(
+                        'Chưa có tài khoản? Đăng ký ngay!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -121,10 +137,10 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             // add event to bloc
-            context.read<AuthBloc>().add(LoginEvent(
+            await context.read<AuthCubit>().loginWithUsernameAndPassword(
                   username: _usernameController.text,
                   password: _passwordController.text,
-                ));
+                );
 
             // if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
             //   context.go('/home');
@@ -142,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
             // }
           }
         },
-        child: BlocBuilder<AuthBloc, AuthState>(
+        child: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             if (state.status == AuthStatus.authenticating) {
               return const SizedBox(

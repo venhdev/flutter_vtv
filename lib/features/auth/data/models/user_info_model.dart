@@ -64,47 +64,51 @@ class UserInfoModel extends UserInfoEntity {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'customerId': customerId,
-      'username': username,
-      'fullName': fullName,
-      'gender': gender,
-      'email': email,
-      'birthday': birthday.toIso8601String(),
-      'status': status.name,
-      'roles': roles.map((e) => e.name).toList(),
+      if (customerId != null) 'customerId': customerId,
+      if (username != null) 'username': username,
+      if (fullName != null) 'fullName': fullName,
+      if (gender != null) 'gender': gender,
+      if (email != null) 'email': email,
+      if (birthday != null) 'birthday': birthday!.toIso8601String(),
+      if (status != null) 'status': status!.name,
+      if (roles != null) 'roles': roles!.map((e) => e.name).toList(),
     };
   }
 
   factory UserInfoModel.fromMap(Map<String, dynamic> map) {
-    final Status status;
-    final List<Role> roles = [];
+    Status? status;
+    List<Role> roles = [];
 
-    switch (map['status'] as String) {
-      case 'ACTIVE':
-        status = Status.ACTIVE;
-        break;
-      default:
-        status = Status.ACTIVE;
+    if (map['status'] != null) {
+      switch (map['status'] as String) {
+        case 'ACTIVE':
+          status = Status.ACTIVE;
+          break;
+        default:
+          status = Status.ACTIVE;
+      }
     }
 
-    for (var element in (map['roles'] as List<dynamic>)) {
-      switch (element as String) {
-        case 'ADMIN':
-          roles.add(Role.ADMIN);
-          break;
-        case 'CUSTOMER':
-          roles.add(Role.CUSTOMER);
-          break;
+    if (map['roles'] != null) {
+      for (var element in (map['roles'] as List<dynamic>)) {
+        switch (element as String) {
+          case 'ADMIN':
+            roles.add(Role.ADMIN);
+            break;
+          case 'CUSTOMER':
+            roles.add(Role.CUSTOMER);
+            break;
+        }
       }
     }
 
     return UserInfoModel(
-      customerId: map['customerId'] as int,
-      username: map['username'] as String,
-      fullName: map['fullName'] as String,
-      gender: map['gender'] as bool,
-      email: map['email'] as String,
-      birthday: DateTime.parse(map['birthday'] as String),
+      customerId: map['customerId'] as int?,
+      username: map['username'] as String?,
+      fullName: map['fullName'] as String?,
+      gender: map['gender'] as bool?,
+      email: map['email'] as String?,
+      birthday: map['birthday'] != null ? DateTime.parse(map['birthday'] as String) : null,
       status: status,
       roles: roles,
     );

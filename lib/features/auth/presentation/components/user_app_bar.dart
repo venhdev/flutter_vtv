@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../bloc/auth_bloc.dart';
+import '../bloc/auth_cubit.dart';
 
 AppBar buildUserAppBar(BuildContext context) {
-  final auth = context.read<AuthBloc>().state.auth;
+  final auth = context.read<AuthCubit>().state.auth;
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     actions: [
