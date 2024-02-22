@@ -1,19 +1,18 @@
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/core/usecase/base_usecase.dart';
-
+import '../../../../core/constants/base_usecase.dart';
+import '../../../../core/constants/typedef.dart';
 import '../repositories/auth_repository.dart';
 
-class LogoutUC implements UseCaseHasParams<FResultVoid, String> {
+class LogoutUC implements UseCaseHasParams<RespEither, String> {
   final AuthRepository _authRepository;
 
   LogoutUC(this._authRepository);
   @override
-  FResultVoid call(String params) async {
-    final resultEither = await _authRepository.logout(params);
-    await resultEither.fold(
-      (failure) => null,
-      (ok) async => await _authRepository.deleteAuth(),
+  RespEither call(String params) async {
+    final resEither = await _authRepository.logout(params);
+    resEither.fold(
+      (error) => _authRepository.deleteAuth(), // even if logout failed, delete token in local storage
+      (ok) => _authRepository.deleteAuth(), // delete token in local storage when logout success
     );
-    return resultEither;
+    return resEither;
   }
 }

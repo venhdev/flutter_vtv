@@ -2,14 +2,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:flutter_vtv/config/bloc_config.dart';
-import 'package:flutter_vtv/config/themes/theme_provider.dart';
-import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
-import 'package:flutter_vtv/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'app_state.dart';
+import 'config/bloc_config.dart';
+import 'config/themes/theme_provider.dart';
+import 'core/helpers/shared_preferences_helper.dart';
+import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'locator_service.dart';
 
 void main() async {
@@ -22,6 +22,8 @@ void main() async {
   await appState.checkConnection();
   appState.subscribeConnection();
 
+  final authCubit = sl<AuthCubit>()..onStarted();
+
   FlutterNativeSplash.remove();
   runApp(MultiProvider(
     providers: [
@@ -31,7 +33,7 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => appState,
       ),
-      BlocProvider(create: (context) => sl<AuthCubit>()..onStarted()),
+      BlocProvider(create: (context) => authCubit),
     ],
     child: const VTVApp(),
   ));

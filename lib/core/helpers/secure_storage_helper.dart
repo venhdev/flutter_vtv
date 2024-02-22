@@ -10,12 +10,12 @@ class SecureStorageHelper {
 
   FlutterSecureStorage get I => _storage;
 
-  final _key = 'authentication';
+  final _keyAuth = 'authentication';
 
-  Future<bool> get isLogin => _storage.containsKey(key: _key);
+  Future<bool> get isLogin => _storage.containsKey(key: _keyAuth);
 
   Future<AuthEntity> readAuth() async {
-    final data = await _storage.read(key: _key);
+    final data = await _storage.read(key: _keyAuth);
     if (data?.isNotEmpty ?? false) {
       return AuthModel.fromJson(data!).toEntity();
     } else {
@@ -24,10 +24,14 @@ class SecureStorageHelper {
   }
 
   Future<void> cacheAuth(String jsonData) async {
-    await _storage.write(key: _key, value: jsonData);
+    try {
+      await _storage.write(key: _keyAuth, value: jsonData);
+    } catch (e) {
+      throw CacheException(message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
+    }
   }
 
-  Future<void> deleteAuth() async => await _storage.delete(key: _key);
+  Future<void> deleteAuth() async => await _storage.delete(key: _keyAuth);
 
   Future<void> deleteAll() async => await _storage.deleteAll();
 }

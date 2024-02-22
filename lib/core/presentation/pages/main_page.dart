@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../app_state.dart';
+import '../../../app_state.dart';
 import 'intro_page.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a

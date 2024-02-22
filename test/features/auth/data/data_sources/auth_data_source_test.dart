@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_vtv/core/constants/api.dart';
+import 'package:flutter_vtv/core/error/exceptions.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
+import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
-
-import 'package:flutter_vtv/core/constants/api.dart';
-import 'package:flutter_vtv/core/error/exceptions.dart';
-import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart';
-import 'package:flutter_vtv/features/auth/data/models/auth_model.dart';
 
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 import '../../../../helpers/test_helper.mocks.dart';
@@ -51,12 +50,13 @@ void main() {
       // Arrange (setup @mocks)
       when(
         mockHttpClient.post(
-          Uri.parse(kAPIAuthLoginURL),
+          // Uri.parse(kAPIAuthLoginURL),
+          baseUri(path: kAPIAuthLoginURL),
           body: jsonEncode({
             'username': tUsername,
             'password': tPassword,
           }),
-          headers: baseHeaders,
+          headers: baseHttpHeaders(),
         ),
       ).thenAnswer((_) async => http.Response(
             json.encode(tResLoginFail),
@@ -77,12 +77,13 @@ void main() {
       // Arrange (setup @mocks)
       when(
         mockHttpClient.post(
-          Uri.parse(kAPIAuthLoginURL),
+          // Uri.parse(kAPIAuthLoginURL),
+          baseUri(path: kAPIAuthLoginURL),
           body: jsonEncode({
             'username': tUsername,
             'password': tPassword,
           }),
-          headers: baseHeaders,
+          headers: baseHttpHeaders(),
         ),
       ).thenAnswer((_) async => http.Response(
             json.encode(tResLoginFail),
@@ -105,12 +106,13 @@ void main() {
       when(mockSecureStorageHelper.cacheAuth(any)).thenAnswer((_) async => {});
       when(
         mockHttpClient.post(
-          Uri.parse(kAPIAuthLoginURL),
+          // Uri.parse(kAPIAuthLoginURL),
+          baseUri(path: kAPIAuthLoginURL),
           body: jsonEncode({
             'username': tUsername,
             'password': tPassword,
           }),
-          headers: baseHeaders,
+          headers: baseHttpHeaders(),
         ),
       ).thenAnswer((_) async => http.Response(
             json.encode(tResLoginSuccess),
@@ -126,7 +128,7 @@ void main() {
       // --verify something should(not) happen/call
       // verify(mockSecureStorageHelper.cacheAuth(result)); // should call secure storage
       // --expect something equals, isA, throwsA
-      expect(result, isA<AuthModel>());
+      expect(result, isA<DataResponse>());
     });
   });
 
@@ -137,12 +139,13 @@ void main() {
       "code": 200,
     };
     when(mockHttpClient.post(
-      Uri.parse(kAPIAuthLogoutURL),
+      // Uri.parse(kAPIAuthLogoutURL),
+      baseUri(path: kAPIAuthLogoutURL),
       headers: anyNamed("headers"),
       body: anyNamed("body"),
     )).thenAnswer((_) async => http.Response(jsonEncode(tRes), 200));
     // Act
-    final future = authDataSourceImpl.disableRefreshToken(tRefreshToken);
+    final future = authDataSourceImpl.revokeRefreshToken(tRefreshToken);
 
     // Assert
     // --verify something should(not) happen/call
@@ -150,7 +153,7 @@ void main() {
     expect(future, completes);
   });
 
-  test('should return new accessToken [String] when call {getAccessToken}', () async {
+  test('should return new respOK with data [String] when call {getAccessToken}', () async {
     // Arrange (setup @mocks)
     var tRes = {
       "accessToken": "string",
@@ -160,17 +163,20 @@ void main() {
     };
 
     when(mockHttpClient.post(
-      Uri.parse(kAPIAuthRefreshTokenURL),
-      headers: headersWithRefreshToken(tRefreshToken),
+      // Uri.parse(kAPIAuthRefreshTokenURL),
+      baseUri(path: kAPIAuthRefreshTokenURL),
+      headers: baseHttpHeaders(refreshToken: tRefreshToken),
     )).thenAnswer((_) async => http.Response(jsonEncode(tRes), 200));
 
     // Act
-    final result = await authDataSourceImpl.getAccessToken(tRefreshToken);
+    final result = await authDataSourceImpl.getNewAccessToken(tRefreshToken);
 
     // Assert
     // --verify something should(not) happen/call
     // --expect something equals, isA, throwsA
-    expect(result, isA<String>());
+    expect(result, isA<SuccessResponse>());
+    // has data
+    expect(result.data, isA<String>());
   });
 
   group('register', () {
@@ -204,8 +210,9 @@ void main() {
     test('should completes when register success', () async {
       // Arrange (setup @mocks)
       when(mockHttpClient.post(
-        Uri.parse(kAPIAuthRegisterURL),
-        headers: baseHeaders,
+        // Uri.parse(kAPIAuthRegisterURL),
+        baseUri(path: kAPIAuthRegisterURL),
+        headers: baseHttpHeaders(),
         body: tRegisterParams.toJson(),
       )).thenAnswer((_) async => http.Response(
             jsonEncode(tRegisterSuccess),
@@ -224,8 +231,9 @@ void main() {
     test('should throw [ClientException] when status code is 400', () async {
       // Arrange (setup @mocks)
       when(mockHttpClient.post(
-        Uri.parse(kAPIAuthRegisterURL),
-        headers: baseHeaders,
+        // Uri.parse(kAPIAuthRegisterURL),
+        baseUri(path: kAPIAuthRegisterURL),
+        headers: baseHttpHeaders(),
         body: tRegisterParams.toJson(),
       )).thenAnswer((_) async => http.Response(
             jsonEncode(tRegisterFailRes),
@@ -242,8 +250,9 @@ void main() {
     test('should throw [ClientException] when status code is 409', () async {
       // Arrange (setup @mocks)
       when(mockHttpClient.post(
-        Uri.parse(kAPIAuthRegisterURL),
-        headers: baseHeaders,
+        // Uri.parse(kAPIAuthRegisterURL),
+        baseUri(path: kAPIAuthRegisterURL),
+        headers: baseHttpHeaders(),
         body: tRegisterParams.toJson(),
       )).thenAnswer((_) async => http.Response(
             jsonEncode(tRegisterFailRes2),

@@ -1,4 +1,5 @@
 import 'package:flutter_vtv/core/constants/enum.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/data/models/auth_model.dart';
 import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart';
 import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart'
 const tUsername = 'admin';
 const tPassword = 'admin';
 const tRefreshToken = 'testRefreshToken';
+const tSuccessResponse = SuccessResponse(code: 200, message: 'success');
 
 final tUserInfoEntity = UserInfoEntity(
   customerId: 0,
