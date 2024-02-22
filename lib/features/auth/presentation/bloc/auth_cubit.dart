@@ -1,26 +1,20 @@
-import 'dart:async';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/constants/constants.dart';
-import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
-import 'package:flutter_vtv/features/auth/domain/usecase/check_and_get_token.dart';
-import 'package:flutter_vtv/features/auth/domain/usecase/login_with_username_and_password.dart';
-import 'package:flutter_vtv/features/auth/domain/usecase/logout.dart';
-import 'package:flutter_vtv/features/auth/domain/usecase/register.dart';
 
+import '../../../../core/constants/constants.dart';
+import '../../domain/dto/register_params.dart';
 import '../../domain/entities/auth_entity.dart';
-import '../../domain/usecase/retrieve_auth.dart';
+import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecase/use_cases.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(
-    this._retrieveAuthUC,
+    this._authRepository,
     this._loginWithUsernameAndPasswordUC,
     this._logoutUC,
     this._checkAndGetTokenIfNeededUC,
-    this._registerUC,
   ) : super(const AuthState.unknown()) {
     onStarted;
     loginWithUsernameAndPassword;
@@ -28,35 +22,30 @@ class AuthCubit extends Cubit<AuthState> {
     register;
   }
 
-  final RetrieveAuthUC _retrieveAuthUC;
+  final AuthRepository _authRepository;
   final LoginWithUsernameAndPasswordUC _loginWithUsernameAndPasswordUC;
   final LogoutUC _logoutUC;
-  final CheckAndGetTokenIfNeededUC _checkAndGetTokenIfNeededUC;
-  final RegisterUC _registerUC;
+  final CheckTokenUC _checkAndGetTokenIfNeededUC;
 
-  FutureOr<void> onStarted() async {
+  Future<void> onStarted() async {
     emit(const AuthState.authenticating());
-    await _retrieveAuthUC().then((resultEither) {
+    await _authRepository.retrieveAuth().then((resultEither) {
       resultEither.fold(
-        (failure) => emit(const AuthState.unauthenticated()),
+        (failure) => emit(AuthState.error(message: failure.message)),
         (authEntity) async {
-          final checkParam = (
-            accessToken: authEntity.accessToken,
-            refreshToken: authEntity.refreshToken,
-          );
-          final resultCheck = await _checkAndGetTokenIfNeededUC(checkParam);
+          // get new access token if needed
+          final resultCheck = await _checkAndGetTokenIfNeededUC(authEntity.accessToken);
           resultCheck.fold(
+            // get new access token failed
             (failure) => emit(AuthState.authenticated(authEntity, message: failure.message)),
             (newAccessToken) => emit(AuthState.authenticated(authEntity.copyWith(accessToken: newAccessToken))),
           );
-
-          emit(AuthState.authenticated(authEntity));
         },
       );
     });
   }
 
-  FutureOr<void> loginWithUsernameAndPassword({required String username, required String password}) async {
+  Future<void> loginWithUsernameAndPassword({required String username, required String password}) async {
     emit(const AuthState.authenticating());
 
     await _loginWithUsernameAndPasswordUC(
@@ -64,33 +53,31 @@ class AuthCubit extends Cubit<AuthState> {
         username: username,
         password: password,
       ),
-    ).then((resultEither) {
-      resultEither.fold(
-        (failure) => emit(AuthState.unauthenticated(message: failure.message)),
-        (authModel) => emit(AuthState.authenticated(authModel, message: kMsgLoggedInSuccessfully)),
+    ).then((respEither) {
+      respEither.fold(
+        (failure) => emit(AuthState.error(code: failure.code, message: failure.message)),
+        (ok) => emit(AuthState.authenticated(ok.data, message: kMsgLoggedInSuccessfully, code: ok.code)),
       );
     });
   }
 
-  FutureOr<void> logout(String refreshToken) async {
-    // get the previous state
-    // final previousState = state;
+  Future<void> logout(String refreshToken) async {
     emit(const AuthState.authenticating());
-    await _logoutUC(refreshToken).then((resultEither) {
-      resultEither.fold(
-        (failure) => emit(AuthState.unauthenticated(message: failure.message)),
-        (_) => emit(const AuthState.unauthenticated(message: kMsgLoggedOutSuccessfully)),
+    await _logoutUC(refreshToken).then((respEither) {
+      respEither.fold(
+        (error) => emit(AuthState.error(code: error.code, message: error.message)),
+        (ok) => emit(AuthState.unauthenticated(message: ok.message, code: ok.code)),
       );
     });
   }
 
-  FutureOr<void> register(RegisterParams params) async {
+  Future<void> register(RegisterParams params) async {
     emit(const AuthState.authenticating());
-    await _registerUC(params).then((resultEither) {
+    await _authRepository.register(params).then((resultEither) {
       resultEither.fold(
-        (failure) => emit(AuthState.unauthenticated(message: failure.message)),
-        (_) => emit(
-          const AuthState.unauthenticated(message: kMsgRegisteredSuccessfully, code: 200),
+        (error) => emit(AuthState.error(code: error.code, message: error.message)),
+        (ok) => emit(
+          AuthState.unauthenticated(message: ok.message, code: ok.code),
         ),
       );
     });

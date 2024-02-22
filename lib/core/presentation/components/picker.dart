@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../helpers/converter.dart';
+import '../../helpers/converter.dart';
 
 /// Return the same [date] with the [time] set
 DateTime copyTimeOfDay(DateTime date, TimeOfDay time) => DateTime(date.year, date.month, date.day, time.hour, time.minute);

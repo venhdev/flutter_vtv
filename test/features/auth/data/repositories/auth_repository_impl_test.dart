@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_vtv/core/error/exceptions.dart';
 import 'package:flutter_vtv/core/error/failures.dart';
+import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:mockito/mockito.dart';
@@ -33,7 +34,7 @@ void main() {
       when(mockAuthDataSource.loginWithUsernameAndPassword(
         tUsername,
         tPassword,
-      )).thenAnswer((_) async => tAuthModel);
+      )).thenAnswer((_) async => DataResponse(tAuthModel));
 
       // when(mockConnectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.wifi);
 
@@ -46,7 +47,7 @@ void main() {
       // Assert
       // --verify something should(not) happen/call
       // --expect something equals, isA, throwsA
-      expect(result, equals(Right(tAuthEntity)));
+      expect(result, equals(Right(DataResponse(tAuthEntity))));
     });
     test('should return [void] when cache success', () async {
       // Arrange (setup @mocks)
@@ -92,7 +93,7 @@ void main() {
   group('logout', () {
     test('should return [void] when logout successfully', () async {
       // Arrange (setup @mocks)
-      when(mockAuthDataSource.disableRefreshToken(tRefreshToken)).thenAnswer((_) async {});
+      when(mockAuthDataSource.revokeRefreshToken(tRefreshToken)).thenAnswer((_) async => tSuccessResponse);
 
       // Act
       final result = await authRepositoryImpl.logout(tRefreshToken);
@@ -100,7 +101,7 @@ void main() {
       // Assert
       // --verify something should(not) happen/call
       // --expect something equals, isA, throwsA
-      expect(result, equals(const Right(null)));
+      expect(result, equals(const Right(tSuccessResponse)));
     });
   });
 
@@ -114,18 +115,19 @@ void main() {
       birthday: DateTime(2000, 1, 1),
     );
     // register success
-    test('should [completes] when {register} success', () async {
+    test('should return [SuccessResponse] when {register} success', () async {
       // Arrange (setup @mocks)
-      when(mockAuthDataSource.register(tRegisterParams)).thenAnswer((_) async {});
+      when(mockAuthDataSource.register(tRegisterParams)).thenAnswer((_) async => tSuccessResponse);
 
       // Act
-      final future = authRepositoryImpl.register(tRegisterParams);
+      final result = await authRepositoryImpl.register(tRegisterParams);
 
       // Assert
       // --verify something should(not) happen/call
       verify(mockAuthDataSource.register(tRegisterParams));
       // --expect something equals, isA, throwsA
-      expect(future, completes);
+      // expect(future, completes);
+      expect(result, equals(const Right(tSuccessResponse)));
     });
 
     // register failure
@@ -141,7 +143,7 @@ void main() {
       // --verify something should(not) happen/call
       verify(mockAuthDataSource.register(tRegisterParams));
       // --expect something equals, isA, throwsA
-      expect(result, equals(const Left(ServerFailure(code: 500, message: 'Đăng ký thất bại!'))));
+      expect(result, equals(const Left(ServerError(code: 500, message: 'Đăng ký thất bại!'))));
     });
   });
 }

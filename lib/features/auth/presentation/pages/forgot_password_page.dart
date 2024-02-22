@@ -19,6 +19,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _isCodeSent = false;
+  bool _isSendingCode = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _codeController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +61,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 children: <Widget>[
                   const SizedBox(height: 24),
                   const Text(
-                    'Vui lòng nhập email của bạn để lấy lại mật khẩu',
+                    'Nhập tên tài khoản và mã xác nhận\n được gửi đến email của bạn',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -61,39 +71,35 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   const SizedBox(height: 24),
                   TextFieldCustom(
+                    readOnly: _isCodeSent,
                     controller: _emailController,
-                    label: 'Email xác nhận',
-                    hint: 'Nhập email',
+                    label: 'Tài khoản',
+                    hint: 'Nhập tên tài khoản',
                     isRequired: true,
                     suffixIcon: IconButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Kiểm tra email để lấy mã xác nhận'),
-                            ),
-                          );
                           setState(() {
-                            _isCodeSent = true;
+                            _isSendingCode = true;
+                          });
+
+                          await Future.delayed(const Duration(seconds: 3)).then((value) {
+                            if (mounted) {
+                              // sl<AuthRepository>().(_emailController.text);
+                              setState(() {
+                                _isSendingCode = false;
+                                _isCodeSent = true;
+                              });
+                            }
                           });
                         }
                       },
-                      icon: const Icon(Icons.send),
+                      icon: _isSendingCode ? const CircularProgressIndicator() : const Icon(Icons.send),
                     ),
-                    validator: (value) {
-                      // check if email is valid or not
-                      if (value == null || value.isEmpty) {
-                        return 'Chưa nhập email';
-                      } else if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                        return null;
-                      } else {
-                        return 'Email không hợp lệ';
-                      }
-                    },
                   ),
                   // when code is sent add more fields to form
                   if (_isCodeSent) ...[
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
                     TextFieldCustom(
                       controller: _codeController,
                       label: 'Mã xác nhận',

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/helpers/converter.dart';
-import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/helpers/converter.dart';
+import '../../domain/dto/register_params.dart';
 import '../bloc/auth_cubit.dart';
 import '../components/text_field_custom.dart';
 

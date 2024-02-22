@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Utf-8 decode
+- Expired Token check
 
 ## [v0.0.3-pre] - 26-01-2024
 
