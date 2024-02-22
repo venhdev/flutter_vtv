@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:logger/logger.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/typedef.dart';
@@ -108,17 +107,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// Tells whether a token is expired.
   ///
-  /// Returns true if the token is valid, false if it is expired.
+  /// Returns false if the token is valid, true if it is expired.
+  //!!! The package function {isExpired} returns true if the token is expired, false if it is valid. So, the return value is reversed.
   ///
   /// When some error occurs, it returns a [Failure].
   @override
   FResult<bool> isExpiredToken(String accessToken) async {
     try {
-      final rs = JwtDecoder.isExpired(accessToken);
-
-      Logger().e('token: $accessToken');
-      Logger().e('isValidToken: $rs');
-
       return Right(JwtDecoder.isExpired(accessToken));
     } on FormatException catch (e) {
       return Left(UnexpectedFailure(message: e.message));

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/custom_dialogs.dart';
@@ -41,7 +40,6 @@ class SettingsPage extends StatelessWidget {
             content: 'Bạn có chắc chắn muốn đăng xuất?',
             onConfirm: () async {
               final refreshToken = context.read<AuthCubit>().state.auth!.refreshToken;
-              Logger().e('refreshToken: $refreshToken');
               await context.read<AuthCubit>().logout(refreshToken).then((_) {
                 // redirect to user home
                 GoRouter.of(context).go('/user');

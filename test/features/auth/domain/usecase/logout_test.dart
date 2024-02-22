@@ -40,7 +40,7 @@ void main() {
     // Assert
     // --verify something should(not) happen/call
     verify(mockAuthRepository.logout(tRefreshToken));
-    verifyNever(mockAuthRepository.deleteAuth());
+    verify(mockAuthRepository.deleteAuth());
     // --expect something equals, isA, throwsA
     expect(result, const Left(ClientError()));
   });
