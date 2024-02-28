@@ -1,7 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_vtv/firebase_options.dart';
 import 'package:provider/provider.dart';
 
 import 'app.dart';
@@ -10,17 +12,20 @@ import 'config/bloc_config.dart';
 import 'config/themes/theme_provider.dart';
 import 'core/helpers/shared_preferences_helper.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
-import 'locator_service.dart';
+import 'service_locator.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await initializeLocator();
   Bloc.observer = GlobalBlocObserver(); // NOTE: debug
   final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());
-  await appState.checkConnection();
-  appState.subscribeConnection();
+  await appState.init();
 
   final authCubit = sl<AuthCubit>()..onStarted();
 
