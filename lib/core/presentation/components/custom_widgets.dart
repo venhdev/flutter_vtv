@@ -38,7 +38,7 @@ class MessageScreen extends StatelessWidget {
           ),
           if (enableBack) ...[
             TextButton(
-              onPressed: () => context.go('/home'),
+              onPressed: () => context.go('/shop'),
               child: const Text('Go back'),
             ),
           ]

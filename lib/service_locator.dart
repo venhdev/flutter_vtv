@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_vtv/features/shop/data/data_sources/category_data_source.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,8 @@ import 'features/auth/domain/usecase/check_token.dart';
 import 'features/auth/domain/usecase/login_with_username_and_password.dart';
 import 'features/auth/domain/usecase/logout.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
+import 'features/shop/data/repository/category_repository_impl.dart';
+import 'features/shop/domain/repository/category_repository.dart';
 
 // Service locator
 GetIt sl = GetIt.instance;
@@ -42,9 +45,11 @@ Future<void> initializeLocator() async {
 
   //! Data source
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
+  sl.registerSingleton<CategoryRepository>(CategoryRepositoryImpl(sl()));
 
   //! UseCase
   sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
