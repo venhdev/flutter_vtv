@@ -12,9 +12,11 @@ class AppState extends ChangeNotifier {
   bool _isFirstRun;
   late bool hasConnection;
 
-  // initialize the connection
-  Future<void> checkConnection() async {
+  /// initialize 
+  /// - Connection status
+  Future<void> init() async {
     hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
+    subscribeConnection();
   }
 
   Stream<ConnectivityResult> get connectionStream => _connectivity.onConnectivityChanged;
@@ -29,7 +31,7 @@ class AppState extends ChangeNotifier {
 
   bool get isFirstRun => _isFirstRun;
 
-  /// Sets the app as started.
+  /// Sets the app as started. (Not the first run)
   Future<void> started() async {
     _isFirstRun = false;
     await _prefHelper.setStarted(false);

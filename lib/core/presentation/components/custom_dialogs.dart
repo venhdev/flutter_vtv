@@ -10,21 +10,33 @@ Future<T?> showMyDialogToConfirm<T>({
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(title),
+        title: Text(
+          title,
+          textAlign: TextAlign.center, // Căn giữa tiêu đề
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Text(content),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('Không'),
-          ),
-          TextButton(
-            onPressed: () async {
-              onConfirm?.call();
-              Navigator.of(context).pop(true);
-            },
-            child: const Text('Có'),
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceBetween, // Đặt căn chỉnh của nút
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('Không', style: TextStyle(color: Colors.red)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  onConfirm?.call();
+                  Navigator.of(context).pop(true);
+                },
+                child: const Text('Có', style: TextStyle(color: Colors.green)),
+              ),
+            ],
           ),
         ],
       );
