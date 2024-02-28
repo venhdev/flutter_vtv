@@ -53,8 +53,8 @@ class MainPage extends StatelessWidget {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.shopping_cart),
-                tooltip: 'Home',
-                label: 'Home', // index => 0
+                tooltip: 'Shop',
+                label: 'Shop', // index => 0
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
@@ -72,7 +72,7 @@ class MainPage extends StatelessWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith('/home')) {
+    if (location.startsWith('/shop')) {
       return 0;
     }
     if (location.startsWith('/user')) {
@@ -84,7 +84,7 @@ class MainPage extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        GoRouter.of(context).go('/home');
+        GoRouter.of(context).go('/shop');
       case 1:
         GoRouter.of(context).go('/user');
     }
