@@ -3,9 +3,9 @@ part of 'app_routes.dart';
 final _routes = <RouteBase>[
   // Home Route
   GoRoute(
-    path: '/${HomePage.routeName}',
+    path: '/${ShopPage.routeName}',
     builder: (BuildContext context, GoRouterState state) {
-      return const HomePage();
+      return const ShopPage();
     },
   ),
   // User Route
