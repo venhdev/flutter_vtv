@@ -7,16 +7,15 @@ class AppState extends ChangeNotifier {
   final SharedPreferencesHelper _prefHelper;
   final Connectivity _connectivity;
 
-  AppState(this._prefHelper, this._connectivity) : _isFirstRun = _prefHelper.isFirstRun;
+  AppState(
+    this._prefHelper,
+    this._connectivity) : _isFirstRun = _prefHelper.isFirstRun;
 
   bool _isFirstRun;
   late bool hasConnection;
 
-  /// initialize 
-  /// - Connection status
-  Future<void> init() async {
+ Future<void> init() async {
     hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
-    subscribeConnection();
   }
 
   Stream<ConnectivityResult> get connectionStream => _connectivity.onConnectivityChanged;
