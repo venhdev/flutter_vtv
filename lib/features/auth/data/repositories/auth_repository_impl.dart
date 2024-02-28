@@ -65,7 +65,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   RespEither logout(String refreshToken) async {
     try {
-      final resOK = await _authDataSource.revokeRefreshToken(refreshToken);
+      final resOK = await _authDataSource.logoutAndRevokeRefreshToken(refreshToken);
       return Right(resOK);
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));

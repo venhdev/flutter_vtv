@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart';
 import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart';
 import 'package:http/http.dart' as http show Client;
 
@@ -15,7 +16,7 @@ abstract class AuthDataSource {
   // ======================  Auth controller ======================
   Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(String username, String password);
   Future<SuccessResponse> register(RegisterParams registerDTO);
-  Future<SuccessResponse> revokeRefreshToken(String refreshToken); // use for logout
+  Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken); // use for logout
   Future<DataResponse<String>> getNewAccessToken(String refreshToken); // handing expired token
   // ======================  Auth controller ======================
 
@@ -44,14 +45,18 @@ abstract class AuthDataSource {
 
 class AuthDataSourceImpl implements AuthDataSource {
   final http.Client _client;
+  final FirebaseCloudMessagingManager _fcmManager;
 
-  AuthDataSourceImpl(this._client);
+  AuthDataSourceImpl(this._client, this._fcmManager);
 
   @override
   Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(String username, String password) async {
+    final fcmToken = _fcmManager.currentFCMToken;
+
     final body = {
       'username': username,
       'password': password,
+      'fcmToken': fcmToken,
     };
 
     // send request
@@ -83,11 +88,16 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<SuccessResponse> revokeRefreshToken(String refreshToken) async {
+  Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken) async {
+    // body contains fcmToken
+    final body = {
+      'fcmToken': _fcmManager.currentFCMToken,
+    };
     // send request
     final response = await _client.post(
       baseUri(path: kAPIAuthLogoutURL),
       headers: baseHttpHeaders(refreshToken: refreshToken),
+      body: jsonEncode(body),
     );
     return handleResponseNoData(response, kAPIAuthLogoutURL);
   }
