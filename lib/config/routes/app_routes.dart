@@ -9,7 +9,7 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/pages/user_home.dart';
-import '../../features/shop/presentation/shop_page.dart';
+import '../../features/shop/presentation/pages/shop_page.dart';
 
 part 'routes.dart';
 

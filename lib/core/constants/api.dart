@@ -16,7 +16,7 @@ Map<String, String> baseHttpHeaders({
 
 // Uri Endpoints
 Uri baseUri({
-  String? path,
+  required String path,
   Map<String, dynamic>? queryParameters,
 }) =>
     Uri(
@@ -38,3 +38,6 @@ const String kAPICustomerForgotPasswordURL = '/customer/forgot-password';
 const String kAPICustomerResetPasswordURL = '/customer/reset-password';
 const String kAPICustomerChangePasswordURL = '/customer/change-password';
 const String kAPICustomerProfileURL = '/customer/profile'; // GET, PUT
+
+//! category-controller
+const String kAPIGetAllCategoryURL = '/category/all-parent'; // GET
