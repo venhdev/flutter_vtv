@@ -29,6 +29,7 @@ void main() async {
   sl<FirebaseCloudMessagingManager>().init();
 
   final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>())..init();
+  final authCubit = sl<AuthCubit>()..onStarted();
 
   FlutterNativeSplash.remove();
   runApp(MultiProvider(
@@ -39,7 +40,7 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => appState..subscribeConnection(),
       ),
-      BlocProvider(create: (context) => sl<AuthCubit>()..onStarted()),
+      BlocProvider(create: (context) => authCubit),
     ],
     child: const VTVApp(),
   ));

@@ -9,7 +9,7 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/pages/user_home.dart';
-import '../../features/home/presentation/home_page.dart';
+import '../../features/shop/presentation/shop_page.dart';
 
 part 'routes.dart';
 
@@ -20,11 +20,11 @@ class AppRoutes {
   static GoRouter router = GoRouter(
     debugLogDiagnostics: true, // NOTE: Only set this to true for debugging
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/home',
+    initialLocation: '/shop',
     routes: <RouteBase>[
       GoRoute(
         path: '/',
-        redirect: (context, state) => '/home',
+        redirect: (context, state) => '/shop',
       ),
       // Application Shell
       ShellRoute(
