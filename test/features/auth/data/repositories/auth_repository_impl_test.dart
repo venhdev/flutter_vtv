@@ -93,7 +93,7 @@ void main() {
   group('logout', () {
     test('should return [void] when logout successfully', () async {
       // Arrange (setup @mocks)
-      when(mockAuthDataSource.revokeRefreshToken(tRefreshToken)).thenAnswer((_) async => tSuccessResponse);
+      when(mockAuthDataSource.logoutAndRevokeRefreshToken(tRefreshToken)).thenAnswer((_) async => tSuccessResponse);
 
       // Act
       final result = await authRepositoryImpl.logout(tRefreshToken);
