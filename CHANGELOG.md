@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Register
 - Flash screen and icon launcher
 - Base functions and widgets
+- Show Category, Product
 
 ### Changed
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/helpers/helpers.dart';
+
 class ProductItem extends StatelessWidget {
   const ProductItem({super.key, required this.title, required this.price, required this.image});
 
@@ -12,9 +14,11 @@ class ProductItem extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          Image.network(image),
+          Expanded(
+            child: Image.network(image),
+          ),
           Text(title),
-          Text('$price'),
+          Text(formatCurrency(price)),
         ],
       ),
     );
