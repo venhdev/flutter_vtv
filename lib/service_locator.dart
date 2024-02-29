@@ -18,8 +18,11 @@ import 'features/auth/domain/usecase/check_token.dart';
 import 'features/auth/domain/usecase/login_with_username_and_password.dart';
 import 'features/auth/domain/usecase/logout.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
+import 'features/shop/data/data_sources/product_data_source.dart';
 import 'features/shop/data/repository/category_repository_impl.dart';
+import 'features/shop/data/repository/product_repository_impl.dart';
 import 'features/shop/domain/repository/category_repository.dart';
+import 'features/shop/domain/repository/product_repository.dart';
 
 // Service locator
 GetIt sl = GetIt.instance;
@@ -46,10 +49,12 @@ Future<void> initializeLocator() async {
   //! Data source
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl()));
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
+  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<CategoryRepository>(CategoryRepositoryImpl(sl()));
+  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
 
   //! UseCase
   sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));

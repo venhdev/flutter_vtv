@@ -13,16 +13,18 @@ class CategoryItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 70,
-            height: 70,
             child: Image.network(
               image,
+              height: 70,
               fit: BoxFit.fitHeight,
             ),
           ),
           Text(
             title,
             overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+            ),
           ),
         ],
       ),
