@@ -1,11 +1,19 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/core/constants/api.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../../service_locator.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
+import '../../domain/entities/product_entity.dart';
 import '../../domain/repository/category_repository.dart';
+import '../../domain/repository/product_repository.dart';
 import '../components/category_item.dart';
 import '../components/product_item.dart';
+import '../components/product_list.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
@@ -24,7 +32,7 @@ class ShopPage extends StatelessWidget {
           // Category
           Category(),
           // Product
-          Product(),
+          ProductList(),
         ],
       ),
     );
@@ -68,7 +76,7 @@ class Category extends StatelessWidget {
             if (snapshot.hasData) {
               return snapshot.data!.fold(
                 (l) => Center(
-                  child: Text('Error: $l'),
+                  child: Text('Error: $l', style: const TextStyle(color: Colors.red)),
                 ),
                 (r) => GridView.count(
                   crossAxisCount: 4,
@@ -130,74 +138,6 @@ class Category extends StatelessWidget {
             //   ],
             // );
           },
-        ),
-      ],
-    );
-  }
-}
-
-class Product extends StatelessWidget {
-  const Product({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: () async {
-            log('get category list');
-            final resultEither = await sl<CategoryRepository>().getAllParentCategories();
-
-            resultEither.fold(
-              (l) => log('error: $l'),
-              (r) => log('result: $r'),
-            );
-          },
-          child: const Text('Button'),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Danh sách sản phẩm',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Xem thêm'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: const [
-            ProductItem(
-              title: 'Áo thun',
-              price: 100000,
-              image: 'https://via.placeholder.com/150',
-            ),
-            ProductItem(
-              title: 'Quần jean',
-              price: 200000,
-              image: 'https://via.placeholder.com/150',
-            ),
-            ProductItem(
-              title: 'Áo thun',
-              price: 100000,
-              image: 'https://via.placeholder.com/150',
-            ),
-            ProductItem(
-              title: 'Quần jean',
-              price: 200000,
-              image: 'https://via.placeholder.com/150',
-            ),
-          ],
         ),
       ],
     );
