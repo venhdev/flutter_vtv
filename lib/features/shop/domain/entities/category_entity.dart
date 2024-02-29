@@ -1,6 +1,6 @@
+import 'package:equatable/equatable.dart';
 
-
-class CategoryEntity {
+class CategoryEntity extends Equatable {
   final int categoryId;
   final String name;
   final String image;
@@ -41,19 +41,12 @@ class CategoryEntity {
   }
 
   @override
-  bool operator ==(covariant CategoryEntity other) {
-    if (identical(this, other)) return true;
-
-    return other.categoryId == categoryId &&
-        other.name == name &&
-        other.image == image &&
-        other.description == description &&
-        other.adminOnly == adminOnly &&
-        other.status == status;
-  }
-
-  @override
-  int get hashCode {
-    return categoryId.hashCode ^ name.hashCode ^ image.hashCode ^ description.hashCode ^ adminOnly.hashCode ^ status.hashCode;
-  }
+  List<Object?> get props => [
+        categoryId,
+        name,
+        image,
+        description,
+        adminOnly,
+        status,
+      ];
 }

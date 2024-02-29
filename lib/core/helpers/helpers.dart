@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
 
 import '../../features/auth/presentation/bloc/auth_cubit.dart';
 
@@ -22,4 +24,10 @@ bool isLogin(BuildContext context) {
 
 bool isValidEmail(String email) {
   return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+}
+
+String formatCurrency(int value) {
+  var f = NumberFormat.decimalPattern();
+  return '${f.format(value)} đ';
+  // return value.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
 }
