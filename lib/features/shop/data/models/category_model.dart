@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_vtv/features/shop/domain/entities/category_entity.dart';
 
 class CategoryModel extends CategoryEntity {
-  CategoryModel({
+  const CategoryModel({
     required super.categoryId,
     required super.name,
     required super.image,
