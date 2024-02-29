@@ -8,7 +8,7 @@ class CategoryEntity extends Equatable {
   final bool adminOnly;
   final String status;
 
-  CategoryEntity({
+  const CategoryEntity({
     required this.categoryId,
     required this.name,
     required this.image,
