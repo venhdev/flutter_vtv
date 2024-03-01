@@ -35,14 +35,14 @@ class UserHome extends StatelessWidget {
               ),
             );
           }
-          context.go('/user');
+          context.go('/shop');
         }
       },
       builder: (context, state) {
         if (state.status == AuthStatus.unauthenticated) {
           return const NotLoggedWidget();
         } else if (state.status == AuthStatus.authenticated) {
-          return const LoggedWidget();
+          return LoggedWidget(auth: state.auth!);
         } else {
           return loadingWidget;
         }

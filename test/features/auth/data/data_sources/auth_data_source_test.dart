@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_vtv/core/constants/api.dart';
 import 'package:flutter_vtv/core/error/exceptions.dart';
 import 'package:flutter_vtv/core/network/base_response.dart';
-import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart';
 import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:http/http.dart' as http;
@@ -16,15 +14,15 @@ import '../../../../helpers/test_helper.mocks.dart';
 
 void main() {
   late MockHttpClient mockHttpClient;
-  late AuthDataSourceImpl authDataSourceImpl;
+  late MockFirebaseCloudMessagingManager mockFCMManager;
   late MockSecureStorageHelper mockSecureStorageHelper;
-  late FirebaseCloudMessagingManager fcmManager;
+  late AuthDataSourceImpl authDataSourceImpl;
 
   setUp(() {
-    fcmManager = FirebaseCloudMessagingManager(FirebaseMessaging.instance);
+    mockFCMManager = MockFirebaseCloudMessagingManager();
     mockHttpClient = MockHttpClient();
     mockSecureStorageHelper = MockSecureStorageHelper();
-    authDataSourceImpl = AuthDataSourceImpl(mockHttpClient, fcmManager);
+    authDataSourceImpl = AuthDataSourceImpl(mockHttpClient, mockFCMManager);
   });
 
   group('login with username and password', () {
@@ -50,8 +48,12 @@ void main() {
       "access_token": "accessToken",
       "refresh_token": "refreshToken"
     };
+
+    when(mockFCMManager.currentFCMToken).thenReturn('fcmTokenSample');
+
     test('should throw [ClientException] when status code is 404', () async {
       // Arrange (setup @mocks)
+
       when(
         mockHttpClient.post(
           // Uri.parse(kAPIAuthLoginURL),
@@ -142,6 +144,7 @@ void main() {
       "message": "message",
       "code": 200,
     };
+    when(mockFCMManager.currentFCMToken).thenReturn('fcmTokenSample');
     when(mockHttpClient.post(
       // Uri.parse(kAPIAuthLogoutURL),
       baseUri(path: kAPIAuthLogoutURL),
