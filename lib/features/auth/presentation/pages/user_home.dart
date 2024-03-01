@@ -16,33 +16,30 @@ class UserHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
+        // if there is message, show snackbar
+        if (state.message != null) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message!),
+            ),
+          );
+        }
         if (state.status == AuthStatus.unauthenticated) {
-          if (state.message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message!),
-              ),
-            );
-          }
           if (state.code == 200) {
             context.go('/user/login');
           }
         } else if (state.status == AuthStatus.authenticated) {
-          if (state.message != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message!),
-              ),
-            );
+          if (state.code == 200) {
+            context.go('/shop');
           }
-          context.go('/user');
         }
       },
       builder: (context, state) {
         if (state.status == AuthStatus.unauthenticated) {
           return const NotLoggedWidget();
         } else if (state.status == AuthStatus.authenticated) {
-          return const LoggedWidget();
+          return LoggedWidget(auth: state.auth!);
         } else {
           return loadingWidget;
         }

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-import '../bloc/auth_cubit.dart';
+import '../../domain/entities/auth_entity.dart';
 
-AppBar buildUserAppBar(BuildContext context) {
-  final auth = context.read<AuthCubit>().state.auth;
+AppBar buildUserAppBar(BuildContext context, [AuthEntity? auth]) {
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     actions: [

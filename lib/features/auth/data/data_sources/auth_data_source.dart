@@ -5,6 +5,7 @@ import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart';
 import 'package:http/http.dart' as http show Client;
 
 import '../../../../core/constants/api.dart';
+import '../../../../core/helpers/secure_storage_helper.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
 import '../../domain/dto/register_params.dart';
@@ -22,9 +23,9 @@ abstract class AuthDataSource {
 
   // ======================  Customer controller ======================
   // Get user's profile
-  Future<DataResponse<AuthModel>> getUserProfile({required String accessToken});
+  Future<DataResponse<AuthModel>> getUserProfile();
   // Edit user's profile
-  Future<SuccessResponse> editUserProfile({required String accessToken, required UserInfoModel newInfo});
+  Future<SuccessResponse> editUserProfile({ required UserInfoModel newInfo});
 
   /// Request send OTP to the user's email
   Future<SuccessResponse> requestOtpForResetPassword(String username);
@@ -46,8 +47,9 @@ abstract class AuthDataSource {
 class AuthDataSourceImpl implements AuthDataSource {
   final http.Client _client;
   final FirebaseCloudMessagingManager _fcmManager;
+  final SecureStorageHelper _secureStorageHelper;
 
-  AuthDataSourceImpl(this._client, this._fcmManager);
+  AuthDataSourceImpl(this._client, this._fcmManager, this._secureStorageHelper);
 
   @override
   Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(String username, String password) async {
@@ -191,9 +193,9 @@ class AuthDataSourceImpl implements AuthDataSource {
     };
 
     // send request
-    final response = await _client.post(
+    final response = await _client.patch(
       baseUri(path: kAPICustomerChangePasswordURL),
-      headers: baseHttpHeaders(),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(body),
     );
 
@@ -201,11 +203,11 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<SuccessResponse> editUserProfile({required String accessToken, required UserInfoModel newInfo}) async {
+  Future<SuccessResponse> editUserProfile({required UserInfoModel newInfo}) async {
     // send request
     final response = await _client.put(
       baseUri(path: kAPICustomerProfileURL),
-      headers: baseHttpHeaders(accessToken: accessToken),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: newInfo.toJson(),
     );
 
@@ -213,11 +215,11 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<DataResponse<AuthModel>> getUserProfile({required String accessToken}) async {
+  Future<DataResponse<AuthModel>> getUserProfile() async {
     // send request
     final response = await _client.get(
       baseUri(path: kAPICustomerProfileURL),
-      headers: baseHttpHeaders(accessToken: accessToken),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     // decode response using utf8

@@ -142,4 +142,23 @@ class AuthRepositoryImpl implements AuthRepository {
   RespEither sendCode(String username) {
     throw UnimplementedError();
   }
+
+  @override
+  RespEither changePassword(String oldPassword, String newPassword) async {
+    try {
+      final username = await _secureStorageHelper.username;
+      final resOK = await _authDataSource.changePassword(
+        username: username!, //? have checked in the 'Setting Page'
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      );
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
 }

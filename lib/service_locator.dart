@@ -47,7 +47,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source
-  sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
   sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl()));
 

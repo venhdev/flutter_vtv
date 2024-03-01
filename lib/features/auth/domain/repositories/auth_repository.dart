@@ -11,6 +11,9 @@ abstract class AuthRepository {
   RespEitherData<AuthEntity> loginWithUsernameAndPassword(String username, String password);
   FResult<void> cacheAuth(AuthEntity authEntity);
 
+  // change password
+  RespEither changePassword(String oldPassword, String newPassword);
+
   //* logout
   RespEither logout(String refreshToken);
   FResult<void> deleteAuth();

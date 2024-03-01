@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/custom_dialogs.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../bloc/auth_cubit.dart';
@@ -18,6 +17,15 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
         centerTitle: true,
+        actions: [
+          // dev page button
+          IconButton(
+            onPressed: () {
+              GoRouter.of(context).go('/dev');
+            },
+            icon: const Icon(Icons.developer_mode),
+          ),
+        ],
       ),
       body: Column(
         // fill the column width
@@ -25,8 +33,41 @@ class SettingsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // logout button
-          if (isLogin(context)) _buildLogoutButton(context),
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state.status == AuthStatus.unauthenticated) {
+                return const SizedBox.shrink();
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildChangePasswordButton(context),
+                  _buildLogoutButton(context),
+                ],
+              );
+            },
+          ),
+          // if (isLogin(context)) _buildChangePasswordButton(context),
+          // if (isLogin(context)) _buildLogoutButton(context),
         ],
+      ),
+    );
+  }
+
+  // change password button
+
+  TextButton _buildChangePasswordButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        GoRouter.of(context).go('/user/settings/change-password');
+      },
+      style: TextButton.styleFrom(
+        backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: const Text(
+        'Thay đổi mật khẩu',
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -20,6 +20,7 @@ class AuthCubit extends Cubit<AuthState> {
     loginWithUsernameAndPassword;
     logout;
     register;
+    changePassword;
   }
 
   final AuthRepository _authRepository;
@@ -56,7 +57,7 @@ class AuthCubit extends Cubit<AuthState> {
     ).then((respEither) {
       respEither.fold(
         (failure) => emit(AuthState.error(code: failure.code, message: failure.message)),
-        (ok) => emit(AuthState.authenticated(ok.data, message: kMsgLoggedInSuccessfully, code: ok.code)),
+        (ok) => emit(AuthState.authenticated(ok.data, message: kMsgLoggedInSuccessfully, code: 200)),
       );
     });
   }
@@ -79,6 +80,19 @@ class AuthCubit extends Cubit<AuthState> {
         (ok) => emit(
           AuthState.unauthenticated(message: ok.message, code: ok.code),
         ),
+      );
+    });
+  }
+
+  Future<void> changePassword({required String oldPassword, required String newPassword}) async {
+    // using 'state' to get the previous state (should be authenticated)
+    final previousState = state;
+    emit(const AuthState.authenticating());
+    await _authRepository.changePassword(oldPassword, newPassword).then((resultEither) {
+      //? even user change password success or not, keep the user authenticated
+      resultEither.fold(
+        (error) => emit(previousState.copyWith(message: error.message, code: error.code)),
+        (ok) => emit(previousState.copyWith(message: ok.message, code: ok.code)),
       );
     });
   }
