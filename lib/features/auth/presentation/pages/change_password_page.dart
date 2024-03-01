@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/auth_cubit.dart';
 import '../components/text_field_custom.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -87,11 +89,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Đổi mật khẩu thành công'),
-                            ),
-                          );
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   const SnackBar(
+                          //     content: Text('Đổi mật khẩu thành công'),
+                          //   ),
+                          // );
+                          context.read<AuthCubit>().changePassword(
+                                oldPassword: _oldPasswordController.text,
+                                newPassword: _newPasswordController.text,
+                              );
                         }
                       },
                       child: const Text('Đổi mật khẩu'),

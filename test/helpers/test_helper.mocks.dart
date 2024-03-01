@@ -4,8 +4,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
-import 'dart:convert' as _i17;
-import 'dart:typed_data' as _i19;
+import 'dart:convert' as _i18;
+import 'dart:typed_data' as _i20;
 
 import 'package:connectivity_plus/connectivity_plus.dart' as _i15;
 import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart'
@@ -15,6 +15,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i4;
 import 'package:flutter_vtv/core/error/failures.dart' as _i9;
 import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart' as _i14;
 import 'package:flutter_vtv/core/network/base_response.dart' as _i3;
+import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart'
+    as _i17;
 import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart'
     as _i11;
 import 'package:flutter_vtv/features/auth/data/models/auth_model.dart' as _i12;
@@ -28,7 +30,7 @@ import 'package:flutter_vtv/features/auth/domain/repositories/auth_repository.da
     as _i7;
 import 'package:http/http.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i18;
+import 'package:mockito/src/dummies.dart' as _i19;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -189,6 +191,33 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
           ),
         )),
       ) as _i8.Future<_i2.Either<_i9.Failure, void>>);
+
+  @override
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> changePassword(
+    String? oldPassword,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #changePassword,
+          [
+            oldPassword,
+            newPassword,
+          ],
+        ),
+        returnValue: _i8
+            .Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+            _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+          this,
+          Invocation.method(
+            #changePassword,
+            [
+              oldPassword,
+              newPassword,
+            ],
+          ),
+        )),
+      ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
 
   @override
   _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> logout(
@@ -354,17 +383,18 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
       ) as _i8.Future<_i3.SuccessResponse>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> logoutAndRevokeRefreshToken(String? refreshToken) =>
+  _i8.Future<_i3.SuccessResponse> logoutAndRevokeRefreshToken(
+          String? refreshToken) =>
       (super.noSuchMethod(
         Invocation.method(
-          #revokeRefreshToken,
+          #logoutAndRevokeRefreshToken,
           [refreshToken],
         ),
         returnValue:
             _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
           this,
           Invocation.method(
-            #revokeRefreshToken,
+            #logoutAndRevokeRefreshToken,
             [refreshToken],
           ),
         )),
@@ -389,13 +419,11 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
       ) as _i8.Future<_i3.DataResponse<String>>);
 
   @override
-  _i8.Future<_i3.DataResponse<_i12.AuthModel>> getUserProfile(
-          {required String? accessToken}) =>
+  _i8.Future<_i3.DataResponse<_i12.AuthModel>> getUserProfile() =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserProfile,
           [],
-          {#accessToken: accessToken},
         ),
         returnValue: _i8.Future<_i3.DataResponse<_i12.AuthModel>>.value(
             _FakeDataResponse_1<_i12.AuthModel>(
@@ -403,24 +431,18 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
           Invocation.method(
             #getUserProfile,
             [],
-            {#accessToken: accessToken},
           ),
         )),
       ) as _i8.Future<_i3.DataResponse<_i12.AuthModel>>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> editUserProfile({
-    required String? accessToken,
-    required _i13.UserInfoModel? newInfo,
-  }) =>
+  _i8.Future<_i3.SuccessResponse> editUserProfile(
+          {required _i13.UserInfoModel? newInfo}) =>
       (super.noSuchMethod(
         Invocation.method(
           #editUserProfile,
           [],
-          {
-            #accessToken: accessToken,
-            #newInfo: newInfo,
-          },
+          {#newInfo: newInfo},
         ),
         returnValue:
             _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
@@ -428,10 +450,7 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
           Invocation.method(
             #editUserProfile,
             [],
-            {
-              #accessToken: accessToken,
-              #newInfo: newInfo,
-            },
+            {#newInfo: newInfo},
           ),
         )),
       ) as _i8.Future<_i3.SuccessResponse>);
@@ -542,6 +561,18 @@ class MockSecureStorageHelper extends _i1.Mock
       ) as _i8.Future<bool>);
 
   @override
+  _i8.Future<String?> get accessToken => (super.noSuchMethod(
+        Invocation.getter(#accessToken),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
+
+  @override
+  _i8.Future<String?> get username => (super.noSuchMethod(
+        Invocation.getter(#username),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
+
+  @override
   _i8.Future<_i5.AuthEntity> readAuth() => (super.noSuchMethod(
         Invocation.method(
           #readAuth,
@@ -614,6 +645,35 @@ class MockConnectivity extends _i1.Mock implements _i15.Connectivity {
       ) as _i8.Future<_i16.ConnectivityResult>);
 }
 
+/// A class which mocks [FirebaseCloudMessagingManager].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFirebaseCloudMessagingManager extends _i1.Mock
+    implements _i17.FirebaseCloudMessagingManager {
+  MockFirebaseCloudMessagingManager() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  set currentFCMToken(String? _currentFCMToken) => super.noSuchMethod(
+        Invocation.setter(
+          #currentFCMToken,
+          _currentFCMToken,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i8.Future<void> init() => (super.noSuchMethod(
+        Invocation.method(
+          #init,
+          [],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+}
+
 /// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -669,7 +729,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i17.Encoding? encoding,
+    _i18.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -700,7 +760,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i17.Encoding? encoding,
+    _i18.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -731,7 +791,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i17.Encoding? encoding,
+    _i18.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -762,7 +822,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i17.Encoding? encoding,
+    _i18.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -799,7 +859,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i8.Future<String>.value(_i18.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i19.dummyValue<String>(
           this,
           Invocation.method(
             #read,
@@ -810,7 +870,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
       ) as _i8.Future<String>);
 
   @override
-  _i8.Future<_i19.Uint8List> readBytes(
+  _i8.Future<_i20.Uint8List> readBytes(
     Uri? url, {
     Map<String, String>? headers,
   }) =>
@@ -820,8 +880,8 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i8.Future<_i19.Uint8List>.value(_i19.Uint8List(0)),
-      ) as _i8.Future<_i19.Uint8List>);
+        returnValue: _i8.Future<_i20.Uint8List>.value(_i20.Uint8List(0)),
+      ) as _i8.Future<_i20.Uint8List>);
 
   @override
   _i8.Future<_i6.StreamedResponse> send(_i6.BaseRequest? request) =>
