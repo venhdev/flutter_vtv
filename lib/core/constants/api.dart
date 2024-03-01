@@ -1,5 +1,10 @@
+part './apis/auth_api.dart';
+part './apis/customer_api.dart';
+part './apis/guest_api.dart';
+
 const int kPORT = 8585;
-const String kDOMAIN = '192.168.1.6';
+const String kDOMAIN = '172.16.20.232';
+String devDOMAIN = '172.16.20.232'; // NOTE: For development purposes
 // const String kAPIBaseURL = 'http://$kDOMAIN:$kPORT/api';
 
 // Http Headers
@@ -21,26 +26,9 @@ Uri baseUri({
 }) =>
     Uri(
       scheme: 'http',
-      host: kDOMAIN,
+      host: devDOMAIN,
       port: kPORT,
       path: '/api$path',
       queryParameters: queryParameters,
     );
 
-//! Auth
-const String kAPIAuthLoginURL = '/auth/login';
-const String kAPIAuthRefreshTokenURL = '/auth/refresh-token';
-const String kAPIAuthLogoutURL = '/auth/logout';
-const String kAPIAuthRegisterURL = '/auth/register';
-
-//! customer-controller
-const String kAPICustomerForgotPasswordURL = '/customer/forgot-password';
-const String kAPICustomerResetPasswordURL = '/customer/reset-password';
-const String kAPICustomerChangePasswordURL = '/customer/change-password';
-const String kAPICustomerProfileURL = '/customer/profile'; // GET, PUT
-
-//! category-controller
-const String kAPIGetAllCategoryURL = '/category/all-parent'; // GET
-
-//! product-suggestion-controller
-const String kAPIGetSuggestionProductURL = '/product-suggestion/get-page/randomly'; // GET

@@ -37,4 +37,9 @@ final _routes = <RouteBase>[
       ),
     ],
   ),
+  // Other routes not in bottom navigation
+  GoRoute(
+    path: DevPage.routeName,
+    builder: (context, state) => const DevPage(),
+  ),
 ];
