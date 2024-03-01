@@ -4,7 +4,7 @@ part './apis/guest_api.dart';
 
 const int kPORT = 8585;
 const String kDOMAIN = '172.16.20.232';
-String devDOMAIN = '172.16.20.232'; // NOTE: For development purposes
+String devDOMAIN = '192.168.1.11'; // NOTE: For development purposes
 // const String kAPIBaseURL = 'http://$kDOMAIN:$kPORT/api';
 
 // Http Headers

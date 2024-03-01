@@ -22,7 +22,7 @@ void main() {
     mockFCMManager = MockFirebaseCloudMessagingManager();
     mockHttpClient = MockHttpClient();
     mockSecureStorageHelper = MockSecureStorageHelper();
-    authDataSourceImpl = AuthDataSourceImpl(mockHttpClient, mockFCMManager);
+    authDataSourceImpl = AuthDataSourceImpl(mockHttpClient, mockFCMManager, mockSecureStorageHelper);
   });
 
   group('login with username and password', () {
