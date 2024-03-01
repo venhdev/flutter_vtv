@@ -14,6 +14,24 @@ class SecureStorageHelper {
 
   Future<bool> get isLogin => _storage.containsKey(key: _keyAuth);
 
+  /// get access token from local storage.
+  /// - return null if not found (not login yet)
+  Future<String?> get accessToken async {
+    try {
+      final auth = await readAuth();
+      return auth.accessToken;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// get username from local storage.
+  /// - return null if not found
+  Future<String?> get username async {
+    final auth = await readAuth();
+    return auth.userInfo.username;
+  }
+
   Future<AuthEntity> readAuth() async {
     final data = await _storage.read(key: _keyAuth);
     if (data?.isNotEmpty ?? false) {

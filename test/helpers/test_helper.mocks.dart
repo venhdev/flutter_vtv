@@ -193,6 +193,33 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
       ) as _i8.Future<_i2.Either<_i9.Failure, void>>);
 
   @override
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> changePassword(
+    String? oldPassword,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #changePassword,
+          [
+            oldPassword,
+            newPassword,
+          ],
+        ),
+        returnValue: _i8
+            .Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+            _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+          this,
+          Invocation.method(
+            #changePassword,
+            [
+              oldPassword,
+              newPassword,
+            ],
+          ),
+        )),
+      ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
+
+  @override
   _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> logout(
           String? refreshToken) =>
       (super.noSuchMethod(
@@ -392,13 +419,11 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
       ) as _i8.Future<_i3.DataResponse<String>>);
 
   @override
-  _i8.Future<_i3.DataResponse<_i12.AuthModel>> getUserProfile(
-          {required String? accessToken}) =>
+  _i8.Future<_i3.DataResponse<_i12.AuthModel>> getUserProfile() =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserProfile,
           [],
-          {#accessToken: accessToken},
         ),
         returnValue: _i8.Future<_i3.DataResponse<_i12.AuthModel>>.value(
             _FakeDataResponse_1<_i12.AuthModel>(
@@ -406,24 +431,18 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
           Invocation.method(
             #getUserProfile,
             [],
-            {#accessToken: accessToken},
           ),
         )),
       ) as _i8.Future<_i3.DataResponse<_i12.AuthModel>>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> editUserProfile({
-    required String? accessToken,
-    required _i13.UserInfoModel? newInfo,
-  }) =>
+  _i8.Future<_i3.SuccessResponse> editUserProfile(
+          {required _i13.UserInfoModel? newInfo}) =>
       (super.noSuchMethod(
         Invocation.method(
           #editUserProfile,
           [],
-          {
-            #accessToken: accessToken,
-            #newInfo: newInfo,
-          },
+          {#newInfo: newInfo},
         ),
         returnValue:
             _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
@@ -431,10 +450,7 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
           Invocation.method(
             #editUserProfile,
             [],
-            {
-              #accessToken: accessToken,
-              #newInfo: newInfo,
-            },
+            {#newInfo: newInfo},
           ),
         )),
       ) as _i8.Future<_i3.SuccessResponse>);
@@ -543,6 +559,18 @@ class MockSecureStorageHelper extends _i1.Mock
         Invocation.getter(#isLogin),
         returnValue: _i8.Future<bool>.value(false),
       ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<String?> get accessToken => (super.noSuchMethod(
+        Invocation.getter(#accessToken),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
+
+  @override
+  _i8.Future<String?> get username => (super.noSuchMethod(
+        Invocation.getter(#username),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
   _i8.Future<_i5.AuthEntity> readAuth() => (super.noSuchMethod(
