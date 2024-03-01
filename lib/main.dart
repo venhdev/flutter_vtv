@@ -28,7 +28,8 @@ void main() async {
   sl<LocalNotificationManager>().init();
   sl<FirebaseCloudMessagingManager>().init();
 
-  final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>())..init();
+  final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());
+  await appState.init();
   final authCubit = sl<AuthCubit>()..onStarted();
 
   FlutterNativeSplash.remove();
@@ -38,7 +39,7 @@ void main() async {
         create: (context) => ThemeProvider(),
       ),
       ChangeNotifierProvider(
-        create: (context) => appState..subscribeConnection(),
+        create: (context) => appState,
       ),
       BlocProvider(create: (context) => authCubit),
     ],

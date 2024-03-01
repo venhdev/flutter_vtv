@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/presentation/pages/dev_page.dart';
 import '../../core/presentation/pages/intro_page.dart';
 import '../../core/presentation/pages/main_page.dart';
 import '../../features/auth/presentation/pages/change_password_page.dart';

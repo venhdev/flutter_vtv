@@ -18,6 +18,15 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
         centerTitle: true,
+        actions: [
+          // dev page button
+          IconButton(
+            onPressed: () {
+              GoRouter.of(context).go('/dev');
+            },
+            icon: const Icon(Icons.developer_mode),
+          ),
+        ],
       ),
       body: Column(
         // fill the column width
