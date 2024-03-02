@@ -28,7 +28,7 @@ abstract class AuthDataSource {
   Future<DataResponse<UserInfoModel>> editUserProfile({required UserInfoModel newInfo});
 
   /// Request send OTP to the user's email
-  Future<SuccessResponse> requestOtpForResetPassword(String username);
+  Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username);
 
   /// Request reset password with OTP code received from the user's email
   Future<SuccessResponse> resetPassword({
@@ -146,7 +146,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<SuccessResponse> requestOtpForResetPassword(String username) async {
+  Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username) async {
     final response = await _client.get(
       baseUri(
         path: kAPICustomerForgotPasswordURL,
@@ -171,7 +171,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     };
 
     // send request
-    final response = await _client.post(
+    final response = await _client.patch(
       baseUri(path: kAPICustomerResetPasswordURL),
       headers: baseHttpHeaders(),
       body: jsonEncode(body),
