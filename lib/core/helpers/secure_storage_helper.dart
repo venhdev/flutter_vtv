@@ -29,8 +29,12 @@ class SecureStorageHelper {
   /// get username from local storage.
   /// - return null if not found
   Future<String?> get username async {
-    final auth = await readAuth();
-    return auth.userInfo.username;
+    try {
+      final auth = await readAuth();
+      return auth.userInfo.username;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<AuthEntity> readAuth() async {

@@ -336,7 +336,7 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
               .Future<_i2.Either<_i3.ErrorResponse, _i3.DataResponse<String>>>);
 
   @override
-  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> sendCode(
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> sendOTPForResetPassword(
           String? username) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -480,7 +480,7 @@ class MockAuthDataSource extends _i1.Mock implements _i12.AuthDataSource {
       ) as _i8.Future<_i3.DataResponse<_i14.UserInfoModel>>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> requestOtpForResetPassword(
+  _i8.Future<_i3.SuccessResponse> sendOTPForResetPasswordViaUsername(
           String? username) =>
       (super.noSuchMethod(
         Invocation.method(
