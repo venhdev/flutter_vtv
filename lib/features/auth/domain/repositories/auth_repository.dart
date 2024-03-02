@@ -1,6 +1,7 @@
 import '../../../../core/constants/typedef.dart';
 import '../dto/register_params.dart';
 import '../entities/auth_entity.dart';
+import '../entities/user_info_entity.dart';
 
 abstract class AuthRepository {
   // ----------------- Auth -----------------
@@ -13,6 +14,7 @@ abstract class AuthRepository {
 
   // change password
   RespEither changePassword(String oldPassword, String newPassword);
+  RespEitherData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo);
 
   //* logout
   RespEither logout(String refreshToken);

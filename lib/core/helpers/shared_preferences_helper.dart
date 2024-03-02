@@ -6,6 +6,8 @@ const String _keyTheme = 'theme';
 class SharedPreferencesHelper {
   SharedPreferencesHelper(this._prefs);
 
+  SharedPreferences get I => _prefs;
+
   final SharedPreferences _prefs;
 
   bool get isFirstRun => _prefs.getBool(_keyStarted) ?? true;

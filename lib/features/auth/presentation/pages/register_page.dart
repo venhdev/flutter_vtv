@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onTap: () async {
                       final pickedDate = await showDatePicker(
                         context: context,
-                        firstDate: DateTime(1950),
+                        firstDate: DateTime(1900),
                         lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
                       );
 

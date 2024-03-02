@@ -4,13 +4,16 @@ import 'package:go_router/go_router.dart';
 import '../../core/presentation/pages/dev_page.dart';
 import '../../core/presentation/pages/intro_page.dart';
 import '../../core/presentation/pages/main_page.dart';
+import '../../features/auth/domain/entities/user_info_entity.dart';
 import '../../features/auth/presentation/pages/change_password_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/settings_page.dart';
+import '../../features/auth/presentation/pages/user_detail_page.dart';
 import '../../features/auth/presentation/pages/user_home.dart';
-import '../../features/shop/presentation/pages/shop_page.dart';
+import '../../features/home/presentation/pages/home_page.dart';
+import 'extra_codec.dart';
 
 part 'routes.dart';
 
@@ -21,11 +24,12 @@ class AppRoutes {
   static GoRouter router = GoRouter(
     debugLogDiagnostics: true, // NOTE: Only set this to true for debugging
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/shop',
+    initialLocation: '/home',
+    extraCodec: const UserInfoExtraCodec(),
     routes: <RouteBase>[
       GoRoute(
         path: '/',
-        redirect: (context, state) => '/shop',
+        redirect: (context, state) => '/home',
       ),
       // Application Shell
       ShellRoute(
@@ -41,6 +45,11 @@ class AppRoutes {
         builder: (BuildContext context, GoRouterState state) {
           return const IntroPage();
         },
+      ),
+      // Other routes not in bottom navigation
+      GoRoute(
+        path: DevPage.routeName, // '/dev'
+        builder: (context, state) => const DevPage(),
       ),
     ],
   );

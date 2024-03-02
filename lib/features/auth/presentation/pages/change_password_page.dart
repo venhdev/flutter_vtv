@@ -51,7 +51,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   TextFieldCustom(
                     controller: _oldPasswordController,
                     label: 'Mật khẩu hiện tại',
-                    hint: 'Nhập  mật khẩu hiện tại',
+                    hint: 'Nhập mật khẩu hiện tại',
                     obscureText: true,
                     prefixIcon: const Icon(Icons.lock),
                   ),
