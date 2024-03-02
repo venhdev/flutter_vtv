@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Auto get new accessToken if expired
 - Register
 - Logout
-- Change Password
+- Change Password, Forgot password
 - Show Category, Product
 - Flash screen and icon launcher
 

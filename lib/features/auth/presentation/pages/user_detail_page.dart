@@ -40,6 +40,15 @@ class _UserDetailPageState extends State<UserDetailPage> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _fullNameController.dispose();
+    _dobController.dispose();
+    _genderController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

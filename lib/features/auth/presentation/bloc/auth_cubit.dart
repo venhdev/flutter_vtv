@@ -82,9 +82,11 @@ class AuthCubit extends Cubit<AuthState> {
     await _authRepository.register(params).then((resultEither) {
       resultEither.fold(
         (error) => emit(AuthState.error(code: error.code, message: error.message)),
-        (ok) => emit(
-          AuthState.unauthenticated(message: ok.message, code: ok.code),
-        ),
+        (ok) => emit(AuthState.unauthenticated(
+          message: ok.message,
+          code: ok.code,
+          redirectTo: '/user/login',
+        )),
       );
     });
   }
@@ -97,11 +99,7 @@ class AuthCubit extends Cubit<AuthState> {
       //? even user change password success or not, keep the user authenticated
       resultEither.fold(
         (error) => emit(previousState.copyWith(message: error.message, code: error.code)),
-        (ok) => emit(previousState.copyWith(
-          message: ok.message,
-          code: ok.code,
-          redirectTo: '/user'
-        )),
+        (ok) => emit(previousState.copyWith(message: ok.message, code: ok.code, redirectTo: '/user')),
       );
     });
   }
