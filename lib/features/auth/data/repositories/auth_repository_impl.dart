@@ -141,11 +141,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither sendCode(String username) {
-    throw UnimplementedError();
-  }
-
-  @override
   RespEither changePassword(String oldPassword, String newPassword) async {
     try {
       final username = await _secureStorageHelper.username;
@@ -165,13 +160,45 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEitherData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async{
+  RespEitherData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async {
     try {
       final resOK = await _authDataSource.editUserProfile(
         newInfo: UserInfoModel.fromEntity(newInfo),
       );
       // update user info in local storage
       await _secureStorageHelper.updateUserInfo(resOK.data);
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  RespEither sendOTPForResetPassword(String username) async {
+    try {
+      final resOK = await _authDataSource.sendOTPForResetPasswordViaUsername(username);
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  RespEither resetPasswordViaOTP(String username, String otpCode, String newPassword) async {
+    try {
+      final resOK = await _authDataSource.resetPassword(
+        username: username,
+        otp: otpCode,
+        newPassword: newPassword,
+      );
       return Right(resOK);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));
