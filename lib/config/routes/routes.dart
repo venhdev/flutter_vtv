@@ -3,40 +3,40 @@ part of 'app_routes.dart';
 final _routes = <RouteBase>[
   // Home Route
   GoRoute(
-    path: '/${HomePage.routeName}',
+    path: '/${HomePage.routeName}', // '/' -> home
     builder: (BuildContext context, GoRouterState state) {
       return const HomePage();
     },
   ),
   // User Route
   GoRoute(
-    path: '/${UserHome.routeName}',
+    path: '/${UserHome.routeName}', // '/user'
     builder: (BuildContext context, GoRouterState state) {
       return const UserHome(); // contain login page
     },
     routes: [
       GoRoute(
-        path: LoginPage.routeName,
+        path: LoginPage.routeName, // '/user/login'
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: RegisterPage.routeName,
+        path: RegisterPage.routeName, // '/user/register'
         builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
-        path: ForgotPasswordPage.routeName,
+        path: ForgotPasswordPage.routeName, // '/user/forgot-password'
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
         // get extra from state
-        path: UserDetailPage.routeName,
+        path: UserDetailPage.routeName, // '/user/detail'
         builder: (context, state) {
           final userInfo = state.extra as UserInfoEntity;
           return UserDetailPage(userInfo: userInfo);
         },
       ),
       GoRoute(
-        path: SettingsPage.routeName,
+        path: SettingsPage.routeName, // '/user/settings'
         builder: (context, state) => const SettingsPage(),
         routes: [
           GoRoute(
@@ -46,10 +46,5 @@ final _routes = <RouteBase>[
         ],
       ),
     ],
-  ),
-  // Other routes not in bottom navigation
-  GoRoute(
-    path: DevPage.routeName,
-    builder: (context, state) => const DevPage(),
   ),
 ];

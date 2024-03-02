@@ -25,7 +25,7 @@ abstract class AuthDataSource {
   // Get user's profile
   Future<DataResponse<AuthModel>> getUserProfile();
   // Edit user's profile
-  Future<SuccessResponse> editUserProfile({ required UserInfoModel newInfo});
+  Future<DataResponse<UserInfoModel>> editUserProfile({required UserInfoModel newInfo});
 
   /// Request send OTP to the user's email
   Future<SuccessResponse> requestOtpForResetPassword(String username);
@@ -203,7 +203,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<SuccessResponse> editUserProfile({required UserInfoModel newInfo}) async {
+  Future<DataResponse<UserInfoModel>> editUserProfile({required UserInfoModel newInfo}) async {
     // send request
     final response = await _client.put(
       baseUri(path: kAPICustomerProfileURL),
@@ -211,7 +211,27 @@ class AuthDataSourceImpl implements AuthDataSource {
       body: newInfo.toJson(),
     );
 
-    return handleResponseNoData(response, kAPICustomerProfileURL);
+    // decode response using utf8
+    final utf8BodyMap = utf8.decode(response.bodyBytes);
+    final decodedBody = jsonDecode(utf8BodyMap);
+
+    // handle response
+    if (response.statusCode == 200) {
+      final result = DataResponse<UserInfoModel>(
+        UserInfoModel.fromMap(decodedBody['customerDTO']),
+        code: response.statusCode,
+        message: decodedBody['message'],
+      );
+      return result;
+    } else {
+      throwException(
+        code: response.statusCode,
+        message: decodedBody['message'],
+        url: kAPIAuthLoginURL,
+      );
+    }
+
+    // return handleResponseNoData(response, kAPICustomerProfileURL);
   }
 
   @override

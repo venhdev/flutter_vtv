@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../service_locator.dart';
 import '../../constants/api.dart';
@@ -32,8 +33,13 @@ class _DevPageState extends State<DevPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dev Page'),
-      ),
+          title: const Text('Dev Page'),
+          leading: IconButton(
+            onPressed: () {
+              context.go('/home');
+            },
+            icon: const Icon(Icons.arrow_back),
+          )),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

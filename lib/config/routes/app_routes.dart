@@ -13,6 +13,7 @@ import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/pages/user_detail_page.dart';
 import '../../features/auth/presentation/pages/user_home.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import 'extra_codec.dart';
 
 part 'routes.dart';
 
@@ -24,6 +25,7 @@ class AppRoutes {
     debugLogDiagnostics: true, // NOTE: Only set this to true for debugging
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/home',
+    extraCodec: const UserInfoExtraCodec(),
     routes: <RouteBase>[
       GoRoute(
         path: '/',
@@ -43,6 +45,11 @@ class AppRoutes {
         builder: (BuildContext context, GoRouterState state) {
           return const IntroPage();
         },
+      ),
+      // Other routes not in bottom navigation
+      GoRoute(
+        path: DevPage.routeName, // '/dev'
+        builder: (context, state) => const DevPage(),
       ),
     ],
   );

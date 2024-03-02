@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/constants.dart';
 import '../../domain/dto/register_params.dart';
 import '../../domain/entities/auth_entity.dart';
+import '../../domain/entities/user_info_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecase/use_cases.dart';
 
@@ -21,6 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
     logout;
     register;
     changePassword;
+    editUserProfile;
   }
 
   final AuthRepository _authRepository;
@@ -57,7 +59,7 @@ class AuthCubit extends Cubit<AuthState> {
     ).then((respEither) {
       respEither.fold(
         (failure) => emit(AuthState.error(code: failure.code, message: failure.message)),
-        (ok) => emit(AuthState.authenticated(ok.data, message: kMsgLoggedInSuccessfully, code: 200)),
+        (ok) => emit(AuthState.authenticated(ok.data, message: kMsgLoggedInSuccessfully, code: 200, redirectTo: '/home')),
       );
     });
   }
@@ -67,7 +69,10 @@ class AuthCubit extends Cubit<AuthState> {
     await _logoutUC(refreshToken).then((respEither) {
       respEither.fold(
         (error) => emit(AuthState.error(code: error.code, message: error.message)),
-        (ok) => emit(AuthState.unauthenticated(message: ok.message, code: ok.code)),
+        (ok) => emit(AuthState.unauthenticated(
+          message: ok.message,
+          code: ok.code,
+        )),
       );
     });
   }
@@ -92,7 +97,29 @@ class AuthCubit extends Cubit<AuthState> {
       //? even user change password success or not, keep the user authenticated
       resultEither.fold(
         (error) => emit(previousState.copyWith(message: error.message, code: error.code)),
-        (ok) => emit(previousState.copyWith(message: ok.message, code: ok.code)),
+        (ok) => emit(previousState.copyWith(
+          message: ok.message,
+          code: ok.code,
+          redirectTo: '/user'
+        )),
+      );
+    });
+  }
+
+  Future<void> editUserProfile({required UserInfoEntity newInfo}) async {
+    // using 'state' to get the previous state (should be authenticated)
+    final previousState = state;
+    emit(const AuthState.authenticating());
+    await _authRepository.editUserProfile(newInfo).then((resultEither) {
+      //? even user change password success or not, keep the user authenticated
+      resultEither.fold(
+        (error) => emit(previousState.copyWith(message: error.message, code: error.code)),
+        (ok) => emit(AuthState.authenticated(
+          previousState.auth!.copyWith(userInfo: ok.data), // copy with new user info
+          message: ok.message,
+          code: ok.code,
+          redirectTo: '/user',
+        )),
       );
     });
   }

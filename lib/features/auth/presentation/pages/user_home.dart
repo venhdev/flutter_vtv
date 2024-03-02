@@ -26,12 +26,12 @@ class UserHome extends StatelessWidget {
           );
         }
         if (state.status == AuthStatus.unauthenticated) {
-          if (state.code == 200) {
-            context.go('/user/login');
+          if (state.code == 200 && state.redirectTo != null) {
+            context.go(state.redirectTo!);
           }
         } else if (state.status == AuthStatus.authenticated) {
-          if (state.code == 200) {
-            context.go('/home');
+          if (state.code == 200 && state.redirectTo != null) {
+            context.go(state.redirectTo!);
           }
         }
       },
