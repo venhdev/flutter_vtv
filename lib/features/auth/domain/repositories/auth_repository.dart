@@ -23,16 +23,16 @@ abstract class AuthRepository {
   //* register
   RespEither register(RegisterParams registerParams);
 
-  //* token expired
   /// Whether [accessToken] is expired or not. Returns true if expired, false if not
   FResult<bool> isExpiredToken(String accessToken);
 
-  /// get new access token base on refresh token stored in local
+  /// get new access token via refresh token stored in local
   RespEitherData<String> getNewAccessToken();
 
   //* forgot password
-  /// send code to email that match with [username]
-  RespEither sendCode(String username);
+  /// send otp code to email that match with [username]
+  RespEither sendOTPForResetPassword(String username);
+  RespEither resetPasswordViaOTP(String username, String otpCode, String newPassword);
 
   // ----------------- Auth -----------------
 }
