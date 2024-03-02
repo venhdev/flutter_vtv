@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_vtv/core/network/base_response.dart';
-import 'package:flutter_vtv/features/shop/data/models/category_model.dart';
+import 'package:flutter_vtv/features/home/data/models/category_model.dart';
 import 'package:http/http.dart' as http show Client;
 
 import '../../../../core/constants/api.dart';

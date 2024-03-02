@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/features/shop/data/data_sources/product_data_source.dart';
+import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/base_response.dart';

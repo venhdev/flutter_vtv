@@ -11,6 +11,7 @@ import 'app.dart';
 import 'app_state.dart';
 import 'config/bloc_config.dart';
 import 'config/themes/theme_provider.dart';
+import 'core/constants/api.dart';
 import 'core/helpers/shared_preferences_helper.dart';
 import 'core/notification/local_notification_manager.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
@@ -31,6 +32,12 @@ void main() async {
   final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());
   await appState.init();
   final authCubit = sl<AuthCubit>()..onStarted();
+
+  // NOTE: only for debug
+  final domain = sl<SharedPreferencesHelper>().I.getString('devDomain');
+  if (domain != null) {
+    devDOMAIN = domain;
+  }
 
   FlutterNativeSplash.remove();
   runApp(MultiProvider(

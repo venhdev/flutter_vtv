@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                 );
 
             // if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
-            //   context.go('/shop');
+            //   context.go('/home');
             //   ScaffoldMessenger.of(context).showSnackBar(
             //     const SnackBar(
             //       content: Text('Đăng nhập thành công!'),
