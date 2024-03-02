@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../service_locator.dart';
 import '../../constants/api.dart';
 
 class DevPage extends StatefulWidget {
@@ -13,11 +16,13 @@ class DevPage extends StatefulWidget {
 }
 
 class _DevPageState extends State<DevPage> {
-  void setDomain(String newDomain) {
+  Future<void> setDomain(String newDomain) async {
     if (newDomain == devDOMAIN) {
       Fluttertoast.showToast(msg: 'Domain is the same');
     } else {
       devDOMAIN = newDomain;
+      await sl<SharedPreferencesHelper>().I.setString('devDomain', devDOMAIN);
+      Fluttertoast.showToast(msg: 'Server domain has been changed to $devDOMAIN');
       setState(() {});
     }
   }
@@ -28,8 +33,13 @@ class _DevPageState extends State<DevPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dev Page'),
-      ),
+          title: const Text('Dev Page'),
+          leading: IconButton(
+            onPressed: () {
+              context.go('/home');
+            },
+            icon: const Icon(Icons.arrow_back),
+          )),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -40,8 +50,8 @@ class _DevPageState extends State<DevPage> {
                 border: const OutlineInputBorder(),
                 labelText: 'Domain',
                 suffixIcon: IconButton(
-                  onPressed: () {
-                    setDomain(domainTextController.text);
+                  onPressed: () async {
+                    await setDomain(domainTextController.text);
                   },
                   icon: const Icon(Icons.save),
                 ),
@@ -49,8 +59,8 @@ class _DevPageState extends State<DevPage> {
               // init value
               controller: domainTextController,
               // save button
-              onSubmitted: (value) {
-                setDomain(value);
+              onSubmitted: (value) async {
+                await setDomain(value);
               },
             ),
           ],
