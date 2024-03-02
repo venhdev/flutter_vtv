@@ -31,7 +31,7 @@ class UserHome extends StatelessWidget {
           }
         } else if (state.status == AuthStatus.authenticated) {
           if (state.code == 200) {
-            context.go('/shop');
+            context.go('/home');
           }
         }
       },
