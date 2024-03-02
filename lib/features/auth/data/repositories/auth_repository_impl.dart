@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -14,6 +15,7 @@ import '../../domain/entities/auth_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_sources/auth_data_source.dart';
 import '../models/auth_model.dart';
+import '../models/user_info_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authDataSource, this._secureStorageHelper);
@@ -152,6 +154,24 @@ class AuthRepositoryImpl implements AuthRepository {
         oldPassword: oldPassword,
         newPassword: newPassword,
       );
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  RespEitherData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async{
+    try {
+      final resOK = await _authDataSource.editUserProfile(
+        newInfo: UserInfoModel.fromEntity(newInfo),
+      );
+      // update user info in local storage
+      await _secureStorageHelper.updateUserInfo(resOK.data);
       return Right(resOK);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));

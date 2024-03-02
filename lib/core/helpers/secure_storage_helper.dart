@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../features/auth/data/models/auth_model.dart';
 import '../../features/auth/domain/entities/auth_entity.dart';
+import '../../features/auth/domain/entities/user_info_entity.dart';
 import '../error/exceptions.dart';
 
 class SecureStorageHelper {
@@ -46,6 +47,17 @@ class SecureStorageHelper {
       await _storage.write(key: _keyAuth, value: jsonData);
     } catch (e) {
       throw CacheException(message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
+    }
+  }
+
+  // update user info
+  Future<void> updateUserInfo(UserInfoEntity newInfo) async {
+    try {
+      final auth = await readAuth();
+      final newAuth = auth.copyWith(userInfo: newInfo);
+      await cacheAuth(AuthModel.fromEntity(newAuth).toJson());
+    } catch (e) {
+      throw CacheException(message: 'Có lỗi xảy ra khi cập nhật thông tin người dùng!');
     }
   }
 
