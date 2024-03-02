@@ -53,7 +53,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Set the background color to transparent
-        title: const Text('User Detail'),
+        title: const Text('Thông tin cá nhân'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -80,6 +80,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   prefixIcon: const Icon(Icons.email),
                   isRequired: false,
                   readOnly: true,
+                  enabledBorderColor: Colors.grey.shade300,
+                  focusedBorderColor: Colors.grey.shade300,
                 ),
                 TextFieldCustom(
                   controller: _genderController,

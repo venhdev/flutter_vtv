@@ -10,7 +10,7 @@ SuccessResponse handleResponseNoData(Response response, String url) {
   final utf8BodyMap = utf8.decode(response.bodyBytes);
   final decodedBody = jsonDecode(utf8BodyMap);
 
-  if (response.statusCode == 200 && decodedBody['code'] == 200) {
+  if (response.statusCode >= 200 && response.statusCode < 300) {
     return SuccessResponse(
       code: response.statusCode,
       message: decodedBody['message'],

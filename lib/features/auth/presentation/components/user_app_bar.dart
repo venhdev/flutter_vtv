@@ -55,7 +55,7 @@ AppBar buildUserAppBar(BuildContext context, [AuthEntity? auth]) {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  auth?.userInfo.username ?? 'Chưa đăng nhập',
+                  auth != null ? '${auth.userInfo.fullName!} (${auth.userInfo.username!})' : 'Chưa đăng nhập',
                   style: const TextStyle(fontSize: 18),
                 ),
               ),
