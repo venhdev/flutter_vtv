@@ -336,23 +336,53 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
               .Future<_i2.Either<_i3.ErrorResponse, _i3.DataResponse<String>>>);
 
   @override
-  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> sendOTPForResetPassword(
-          String? username) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #sendCode,
-          [username],
-        ),
-        returnValue: _i8
-            .Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
-            _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
-          this,
-          Invocation.method(
-            #sendCode,
-            [username],
-          ),
-        )),
-      ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>
+      sendOTPForResetPassword(String? username) => (super.noSuchMethod(
+            Invocation.method(
+              #sendOTPForResetPassword,
+              [username],
+            ),
+            returnValue: _i8.Future<
+                    _i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+                _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+              this,
+              Invocation.method(
+                #sendOTPForResetPassword,
+                [username],
+              ),
+            )),
+          ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
+
+  @override
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>
+      resetPasswordViaOTP(
+    String? username,
+    String? otpCode,
+    String? newPassword,
+  ) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #resetPasswordViaOTP,
+              [
+                username,
+                otpCode,
+                newPassword,
+              ],
+            ),
+            returnValue: _i8.Future<
+                    _i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+                _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+              this,
+              Invocation.method(
+                #resetPasswordViaOTP,
+                [
+                  username,
+                  otpCode,
+                  newPassword,
+                ],
+              ),
+            )),
+          ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
 }
 
 /// A class which mocks [AuthDataSource].
@@ -484,14 +514,14 @@ class MockAuthDataSource extends _i1.Mock implements _i12.AuthDataSource {
           String? username) =>
       (super.noSuchMethod(
         Invocation.method(
-          #requestOtpForResetPassword,
+          #sendOTPForResetPasswordViaUsername,
           [username],
         ),
         returnValue:
             _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
           this,
           Invocation.method(
-            #requestOtpForResetPassword,
+            #sendOTPForResetPasswordViaUsername,
             [username],
           ),
         )),

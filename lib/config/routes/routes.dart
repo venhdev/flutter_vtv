@@ -3,10 +3,19 @@ part of 'app_routes.dart';
 final _routes = <RouteBase>[
   // Home Route
   GoRoute(
-    path: '/${HomePage.routeName}', // '/' -> home
+    path: '/${HomePage.routeName}', // '/home'
     builder: (BuildContext context, GoRouterState state) {
       return const HomePage();
     },
+    routes: [
+      GoRoute(
+        path: ProductDetailPage.routeName, // '/home/product-detail'
+        builder: (context, state) {
+          final product = state.extra as ProductEntity;
+          return ProductDetailPage(product: product);
+        },
+      ),
+    ],
   ),
   // User Route
   GoRoute(

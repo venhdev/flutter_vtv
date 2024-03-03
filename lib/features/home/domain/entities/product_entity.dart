@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
@@ -94,4 +95,21 @@ class ProductEntity extends Equatable {
         brandId,
         productVariant,
       ];
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'productId': productId,
+      'name': name,
+      'image': image,
+      'description': description,
+      'information': information,
+      'sold': sold,
+      'status': status,
+      'categoryId': categoryId,
+      'brandId': brandId,
+      'productVariant': productVariant.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
 }

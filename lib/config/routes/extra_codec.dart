@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import '../../features/auth/data/models/user_info_model.dart';
 import '../../features/auth/domain/entities/user_info_entity.dart';
+import '../../features/home/domain/entities/product_entity.dart';
 
-class UserInfoExtraCodec extends Codec<Object?, Object?> {
+// <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
+
+class MyExtraCodec extends Codec<Object?, Object?> {
   /// Create a codec.
-  const UserInfoExtraCodec();
+  const MyExtraCodec();
   @override
   Converter<Object?, Object?> get decoder => const _MyExtraDecoder();
 
@@ -24,6 +27,9 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'UserInfoEntity') {
       return UserInfoModel.fromJson(inputAsList[1] as String).toEntity();
     }
+    if (inputAsList[0] == 'ProductEntity') {
+      return ProductEntity.fromJson(inputAsList[1] as String);
+    }
     throw FormatException('Unable to parse input: $input');
   }
 }
@@ -40,6 +46,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
         return <Object?>[
           'UserInfoEntity',
           UserInfoModel.fromEntity(input).toJson(),
+        ];
+      case ProductEntity _:
+        return <Object?>[
+          'ProductEntity',
+          (input).toJson(),
         ];
       default:
         throw FormatException('Cannot encode type ${input.runtimeType}');

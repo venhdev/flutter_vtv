@@ -47,11 +47,7 @@ class ProductList extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   children: productDTOResp.data.products
                       .map(
-                        (product) => ProductItem(
-                          title: product.name,
-                          image: product.image,
-                          price: product.productVariant.first.price,
-                        ),
+                        (product) => ProductItem(product: product),
                       )
                       .toList(),
                 ),
