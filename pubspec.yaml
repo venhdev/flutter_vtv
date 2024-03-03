@@ -15,6 +15,7 @@ dependencies:
   flutter_native_splash: ^2.3.9
   google_fonts: ^6.1.0
   cupertino_icons: ^1.0.2
+  photo_view: ^0.14.0
   # awesome_snackbar_content
 
   # navigation + state management

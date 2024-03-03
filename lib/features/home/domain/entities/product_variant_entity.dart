@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
@@ -90,19 +91,37 @@ class ProductVariantEntity extends Equatable {
   String toString() {
     return 'ProductVariantEntity(productVariantId: $productVariantId, sku: $sku, image: $image, originalPrice: $originalPrice, price: $price, quantity: $quantity, status: $status, productId: $productId, productName: $productName, productImage: $productImage, attributeDTOs: $attributes)';
   }
-  
+
   @override
   List<Object?> get props => [
-    productVariantId,
-    sku,
-    image,
-    originalPrice,
-    price,
-    quantity,
-    status,
-    productId,
-    productName,
-    productImage,
-    attributes,
-  ];
+        productVariantId,
+        sku,
+        image,
+        originalPrice,
+        price,
+        quantity,
+        status,
+        productId,
+        productName,
+        productImage,
+        attributes,
+      ];
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'productVariantId': productVariantId,
+      'sku': sku,
+      'image': image,
+      'originalPrice': originalPrice,
+      'price': price,
+      'quantity': quantity,
+      'status': status,
+      'productId': productId,
+      'productName': productName,
+      'productImage': productImage,
+      'attributes': attributes.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
 }
