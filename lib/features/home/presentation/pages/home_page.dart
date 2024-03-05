@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
         title: const Text('VTV'),
         actions: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7, // Adjust the width as needed
+            width: MediaQuery.of(context).size.width * 0.7,
             child: SearchBarComponent(controller: searchController),
           ),
         ],
