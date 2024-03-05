@@ -18,7 +18,7 @@ void main() {
 
   test('should return new token when get refresh token success', () async {
     // Arrange (setup @mocks)
-    when(mockAuthRepository.isValidToken(any)).thenAnswer((_) async => const Right(false));
+    when(mockAuthRepository.isExpiredToken(any)).thenAnswer((_) async => const Right(true));
     when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right(DataResponse('new_token')));
     // Act
 
@@ -26,35 +26,35 @@ void main() {
 
     // Assert
     // --verify something should(not) happen/call
-    verify(mockAuthRepository.isValidToken('any'));
+    verify(mockAuthRepository.isExpiredToken('any'));
     verify(mockAuthRepository.getNewAccessToken());
     // --expect something equals, isA, throwsA
     expect(result, const Right('new_token'));
   });
-  test('should do nothing when get token is not expired', () async {
+  test('should do nothing when get token is not expired (token still valid)', () async {
     // Arrange (setup @mocks)
-    when(mockAuthRepository.isValidToken(any)).thenAnswer((_) async => const Right(true));
+    when(mockAuthRepository.isExpiredToken(any)).thenAnswer((_) async => const Right(false));
     // Act
 
     final result = await checkTokenUC('any');
 
     // Assert
     // --verify something should(not) happen/call
-    verify(mockAuthRepository.isValidToken('any'));
+    verify(mockAuthRepository.isExpiredToken('any'));
     verifyNever(mockAuthRepository.getNewAccessToken());
     // --expect something equals, isA, throwsA
     expect(result, const Right(null));
   });
   test('should return [Failure] when get token format is invalid', () async {
     // Arrange (setup @mocks)
-    when(mockAuthRepository.isValidToken(any)).thenAnswer((_) async => const Left(UnexpectedFailure()));
+    when(mockAuthRepository.isExpiredToken(any)).thenAnswer((_) async => const Left(UnexpectedFailure()));
     // Act
 
     final result = await checkTokenUC('any');
 
     // Assert
     // --verify something should(not) happen/call
-    verify(mockAuthRepository.isValidToken('any'));
+    verify(mockAuthRepository.isExpiredToken('any'));
     verifyNever(mockAuthRepository.getNewAccessToken());
     // --expect something equals, isA, throwsA
     expect(result, const Left(UnexpectedFailure()));

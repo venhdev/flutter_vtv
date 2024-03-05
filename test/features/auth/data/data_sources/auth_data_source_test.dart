@@ -14,13 +14,15 @@ import '../../../../helpers/test_helper.mocks.dart';
 
 void main() {
   late MockHttpClient mockHttpClient;
-  late AuthDataSourceImpl authDataSourceImpl;
+  late MockFirebaseCloudMessagingManager mockFCMManager;
   late MockSecureStorageHelper mockSecureStorageHelper;
+  late AuthDataSourceImpl authDataSourceImpl;
 
   setUp(() {
+    mockFCMManager = MockFirebaseCloudMessagingManager();
     mockHttpClient = MockHttpClient();
     mockSecureStorageHelper = MockSecureStorageHelper();
-    authDataSourceImpl = AuthDataSourceImpl(mockHttpClient);
+    authDataSourceImpl = AuthDataSourceImpl(mockHttpClient, mockFCMManager, mockSecureStorageHelper);
   });
 
   group('login with username and password', () {
@@ -46,8 +48,12 @@ void main() {
       "access_token": "accessToken",
       "refresh_token": "refreshToken"
     };
+
+    when(mockFCMManager.currentFCMToken).thenReturn('fcmTokenSample');
+
     test('should throw [ClientException] when status code is 404', () async {
       // Arrange (setup @mocks)
+
       when(
         mockHttpClient.post(
           // Uri.parse(kAPIAuthLoginURL),
@@ -138,6 +144,7 @@ void main() {
       "message": "message",
       "code": 200,
     };
+    when(mockFCMManager.currentFCMToken).thenReturn('fcmTokenSample');
     when(mockHttpClient.post(
       // Uri.parse(kAPIAuthLogoutURL),
       baseUri(path: kAPIAuthLogoutURL),
@@ -145,7 +152,7 @@ void main() {
       body: anyNamed("body"),
     )).thenAnswer((_) async => http.Response(jsonEncode(tRes), 200));
     // Act
-    final future = authDataSourceImpl.revokeRefreshToken(tRefreshToken);
+    final future = authDataSourceImpl.logoutAndRevokeRefreshToken(tRefreshToken);
 
     // Assert
     // --verify something should(not) happen/call

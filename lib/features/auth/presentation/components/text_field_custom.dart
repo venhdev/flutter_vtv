@@ -6,7 +6,8 @@ class TextFieldCustom extends StatelessWidget {
     required this.controller,
     required this.label,
     required this.hint,
-    this.borderColor,
+    this.focusedBorderColor,
+    this.enabledBorderColor,
     this.suffixIcon,
     this.prefixIcon,
     this.isRequired = true,
@@ -22,7 +23,8 @@ class TextFieldCustom extends StatelessWidget {
   final TextEditingController? controller;
   final String label;
   final String hint;
-  final Color? borderColor;
+  final Color? focusedBorderColor;
+  final Color? enabledBorderColor;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
 
@@ -80,9 +82,16 @@ class TextFieldCustom extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: borderColor ?? Theme.of(context).colorScheme.primaryContainer,
+                color: focusedBorderColor ?? Theme.of(context).colorScheme.primaryContainer,
+                width: 2.0,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: enabledBorderColor ?? const Color(0xFF000000),
                 width: 2.0,
               ),
             ),

@@ -3,6 +3,28 @@ const String clientExceptionMessage = 'Client Exception';
 const String cacheExceptionMessage = 'Cache Exception';
 // const String formatExceptionMessage = 'Format Exception';
 
+Never throwException({
+  required String message,
+  required int code,
+  String? url,
+}) {
+  if (code >= 500) {
+    throw ServerException(
+      code: code,
+      message: message,
+      uri: url != null ? Uri.parse(url) : null,
+    );
+  } else if (code >= 400) {
+    throw ClientException(
+      code: code,
+      message: message,
+      uri: url != null ? Uri.parse(url) : null,
+    );
+  } else {
+    throw Exception(message);
+  }
+}
+
 class ServerException implements Exception {
   ServerException({
     this.code = 500,

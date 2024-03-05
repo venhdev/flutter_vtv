@@ -7,14 +7,19 @@ class AppState extends ChangeNotifier {
   final SharedPreferencesHelper _prefHelper;
   final Connectivity _connectivity;
 
-  AppState(this._prefHelper, this._connectivity) : _isFirstRun = _prefHelper.isFirstRun;
+  AppState(this._prefHelper, this._connectivity);
 
-  bool _isFirstRun;
+  late bool _isFirstRun;
   late bool hasConnection;
 
-  // initialize the connection
-  Future<void> checkConnection() async {
+  /// Initializes the app state.
+  /// - Checks if the app is the first run.
+  /// - Checks if the device has an internet connection.
+  /// - Subscribes to the connectivity stream. (If lost connection will show a snackbar)
+  Future<void> init() async {
+    _isFirstRun = _prefHelper.isFirstRun;
     hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
+    subscribeConnection();
   }
 
   Stream<ConnectivityResult> get connectionStream => _connectivity.onConnectivityChanged;
@@ -29,7 +34,7 @@ class AppState extends ChangeNotifier {
 
   bool get isFirstRun => _isFirstRun;
 
-  /// Sets the app as started.
+  /// Sets the app as started. (Not the first run)
   Future<void> started() async {
     _isFirstRun = false;
     await _prefHelper.setStarted(false);

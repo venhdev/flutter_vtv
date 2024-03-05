@@ -18,7 +18,7 @@ DateTime convertStringToDateTime(
   return DateTime.parse(date);
 }
 
-/// Change [pattern] to change the format
+/// Change [pattern] to change the format, default is 'dd-MM-yyyy'
 ///
 /// {defaultValue} will return if [date] is null
 String convertDateTimeToString(

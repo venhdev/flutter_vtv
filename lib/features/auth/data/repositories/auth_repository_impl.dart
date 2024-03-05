@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:logger/logger.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/typedef.dart';
@@ -15,6 +15,7 @@ import '../../domain/entities/auth_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_sources/auth_data_source.dart';
 import '../models/auth_model.dart';
+import '../models/user_info_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authDataSource, this._secureStorageHelper);
@@ -66,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   RespEither logout(String refreshToken) async {
     try {
-      final resOK = await _authDataSource.revokeRefreshToken(refreshToken);
+      final resOK = await _authDataSource.logoutAndRevokeRefreshToken(refreshToken);
       return Right(resOK);
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
@@ -108,17 +109,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// Tells whether a token is expired.
   ///
-  /// Returns true if the token is valid, false if it is expired.
+  /// Returns false if the token is valid, true if it is expired.
+  //!!! The package function {isExpired} returns true if the token is expired, false if it is valid. So, the return value is reversed.
   ///
   /// When some error occurs, it returns a [Failure].
   @override
   FResult<bool> isExpiredToken(String accessToken) async {
     try {
-      final rs = JwtDecoder.isExpired(accessToken);
-
-      Logger().e('token: $accessToken');
-      Logger().e('isValidToken: $rs');
-
       return Right(JwtDecoder.isExpired(accessToken));
     } on FormatException catch (e) {
       return Left(UnexpectedFailure(message: e.message));
@@ -144,7 +141,71 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither sendCode(String username) {
-    throw UnimplementedError();
+  RespEither changePassword(String oldPassword, String newPassword) async {
+    try {
+      final username = await _secureStorageHelper.username;
+      final resOK = await _authDataSource.changePassword(
+        username: username!, //? have checked in the 'Setting Page'
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      );
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  RespEitherData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async {
+    try {
+      final resOK = await _authDataSource.editUserProfile(
+        newInfo: UserInfoModel.fromEntity(newInfo),
+      );
+      // update user info in local storage
+      await _secureStorageHelper.updateUserInfo(resOK.data);
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  RespEither sendOTPForResetPassword(String username) async {
+    try {
+      final resOK = await _authDataSource.sendOTPForResetPasswordViaUsername(username);
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  RespEither resetPasswordViaOTP(String username, String otpCode, String newPassword) async {
+    try {
+      final resOK = await _authDataSource.resetPassword(
+        username: username,
+        otp: otpCode,
+        newPassword: newPassword,
+      );
+      return Right(resOK);
+    } on ClientException catch (e) {
+      return Left(ClientError(code: e.code, message: e.message));
+    } on ServerException catch (e) {
+      return Left(ServerError(code: e.code, message: e.message));
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
   }
 }

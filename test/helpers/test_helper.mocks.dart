@@ -4,29 +4,35 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
-import 'dart:convert' as _i16;
-import 'dart:typed_data' as _i18;
+import 'dart:convert' as _i19;
+import 'dart:typed_data' as _i21;
 
-import 'package:connectivity_plus/connectivity_plus.dart' as _i14;
+import 'package:connectivity_plus/connectivity_plus.dart' as _i16;
 import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart'
-    as _i15;
+    as _i17;
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i4;
 import 'package:flutter_vtv/core/error/failures.dart' as _i9;
-import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart' as _i13;
+import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart' as _i15;
 import 'package:flutter_vtv/core/network/base_response.dart' as _i3;
+import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart'
+    as _i18;
 import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart'
-    as _i11;
-import 'package:flutter_vtv/features/auth/data/models/auth_model.dart' as _i12;
+    as _i12;
+import 'package:flutter_vtv/features/auth/data/models/auth_model.dart' as _i13;
+import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart'
+    as _i14;
 import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart'
-    as _i10;
+    as _i11;
 import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart'
     as _i5;
+import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart'
+    as _i10;
 import 'package:flutter_vtv/features/auth/domain/repositories/auth_repository.dart'
     as _i7;
 import 'package:http/http.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i17;
+import 'package:mockito/src/dummies.dart' as _i20;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -189,6 +195,55 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
       ) as _i8.Future<_i2.Either<_i9.Failure, void>>);
 
   @override
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> changePassword(
+    String? oldPassword,
+    String? newPassword,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #changePassword,
+          [
+            oldPassword,
+            newPassword,
+          ],
+        ),
+        returnValue: _i8
+            .Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+            _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+          this,
+          Invocation.method(
+            #changePassword,
+            [
+              oldPassword,
+              newPassword,
+            ],
+          ),
+        )),
+      ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
+
+  @override
+  _i8.Future<
+          _i2.Either<_i3.ErrorResponse, _i3.DataResponse<_i10.UserInfoEntity>>>
+      editUserProfile(_i10.UserInfoEntity? newInfo) => (super.noSuchMethod(
+            Invocation.method(
+              #editUserProfile,
+              [newInfo],
+            ),
+            returnValue: _i8.Future<
+                _i2.Either<_i3.ErrorResponse,
+                    _i3.DataResponse<_i10.UserInfoEntity>>>.value(_FakeEither_0<
+                _i3.ErrorResponse, _i3.DataResponse<_i10.UserInfoEntity>>(
+              this,
+              Invocation.method(
+                #editUserProfile,
+                [newInfo],
+              ),
+            )),
+          ) as _i8.Future<
+              _i2.Either<_i3.ErrorResponse,
+                  _i3.DataResponse<_i10.UserInfoEntity>>>);
+
+  @override
   _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> logout(
           String? refreshToken) =>
       (super.noSuchMethod(
@@ -225,7 +280,7 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
 
   @override
   _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> register(
-          _i10.RegisterParams? registerParams) =>
+          _i11.RegisterParams? registerParams) =>
       (super.noSuchMethod(
         Invocation.method(
           #register,
@@ -243,17 +298,18 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
       ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
 
   @override
-  _i8.Future<_i2.Either<_i9.Failure, bool>> isValidToken(String? accessToken) =>
+  _i8.Future<_i2.Either<_i9.Failure, bool>> isExpiredToken(
+          String? accessToken) =>
       (super.noSuchMethod(
         Invocation.method(
-          #isValidToken,
+          #isExpiredToken,
           [accessToken],
         ),
         returnValue: _i8.Future<_i2.Either<_i9.Failure, bool>>.value(
             _FakeEither_0<_i9.Failure, bool>(
           this,
           Invocation.method(
-            #isValidToken,
+            #isExpiredToken,
             [accessToken],
           ),
         )),
@@ -280,35 +336,65 @@ class MockAuthRepository extends _i1.Mock implements _i7.AuthRepository {
               .Future<_i2.Either<_i3.ErrorResponse, _i3.DataResponse<String>>>);
 
   @override
-  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> sendCode(
-          String? username) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #sendCode,
-          [username],
-        ),
-        returnValue: _i8
-            .Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
-            _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
-          this,
-          Invocation.method(
-            #sendCode,
-            [username],
-          ),
-        )),
-      ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>
+      sendOTPForResetPassword(String? username) => (super.noSuchMethod(
+            Invocation.method(
+              #sendOTPForResetPassword,
+              [username],
+            ),
+            returnValue: _i8.Future<
+                    _i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+                _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+              this,
+              Invocation.method(
+                #sendOTPForResetPassword,
+                [username],
+              ),
+            )),
+          ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
+
+  @override
+  _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>
+      resetPasswordViaOTP(
+    String? username,
+    String? otpCode,
+    String? newPassword,
+  ) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #resetPasswordViaOTP,
+              [
+                username,
+                otpCode,
+                newPassword,
+              ],
+            ),
+            returnValue: _i8.Future<
+                    _i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>.value(
+                _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse>(
+              this,
+              Invocation.method(
+                #resetPasswordViaOTP,
+                [
+                  username,
+                  otpCode,
+                  newPassword,
+                ],
+              ),
+            )),
+          ) as _i8.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>);
 }
 
 /// A class which mocks [AuthDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
+class MockAuthDataSource extends _i1.Mock implements _i12.AuthDataSource {
   MockAuthDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i8.Future<_i3.DataResponse<_i12.AuthModel>> loginWithUsernameAndPassword(
+  _i8.Future<_i3.DataResponse<_i13.AuthModel>> loginWithUsernameAndPassword(
     String? username,
     String? password,
   ) =>
@@ -320,8 +406,8 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
             password,
           ],
         ),
-        returnValue: _i8.Future<_i3.DataResponse<_i12.AuthModel>>.value(
-            _FakeDataResponse_1<_i12.AuthModel>(
+        returnValue: _i8.Future<_i3.DataResponse<_i13.AuthModel>>.value(
+            _FakeDataResponse_1<_i13.AuthModel>(
           this,
           Invocation.method(
             #loginWithUsernameAndPassword,
@@ -331,10 +417,10 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
             ],
           ),
         )),
-      ) as _i8.Future<_i3.DataResponse<_i12.AuthModel>>);
+      ) as _i8.Future<_i3.DataResponse<_i13.AuthModel>>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> register(_i10.RegisterParams? registerDTO) =>
+  _i8.Future<_i3.SuccessResponse> register(_i11.RegisterParams? registerDTO) =>
       (super.noSuchMethod(
         Invocation.method(
           #register,
@@ -351,17 +437,18 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
       ) as _i8.Future<_i3.SuccessResponse>);
 
   @override
-  _i8.Future<_i3.SuccessResponse> revokeRefreshToken(String? refreshToken) =>
+  _i8.Future<_i3.SuccessResponse> logoutAndRevokeRefreshToken(
+          String? refreshToken) =>
       (super.noSuchMethod(
         Invocation.method(
-          #disableRefreshToken,
+          #logoutAndRevokeRefreshToken,
           [refreshToken],
         ),
         returnValue:
             _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
           this,
           Invocation.method(
-            #disableRefreshToken,
+            #logoutAndRevokeRefreshToken,
             [refreshToken],
           ),
         )),
@@ -384,13 +471,130 @@ class MockAuthDataSource extends _i1.Mock implements _i11.AuthDataSource {
           ),
         )),
       ) as _i8.Future<_i3.DataResponse<String>>);
+
+  @override
+  _i8.Future<_i3.DataResponse<_i13.AuthModel>> getUserProfile() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserProfile,
+          [],
+        ),
+        returnValue: _i8.Future<_i3.DataResponse<_i13.AuthModel>>.value(
+            _FakeDataResponse_1<_i13.AuthModel>(
+          this,
+          Invocation.method(
+            #getUserProfile,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i3.DataResponse<_i13.AuthModel>>);
+
+  @override
+  _i8.Future<_i3.DataResponse<_i14.UserInfoModel>> editUserProfile(
+          {required _i14.UserInfoModel? newInfo}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #editUserProfile,
+          [],
+          {#newInfo: newInfo},
+        ),
+        returnValue: _i8.Future<_i3.DataResponse<_i14.UserInfoModel>>.value(
+            _FakeDataResponse_1<_i14.UserInfoModel>(
+          this,
+          Invocation.method(
+            #editUserProfile,
+            [],
+            {#newInfo: newInfo},
+          ),
+        )),
+      ) as _i8.Future<_i3.DataResponse<_i14.UserInfoModel>>);
+
+  @override
+  _i8.Future<_i3.SuccessResponse> sendOTPForResetPasswordViaUsername(
+          String? username) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendOTPForResetPasswordViaUsername,
+          [username],
+        ),
+        returnValue:
+            _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
+          this,
+          Invocation.method(
+            #sendOTPForResetPasswordViaUsername,
+            [username],
+          ),
+        )),
+      ) as _i8.Future<_i3.SuccessResponse>);
+
+  @override
+  _i8.Future<_i3.SuccessResponse> resetPassword({
+    required String? username,
+    required String? otp,
+    required String? newPassword,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #resetPassword,
+          [],
+          {
+            #username: username,
+            #otp: otp,
+            #newPassword: newPassword,
+          },
+        ),
+        returnValue:
+            _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
+          this,
+          Invocation.method(
+            #resetPassword,
+            [],
+            {
+              #username: username,
+              #otp: otp,
+              #newPassword: newPassword,
+            },
+          ),
+        )),
+      ) as _i8.Future<_i3.SuccessResponse>);
+
+  @override
+  _i8.Future<_i3.SuccessResponse> changePassword({
+    required String? username,
+    required String? oldPassword,
+    required String? newPassword,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #changePassword,
+          [],
+          {
+            #username: username,
+            #oldPassword: oldPassword,
+            #newPassword: newPassword,
+          },
+        ),
+        returnValue:
+            _i8.Future<_i3.SuccessResponse>.value(_FakeSuccessResponse_2(
+          this,
+          Invocation.method(
+            #changePassword,
+            [],
+            {
+              #username: username,
+              #oldPassword: oldPassword,
+              #newPassword: newPassword,
+            },
+          ),
+        )),
+      ) as _i8.Future<_i3.SuccessResponse>);
 }
 
 /// A class which mocks [SecureStorageHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSecureStorageHelper extends _i1.Mock
-    implements _i13.SecureStorageHelper {
+    implements _i15.SecureStorageHelper {
   MockSecureStorageHelper() {
     _i1.throwOnMissingStub(this);
   }
@@ -409,6 +613,18 @@ class MockSecureStorageHelper extends _i1.Mock
         Invocation.getter(#isLogin),
         returnValue: _i8.Future<bool>.value(false),
       ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<String?> get accessToken => (super.noSuchMethod(
+        Invocation.getter(#accessToken),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
+
+  @override
+  _i8.Future<String?> get username => (super.noSuchMethod(
+        Invocation.getter(#username),
+        returnValue: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
   _i8.Future<_i5.AuthEntity> readAuth() => (super.noSuchMethod(
@@ -430,6 +646,17 @@ class MockSecureStorageHelper extends _i1.Mock
         Invocation.method(
           #cacheAuth,
           [jsonData],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> updateUserInfo(_i10.UserInfoEntity? newInfo) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateUserInfo,
+          [newInfo],
         ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
@@ -459,28 +686,57 @@ class MockSecureStorageHelper extends _i1.Mock
 /// A class which mocks [Connectivity].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockConnectivity extends _i1.Mock implements _i14.Connectivity {
+class MockConnectivity extends _i1.Mock implements _i16.Connectivity {
   MockConnectivity() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i8.Stream<_i15.ConnectivityResult> get onConnectivityChanged =>
+  _i8.Stream<_i17.ConnectivityResult> get onConnectivityChanged =>
       (super.noSuchMethod(
         Invocation.getter(#onConnectivityChanged),
-        returnValue: _i8.Stream<_i15.ConnectivityResult>.empty(),
-      ) as _i8.Stream<_i15.ConnectivityResult>);
+        returnValue: _i8.Stream<_i17.ConnectivityResult>.empty(),
+      ) as _i8.Stream<_i17.ConnectivityResult>);
 
   @override
-  _i8.Future<_i15.ConnectivityResult> checkConnectivity() =>
+  _i8.Future<_i17.ConnectivityResult> checkConnectivity() =>
       (super.noSuchMethod(
         Invocation.method(
           #checkConnectivity,
           [],
         ),
-        returnValue: _i8.Future<_i15.ConnectivityResult>.value(
-            _i15.ConnectivityResult.bluetooth),
-      ) as _i8.Future<_i15.ConnectivityResult>);
+        returnValue: _i8.Future<_i17.ConnectivityResult>.value(
+            _i17.ConnectivityResult.bluetooth),
+      ) as _i8.Future<_i17.ConnectivityResult>);
+}
+
+/// A class which mocks [FirebaseCloudMessagingManager].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFirebaseCloudMessagingManager extends _i1.Mock
+    implements _i18.FirebaseCloudMessagingManager {
+  MockFirebaseCloudMessagingManager() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  set currentFCMToken(String? _currentFCMToken) => super.noSuchMethod(
+        Invocation.setter(
+          #currentFCMToken,
+          _currentFCMToken,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i8.Future<void> init() => (super.noSuchMethod(
+        Invocation.method(
+          #init,
+          [],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [Client].
@@ -538,7 +794,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i16.Encoding? encoding,
+    _i19.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -569,7 +825,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i16.Encoding? encoding,
+    _i19.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -600,7 +856,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i16.Encoding? encoding,
+    _i19.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -631,7 +887,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i16.Encoding? encoding,
+    _i19.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -668,7 +924,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i8.Future<String>.value(_i17.dummyValue<String>(
+        returnValue: _i8.Future<String>.value(_i20.dummyValue<String>(
           this,
           Invocation.method(
             #read,
@@ -679,7 +935,7 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
       ) as _i8.Future<String>);
 
   @override
-  _i8.Future<_i18.Uint8List> readBytes(
+  _i8.Future<_i21.Uint8List> readBytes(
     Uri? url, {
     Map<String, String>? headers,
   }) =>
@@ -689,8 +945,8 @@ class MockHttpClient extends _i1.Mock implements _i6.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i8.Future<_i18.Uint8List>.value(_i18.Uint8List(0)),
-      ) as _i8.Future<_i18.Uint8List>);
+        returnValue: _i8.Future<_i21.Uint8List>.value(_i21.Uint8List(0)),
+      ) as _i8.Future<_i21.Uint8List>);
 
   @override
   _i8.Future<_i6.StreamedResponse> send(_i6.BaseRequest? request) =>

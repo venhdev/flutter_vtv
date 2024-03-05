@@ -1,5 +1,5 @@
 const int kPORT = 8585;
-const String kDOMAIN = '192.168.1.10';
+const String kDOMAIN = '172.16.20.208';
 const String kAPIBaseURL = 'http://$kDOMAIN:$kPORT/api';
 // const String kAPIBaseURL = 'https://$kDOMAIN/api';
 
