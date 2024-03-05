@@ -24,6 +24,15 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
       return null;
     }
     final List<Object?> inputAsList = input as List<Object?>;
+    if (inputAsList[0] == 'String' ||
+        inputAsList[0] == 'Uri' ||
+        inputAsList[0] == 'DateTime' ||
+        inputAsList[0] == 'bool' ||
+        inputAsList[0] == 'double' ||
+        inputAsList[0] == 'num' ||
+        inputAsList[0] == 'int') {
+      return inputAsList[1];
+    }
     if (inputAsList[0] == 'UserInfoEntity') {
       return UserInfoModel.fromJson(inputAsList[1] as String).toEntity();
     }
@@ -42,6 +51,8 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       return null;
     }
     switch (input) {
+      case String _ || Uri _ || DateTime _ || bool _ || double _ || num _ || int _:
+        return input;
       case UserInfoEntity _:
         return <Object?>[
           'UserInfoEntity',

@@ -23,10 +23,9 @@ class SearchBarComponent extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            context.go(
-              '/home/${SearchProductsPage.routeName}',
-              extra: controller.text,
-            );
+            if (controller.text.isNotEmpty) {
+              context.go('/home/${SearchProductsPage.routeName}', extra: controller.text);
+            }
           },
         ),
       ],
