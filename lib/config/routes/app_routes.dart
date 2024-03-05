@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter_vtv/features/search/presentation/pages/search_products_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/presentation/pages/dev_page.dart';
@@ -15,6 +16,7 @@ import '../../features/auth/presentation/pages/user_home.dart';
 import '../../features/home/domain/entities/product_entity.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/product_detail_page.dart';
+import '../../features/search/presentation/pages/search_products_page.dart';
 import 'extra_codec.dart';
 
 part 'routes.dart';
