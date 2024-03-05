@@ -1,7 +1,3 @@
-import 'dart:developer';
-
-import 'package:logger/logger.dart';
-
 import '../../../../core/constants/base_usecase.dart';
 import '../../../../core/constants/typedef.dart';
 import '../repositories/auth_repository.dart';
@@ -12,14 +8,10 @@ class LogoutUC implements UseCaseHasParams<RespEither, String> {
   LogoutUC(this._authRepository);
   @override
   RespEither call(String params) async {
-    Logger().e('token: $params');
     final resEither = await _authRepository.logout(params);
     resEither.fold(
-      (error) => _authRepository.deleteAuth(),
-      (ok) => _authRepository.deleteAuth().then((value) => value.fold(
-            (l) => log('delete token in local storage error: $l'),
-            (r) => log('delete token in local storage success'),
-          )), // delete token in local storage --may have error -> ignore
+      (error) => _authRepository.deleteAuth(), // even if logout failed, delete token in local storage
+      (ok) => _authRepository.deleteAuth(), // delete token in local storage when logout success
     );
     return resEither;
   }

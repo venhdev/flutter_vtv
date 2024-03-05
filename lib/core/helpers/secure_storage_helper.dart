@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../features/auth/data/models/auth_model.dart';
 import '../../features/auth/domain/entities/auth_entity.dart';
+import '../../features/auth/domain/entities/user_info_entity.dart';
 import '../error/exceptions.dart';
 
 class SecureStorageHelper {
@@ -13,6 +14,28 @@ class SecureStorageHelper {
   final _keyAuth = 'authentication';
 
   Future<bool> get isLogin => _storage.containsKey(key: _keyAuth);
+
+  /// get access token from local storage.
+  /// - return null if not found (not login yet)
+  Future<String?> get accessToken async {
+    try {
+      final auth = await readAuth();
+      return auth.accessToken;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// get username from local storage.
+  /// - return null if not found
+  Future<String?> get username async {
+    try {
+      final auth = await readAuth();
+      return auth.userInfo.username;
+    } catch (e) {
+      return null;
+    }
+  }
 
   Future<AuthEntity> readAuth() async {
     final data = await _storage.read(key: _keyAuth);
@@ -28,6 +51,17 @@ class SecureStorageHelper {
       await _storage.write(key: _keyAuth, value: jsonData);
     } catch (e) {
       throw CacheException(message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
+    }
+  }
+
+  // update user info
+  Future<void> updateUserInfo(UserInfoEntity newInfo) async {
+    try {
+      final auth = await readAuth();
+      final newAuth = auth.copyWith(userInfo: newInfo);
+      await cacheAuth(AuthModel.fromEntity(newAuth).toJson());
+    } catch (e) {
+      throw CacheException(message: 'Có lỗi xảy ra khi cập nhật thông tin người dùng!');
     }
   }
 

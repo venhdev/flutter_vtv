@@ -6,20 +6,23 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Login & Auto get new accessToken if expired
-- Logout
+- Login & Save info to local
+- Auto get new accessToken if expired
 - Register
+- Logout
+- Change Password, Forgot password
+- Show Category, Product
 - Flash screen and icon launcher
-- Base functions and widgets
 
 ### Changed
 
-- App package name
+- App package name to 'hcmute.kltn.vtv'
 - GetIt package instead using Injectable
 
 ### Fixed
 
 - Utf-8 decode
+- Expired Token check
 
 ## [v0.0.3-pre] - 26-01-2024
 

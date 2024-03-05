@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-import '../bloc/auth_cubit.dart';
+import '../../domain/entities/auth_entity.dart';
 
-AppBar buildUserAppBar(BuildContext context) {
-  final auth = context.read<AuthCubit>().state.auth;
+AppBar buildUserAppBar(BuildContext context, [AuthEntity? auth]) {
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     actions: [
@@ -31,30 +29,39 @@ AppBar buildUserAppBar(BuildContext context) {
     // bottom
     bottom: PreferredSize(
       preferredSize: const Size.fromHeight(60),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        // avatar
-        children: [
-          const SizedBox(width: 12),
-          const CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
-          ),
+      child: InkWell(
+        onTap: () {
+          if (auth == null) {
+            context.go('/user/login');
+          } else {
+            context.go('/user/user-detail', extra: auth.userInfo);
+          }
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // avatar
+          children: [
+            const SizedBox(width: 12),
+            const CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
+            ),
 
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-          // username
-          SizedBox(
-            height: 60,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                auth?.userInfo.username ?? 'Chưa đăng nhập',
-                style: const TextStyle(fontSize: 18),
+            // username
+            SizedBox(
+              height: 60,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  auth != null ? '${auth.userInfo.fullName!} (${auth.userInfo.username!})' : 'Chưa đăng nhập',
+                  style: const TextStyle(fontSize: 18),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );

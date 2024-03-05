@@ -27,6 +27,23 @@ class MainPage extends StatelessWidget {
           return const IntroPage();
         }
 
+        // the app is not connected to the internet
+
+        // if (appState.hasConnection == false) {
+        //   return const Scaffold(
+        //     body: Center(
+        //       child: Column(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           // icon
+        //           Icon(Icons.wifi_off),
+        //           Text('Không có kết nối mạng'),
+        //         ],
+        //       ),
+        //     ),
+        //   );
+        // }
+
         return Scaffold(
           body: child,
           // if the app is not connected to the internet, show a bottom sheet
@@ -53,13 +70,14 @@ class MainPage extends StatelessWidget {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.shopping_cart),
-                tooltip: 'Home',
-                label: 'Home', // index => 0
+                tooltip: 'Trang chủ',
+                label: 'Trang chủ', // index => 0
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                tooltip: 'User',
-                label: 'User', // index => 1
+                tooltip: 'Tài khoản',
+                label: 'Tài khoản', // index => 1
+                backgroundColor: Colors.blue,
               ),
             ],
             currentIndex: _calculateSelectedIndex(context),
@@ -78,6 +96,12 @@ class MainPage extends StatelessWidget {
     if (location.startsWith('/user')) {
       return 1;
     }
+    // if (location.startsWith('/h3')) {
+    //   return 2;
+    // }
+    // if (location.startsWith('/h4')) {
+    //   return 3;
+    // }
     return 0;
   }
 
@@ -87,6 +111,10 @@ class MainPage extends StatelessWidget {
         GoRouter.of(context).go('/home');
       case 1:
         GoRouter.of(context).go('/user');
+      // case 2:
+      //   GoRouter.of(context).go('/home');
+      // case 3:
+      //   GoRouter.of(context).go('/home');
     }
   }
 }

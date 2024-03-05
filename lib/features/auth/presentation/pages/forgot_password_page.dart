@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../service_locator.dart';
+import '../../domain/repositories/auth_repository.dart';
 import '../components/text_field_custom.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -28,6 +31,75 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> handleSendCode() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isSendingCode = true;
+      });
+
+      sl<AuthRepository>().sendOTPForResetPassword(_emailController.text).then((resultEither) {
+        if (mounted) {
+          setState(() {
+            _isSendingCode = false;
+            resultEither.fold(
+              (failure) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(failure.message ?? 'Có lỗi xảy ra'),
+                    ),
+                  );
+              },
+              (success) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(success.message ?? 'Gửi mã xác nhận thành công'),
+                    ),
+                  );
+                _isCodeSent = true;
+              },
+            );
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> handleResetPassword() async {
+    final username = _emailController.text;
+    final otp = _codeController.text;
+    final newPassword = _passwordController.text;
+
+    sl<AuthRepository>().resetPasswordViaOTP(username, otp, newPassword).then((resultEither) {
+      resultEither.fold(
+        (failure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(failure.message ?? 'Có lỗi xảy ra'),
+              ),
+            );
+        },
+        (success) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(success.message ?? 'Đổi mật khẩu thành công'),
+              ),
+            );
+
+          // navigate back to login page
+          context.go('/user/login');
+        },
+      );
+    });
   }
 
   @override
@@ -77,23 +149,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     hint: 'Nhập tên tài khoản',
                     isRequired: true,
                     suffixIcon: IconButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            _isSendingCode = true;
-                          });
-
-                          await Future.delayed(const Duration(seconds: 3)).then((value) {
-                            if (mounted) {
-                              // sl<AuthRepository>().(_emailController.text);
-                              setState(() {
-                                _isSendingCode = false;
-                                _isCodeSent = true;
-                              });
-                            }
-                          });
-                        }
-                      },
+                      onPressed: () async => await handleSendCode(),
                       icon: _isSendingCode ? const CircularProgressIndicator() : const Icon(Icons.send),
                     ),
                   ),
@@ -152,15 +208,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ),
                           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đổi mật khẩu thành công, vui lòng đăng nhập lại'),
-                              ),
-                            );
-                            // redirect to login page
-                            Navigator.of(context).pop();
+                            await handleResetPassword();
                           }
                         },
                         child: const Text('Đổi mật khẩu'),

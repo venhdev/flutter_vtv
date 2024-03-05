@@ -1,5 +1,3 @@
-import 'package:logger/logger.dart';
-
 import '../../../../core/constants/base_usecase.dart';
 import '../../../../core/constants/typedef.dart';
 import '../entities/auth_entity.dart';
@@ -20,7 +18,6 @@ class LoginWithUsernameAndPasswordUC
       (error) async => null, // do nothing
       (ok) async => {
         await _authRepository.cacheAuth(ok.data),
-        Logger().i('cache auth success data: ${ok.data.refreshToken}'),
       },
     );
 
