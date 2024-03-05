@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vtv/features/search/domain/repository/search_product_repository.dart';
 
 import '../../../../service_locator.dart';
-
-import '../../../home/domain/repository/product_repository.dart';
 import 'product_item.dart';
 
 class SearchProducts extends StatelessWidget {
@@ -33,8 +31,7 @@ class SearchProducts extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         FutureBuilder(
-          future: sl<SearchProductRepository>()
-              .searchPageProductBySort(1, 10, keywords ?? '', 'newest'),
+          future: sl<SearchProductRepository>().searchPageProductBySort(1, 10, keywords ?? '', 'newest'),
           // Pass keywords parameter
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
@@ -45,8 +42,7 @@ class SearchProducts extends StatelessWidget {
             if (snapshot.hasData) {
               return snapshot.data!.fold(
                 (errorResp) => Center(
-                  child: Text('Error: $errorResp',
-                      style: const TextStyle(color: Colors.red)),
+                  child: Text('Error: $errorResp', style: const TextStyle(color: Colors.red)),
                 ),
                 (productDTOResp) => GridView.count(
                   crossAxisCount: 2,

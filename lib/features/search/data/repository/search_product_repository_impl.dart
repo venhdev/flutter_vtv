@@ -15,59 +15,36 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
 
   final SearchProductDataSource _searchProductDataSource;
 
-
   @override
   RespEitherData<PageProductResponse> searchAndPriceRangePageProductBySort(
-      int page,
-      int size,
-      String keyword,
-      String sort,
-      int minPrice,
-      int maxPrice) {
+      int page, int size, String keyword, String sort, int minPrice, int maxPrice) {
     try {
-      final result =
-          _searchProductDataSource.searchAndPriceRangePageProductBySort(
-              page, size, keyword, sort, minPrice, maxPrice);
-      return RespEitherData(Right(Future.value(result))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+      final result = _searchProductDataSource.searchAndPriceRangePageProductBySort(page, size, keyword, sort, minPrice, maxPrice);
+      return RespEitherData(
+          Right(Future.value(result)) as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>> Function());
     } on ClientException catch (e) {
       return RespEitherData(Left(ClientError(code: e.code, message: e.message))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>> Function());
     } on ServerException catch (e) {
       return RespEitherData(Left(ServerError(code: e.code, message: e.message))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>> Function());
     } catch (e) {
       return RespEitherData(Left(UnexpectedError(message: e.toString()))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>> Function());
     }
   }
 
-  
   @override
-  RespEitherData<PageProductResponse> searchPageProductBySort(
-      int page, int size, String keyword, String sort) {
+  RespEitherData<PageProductResponse> searchPageProductBySort(int page, int size, String keyword, String sort) async {
     try {
-      final result = _searchProductDataSource.searchPageProductBySort(
-          page, size, keyword, sort);
-      return RespEitherData(Right(Future.value(result))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+      final result = await _searchProductDataSource.searchPageProductBySort(page, size, keyword, sort);
+      return Right(result);
     } on ClientException catch (e) {
-      return RespEitherData(Left(ClientError(code: e.code, message: e.message))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+      return Left(ClientError(code: e.code, message: e.message));
     } on ServerException catch (e) {
-      return RespEitherData(Left(ServerError(code: e.code, message: e.message))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+      return Left(ServerError(code: e.code, message: e.message));
     } catch (e) {
-      return RespEitherData(Left(UnexpectedError(message: e.toString()))
-          as FutureOr<Either<ErrorResponse, DataResponse<PageProductResponse>>>
-              Function());
+      return Left(UnexpectedError(message: e.toString()));
     }
   }
 }
