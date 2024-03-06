@@ -4,6 +4,7 @@ import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/base_response.dart';
+import '../../../../core/network/response_handler.dart';
 import '../../domain/dto/product_dto.dart';
 import '../../domain/repository/product_repository.dart';
 
@@ -24,5 +25,24 @@ class ProductRepositoryImpl extends ProductRepository {
     } catch (e) {
       return Left(UnexpectedError(message: e.toString()));
     }
+  }
+
+  @override
+  FRespData<ProductDTO> getProductFilterByPriceRange(
+    int page,
+    int size,
+    int minPrice,
+    int maxPrice,
+    String filter,
+  ) async {
+    return await handleDataResponseFromDataSource(
+      dataExecute: () async => _productDataSource.getProductFilterByPriceRange(
+        page: page,
+        size: size,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        filter: filter,
+      ),
+    );
   }
 }

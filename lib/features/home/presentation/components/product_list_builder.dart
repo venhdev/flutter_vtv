@@ -42,7 +42,7 @@ class ProductListBuilder extends StatelessWidget {
         if (snapshot.hasData) {
           return snapshot.data!.fold(
             (errorResp) => Center(
-              child: Text('Error: $errorResp', style: const TextStyle(color: Colors.red)),
+              child: Text('Error (only for dev): $errorResp', style: const TextStyle(color: Colors.red)),
             ),
             (dataResp) => Builder(builder: (context) {
               if (dataResp.data.products.isEmpty) {

@@ -9,6 +9,14 @@ import '../../domain/dto/product_dto.dart';
 
 abstract class ProductDataSource {
   Future<DataResponse<ProductDTO>> getSuggestionProductsRandomly(int page, int size);
+
+  Future<DataResponse<ProductDTO>> getProductFilterByPriceRange({
+    required int page,
+    required int size,
+    required int minPrice,
+    required int maxPrice,
+    required String filter,
+  });
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
@@ -42,11 +50,60 @@ class ProductDataSourceImpl implements ProductDataSource {
         message: decodedBody['message'],
       );
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
-        message: jsonDecode(utf8BodyMap)['message'],
+        message: decodedBody['message'],
         url: kAPIAuthLoginURL,
       );
     }
+  }
+
+  @override
+  Future<DataResponse<ProductDTO>> getProductFilterByPriceRange({
+    required int page,
+    required int size,
+    required int minPrice,
+    required int maxPrice,
+    required String filter,
+  }) async {
+    // send request
+    final response = await _client.get(
+      baseUri(
+        path: '$kAPIGetProductFilterPriceRangeURL/$filter',
+        queryParameters: {
+          'page': page.toString(),
+          'size': size.toString(),
+          'minPrice': minPrice.toString(),
+          'maxPrice': maxPrice.toString(),
+        },
+      ),
+      headers: baseHttpHeaders(),
+    );
+
+    return handleResponseWithData<ProductDTO>(
+      response,
+      kAPIGetProductFilterPriceRangeURL,
+      (jsonMap) => ProductDTO.fromMap(jsonMap),
+    );
+
+    // // decode response using utf8
+    // final utf8BodyMap = utf8.decode(response.bodyBytes);
+    // final decodedBody = jsonDecode(utf8BodyMap);
+
+    // // handle response
+    // if (response.statusCode == 200) {
+    //   final result = ProductDTO.fromMap(decodedBody);
+    //   return DataResponse<ProductDTO>(
+    //     result,
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //   );
+    // } else {
+    //   throwException(
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //     url: kAPIGetProductFilterPriceRangeURL,
+    //   );
+    // }
   }
 }

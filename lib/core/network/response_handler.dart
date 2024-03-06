@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' show Response;
 
+import '../constants/typedef.dart';
 import '../error/exceptions.dart';
 import 'base_response.dart';
 
@@ -16,7 +18,7 @@ SuccessResponse handleResponseNoData(Response response, String url) {
       message: decodedBody['message'],
     );
   } else {
-    throwException(
+    throwResponseException(
       code: response.statusCode,
       message: decodedBody['message'],
       url: url,
@@ -24,7 +26,32 @@ SuccessResponse handleResponseNoData(Response response, String url) {
   }
 }
 
-Never throwException({
+DataResponse<T> handleResponseWithData<T>(
+  Response response,
+  String url,
+  T Function(Map<String, dynamic> jsonMap) fromMap,
+) {
+  // decode response using utf8
+  final utf8BodyMap = utf8.decode(response.bodyBytes);
+  final decodedBodyMap = jsonDecode(utf8BodyMap);
+
+  if (response.statusCode >= 200 && response.statusCode < 300) {
+    final result = fromMap(decodedBodyMap);
+    return DataResponse(
+      result,
+      code: response.statusCode,
+      message: decodedBodyMap['message'],
+    );
+  } else {
+    throwResponseException(
+      code: response.statusCode,
+      message: decodedBodyMap['message'],
+      url: url,
+    );
+  }
+}
+
+Never throwResponseException({
   required String message,
   required int code,
   String? url,
@@ -43,5 +70,35 @@ Never throwException({
     );
   } else {
     throw Exception(message);
+  }
+}
+
+// handle data response from data source
+FRespData<T> handleDataResponseFromDataSource<T>({
+  required Future<DataResponse<T>> Function() dataExecute,
+}) async {
+  try {
+    return Right(await dataExecute());
+  } on ClientException catch (e) {
+    return Left(ClientError(code: e.code, message: e.message));
+  } on ServerException catch (e) {
+    return Left(ServerError(code: e.code, message: e.message));
+  } catch (e) {
+    return Left(UnexpectedError(message: e.toString()));
+  }
+}
+
+// handle success response from data source
+FResp handleSuccessResponseFromDataSource({
+  SuccessResponse? data,
+}) async {
+  try {
+    return Right(data!);
+  } on ClientException catch (e) {
+    return Left(ClientError(code: e.code, message: e.message));
+  } on ServerException catch (e) {
+    return Left(ServerError(code: e.code, message: e.message));
+  } catch (e) {
+    return Left(UnexpectedError(message: e.toString()));
   }
 }

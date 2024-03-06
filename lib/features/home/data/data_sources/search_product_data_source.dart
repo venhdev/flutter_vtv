@@ -47,7 +47,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
         message: decodedBody['message'],
       );
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
         url: kAPIGetSearchProductURL,
@@ -87,7 +87,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
         message: decodedBody['message'],
       );
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
         url: kAPIGetSearchPriceRangeProductURL,
