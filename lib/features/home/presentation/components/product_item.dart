@@ -14,7 +14,7 @@ class ProductItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          // context.go('/home/product-detail', extra: product);
+          //? allow user easily pop back to the previous screen
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ProductDetailPage(product: product),

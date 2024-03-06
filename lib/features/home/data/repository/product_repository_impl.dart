@@ -13,7 +13,7 @@ class ProductRepositoryImpl extends ProductRepository {
   final ProductDataSource _productDataSource;
 
   @override
-  RespEitherData<ProductDTO> getSuggestionProductsRandomly(int page, int size) async {
+  FRespData<ProductDTO> getSuggestionProductsRandomly(int page, int size) async {
     try {
       final result = await _productDataSource.getSuggestionProductsRandomly(page, size);
       return Right(result);

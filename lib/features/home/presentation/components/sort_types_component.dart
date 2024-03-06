@@ -1,16 +1,16 @@
 
 import 'package:flutter/material.dart';
 
-class SortComponent extends StatefulWidget {
+class SortTypesComponent extends StatefulWidget {
   final Function(String) onSortChanged;
 
-  const SortComponent({super.key, required this.onSortChanged});
+  const SortTypesComponent({super.key, required this.onSortChanged});
 
   @override
-  State<SortComponent> createState() => _SortComponentState();
+  State<SortTypesComponent> createState() => _SortTypesComponentState();
 }
 
-class _SortComponentState extends State<SortComponent> {
+class _SortTypesComponentState extends State<SortTypesComponent> {
   String selectedSortType = 'newest'; // Default sort type
 
   @override

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../search/presentation/components/search_bar_component.dart';
+import '../../../../service_locator.dart';
+import '../components/search_bar_component.dart';
+import '../../domain/repository/product_repository.dart';
 import '../components/category_list.dart';
-import '../components/product_list.dart';
+import '../components/product_list_builder.dart';
+import 'search_products_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,7 +18,6 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: const Text('VTV'),
         title: Text(
           "VTV",
           style: GoogleFonts.ribeye(
@@ -26,16 +29,37 @@ class HomePage extends StatelessWidget {
         actions: [
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.7,
-            child: const SearchBarComponent(),
+            child: SearchBarComponent(
+              clearOnSubmit: true,
+              onSubmitted: (text) => context.go(SearchProductsPage.route, extra: text),
+            ),
           ),
         ],
       ),
       body: ListView(
-        children: const [
+        children: [
           // Category
-          Category(),
+          const Category(),
           // Product
-          ProductList(),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Danh sách sản phẩm',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton(
+                onPressed: null,
+                child: Text('Xem thêm'),
+              ),
+            ],
+          ),
+          ProductListBuilder(
+            future: sl<ProductRepository>().getSuggestionProductsRandomly(1, 10),
+          ),
         ],
       ),
     );

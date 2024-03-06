@@ -1,9 +1,9 @@
 import '../../../../core/constants/typedef.dart';
-import '../response/page_product_response.dart';
+import '../dto/product_dto.dart';
 
 abstract class SearchProductRepository {
 
-  RespEitherData<PageProductResponse> searchAndPriceRangePageProductBySort(
+  FRespData<ProductDTO> searchAndPriceRangePageProductBySort(
       int page,
       int size,
       String keyword,
@@ -11,7 +11,7 @@ abstract class SearchProductRepository {
       int minPrice,
       int maxPrice);
 
-  RespEitherData<PageProductResponse> searchPageProductBySort(
+  FRespData<ProductDTO> searchPageProductBySort(
       int page, int size, String keyword, String sort);
 
 

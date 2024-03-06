@@ -5,21 +5,13 @@ final _routes = <RouteBase>[
   GoRoute(
     path: '/${HomePage.routeName}', // '/home'
     builder: (BuildContext context, GoRouterState state) {
-      return HomePage();
+      return const HomePage();
     },
     routes: [
-      // GoRoute(
-      //   path: ProductDetailPage.routeName, // '/home/product-detail'
-      //   builder: (context, state) {
-      //     final product = state.extra as ProductEntity;
-      //     return ProductDetailPage(product: product);
-      //   },
-      // ),
       GoRoute(
         path: SearchProductsPage.routeName, // 'home/search'
         builder: (context, state) {
           final String keywords = state.extra as String;
-
           return SearchProductsPage(keywords: keywords);
         },
         // routes: [

@@ -24,7 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final SecureStorageHelper _secureStorageHelper;
 
   @override
-  RespEitherData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
+  FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
     try {
       final result = await _authDataSource.loginWithUsernameAndPassword(username, password);
       return Right(DataResponse(result.data.toEntity()));
@@ -65,7 +65,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither logout(String refreshToken) async {
+  FResp logout(String refreshToken) async {
     try {
       final resOK = await _authDataSource.logoutAndRevokeRefreshToken(refreshToken);
       return Right(resOK);
@@ -91,7 +91,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEitherData<String> getNewAccessToken() async {
+  FRespData<String> getNewAccessToken() async {
     try {
       final localAuth = await _secureStorageHelper.readAuth();
       final newAccessToken = await _authDataSource.getNewAccessToken(localAuth.refreshToken);
@@ -125,7 +125,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither register(RegisterParams registerParams) async {
+  FResp register(RegisterParams registerParams) async {
     try {
       final resOK = await _authDataSource.register(registerParams);
       return Right(resOK);
@@ -141,7 +141,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither changePassword(String oldPassword, String newPassword) async {
+  FResp changePassword(String oldPassword, String newPassword) async {
     try {
       final username = await _secureStorageHelper.username;
       final resOK = await _authDataSource.changePassword(
@@ -160,7 +160,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEitherData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async {
+  FRespData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async {
     try {
       final resOK = await _authDataSource.editUserProfile(
         newInfo: UserInfoModel.fromEntity(newInfo),
@@ -178,7 +178,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither sendOTPForResetPassword(String username) async {
+  FResp sendOTPForResetPassword(String username) async {
     try {
       final resOK = await _authDataSource.sendOTPForResetPasswordViaUsername(username);
       return Right(resOK);
@@ -192,7 +192,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  RespEither resetPasswordViaOTP(String username, String otpCode, String newPassword) async {
+  FResp resetPasswordViaOTP(String username, String otpCode, String newPassword) async {
     try {
       final resOK = await _authDataSource.resetPassword(
         username: username,

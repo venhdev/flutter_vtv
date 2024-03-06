@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Logout
 - Change Password, Forgot password
 - Show Category, Product
+- Search Product
 - Flash screen and icon launcher
 
 ### Changed

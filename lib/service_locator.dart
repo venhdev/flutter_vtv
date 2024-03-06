@@ -23,9 +23,9 @@ import 'features/home/data/repository/category_repository_impl.dart';
 import 'features/home/data/repository/product_repository_impl.dart';
 import 'features/home/domain/repository/category_repository.dart';
 import 'features/home/domain/repository/product_repository.dart';
-import 'features/search/data/data_sources/search_product_data_source.dart';
-import 'features/search/data/repository/search_product_repository_impl.dart';
-import 'features/search/domain/repository/search_product_repository.dart';
+import 'features/home/data/data_sources/search_product_data_source.dart';
+import 'features/home/data/repository/search_product_repository_impl.dart';
+import 'features/home/domain/repository/search_product_repository.dart';
 
 // Service locator
 GetIt sl = GetIt.instance;

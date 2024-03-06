@@ -12,7 +12,7 @@ class CategoryRepositoryImpl extends CategoryRepository {
 
   final CategoryDataSource _categoryDataSource;
   @override
-  RespEitherData<List<CategoryEntity>> getAllParentCategories() async {
+  FRespData<List<CategoryEntity>> getAllParentCategories() async {
     try {
       final result = await _categoryDataSource.getAllParentCategories();
       return Right(result);

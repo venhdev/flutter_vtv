@@ -8,4 +8,4 @@
 
 ## Abbreviations
 
-- Res: Response
+- Res/ Resp: Response

@@ -4,13 +4,13 @@ import '../entities/auth_entity.dart';
 import '../repositories/auth_repository.dart';
 
 class LoginWithUsernameAndPasswordUC
-    implements UseCaseHasParams<RespEitherData<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
+    implements UseCaseHasParams<FRespData<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
   final AuthRepository _authRepository;
 
   LoginWithUsernameAndPasswordUC(this._authRepository);
 
   @override
-  RespEitherData<AuthEntity> call(LoginWithUsernameAndPasswordUCParams params) async {
+  FRespData<AuthEntity> call(LoginWithUsernameAndPasswordUCParams params) async {
     final resEither = await _authRepository.loginWithUsernameAndPassword(params.username, params.password);
 
     //> when login success, cache auth into secure storage
