@@ -8,33 +8,30 @@ final _routes = <RouteBase>[
       return HomePage();
     },
     routes: [
+      // GoRoute(
+      //   path: ProductDetailPage.routeName, // '/home/product-detail'
+      //   builder: (context, state) {
+      //     final product = state.extra as ProductEntity;
+      //     return ProductDetailPage(product: product);
+      //   },
+      // ),
       GoRoute(
-        path: ProductDetailPage.routeName, // '/home/product-detail'
-        builder: (context, state) {
-          final product = state.extra as ProductEntity;
-          return ProductDetailPage(product: product);
-        },
-      ),
-      GoRoute(
-        path: SearchProductsPage.routeName,  // 'home/search'
+        path: SearchProductsPage.routeName, // 'home/search'
         builder: (context, state) {
           final String keywords = state.extra as String;
 
-          return SearchProductsPage(
-            keywords: keywords,
-          );
+          return SearchProductsPage(keywords: keywords);
         },
-        routes: [
-          GoRoute(
-            path: ProductDetailPage.routeName, // 'home/search-product/product-detail'
-            builder: (context, state) {
-              final product = state.extra as ProductEntity;
-              return ProductDetailPage(product: product);
-            },
-          ),
-        ],
+        // routes: [
+        //   GoRoute(
+        //     path: ProductDetailPage.routeName, // 'home/search/product-detail'
+        //     builder: (context, state) {
+        //       final product = state.extra as ProductEntity;
+        //       return ProductDetailPage(product: product);
+        //     },
+        //   ),
+        // ],
       ),
-
     ],
   ),
   // User Route

@@ -7,7 +7,7 @@ class SortComponent extends StatefulWidget {
   const SortComponent({super.key, required this.onSortChanged});
 
   @override
-  _SortComponentState createState() => _SortComponentState();
+  State<SortComponent> createState() => _SortComponentState();
 }
 
 class _SortComponentState extends State<SortComponent> {

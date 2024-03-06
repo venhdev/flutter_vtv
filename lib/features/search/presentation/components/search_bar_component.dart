@@ -3,14 +3,28 @@ import 'package:go_router/go_router.dart';
 
 import '../pages/search_products_page.dart';
 
-class SearchBarComponent extends StatelessWidget {
-  final TextEditingController controller;
+class SearchBarComponent extends StatefulWidget {
+  // final TextEditingController controller;
   final String? keywords;
 
-  SearchBarComponent({super.key, required this.controller, this.keywords}) {
-    // Set the initial text of the controller to keywords when available
-    if (keywords != null) {
-      controller.text = keywords!;
+  // Set the initial text of the controller to keywords when available
+  // if (keywords != null) {
+  //   controller.text = keywords!;
+  // }
+  const SearchBarComponent({super.key, this.keywords});
+
+  @override
+  State<SearchBarComponent> createState() => _SearchBarComponentState();
+}
+
+class _SearchBarComponentState extends State<SearchBarComponent> {
+  final keyWordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.keywords != null) {
+      keyWordController.text = widget.keywords!;
     }
   }
 
@@ -28,8 +42,8 @@ class SearchBarComponent extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: controller,
-                    decoration: InputDecoration(
+                    controller: keyWordController,
+                    decoration: const InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                       hintText: 'Tìm kiếm sản phẩm',
                       border: InputBorder.none,
@@ -37,11 +51,10 @@ class SearchBarComponent extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () {
-                    if (controller.text.isNotEmpty) {
-                      final searchKeywords = controller.text;
-                      context.go('/home/${SearchProductsPage.routeName}', extra: searchKeywords);
+                    if (keyWordController.text.isNotEmpty) {
+                      context.go(SearchProductsPage.route, extra: keyWordController.text);
                     }
                   },
                 ),
@@ -53,8 +66,3 @@ class SearchBarComponent extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

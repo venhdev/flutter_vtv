@@ -7,15 +7,11 @@ import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<PageProductResponse>> searchPageProductBySort(
-      int page, int size, String keyword, String sort);
+  Future<DataResponse<PageProductResponse>> searchPageProductBySort(int page, int size, String keyword, String sort);
 
   Future<DataResponse<PageProductResponse>> searchAndPriceRangePageProductBySort(
       int page, int size, String keyword, String sort, int minPrice, int maxPrice);
 }
-
-
-
 
 class SearchProductDataSourceImpl implements SearchProductDataSource {
   final http.Client _client;
@@ -23,8 +19,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<PageProductResponse>> searchPageProductBySort(
-      int page, int size, String keyword, String sort) async {
+  Future<DataResponse<PageProductResponse>> searchPageProductBySort(int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(

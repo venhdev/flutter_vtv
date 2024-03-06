@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../components/search_bar_component.dart';
 import '../components/search_products.dart';
 
 class SearchProductsPage extends StatelessWidget {
   static const String routeName = 'search';
+  static const String route = '/home/$routeName';
 
   final String? keywords;
 
@@ -21,15 +21,11 @@ class SearchProductsPage extends StatelessWidget {
         actions: [
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.65,
-            child: SearchBarComponent(controller: searchController, keywords: keywords),
+            child: SearchBarComponent(keywords: keywords),
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          SearchProducts(keywords: keywords),
-        ],
-      ),
+      body: SearchProducts(keywords: keywords),
     );
   }
 }

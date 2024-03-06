@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../domain/entities/product_entity.dart';
+import '../pages/product_detail_page.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({super.key, required this.product});
@@ -14,7 +14,12 @@ class ProductItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          context.go('/home/product-detail', extra: product);
+          // context.go('/home/product-detail', extra: product);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ProductDetailPage(product: product),
+            ),
+          );
         },
         child: Column(
           children: [
