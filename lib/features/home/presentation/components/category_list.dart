@@ -13,21 +13,24 @@ class Category extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Danh mục',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Danh mục',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Xem thêm'),
-            ),
-          ],
+              TextButton(
+                onPressed: null,
+                child: Text('Xem thêm'),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 8),
         FutureBuilder(

@@ -37,7 +37,7 @@ class CategoryDataSourceImpl implements CategoryDataSource {
         message: decodedBody['message'],
       );
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
         url: kAPIAuthLoginURL,

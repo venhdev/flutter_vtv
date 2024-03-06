@@ -81,9 +81,9 @@ class AuthDataSourceImpl implements AuthDataSource {
       );
       return result;
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
-        message: jsonDecode(utf8BodyMap)['message'],
+        message: decodedBody['message'],
         url: kAPIAuthLoginURL,
       );
     }
@@ -124,7 +124,7 @@ class AuthDataSourceImpl implements AuthDataSource {
         message: decodedBody['message'],
       );
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
         url: kAPIAuthRegisterURL,
@@ -224,7 +224,7 @@ class AuthDataSourceImpl implements AuthDataSource {
       );
       return result;
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
         url: kAPIAuthLoginURL,
@@ -255,9 +255,9 @@ class AuthDataSourceImpl implements AuthDataSource {
       );
       return result;
     } else {
-      throwException(
+      throwResponseException(
         code: response.statusCode,
-        message: jsonDecode(utf8BodyMap)['message'],
+        message: decodedBody['message'],
         url: kAPICustomerProfileURL,
       );
     }

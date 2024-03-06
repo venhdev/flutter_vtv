@@ -41,21 +41,24 @@ class HomePage extends StatelessWidget {
           // Category
           const Category(),
           // Product
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Danh sách sản phẩm',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Danh sách sản phẩm',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              TextButton(
-                onPressed: null,
-                child: Text('Xem thêm'),
-              ),
-            ],
+                TextButton(
+                  onPressed: null,
+                  child: Text('Xem thêm'),
+                ),
+              ],
+            ),
           ),
           ProductListBuilder(
             future: sl<ProductRepository>().getSuggestionProductsRandomly(1, 10),
