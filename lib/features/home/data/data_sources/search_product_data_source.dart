@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:flutter_vtv/features/search/domain/response/page_product_response.dart';
 import 'package:http/http.dart' as http show Client;
 import '../../../../core/network/base_response.dart';
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
+import '../../domain/dto/product_dto.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<PageProductResponse>> searchPageProductBySort(int page, int size, String keyword, String sort);
+  Future<DataResponse<ProductDTO>> searchPageProductBySort(int page, int size, String keyword, String sort);
 
-  Future<DataResponse<PageProductResponse>> searchAndPriceRangePageProductBySort(
+  Future<DataResponse<ProductDTO>> searchAndPriceRangePageProductBySort(
       int page, int size, String keyword, String sort, int minPrice, int maxPrice);
 }
 
@@ -19,7 +19,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<PageProductResponse>> searchPageProductBySort(int page, int size, String keyword, String sort) async {
+  Future<DataResponse<ProductDTO>> searchPageProductBySort(int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(
@@ -40,8 +40,8 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = PageProductResponse.fromMap(decodedBody);
-      return DataResponse<PageProductResponse>(
+      final result = ProductDTO.fromMap(decodedBody);
+      return DataResponse<ProductDTO>(
         result,
         code: response.statusCode,
         message: decodedBody['message'],
@@ -49,14 +49,14 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     } else {
       throwException(
         code: response.statusCode,
-        message: jsonDecode(utf8BodyMap)['message'],
-        url: kAPIAuthLoginURL,
+        message: decodedBody['message'],
+        url: kAPIGetSearchProductURL,
       );
     }
   }
 
   @override
-  Future<DataResponse<PageProductResponse>> searchAndPriceRangePageProductBySort(
+  Future<DataResponse<ProductDTO>> searchAndPriceRangePageProductBySort(
       int page, int size, String keyword, String sort, int minPrice, int maxPrice) async {
     // send request
     final response = await _client.get(
@@ -80,8 +80,8 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = PageProductResponse.fromMap(decodedBody);
-      return DataResponse<PageProductResponse>(
+      final result = ProductDTO.fromMap(decodedBody);
+      return DataResponse<ProductDTO>(
         result,
         code: response.statusCode,
         message: decodedBody['message'],
@@ -89,8 +89,8 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     } else {
       throwException(
         code: response.statusCode,
-        message: jsonDecode(utf8BodyMap)['message'],
-        url: kAPIAuthLoginURL,
+        message: decodedBody['message'],
+        url: kAPIGetSearchPriceRangeProductURL,
       );
     }
   }

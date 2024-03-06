@@ -4,10 +4,16 @@ import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../domain/entities/product_entity.dart';
 
+//! this page should use to easily pop back to the previous screen
+/*
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => ProductDetailPage(product: product),
+    ),
+  );
+*/
 class ProductDetailPage extends StatelessWidget {
   const ProductDetailPage({super.key, required this.product});
-
-  static const routeName = 'product-detail';
 
   final ProductEntity product;
 

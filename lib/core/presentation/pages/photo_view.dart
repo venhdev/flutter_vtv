@@ -18,6 +18,8 @@ class PhotoViewPage extends StatelessWidget {
             child: PhotoView(
               backgroundDecoration: const BoxDecoration(color: Colors.black),
               imageProvider: NetworkImage(imageUrl),
+              maxScale: PhotoViewComputedScale.covered * 2.5,
+              minScale: PhotoViewComputedScale.contained * 0.8,
             ),
           ),
           Positioned(
