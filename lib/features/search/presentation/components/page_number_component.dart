@@ -6,11 +6,11 @@ class PageNumberComponent extends StatelessWidget {
   final Function(int) onPageChanged;
 
   const PageNumberComponent({
-    Key? key,
+    super.key,
     required this.currentPage,
     required this.totalPages,
     required this.onPageChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class PageNumberComponent extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         totalPages,
-            (index) => TextButton(
+        (index) => TextButton(
           onPressed: () {
             onPageChanged(index + 1); // Pages are usually 1-based
           },

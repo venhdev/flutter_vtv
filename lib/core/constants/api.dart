@@ -1,7 +1,11 @@
+part './apis/auth_api.dart';
+part './apis/customer_api.dart';
+part './apis/guest_api.dart';
+
 const int kPORT = 8585;
-const String kDOMAIN = '172.16.20.208';
-const String kAPIBaseURL = 'http://$kDOMAIN:$kPORT/api';
-// const String kAPIBaseURL = 'https://$kDOMAIN/api';
+// const String kDOMAIN = '172.16.20.208';
+String devDOMAIN = '192.168.1.11'; // NOTE: For development purposes
+// const String kAPIBaseURL = 'http://$kDOMAIN:$kPORT/api';
 
 // Http Headers
 Map<String, String> baseHttpHeaders({
@@ -22,20 +26,8 @@ Uri baseUri({
 }) =>
     Uri(
       scheme: 'http',
-      host: kDOMAIN,
+      host: devDOMAIN, // change to kDOMAIN for production
       port: kPORT,
       path: '/api$path',
       queryParameters: queryParameters,
     );
-
-//! Auth
-const String kAPIAuthLoginURL = '/auth/login';
-const String kAPIAuthRefreshTokenURL = '/auth/refresh-token';
-const String kAPIAuthLogoutURL = '/auth/logout';
-const String kAPIAuthRegisterURL = '/auth/register';
-
-//! customer-controller
-const String kAPICustomerForgotPasswordURL = '/customer/forgot-password';
-const String kAPICustomerResetPasswordURL = '/customer/reset-password';
-const String kAPICustomerChangePasswordURL = '/customer/change-password';
-const String kAPICustomerProfileURL = '/customer/profile'; // GET, PUT

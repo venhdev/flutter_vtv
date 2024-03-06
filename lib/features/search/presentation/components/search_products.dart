@@ -12,7 +12,7 @@ class SearchProducts extends StatefulWidget {
   const SearchProducts({super.key, required this.keywords});
 
   @override
-  _SearchProductsState createState() => _SearchProductsState();
+  State<SearchProducts> createState() => _SearchProductsState();
 }
 
 class _SearchProductsState extends State<SearchProducts> {
@@ -27,8 +27,8 @@ class _SearchProductsState extends State<SearchProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 2),
 
