@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/presentation/components/cached_image.dart';
+
 class CategoryItem extends StatelessWidget {
   const CategoryItem({super.key, required this.title, required this.image});
 
@@ -13,7 +15,7 @@ class CategoryItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            child: Image.network(
+            child: ImageCacheable(
               image,
               height: 70,
               fit: BoxFit.fitHeight,

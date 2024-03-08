@@ -27,7 +27,7 @@ class ProductListBuilder extends StatelessWidget {
   // for showing page number component at the bottom
   final bool showPageNumber;
   final int? currentPage;
-  final void Function(int)? onPageChanged;
+  final void Function(int page)? onPageChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class ProductListBuilder extends StatelessWidget {
         if (snapshot.hasData) {
           return snapshot.data!.fold(
             (errorResp) => Center(
-              child: Text('Error (only for dev): $errorResp', style: const TextStyle(color: Colors.red)),
+              child: Text('[ProductListBuilder] Error: $errorResp', style: const TextStyle(color: Colors.red)), // NOTE: debug
             ),
             (dataResp) => Builder(builder: (context) {
               if (dataResp.data.products.isEmpty) {

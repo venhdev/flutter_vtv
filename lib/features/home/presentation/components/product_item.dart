@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/helpers/helpers.dart';
+import '../../../../core/presentation/components/cached_image.dart';
 import '../../domain/entities/product_entity.dart';
 import '../pages/product_detail_page.dart';
 
@@ -24,7 +25,7 @@ class ProductItem extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Image.network(product.image),
+              child: ImageCacheable(product.image),
             ),
             Text(product.name),
             Text(formatCurrency(product.productVariant.first.price)),

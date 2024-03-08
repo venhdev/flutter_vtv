@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' show Response;
@@ -8,6 +9,8 @@ import '../error/exceptions.dart';
 import 'base_response.dart';
 
 SuccessResponse handleResponseNoData(Response response, String url) {
+  log('call API: $url');
+
   // decode response using utf8
   final utf8BodyMap = utf8.decode(response.bodyBytes);
   final decodedBody = jsonDecode(utf8BodyMap);
@@ -31,6 +34,7 @@ DataResponse<T> handleResponseWithData<T>(
   String url,
   T Function(Map<String, dynamic> jsonMap) fromMap,
 ) {
+  log('call API: $url');
   // decode response using utf8
   final utf8BodyMap = utf8.decode(response.bodyBytes);
   final decodedBodyMap = jsonDecode(utf8BodyMap);

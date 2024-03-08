@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:http/http.dart' as http show Client;
 
@@ -37,25 +35,31 @@ class ProductDataSourceImpl implements ProductDataSource {
       headers: baseHttpHeaders(),
     );
 
-    // decode response using utf8
-    final utf8BodyMap = utf8.decode(response.bodyBytes);
-    final decodedBody = jsonDecode(utf8BodyMap);
+    return handleResponseWithData<ProductDTO>(
+      response,
+      kAPIGetSuggestionProductURL,
+      (jsonMap) => ProductDTO.fromMap(jsonMap),
+    );
 
-    // handle response
-    if (response.statusCode == 200) {
-      final result = ProductDTO.fromMap(decodedBody);
-      return DataResponse<ProductDTO>(
-        result,
-        code: response.statusCode,
-        message: decodedBody['message'],
-      );
-    } else {
-      throwResponseException(
-        code: response.statusCode,
-        message: decodedBody['message'],
-        url: kAPIAuthLoginURL,
-      );
-    }
+    // // decode response using utf8
+    // final utf8BodyMap = utf8.decode(response.bodyBytes);
+    // final decodedBody = jsonDecode(utf8BodyMap);
+
+    // // handle response
+    // if (response.statusCode == 200) {
+    //   final result = ProductDTO.fromMap(decodedBody);
+    //   return DataResponse<ProductDTO>(
+    //     result,
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //   );
+    // } else {
+    //   throwResponseException(
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //     url: kAPIAuthLoginURL,
+    //   );
+    // }
   }
 
   @override

@@ -7,11 +7,13 @@ const String kAPIGetAllCategoryURL = '/category/all-parent'; // GET
 const String kAPIGetSuggestionProductURL = '/product-suggestion/get-page/randomly'; // GET
 
 //! search-product-controller
+// only keyword sort
 const String kAPIGetSearchProductURL = '/search/product/sort'; // GET
-
-//! search-price-range-product-controller
-const String kAPIGetSearchPriceRangeProductURL = '/search/product/price-range/sort'; // GET
+// keyword + price range + sort type
+const String kAPIGetSearchProductPriceRangeSortURL = '/search/product/price-range/sort'; // GET
 
 //! product-filter-controller
-const String kAPIGetProductFilterURL = '/product-filter'; // GET
-const String kAPIGetProductFilterPriceRangeURL = '/product-filter/price-range'; // GET
+//HOME --GET /api/product-filter/{filter} -> best seller, new, price asc, price desc
+// const String kAPIGetProductFilterURL = '/product-filter'; // GET
+// when user have range
+const String kAPIGetProductFilterPriceRangeURL = '/product-filter/price-range'; // GET 
