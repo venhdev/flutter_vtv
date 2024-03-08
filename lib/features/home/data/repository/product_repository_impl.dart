@@ -45,4 +45,11 @@ class ProductRepositoryImpl extends ProductRepository {
       ),
     );
   }
+  
+  @override
+  FRespData<ProductDTO> getProductFilter(int page, int size) async {
+    return handleDataResponseFromDataSource(
+      dataExecute: () => _productDataSource.getProductFilter(page, size),
+    );
+  }
 }

@@ -8,6 +8,8 @@ import '../../domain/dto/product_dto.dart';
 abstract class ProductDataSource {
   Future<DataResponse<ProductDTO>> getSuggestionProductsRandomly(int page, int size);
 
+  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size);
+
   Future<DataResponse<ProductDTO>> getProductFilterByPriceRange({
     required int page,
     required int size,
@@ -89,25 +91,25 @@ class ProductDataSourceImpl implements ProductDataSource {
       kAPIGetProductFilterPriceRangeURL,
       (jsonMap) => ProductDTO.fromMap(jsonMap),
     );
+  }
 
-    // // decode response using utf8
-    // final utf8BodyMap = utf8.decode(response.bodyBytes);
-    // final decodedBody = jsonDecode(utf8BodyMap);
+  @override
+  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size) async {
+    final response = await _client.get(
+      baseUri(
+        path: '$kAPIGetProductFilterURL/best-selling',
+        queryParameters: {
+          'page': page.toString(),
+          'size': size.toString(),
+        },
+      ),
+      headers: baseHttpHeaders(),
+    );
 
-    // // handle response
-    // if (response.statusCode == 200) {
-    //   final result = ProductDTO.fromMap(decodedBody);
-    //   return DataResponse<ProductDTO>(
-    //     result,
-    //     code: response.statusCode,
-    //     message: decodedBody['message'],
-    //   );
-    // } else {
-    //   throwException(
-    //     code: response.statusCode,
-    //     message: decodedBody['message'],
-    //     url: kAPIGetProductFilterPriceRangeURL,
-    //   );
-    // }
+    return handleResponseWithData<ProductDTO>(
+      response,
+      kAPIGetProductFilterURL,
+      (jsonMap) => ProductDTO.fromMap(jsonMap),
+    );
   }
 }

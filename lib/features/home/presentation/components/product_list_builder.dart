@@ -68,7 +68,7 @@ class ProductListBuilder extends StatelessWidget {
 
                   // Show page number component at the bottom
                   if (showPageNumber) ...[
-                    PageNumberComponent(
+                    PageNumber(
                       currentPage: currentPage ?? 1,
                       totalPages: dataResp.data.totalPage,
                       onPageChanged: (page) {

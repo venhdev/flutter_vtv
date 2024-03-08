@@ -14,6 +14,6 @@ const String kAPIGetSearchProductPriceRangeSortURL = '/search/product/price-rang
 
 //! product-filter-controller
 //HOME --GET /api/product-filter/{filter} -> best seller, new, price asc, price desc
-// const String kAPIGetProductFilterURL = '/product-filter'; // GET
+const String kAPIGetProductFilterURL = '/product-filter'; // GET /{filter}
 // when user have range
-const String kAPIGetProductFilterPriceRangeURL = '/product-filter/price-range'; // GET 
+const String kAPIGetProductFilterPriceRangeURL = '/product-filter/price-range'; // GET /{filter}
