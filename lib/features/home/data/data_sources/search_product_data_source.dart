@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http show Client;
 import '../../../../core/network/base_response.dart';
 import '../../../../core/constants/api.dart';
@@ -34,25 +32,31 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
       headers: baseHttpHeaders(),
     );
 
-    // decode response using utf8
-    final utf8BodyMap = utf8.decode(response.bodyBytes);
-    final decodedBody = jsonDecode(utf8BodyMap);
+    return handleResponseWithData(
+      response,
+      kAPIGetSearchProductURL,
+      (jsonMap) => ProductDTO.fromMap(jsonMap),
+    );
 
-    // handle response
-    if (response.statusCode == 200) {
-      final result = ProductDTO.fromMap(decodedBody);
-      return DataResponse<ProductDTO>(
-        result,
-        code: response.statusCode,
-        message: decodedBody['message'],
-      );
-    } else {
-      throwResponseException(
-        code: response.statusCode,
-        message: decodedBody['message'],
-        url: kAPIGetSearchProductURL,
-      );
-    }
+    // // decode response using utf8
+    // final utf8BodyMap = utf8.decode(response.bodyBytes);
+    // final decodedBody = jsonDecode(utf8BodyMap);
+
+    // // handle response
+    // if (response.statusCode == 200) {
+    //   final result = ProductDTO.fromMap(decodedBody);
+    //   return DataResponse<ProductDTO>(
+    //     result,
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //   );
+    // } else {
+    //   throwResponseException(
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //     url: kAPIGetSearchProductURL,
+    //   );
+    // }
   }
 
   @override
@@ -61,7 +65,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     // send request
     final response = await _client.get(
       baseUri(
-        path: kAPIGetSearchPriceRangeProductURL,
+        path: kAPIGetSearchProductPriceRangeSortURL,
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
@@ -74,24 +78,30 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
       headers: baseHttpHeaders(),
     );
 
-    // decode response using utf8
-    final utf8BodyMap = utf8.decode(response.bodyBytes);
-    final decodedBody = jsonDecode(utf8BodyMap);
+    return handleResponseWithData(
+      response,
+      kAPIGetSearchProductPriceRangeSortURL,
+      (jsonMap) => ProductDTO.fromMap(jsonMap),
+    );
 
-    // handle response
-    if (response.statusCode == 200) {
-      final result = ProductDTO.fromMap(decodedBody);
-      return DataResponse<ProductDTO>(
-        result,
-        code: response.statusCode,
-        message: decodedBody['message'],
-      );
-    } else {
-      throwResponseException(
-        code: response.statusCode,
-        message: decodedBody['message'],
-        url: kAPIGetSearchPriceRangeProductURL,
-      );
-    }
+    // // decode response using utf8
+    // final utf8BodyMap = utf8.decode(response.bodyBytes);
+    // final decodedBody = jsonDecode(utf8BodyMap);
+
+    // // handle response
+    // if (response.statusCode == 200) {
+    //   final result = ProductDTO.fromMap(decodedBody);
+    //   return DataResponse<ProductDTO>(
+    //     result,
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //   );
+    // } else {
+    //   throwResponseException(
+    //     code: response.statusCode,
+    //     message: decodedBody['message'],
+    //     url: kAPIGetSearchProductPriceRangeSortURL,
+    //   );
+    // }
   }
 }

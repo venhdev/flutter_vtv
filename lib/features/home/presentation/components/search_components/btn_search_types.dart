@@ -1,27 +1,37 @@
-
 import 'package:flutter/material.dart';
 
-class SortTypesComponent extends StatefulWidget {
-  final Function(String) onSortChanged;
+class BtnSortTypes extends StatefulWidget {
+  const BtnSortTypes({
+    super.key,
+    required this.onSortChanged,
+    this.initValue,
+  });
 
-  const SortTypesComponent({super.key, required this.onSortChanged});
+  final Function(String) onSortChanged;
+  final String? initValue;
 
   @override
-  State<SortTypesComponent> createState() => _SortTypesComponentState();
+  State<BtnSortTypes> createState() => _BtnSortTypesState();
 }
 
-class _SortTypesComponentState extends State<SortTypesComponent> {
-  String selectedSortType = 'newest'; // Default sort type
+class _BtnSortTypesState extends State<BtnSortTypes> {
+  late String _selectedSortType; // Default sort type
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedSortType = widget.initValue ?? 'newest';
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      value: selectedSortType,
+      value: _selectedSortType,
       onChanged: (String? newValue) {
         setState(() {
-          selectedSortType = newValue!;
+          _selectedSortType = newValue!;
         });
-        widget.onSortChanged(selectedSortType);
+        widget.onSortChanged(_selectedSortType);
       },
       items: const [
         DropdownMenuItem(
