@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PageNumberComponent extends StatelessWidget {
+class PageNumber extends StatelessWidget {
   final int currentPage;
   final int totalPages;
   final void Function(int) onPageChanged;
 
-  const PageNumberComponent({
+  const PageNumber({
     super.key,
     required this.currentPage,
     required this.totalPages,
