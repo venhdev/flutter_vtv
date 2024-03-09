@@ -6,7 +6,7 @@ import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../components/product_list_builder.dart';
-import '../components/search_bar_component.dart';
+import '../components/search_components/search_bar.dart';
 import '../components/search_components/bottom_sheet_filter.dart';
 
 class SearchProductsPage extends StatefulWidget {

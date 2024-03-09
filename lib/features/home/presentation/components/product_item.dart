@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/cached_image.dart';
+import '../../../../core/presentation/components/image_cacheable.dart';
 import '../../domain/entities/product_entity.dart';
 import '../pages/product_detail_page.dart';
 
@@ -28,7 +28,11 @@ class ProductItem extends StatelessWidget {
               child: ImageCacheable(product.image),
             ),
             Text(product.name),
-            Text(formatCurrency(product.productVariant.first.price)),
+            Text(
+              product.cheapestPrice != product.mostExpensivePrice
+                  ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
+                  : formatCurrency(product.cheapestPrice),
+            ),
           ],
         ),
       ),
