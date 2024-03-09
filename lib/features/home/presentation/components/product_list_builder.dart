@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/typedef.dart';
 import '../../domain/dto/product_dto.dart';
-import 'page_number_component.dart';
+import 'page_number.dart';
 import 'product_item.dart';
 
 class ProductListBuilder extends StatelessWidget {

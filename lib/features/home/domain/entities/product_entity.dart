@@ -112,4 +112,14 @@ class ProductEntity extends Equatable {
   }
 
   String toJson() => json.encode(toMap());
+
+  // get cheapest price of the product in the list of product variants
+  int get cheapestPrice {
+    return productVariant.map((e) => e.price).reduce((value, element) => value < element ? value : element);
+  }
+
+  // get the most expensive price of the product in the list of product variants
+  int get mostExpensivePrice {
+    return productVariant.map((e) => e.price).reduce((value, element) => value > element ? value : element);
+  }
 }

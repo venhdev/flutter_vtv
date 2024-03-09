@@ -68,7 +68,9 @@ class ProductDetailPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                formatCurrency(product.productVariant.first.price),
+                product.cheapestPrice != product.mostExpensivePrice
+                ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
+                : formatCurrency(product.cheapestPrice),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
