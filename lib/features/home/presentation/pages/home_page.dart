@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
             // Product list
             LazyProductListBuilder(
               scrollController: scrollController,
-              execute: (page) => sl<ProductRepository>().getSuggestionProductsRandomly(page, 5),
+              execute: (page) => sl<ProductRepository>().getSuggestionProductsRandomly(page, 4),
             ),
           ],
         ),

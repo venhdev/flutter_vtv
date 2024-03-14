@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/typedef.dart';
@@ -12,24 +10,11 @@ class LazyProductListBuilder extends StatefulWidget {
     super.key,
     required this.execute,
     required this.scrollController,
-    this.future,
     this.crossAxisCount = 2,
-    this.showPageNumber = false,
-    this.currentPage,
-    this.onPageChanged,
-    this.keywords,
-  })  : assert(crossAxisCount > 0),
-        assert(showPageNumber == false || (currentPage != null && onPageChanged != null));
+  }) : assert(crossAxisCount > 0);
 
-  final Future<RespData<ProductDTO>>? future;
   final Future<RespData<ProductDTO>> Function(int page) execute;
-  final String? keywords;
   final int crossAxisCount;
-
-  // for showing page number component at the bottom
-  final bool showPageNumber;
-  final int? currentPage;
-  final void Function(int page)? onPageChanged;
   final ScrollController scrollController;
 
   @override
@@ -48,7 +33,6 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
     _loadData(_currentPage);
     widget.scrollController.addListener(() {
       if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent && !_isLoading) {
-        log('Load more products in [LazyProductListBuilder]...');
         _loadData(_currentPage);
       }
     });
@@ -65,10 +49,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
       List<ProductEntity> data;
       final dataEither = await widget.execute(page);
       data = dataEither.fold(
-        (error) {
-          log('Error: ${error.toString()}');
-          return [];
-        },
+        (error) => [],
         (dataResp) {
           final newProducts = dataResp.data.products;
           _currentPage++;
@@ -85,14 +66,6 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    // return GridView.count(
-    //   controller: _scrollController,
-    //   crossAxisCount: widget.crossAxisCount,
-    //   shrinkWrap: true,
-    //   physics: const NeverScrollableScrollPhysics(),
-    //   children: _products.map((product) => ProductItem(product: product)).toList(),
-    // );
-
     return GridView.builder(
       // controller: _scrollController,
       physics: const NeverScrollableScrollPhysics(),
@@ -104,12 +77,6 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
       ),
       itemCount: _products.length + 1,
       itemBuilder: (context, index) {
-        // return Container(
-        //   color: Colors.red,
-        //   height: 100,
-        //   width: 100,
-        //   child: Text('Product $index'),
-        // );
         if (_products.isEmpty) {
           return const Text('Không tim thấy sản phẩm nào');
         } else if (index == _products.length) {
