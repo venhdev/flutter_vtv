@@ -6,7 +6,7 @@ import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/best_selling_product_list.dart';
 import '../components/category_list.dart';
-import '../components/product_list_builder.dart';
+import '../components/product_components/lazy_product_list_builder.dart';
 import '../components/search_components/search_bar.dart';
 import 'search_products_page.dart';
 
@@ -20,54 +20,49 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late int currentPage;
-
-  @override
-  void initState() {
-    super.initState();
-    currentPage = 1;
-  }
-
+  final ScrollController scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildHomePageAppBar(context),
-      body: ListView(
-        children: [
-          _buildBestSelling(),
-          // Category
-          const Category(),
-          // Product
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Danh sách sản phẩm',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: ListView(
+          controller: scrollController,
+          children: [
+            // Category
+            const Category(),
+            // Best selling
+            _buildBestSelling(),
+            // Product
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Danh sách sản phẩm',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: null,
-                  child: Text('Xem thêm'),
-                ),
-              ],
+                  TextButton(
+                    onPressed: null,
+                    child: Text('Xem thêm'),
+                  ),
+                ],
+              ),
             ),
-          ),
-          ProductListBuilder(
-            future: sl<ProductRepository>().getSuggestionProductsRandomly(currentPage, 20),
-            showPageNumber: true,
-            currentPage: currentPage,
-            onPageChanged: (page) {
-              setState(() {
-                currentPage = page;
-              });
-            },
-          ),
-        ],
+            // Product list
+            LazyProductListBuilder(
+              scrollController: scrollController,
+              execute: (page) => sl<ProductRepository>().getSuggestionProductsRandomly(page, 5),
+            ),
+          ],
+        ),
       ),
     );
   }

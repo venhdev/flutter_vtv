@@ -27,12 +27,23 @@ class ProductItem extends StatelessWidget {
             Expanded(
               child: ImageCacheable(product.image),
             ),
-            Text(product.name),
-            Text(
-              product.cheapestPrice != product.mostExpensivePrice
-                  ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
-                  : formatCurrency(product.cheapestPrice),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                '${product.name} ${product.name}${product.name}',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
             ),
+            // Text(
+            //   product.cheapestPrice != product.mostExpensivePrice
+            //       ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
+            //       : formatCurrency(product.cheapestPrice),
+            // ),
+            Text(formatCurrency(product.cheapestPrice)),
           ],
         ),
       ),
