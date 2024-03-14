@@ -4,7 +4,7 @@ import '../../../../core/constants/typedef.dart';
 import '../../domain/dto/product_dto.dart';
 import '../../domain/entities/product_entity.dart';
 import '../pages/product_detail_page.dart';
-import 'category_item.dart';
+import 'category_list.dart';
 
 class BestSellingProductList extends StatelessWidget {
   const BestSellingProductList({

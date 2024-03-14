@@ -8,8 +8,9 @@ class CategoryModel extends CategoryEntity {
     required super.name,
     required super.image,
     required super.description,
-    required super.adminOnly,
+    required super.child,
     required super.status,
+    super.parentId,
   });
 
   // toEntity
@@ -19,8 +20,9 @@ class CategoryModel extends CategoryEntity {
       name: name,
       image: image,
       description: description,
-      adminOnly: adminOnly,
+      child: child,
       status: status,
+      parentId: parentId,
     );
   }
 
@@ -31,21 +33,22 @@ class CategoryModel extends CategoryEntity {
       name: entity.name,
       image: entity.image,
       description: entity.description,
-      adminOnly: entity.adminOnly,
+      child: entity.child,
       status: entity.status,
+      parentId: entity.parentId,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'categoryId': categoryId,
-      'name': name,
-      'image': image,
-      'description': description,
-      'adminOnly': adminOnly,
-      'status': status,
-    };
-  }
+  // Map<String, dynamic> toMap() {
+  //   return <String, dynamic>{
+  //     'categoryId': categoryId,
+  //     'name': name,
+  //     'image': image,
+  //     'description': description,
+  //     'child': child,
+  //     'status': status,
+  //   };
+  // }
 
   factory CategoryModel.fromMap(Map<String, dynamic> map) {
     return CategoryModel(
@@ -53,8 +56,9 @@ class CategoryModel extends CategoryEntity {
       name: map['name'] as String,
       image: map['image'] as String,
       description: map['description'] as String,
-      adminOnly: map['adminOnly'] as bool,
+      child: map['child'] as bool,
       status: map['status'] as String,
+      parentId: map['parentId'] as String?,
     );
   }
 
