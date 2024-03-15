@@ -1,19 +1,22 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../../core/constants/typedef.dart';
 import '../../../domain/dto/product_dto.dart';
 import '../../../domain/entities/product_entity.dart';
-import '../product_item.dart';
+import 'product_item.dart';
 
 class LazyProductListBuilder extends StatefulWidget {
   const LazyProductListBuilder({
     super.key,
-    required this.execute,
+    required this.dataCallback,
     required this.scrollController,
     this.crossAxisCount = 2,
   }) : assert(crossAxisCount > 0);
 
-  final Future<RespData<ProductDTO>> Function(int page) execute;
+  final Future<RespData<ProductDTO>> Function(int page) dataCallback;
   final int crossAxisCount;
   final ScrollController scrollController;
 
@@ -28,6 +31,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
 
   @override
   void initState() {
+    log('[LazyProductListBuilder] initState');
     super.initState();
     _currentPage = 1;
     _loadData(_currentPage);
@@ -47,12 +51,15 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
       await Future.delayed(const Duration(milliseconds: 500));
 
       List<ProductEntity> data;
-      final dataEither = await widget.execute(page);
+      final dataEither = await widget.dataCallback(page);
       data = dataEither.fold(
-        (error) => [],
+        (error) {
+          Fluttertoast.showToast(msg: '${error.message}');
+          return [];
+        },
         (dataResp) {
           final newProducts = dataResp.data.products;
-          _currentPage++;
+          _currentPage++; // After loading data, increase the current page by 1
           return newProducts;
         },
       );
@@ -66,6 +73,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    log('[LazyProductListBuilder] build with ${_products.length} products');
     return GridView.builder(
       // controller: _scrollController,
       physics: const NeverScrollableScrollPhysics(),
@@ -78,7 +86,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
       itemCount: _products.length + 1,
       itemBuilder: (context, index) {
         if (_products.isEmpty) {
-          return const Text('Không tim thấy sản phẩm nào');
+          return const Center(child: CircularProgressIndicator());
         } else if (index == _products.length) {
           return Center(
             child: _isLoading ? const CircularProgressIndicator() : Container(),

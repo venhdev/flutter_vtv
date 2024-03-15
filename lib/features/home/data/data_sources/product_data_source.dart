@@ -8,7 +8,7 @@ import '../../domain/dto/product_dto.dart';
 abstract class ProductDataSource {
   Future<DataResponse<ProductDTO>> getSuggestionProductsRandomly(int page, int size);
 
-  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size);
+  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size, String sortType);
 
   Future<DataResponse<ProductDTO>> getProductFilterByPriceRange({
     required int page,
@@ -94,10 +94,10 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size) async {
+  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size, String sortType) async {
     final response = await _client.get(
       baseUri(
-        path: '$kAPIGetProductFilterURL/best-selling',
+        path: '$kAPIGetProductFilterURL/$sortType',
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
