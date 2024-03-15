@@ -28,6 +28,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
   late int _currentPage;
   bool _isLoading = false;
   final List<ProductEntity> _products = [];
+  String? _message;
 
   @override
   void initState() {
@@ -59,7 +60,11 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         },
         (dataResp) {
           final newProducts = dataResp.data.products;
-          _currentPage++; // After loading data, increase the current page by 1
+          if (newProducts.isEmpty) {
+            _message = 'Không còn sản phẩm nào';
+          } else {
+            _currentPage++; // After loading data, increase the current page by 1
+          }
           return newProducts;
         },
       );
@@ -89,7 +94,13 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
           return const Center(child: CircularProgressIndicator());
         } else if (index == _products.length) {
           return Center(
-            child: _isLoading ? const CircularProgressIndicator() : Container(),
+            child: _isLoading
+                ? const CircularProgressIndicator()
+                : _message == null
+                    ? Container()
+                    : Text(
+                        '$_message',
+                      ),
           );
         } else {
           return ProductItem(product: _products[index]);

@@ -69,10 +69,19 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.all(12),
+      height: MediaQuery.of(context).size.height * 0.8,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          const Text(
+            'Lọc',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const Divider(thickness: 0.5, color: Colors.grey),
           _filterByPrice(),
           _buildSortTypes(),
           _btnApplyCancel(context),
@@ -163,20 +172,92 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     );
   }
 
+  Widget _buildSuggestionFilterPrice() {
+    return Wrap(
+      spacing: 10,
+      children: [
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+          onPressed: () {
+            setState(() {
+              _currentRangeValues = const RangeValues(0, 100000);
+              if (!_filterPriceRange) {
+                _filterPriceRange = true;
+              }
+            });
+          },
+          child: const Text('Dưới 100.000'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+          onPressed: () {
+            setState(() {
+              _currentRangeValues = const RangeValues(0, 500000);
+              if (!_filterPriceRange) {
+                _filterPriceRange = true;
+              }
+            });
+          },
+          child: const Text('Dưới 500.000'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+          onPressed: () {
+            setState(() {
+              _currentRangeValues = const RangeValues(500000, 1000000);
+              if (!_filterPriceRange) {
+                _filterPriceRange = true;
+              }
+            });
+          },
+          child: const Text('500.000 - 1tr'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+          onPressed: () {
+            setState(() {
+              _currentRangeValues = const RangeValues(1000000, 2000000);
+              if (!_filterPriceRange) {
+                _filterPriceRange = true;
+              }
+            });
+          },
+          child: const Text('1tr - 2tr'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+          onPressed: () {
+            setState(() {
+              _currentRangeValues = const RangeValues(2000000, 5000000);
+              if (!_filterPriceRange) {
+                _filterPriceRange = true;
+              }
+            });
+          },
+          child: const Text('2tr - 5tr'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(backgroundColor: Colors.grey[300]),
+          onPressed: () {
+            setState(() {
+              _currentRangeValues = const RangeValues(5000000, 10000000);
+              if (!_filterPriceRange) {
+                _filterPriceRange = true;
+              }
+            });
+          },
+          child: const Text('Trên 5tr'),
+        ),
+      ],
+    );
+  }
+
   Column _filterByPrice() {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text(
-              'Hiện thị sản phẩm theo giá',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             Checkbox(
               value: _filterPriceRange,
               onChanged: (bool? value) {
@@ -185,8 +266,16 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                 });
               },
             ),
+            const Text(
+              'Hiện thị sản phẩm theo giá',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
+        _buildSuggestionFilterPrice(),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

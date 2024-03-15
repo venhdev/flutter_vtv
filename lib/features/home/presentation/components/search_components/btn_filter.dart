@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../../../../core/presentation/components/custom_buttons.dart';
@@ -12,10 +14,13 @@ class BtnFilter extends StatelessWidget {
     required this.maxPrice,
     required this.sortType,
     required this.onFilterChanged,
+    required this.filterPriceRange,
   });
 
   final BuildContext context;
   final bool isFiltering;
+  final bool filterPriceRange;
+
   final int minPrice;
   final int maxPrice;
   final String sortType;
@@ -36,15 +41,29 @@ class BtnFilter extends StatelessWidget {
   Future<void> handleBottomSheetFilter() async {
     final filterResult = await showModalBottomSheet<FilterParams>(
       context: context,
+      isDismissible: true,
+      isScrollControlled: true,
       builder: (context) => BottomSheetFilter(
         context: context,
         minPrice: minPrice,
         maxPrice: maxPrice,
         sortType: sortType,
+        filterPriceRange: filterPriceRange,
       ),
     );
 
+    log('filterResult: ${filterResult.toString()}');
     onFilterChanged(filterResult);
+    //   builder: (context) => DraggableScrollableSheet(
+    //     initialChildSize: 0.8,
+    //     builder: (context, scrollController) => BottomSheetFilter(
+    //       context: context,
+    //       minPrice: minPrice,
+    //       maxPrice: maxPrice,
+    //       sortType: sortType,
+    //     ),
+    //   ),
+    // );
   }
 }
 
@@ -62,4 +81,9 @@ class FilterParams {
   final int maxPrice;
   final String sortType;
   final bool filterPriceRange;
+
+  @override
+  String toString() {
+    return 'FilterParams(isFiltering: $isFiltering, minPrice: $minPrice, maxPrice: $maxPrice, sortType: $sortType, filterPriceRange: $filterPriceRange)';
+  }
 }
