@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/core/constants/enum.dart';
+import 'package:flutter_vtv/core/constants/typedef.dart';
+import 'package:flutter_vtv/features/home/domain/dto/product_dto.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../service_locator.dart';
-import '../../domain/repository/product_repository.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../components/product_components/product_list_builder.dart';
 import '../components/search_components/btn_filter.dart';
@@ -22,15 +24,19 @@ class SearchProductsPage extends StatefulWidget {
 
 class _SearchProductsPageState extends State<SearchProductsPage> {
   final TextEditingController searchController = TextEditingController();
+  final pageSize = 6;
 
   // search & filter & sort
   late String currentSearchText;
-  String currentSortType = 'newest'; // Default sort type
+  FilterParams currentFilter = FilterParams(
+    isFiltering: false,
+    minPrice: 0,
+    maxPrice: 10000000,
+    sortType: 'newest',
+    filterPriceRange: true,
+  );
+
   int currentPage = 1; // Track the current page
-  // filter
-  bool isFiltering = false;
-  int minPrice = 0;
-  int maxPrice = 10000000; // 10tr
 
   @override
   void initState() {
@@ -79,17 +85,15 @@ class _SearchProductsPageState extends State<SearchProductsPage> {
                   children: [
                     BtnFilter(
                       context,
-                      isFiltering: isFiltering,
-                      minPrice: minPrice,
-                      maxPrice: maxPrice,
-                      sortType: currentSortType,
+                      isFiltering: currentFilter.isFiltering,
+                      minPrice: currentFilter.minPrice,
+                      maxPrice: currentFilter.maxPrice,
+                      sortType: currentFilter.sortType,
+                      filterPriceRange: currentFilter.filterPriceRange,
                       onFilterChanged: (filterParams) {
                         if (filterParams != null) {
                           setState(() {
-                            isFiltering = filterParams.isFiltering;
-                            minPrice = filterParams.minPrice;
-                            maxPrice = filterParams.maxPrice;
-                            currentSortType = filterParams.sortType;
+                            currentFilter = filterParams;
                             currentPage = 1;
                           });
                         }
@@ -113,20 +117,7 @@ class _SearchProductsPageState extends State<SearchProductsPage> {
           ),
           const SizedBox(height: 8),
           ProductListBuilder(
-            future: isFiltering
-                ? sl<ProductRepository>().getProductFilterByPriceRange(
-                    currentPage,
-                    4,
-                    minPrice,
-                    maxPrice,
-                    currentSortType,
-                  )
-                : sl<SearchProductRepository>().searchPageProductBySort(
-                    currentPage,
-                    4,
-                    currentSearchText,
-                    currentSortType,
-                  ),
+            future: searchMethod(),
             keywords: currentSearchText,
             crossAxisCount: 2,
             showPageNumber: true,
@@ -140,5 +131,30 @@ class _SearchProductsPageState extends State<SearchProductsPage> {
         ],
       ),
     );
+  }
+
+  FRespData<ProductDTO> searchMethod() {
+    return currentFilter.isFiltering
+        ? currentFilter.filterPriceRange
+            ? sl<SearchProductRepository>().getSearchProductPriceRangeSort(
+                currentPage,
+                pageSize,
+                currentSearchText,
+                currentFilter.sortType,
+                currentFilter.minPrice,
+                currentFilter.maxPrice,
+              )
+            : sl<SearchProductRepository>().searchProductSort(
+                currentPage,
+                pageSize,
+                currentSearchText,
+                currentFilter.sortType,
+              )
+        : sl<SearchProductRepository>().searchProductSort(
+            currentPage,
+            pageSize,
+            currentSearchText,
+            SortTypes.random,
+          );
   }
 }

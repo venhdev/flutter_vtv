@@ -25,15 +25,17 @@ class _HomePageState extends State<HomePage> {
   final ScrollController scrollController = ScrollController();
   final _productPerPage = 4; // page size
 
-  // search & filter & sort
-  bool isFiltering = false;
-  String currentSortType = 'newest'; // Default sort type
-  int minPrice = 0;
-  int maxPrice = 10000000; // 10tr
+  // filter & sort
+  FilterParams currentFilter = FilterParams(
+    isFiltering: false,
+    filterPriceRange: true,
+    minPrice: 0,
+    maxPrice: 10000000,
+    sortType: 'newest',
+  );
 
   bool isRefreshing = false;
   bool isShowing = true;
-  bool filterPriceRange = false;
   int crossAxisCount = 2;
 
   Future<void> _refresh() async {
@@ -77,23 +79,23 @@ class _HomePageState extends State<HomePage> {
                       crossAxisCount: crossAxisCount,
                       scrollController: scrollController,
                       dataCallback: (page) async {
-                        if (isFiltering) {
-                          if (filterPriceRange) {
+                        if (currentFilter.isFiltering) {
+                          if (currentFilter.filterPriceRange) {
                             return sl<ProductRepository>().getProductFilterByPriceRange(
                               page,
                               _productPerPage,
-                              minPrice,
-                              maxPrice,
-                              currentSortType,
+                              currentFilter.minPrice,
+                              currentFilter.maxPrice,
+                              currentFilter.sortType,
                             );
                           } else {
-                            return sl<ProductRepository>().getProductFilter(page, _productPerPage, currentSortType);
+                            return sl<ProductRepository>().getProductFilter(page, _productPerPage, currentFilter.sortType);
                           }
                         }
                         return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
                       },
                     )
-                  : const Center(child: CircularProgressIndicator()),
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
@@ -114,19 +116,22 @@ class _HomePageState extends State<HomePage> {
         ),
         BtnFilter(
           context,
-          isFiltering: isFiltering,
-          minPrice: minPrice,
-          maxPrice: maxPrice,
-          sortType: currentSortType,
+          isFiltering: currentFilter.isFiltering,
+          minPrice: currentFilter.minPrice,
+          maxPrice: currentFilter.maxPrice,
+          sortType: currentFilter.sortType,
+          filterPriceRange: currentFilter.filterPriceRange,
           onFilterChanged: (filterParams) {
             if (filterParams != null) {
               setState(() {
                 isShowing = false;
-                isFiltering = filterParams.isFiltering;
-                minPrice = filterParams.minPrice;
-                maxPrice = filterParams.maxPrice;
-                currentSortType = filterParams.sortType;
-                filterPriceRange = filterParams.filterPriceRange;
+                currentFilter = filterParams;
+
+                // isFiltering = filterParams.isFiltering;
+                // minPrice = filterParams.minPrice;
+                // maxPrice = filterParams.maxPrice;
+                // currentSortType = filterParams.sortType;
+                // filterPriceRange = filterParams.filterPriceRange;
               });
             }
             // use [isSortTypeChanged] to completed remove [LazyProductListBuilder]

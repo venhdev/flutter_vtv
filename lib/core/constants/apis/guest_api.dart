@@ -8,7 +8,7 @@ const String kAPIGetSuggestionProductURL = '/product-suggestion/get-page/randoml
 
 //! search-product-controller
 // only keyword sort
-const String kAPIGetSearchProductURL = '/search/product/sort'; // GET
+const String kAPIGetSearchProductSortURL = '/search/product/sort'; // GET
 // keyword + price range + sort type
 const String kAPIGetSearchProductPriceRangeSortURL = '/search/product/price-range/sort'; // GET
 

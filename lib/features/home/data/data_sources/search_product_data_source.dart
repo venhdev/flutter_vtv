@@ -5,10 +5,16 @@ import '../../../../core/network/response_handler.dart';
 import '../../domain/dto/product_dto.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductDTO>> searchPageProductBySort(int page, int size, String keyword, String sort);
+  Future<DataResponse<ProductDTO>> searchProductSort(int page, int size, String keyword, String sort);
 
-  Future<DataResponse<ProductDTO>> searchAndPriceRangePageProductBySort(
-      int page, int size, String keyword, String sort, int minPrice, int maxPrice);
+  Future<DataResponse<ProductDTO>> searchProductPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+  );
 }
 
 class SearchProductDataSourceImpl implements SearchProductDataSource {
@@ -17,16 +23,16 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductDTO>> searchPageProductBySort(int page, int size, String keyword, String sort) async {
+  Future<DataResponse<ProductDTO>> searchProductSort(int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(
-        path: kAPIGetSearchProductURL,
+        path: kAPIGetSearchProductSortURL,
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
-          'search': keyword.toString(),
-          'sort': sort.toString(),
+          'search': keyword,
+          'sort': sort,
         },
       ),
       headers: baseHttpHeaders(),
@@ -34,7 +40,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
     return handleResponseWithData(
       response,
-      kAPIGetSearchProductURL,
+      kAPIGetSearchProductSortURL,
       (jsonMap) => ProductDTO.fromMap(jsonMap),
     );
 
@@ -60,8 +66,14 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDTO>> searchAndPriceRangePageProductBySort(
-      int page, int size, String keyword, String sort, int minPrice, int maxPrice) async {
+  Future<DataResponse<ProductDTO>> searchProductPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+  ) async {
     // send request
     final response = await _client.get(
       baseUri(
