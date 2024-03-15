@@ -23,7 +23,12 @@ class ImageCacheable extends StatelessWidget {
       borderRadius: borderRadius ?? BorderRadius.zero,
       child: CachedNetworkImage(
         imageUrl: imageUrl,
-        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+        // placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+          child: CircularProgressIndicator(
+            value: downloadProgress.progress,
+          ),
+        ),
         errorWidget: (context, url, error) => const Icon(Icons.error),
         height: height,
         width: width,

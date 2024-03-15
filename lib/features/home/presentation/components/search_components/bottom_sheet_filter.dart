@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/helpers/helpers.dart';
-import '../../pages/search_products_page.dart';
-import 'btn_search_types.dart';
+import 'btn_filter.dart';
+import 'btn_dropdown_sort_types.dart';
 
 class BottomSheetFilter extends StatefulWidget {
   /// default range is 0 - 10tr
@@ -15,6 +15,7 @@ class BottomSheetFilter extends StatefulWidget {
     this.minRange = 0,
     this.maxRange = 10000000, // 10tr
     this.divisions = 100,
+    this.filterPriceRange = true,
   });
   // required
   final BuildContext context;
@@ -26,6 +27,7 @@ class BottomSheetFilter extends StatefulWidget {
   final double minRange;
   final double maxRange;
   final int divisions;
+  final bool filterPriceRange;
 
   @override
   State<BottomSheetFilter> createState() => _BottomSheetFilterState();
@@ -36,6 +38,9 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
   late double _minRange;
   late double _maxRange;
   late String _sortType;
+
+  // optional
+  late bool _filterPriceRange;
 
   @override
   void initState() {
@@ -57,6 +62,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
       widget.maxPrice.toDouble(),
     );
 
+    _filterPriceRange = widget.filterPriceRange;
     _sortType = widget.sortType;
   }
 
@@ -65,18 +71,36 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _filterByPrice(),
-          BtnSortTypes(
-            initValue: _sortType,
-            onSortChanged: (sortType) {
-              // don't need setState because BtnSortTypes is a stateful widget itself
-              _sortType = sortType;
-            },
-          ),
+          _buildSortTypes(),
           _btnApplyCancel(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildSortTypes() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Sắp xếp theo',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        BtnDropdownSortTypes(
+          initValue: _sortType,
+          onSortChanged: (sortType) {
+            // don't need setState because BtnSortTypes is a stateful widget itself
+            _sortType = sortType;
+          },
+        ),
+      ],
     );
   }
 
@@ -96,6 +120,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                     minPrice: _currentRangeValues.start.round(),
                     maxPrice: _currentRangeValues.end.round(),
                     sortType: _sortType,
+                    filterPriceRange: _filterPriceRange,
                   ),
                 );
               },
@@ -119,6 +144,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                       minPrice: _currentRangeValues.start.round(),
                       maxPrice: _currentRangeValues.end.round(),
                       sortType: _sortType,
+                      filterPriceRange: _filterPriceRange,
                     ));
               },
               child: Container(
@@ -141,12 +167,25 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'Lọc theo giá',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Hiện thị sản phẩm theo giá',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Checkbox(
+              value: _filterPriceRange,
+              onChanged: (bool? value) {
+                setState(() {
+                  _filterPriceRange = value!;
+                });
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         Row(

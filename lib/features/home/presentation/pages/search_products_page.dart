@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/presentation/components/custom_buttons.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
 import '../../domain/repository/search_product_repository.dart';
-import '../components/product_list_builder.dart';
+import '../components/product_components/product_list_builder.dart';
+import '../components/search_components/btn_filter.dart';
 import '../components/search_components/search_bar.dart';
-import '../components/search_components/bottom_sheet_filter.dart';
 
 class SearchProductsPage extends StatefulWidget {
   static const String routeName = 'search';
@@ -78,7 +77,7 @@ class _SearchProductsPageState extends State<SearchProductsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    BtnFilterWithBottomSheet(
+                    BtnFilter(
                       context,
                       isFiltering: isFiltering,
                       minPrice: minPrice,
@@ -142,79 +141,4 @@ class _SearchProductsPageState extends State<SearchProductsPage> {
       ),
     );
   }
-}
-
-class BtnFilterWithBottomSheet extends StatelessWidget {
-  const BtnFilterWithBottomSheet(
-    this.context, {
-    super.key,
-    required this.isFiltering,
-    required this.minPrice,
-    required this.maxPrice,
-    required this.sortType,
-    required this.onFilterChanged,
-  });
-
-  final BuildContext context;
-  final bool isFiltering;
-  final int minPrice;
-  final int maxPrice;
-  final String sortType;
-
-  /// will be null if user cancels the filter by tapping outside the bottom sheet
-  final void Function(FilterParams?) onFilterChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconTextButton(
-      icon: Icons.filter_alt_outlined,
-      text: 'Lọc',
-      backgroundColor: isFiltering ? Colors.blue[300] : null,
-      onPressed: () async => await handleBottomSheetFilter(),
-    );
-  }
-
-  Future<void> handleBottomSheetFilter() async {
-    //{int min, int max}
-    final filterResult = await showModalBottomSheet<FilterParams>(
-      context: context,
-      builder: (context) => BottomSheetFilter(
-        context: context,
-        minPrice: minPrice,
-        maxPrice: maxPrice,
-        sortType: sortType,
-      ),
-    );
-
-    onFilterChanged(filterResult);
-
-    // if (filterResult != null) {
-    //   onFilterChanged(filterResult);
-    //   setState(() {
-    //     isFiltering = true;
-    //     minPrice = filterResult.min;
-    //     maxPrice = filterResult.max;
-    //     currentPage = 1;
-    //   });
-    // } else {
-    //   setState(() {
-    //     isFiltering = false;
-    //     currentPage = 1;
-    //   });
-    // }
-  }
-}
-
-class FilterParams {
-  FilterParams({
-    required this.isFiltering,
-    required this.minPrice,
-    required this.maxPrice,
-    required this.sortType,
-  });
-
-  final bool isFiltering;
-  final int minPrice;
-  final int maxPrice;
-  final String sortType;
 }
