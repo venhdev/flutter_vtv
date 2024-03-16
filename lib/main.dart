@@ -15,6 +15,7 @@ import 'core/constants/api.dart';
 import 'core/helpers/shared_preferences_helper.dart';
 import 'core/notification/local_notification_manager.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
+import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'service_locator.dart';
 
 void main() async {
@@ -49,6 +50,7 @@ void main() async {
         create: (context) => appState,
       ),
       BlocProvider(create: (context) => authCubit),
+      BlocProvider(create: (context) => sl<CartBloc>()..add(FetchCart())),
     ],
     child: const VTVApp(),
   ));

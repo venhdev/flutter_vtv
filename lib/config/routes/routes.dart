@@ -14,15 +14,12 @@ final _routes = <RouteBase>[
           final String keywords = state.extra as String;
           return SearchPage(keywords: keywords);
         },
-        // routes: [
-        //   GoRoute(
-        //     path: ProductDetailPage.routeName, // 'home/search/product-detail'
-        //     builder: (context, state) {
-        //       final product = state.extra as ProductEntity;
-        //       return ProductDetailPage(product: product);
-        //     },
-        //   ),
-        // ],
+      ),
+      GoRoute(
+        path: CartPage.routeName, // 'home/cart'
+        builder: (context, state) {
+          return const CartPage();
+        },
       ),
     ],
   ),

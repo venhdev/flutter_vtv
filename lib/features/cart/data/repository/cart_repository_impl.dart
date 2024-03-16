@@ -23,4 +23,18 @@ class CartRepositoryImpl extends CartRepository {
       noDataCallback: () => cartDataSource.addToCart(productVariantId, quantity),
     );
   }
+
+  @override
+  FResp deleteCart(String cartId) async {
+    return handleSuccessResponseFromDataSource(
+      noDataCallback: () => cartDataSource.deleteToCart(cartId),
+    );
+  }
+
+  @override
+  FResp deleteCartByShopId(String cartId) async {
+    return handleSuccessResponseFromDataSource(
+      noDataCallback: () => cartDataSource.deleteToCartByShopId(cartId),
+    );
+  }
 }

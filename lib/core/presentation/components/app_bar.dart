@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../features/cart/domain/repository/cart_repository.dart';
+import '../../../features/cart/presentation/bloc/cart_bloc.dart';
+import '../../../features/cart/presentation/screens/cart_screen.dart';
 import '../../../features/home/presentation/components/search_components/search_bar.dart';
 import '../../../features/home/presentation/pages/search_page.dart';
-import '../../../service_locator.dart';
 
 AppBar buildAppBar(
   BuildContext context, {
@@ -39,26 +40,8 @@ AppBar buildAppBar(
             },
           ),
         ),
-      // icon cart
-      Badge(
-        label: FutureBuilder(
-          future: sl<CartRepository>().getCarts(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data!.fold(
-                (error) => const Text('-'),
-                (data) => Text(data.data.count.toString()),
-              );
-            }
-            return const Text('-');
-          },
-        ),
-        backgroundColor: Colors.orange,
-        child: const IconButton.outlined(
-          onPressed: null,
-          icon: Icon(Icons.shopping_cart_outlined),
-        ),
-      ),
+      // icon cart badge
+      const CartBadge(),
 
       // icon chat
       const IconButton.outlined(
@@ -74,4 +57,29 @@ AppBar buildAppBar(
         ),
     ],
   );
+}
+
+class CartBadge extends StatelessWidget {
+  const CartBadge({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Badge(
+      label: BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+          if (state is CartLoaded) {
+            return Text(state.cart.count.toString());
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+      backgroundColor: Colors.orange,
+      child: IconButton.outlined(
+        onPressed: () => context.go(CartPage.route),
+        icon: const Icon(Icons.shopping_cart_outlined),
+      ),
+    );
+  }
 }

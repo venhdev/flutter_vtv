@@ -21,6 +21,7 @@ import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/cart/data/data_sources/cart_data_source.dart';
 import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
+import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
 import 'features/home/data/repository/category_repository_impl.dart';
 import 'features/home/data/repository/product_repository_impl.dart';
@@ -66,7 +67,6 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
 
-
   //! UseCase
   sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
   sl.registerLazySingleton<LogoutUC>(() => LogoutUC(sl()));
@@ -74,6 +74,7 @@ Future<void> initializeLocator() async {
 
   //! Bloc
   sl.registerFactory(() => AuthCubit(sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => CartBloc(sl()));
 }
 
 // <https://pub.dev/packages/get_it>
