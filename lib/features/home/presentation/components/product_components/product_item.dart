@@ -20,7 +20,7 @@ class ProductItem extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => ProductDetailPage(product: product),
             ),
-          );  
+          );
         },
         child: Column(
           children: [

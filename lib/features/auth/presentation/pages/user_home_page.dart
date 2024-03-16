@@ -6,8 +6,8 @@ import '../bloc/auth_cubit.dart';
 import '../components/logged_widget.dart';
 import '../components/not_logged_widget.dart';
 
-class UserHome extends StatelessWidget {
-  const UserHome({super.key});
+class UserHomePage extends StatelessWidget {
+  const UserHomePage({super.key});
 
   static const String routeName = 'user';
 

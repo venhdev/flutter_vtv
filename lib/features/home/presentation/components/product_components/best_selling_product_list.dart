@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/typedef.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
-import '../../../domain/dto/product_dto.dart';
+import '../../../domain/response/product_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';
 
@@ -12,7 +12,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
     required this.future,
   });
 
-  final FRespData<ProductDTO> Function() future;
+  final FRespData<ProductResp> Function() future;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        FutureBuilder<RespData<ProductDTO>>(
+        FutureBuilder<RespData<ProductResp>>(
           future: future(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {

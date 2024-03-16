@@ -111,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ],
                             ),
                           );
-                  
+
                           setState(() {
                             _gender = result as bool?;
                             if (_gender == null) {
@@ -138,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             firstDate: DateTime(1900),
                             lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
                           );
-                  
+
                           if (pickedDate != null) {
                             _dobController.text = convertDateTimeToString(pickedDate, pattern: 'dd/MM/yyyy');
                             _dob = pickedDate;

@@ -28,9 +28,9 @@ final _routes = <RouteBase>[
   ),
   // User Route
   GoRoute(
-    path: '/${UserHome.routeName}', // '/user'
+    path: '/${UserHomePage.routeName}', // '/user'
     builder: (BuildContext context, GoRouterState state) {
-      return const UserHome(); // contain login page
+      return const UserHomePage(); // contain login page
     },
     routes: [
       GoRoute(
