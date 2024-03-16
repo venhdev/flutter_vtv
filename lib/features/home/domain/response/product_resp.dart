@@ -5,14 +5,14 @@ import 'package:flutter/foundation.dart';
 
 import '../entities/product_entity.dart';
 
-class ProductDTO {
+class ProductResp {
   final int count;
   final int page;
   final int size;
   final int totalPage;
   List<ProductEntity> products;
 
-  ProductDTO({
+  ProductResp({
     required this.count,
     required this.page,
     required this.size,
@@ -20,14 +20,14 @@ class ProductDTO {
     required this.products,
   });
 
-  ProductDTO copyWith({
+  ProductResp copyWith({
     int? count,
     int? page,
     int? size,
     int? totalPage,
     List<ProductEntity>? products,
   }) {
-    return ProductDTO(
+    return ProductResp(
       count: count ?? this.count,
       page: page ?? this.page,
       size: size ?? this.size,
@@ -36,8 +36,8 @@ class ProductDTO {
     );
   }
 
-  factory ProductDTO.fromMap(Map<String, dynamic> map) {
-    return ProductDTO(
+  factory ProductResp.fromMap(Map<String, dynamic> map) {
+    return ProductResp(
       count: map['count'] as int,
       page: map['page'] as int,
       size: map['size'] as int,
@@ -46,10 +46,11 @@ class ProductDTO {
     );
   }
 
-  factory ProductDTO.fromJson(String source) => ProductDTO.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ProductResp.fromJson(String source) =>
+      ProductResp.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  bool operator ==(covariant ProductDTO other) {
+  bool operator ==(covariant ProductResp other) {
     if (identical(this, other)) return true;
 
     return other.count == count &&
@@ -61,7 +62,11 @@ class ProductDTO {
 
   @override
   int get hashCode {
-    return count.hashCode ^ page.hashCode ^ size.hashCode ^ totalPage.hashCode ^ products.hashCode;
+    return count.hashCode ^
+        page.hashCode ^
+        size.hashCode ^
+        totalPage.hashCode ^
+        products.hashCode;
   }
 
   @override

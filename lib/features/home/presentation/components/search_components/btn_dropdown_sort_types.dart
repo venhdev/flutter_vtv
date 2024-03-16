@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-class BtnSortTypes extends StatefulWidget {
-  const BtnSortTypes({
+import '../../../../../core/constants/enum.dart';
+
+class BtnDropdownSortTypes extends StatefulWidget {
+  const BtnDropdownSortTypes({
     super.key,
     required this.onSortChanged,
     this.initValue,
@@ -11,10 +13,10 @@ class BtnSortTypes extends StatefulWidget {
   final String? initValue;
 
   @override
-  State<BtnSortTypes> createState() => _BtnSortTypesState();
+  State<BtnDropdownSortTypes> createState() => _BtnDropdownSortTypesState();
 }
 
-class _BtnSortTypesState extends State<BtnSortTypes> {
+class _BtnDropdownSortTypesState extends State<BtnDropdownSortTypes> {
   late String _selectedSortType; // Default sort type
 
   @override
@@ -35,23 +37,23 @@ class _BtnSortTypesState extends State<BtnSortTypes> {
       },
       items: const [
         DropdownMenuItem(
-          value: 'newest',
+          value: SortTypes.newest,
           child: Text('Mới nhất'),
         ),
         DropdownMenuItem(
-          value: 'best-selling',
+          value: SortTypes.bestSelling,
           child: Text('Bán chạy'),
         ),
         DropdownMenuItem(
-          value: 'price-asc',
+          value: SortTypes.priceAsc,
           child: Text('Giá tăng dần'),
         ),
         DropdownMenuItem(
-          value: 'price-desc',
+          value: SortTypes.priceDesc,
           child: Text('Giá giảm dần'),
         ),
         DropdownMenuItem(
-          value: 'random',
+          value: SortTypes.random,
           child: Text('Ngẫu nhiên'),
         ),
       ],

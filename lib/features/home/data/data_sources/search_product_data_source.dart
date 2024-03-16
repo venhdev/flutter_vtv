@@ -2,13 +2,19 @@ import 'package:http/http.dart' as http show Client;
 import '../../../../core/network/base_response.dart';
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_dto.dart';
+import '../../domain/response/product_resp.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductDTO>> searchPageProductBySort(int page, int size, String keyword, String sort);
+  Future<DataResponse<ProductResp>> searchProductSort(int page, int size, String keyword, String sort);
 
-  Future<DataResponse<ProductDTO>> searchAndPriceRangePageProductBySort(
-      int page, int size, String keyword, String sort, int minPrice, int maxPrice);
+  Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+  );
 }
 
 class SearchProductDataSourceImpl implements SearchProductDataSource {
@@ -17,16 +23,16 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductDTO>> searchPageProductBySort(int page, int size, String keyword, String sort) async {
+  Future<DataResponse<ProductResp>> searchProductSort(int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(
-        path: kAPIGetSearchProductURL,
+        path: kAPISearchProductSortURL,
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
-          'search': keyword.toString(),
-          'sort': sort.toString(),
+          'search': keyword,
+          'sort': sort,
         },
       ),
       headers: baseHttpHeaders(),
@@ -34,8 +40,8 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
     return handleResponseWithData(
       response,
-      kAPIGetSearchProductURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      kAPISearchProductSortURL,
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8
@@ -60,8 +66,14 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDTO>> searchAndPriceRangePageProductBySort(
-      int page, int size, String keyword, String sort, int minPrice, int maxPrice) async {
+  Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+  ) async {
     // send request
     final response = await _client.get(
       baseUri(
@@ -81,7 +93,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     return handleResponseWithData(
       response,
       kAPIGetSearchProductPriceRangeSortURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/components/custom_dialogs.dart';
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../bloc/auth_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -94,7 +93,9 @@ class SettingsPage extends StatelessWidget {
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state.status == AuthStatus.authenticating) {
-            return loadingWidget;
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
           return const Text(
             'Đăng xuất',

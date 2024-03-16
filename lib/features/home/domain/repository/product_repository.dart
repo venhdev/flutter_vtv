@@ -1,12 +1,12 @@
 import '../../../../core/constants/typedef.dart';
-import '../dto/product_dto.dart';
+import '../response/product_resp.dart';
 
 abstract class ProductRepository {
-  FRespData<ProductDTO> getSuggestionProductsRandomly(int page, int size);
+  FRespData<ProductResp> getSuggestionProductsRandomly(int page, int size);
 
-  FRespData<ProductDTO> getProductFilter(int page, int size);
+  FRespData<ProductResp> getProductFilter(int page, int size, String sortType);
 
-  FRespData<ProductDTO> getProductFilterByPriceRange(
+  FRespData<ProductResp> getProductFilterByPriceRange(
     int page,
     int size,
     int minPrice,

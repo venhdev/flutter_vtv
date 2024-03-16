@@ -3,14 +3,14 @@ import 'package:http/http.dart' as http show Client;
 
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_dto.dart';
+import '../../domain/response/product_resp.dart';
 
 abstract class ProductDataSource {
-  Future<DataResponse<ProductDTO>> getSuggestionProductsRandomly(int page, int size);
+  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(int page, int size);
 
-  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size);
+  Future<DataResponse<ProductResp>> getProductFilter(int page, int size, String sortType);
 
-  Future<DataResponse<ProductDTO>> getProductFilterByPriceRange({
+  Future<DataResponse<ProductResp>> getProductFilterByPriceRange({
     required int page,
     required int size,
     required int minPrice,
@@ -24,11 +24,11 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   ProductDataSourceImpl(this._client);
   @override
-  Future<DataResponse<ProductDTO>> getSuggestionProductsRandomly(int page, int size) async {
+  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(int page, int size) async {
     // send request
     final response = await _client.get(
       baseUri(
-        path: kAPIGetSuggestionProductURL,
+        path: kAPISuggestionProductURL,
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
@@ -37,10 +37,10 @@ class ProductDataSourceImpl implements ProductDataSource {
       headers: baseHttpHeaders(),
     );
 
-    return handleResponseWithData<ProductDTO>(
+    return handleResponseWithData<ProductResp>(
       response,
-      kAPIGetSuggestionProductURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      kAPISuggestionProductURL,
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8
@@ -65,7 +65,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDTO>> getProductFilterByPriceRange({
+  Future<DataResponse<ProductResp>> getProductFilterByPriceRange({
     required int page,
     required int size,
     required int minPrice,
@@ -75,7 +75,7 @@ class ProductDataSourceImpl implements ProductDataSource {
     // send request
     final response = await _client.get(
       baseUri(
-        path: '$kAPIGetProductFilterPriceRangeURL/$filter',
+        path: '$kAPIProductFilterPriceRangeURL/$filter',
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
@@ -86,18 +86,18 @@ class ProductDataSourceImpl implements ProductDataSource {
       headers: baseHttpHeaders(),
     );
 
-    return handleResponseWithData<ProductDTO>(
+    return handleResponseWithData<ProductResp>(
       response,
-      kAPIGetProductFilterPriceRangeURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      kAPIProductFilterPriceRangeURL,
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
   }
 
   @override
-  Future<DataResponse<ProductDTO>> getProductFilter(int page, int size) async {
+  Future<DataResponse<ProductResp>> getProductFilter(int page, int size, String sortType) async {
     final response = await _client.get(
       baseUri(
-        path: '$kAPIGetProductFilterURL/best-selling',
+        path: '$kAPIProductFilterURL/$sortType',
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
@@ -106,10 +106,10 @@ class ProductDataSourceImpl implements ProductDataSource {
       headers: baseHttpHeaders(),
     );
 
-    return handleResponseWithData<ProductDTO>(
+    return handleResponseWithData<ProductResp>(
       response,
-      kAPIGetProductFilterURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      kAPIProductFilterURL,
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
   }
 }

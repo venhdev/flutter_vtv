@@ -1,12 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class AttributeEntity {
+import 'package:equatable/equatable.dart';
+
+class AttributeEntity extends Equatable {
   final int attributeId;
   final String name;
   final String value;
   final bool active;
   final int shopId;
-  AttributeEntity({
+
+  const AttributeEntity({
     required this.attributeId,
     required this.name,
     required this.value,
@@ -52,7 +56,8 @@ class AttributeEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory AttributeEntity.fromJson(String source) => AttributeEntity.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AttributeEntity.fromJson(String source) =>
+      AttributeEntity.fromMap(json.decode(source) as Map<String, dynamic>);
 
   static List<AttributeEntity> fromList(List<dynamic> map) {
     return List<AttributeEntity>.from(
@@ -63,23 +68,16 @@ class AttributeEntity {
   }
 
   @override
-  String toString() {
-    return 'AttributeEntity(attributeId: $attributeId, name: $name, value: $value, active: $active, shopId: $shopId)';
+  List<Object> get props {
+    return [
+      attributeId,
+      name,
+      value,
+      active,
+      shopId,
+    ];
   }
 
   @override
-  bool operator ==(covariant AttributeEntity other) {
-    if (identical(this, other)) return true;
-
-    return other.attributeId == attributeId &&
-        other.name == name &&
-        other.value == value &&
-        other.active == active &&
-        other.shopId == shopId;
-  }
-
-  @override
-  int get hashCode {
-    return attributeId.hashCode ^ name.hashCode ^ value.hashCode ^ active.hashCode ^ shopId.hashCode;
-  }
+  bool get stringify => true;
 }

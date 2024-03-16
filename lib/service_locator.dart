@@ -18,6 +18,9 @@ import 'features/auth/domain/usecase/check_token.dart';
 import 'features/auth/domain/usecase/login_with_username_and_password.dart';
 import 'features/auth/domain/usecase/logout.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
+import 'features/cart/data/data_sources/cart_data_source.dart';
+import 'features/cart/data/repository/cart_repository_impl.dart';
+import 'features/cart/domain/repository/cart_repository.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
 import 'features/home/data/repository/category_repository_impl.dart';
 import 'features/home/data/repository/product_repository_impl.dart';
@@ -54,13 +57,15 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
   sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl()));
   sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
+  sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<CategoryRepository>(CategoryRepositoryImpl(sl()));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
-  
+  sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
+
 
   //! UseCase
   sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
