@@ -2,12 +2,12 @@ import 'package:http/http.dart' as http show Client;
 import '../../../../core/network/base_response.dart';
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_dto.dart';
+import '../../domain/response/product_resp.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductDTO>> searchProductSort(int page, int size, String keyword, String sort);
+  Future<DataResponse<ProductResp>> searchProductSort(int page, int size, String keyword, String sort);
 
-  Future<DataResponse<ProductDTO>> searchProductPriceRangeSort(
+  Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -23,11 +23,11 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductDTO>> searchProductSort(int page, int size, String keyword, String sort) async {
+  Future<DataResponse<ProductResp>> searchProductSort(int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(
-        path: kAPIGetSearchProductSortURL,
+        path: kAPISearchProductSortURL,
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
@@ -40,8 +40,8 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
     return handleResponseWithData(
       response,
-      kAPIGetSearchProductSortURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      kAPISearchProductSortURL,
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8
@@ -66,7 +66,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDTO>> searchProductPriceRangeSort(
+  Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -93,7 +93,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     return handleResponseWithData(
       response,
       kAPIGetSearchProductPriceRangeSortURL,
-      (jsonMap) => ProductDTO.fromMap(jsonMap),
+      (jsonMap) => ProductResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8

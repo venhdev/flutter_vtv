@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_dto.dart';
+import '../../../domain/response/product_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import 'product_item.dart';
 
@@ -16,7 +16,7 @@ class LazyProductListBuilder extends StatefulWidget {
     this.crossAxisCount = 2,
   }) : assert(crossAxisCount > 0);
 
-  final Future<RespData<ProductDTO>> Function(int page) dataCallback;
+  final Future<RespData<ProductResp>> Function(int page) dataCallback;
   final int crossAxisCount;
   final ScrollController scrollController;
 
@@ -37,7 +37,9 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
     _currentPage = 1;
     _loadData(_currentPage);
     widget.scrollController.addListener(() {
-      if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent && !_isLoading) {
+      if (widget.scrollController.position.pixels ==
+              widget.scrollController.position.maxScrollExtent &&
+          !_isLoading) {
         _loadData(_currentPage);
       }
     });

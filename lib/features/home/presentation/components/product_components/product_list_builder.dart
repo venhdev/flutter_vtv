@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_dto.dart';
+import '../../../domain/response/product_resp.dart';
 import 'page_number.dart';
 import 'product_item.dart';
 
@@ -20,7 +20,7 @@ class ProductListBuilder extends StatelessWidget {
   })  : assert(crossAxisCount > 0),
         assert(showPageNumber == false || (currentPage != null && onPageChanged != null));
 
-  final Future<RespData<ProductDTO>> future;
+  final Future<RespData<ProductResp>> future;
   final String? keywords; // for search page
   final int crossAxisCount;
 
@@ -31,7 +31,7 @@ class ProductListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<RespData<ProductDTO>>(
+    return FutureBuilder<RespData<ProductResp>>(
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {

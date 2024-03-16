@@ -15,7 +15,7 @@ class LoggedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false),
+      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
       body: Column(
         children: [
           InkWell(

@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/helpers/helpers.dart';
+import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
+import '../../../../service_locator.dart';
+import '../../../cart/domain/repository/cart_repository.dart';
 import '../../domain/entities/product_entity.dart';
 
 //! this page should use to easily pop back to the previous screen
@@ -20,10 +25,11 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.name),
-        backgroundColor: Colors.transparent,
-      ),
+      // appBar: AppBar(
+      //   title: Text(product.name),
+      //   backgroundColor: Colors.transparent,
+      // ),
+      appBar: buildAppBar(context, title: product.name, showSearchBar: false, automaticallyImplyLeading: true),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +75,8 @@ class ProductDetailPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 product.cheapestPrice != product.mostExpensivePrice
-                ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
-                : formatCurrency(product.cheapestPrice),
+                    ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
+                    : formatCurrency(product.cheapestPrice),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -93,19 +99,58 @@ class ProductDetailPage extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // button to add to cart (always align at bottom of the screen)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // add to cart
-                  },
-                  child: const Text('Add to cart'),
-                ),
-              ),
+            // list product variants
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: product.productVariant.length,
+              itemBuilder: (context, index) {
+                final variant = product.productVariant[index];
+                return ListTile(
+                  title: Text(variant.productName),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('productVariantId: ${variant.productVariantId}'),
+                      Text('sku: ${variant.sku}'),
+                      Text('quantity: ${variant.quantity}'),
+                      Text('originalPrice: ${variant.originalPrice}'),
+                      Text('attributes: ${variant.attributes.toString()}'),
+                      Text(formatCurrency(variant.price)),
+                    ],
+                  ),
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      variant.image.isNotEmpty ? variant.image : product.image,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () async {
+                      final resultEither = await sl<CartRepository>().addToCart(variant.productVariantId, 1);
+                      resultEither.fold(
+                        (l) => log('error: $l'),
+                        (r) => log('success: $r'),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
+
+            // button to add to cart (always align at bottom of the screen)
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(16),
+            //     child: ElevatedButton(
+            //       onPressed: () {
+            //         // add to cart
+            //       },
+            //       child: const Text('Add to cart'),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

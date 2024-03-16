@@ -25,4 +25,11 @@ typedef RespData<T> = Either<ErrorResponse, DataResponse<T>>;
 typedef FResp = Future<Resp>;
 
 /// [T] is data type in 'data' property
+/// 
+/// - Returns:
+///   + [ErrorResponse] will be returned when failure
+///   + [RespData] will be returned when success
+///
+/// 
+/// - Notes: [FResp] when response contains no data
 typedef FRespData<T> = Future<RespData<T>>;

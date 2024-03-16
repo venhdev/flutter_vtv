@@ -3,8 +3,7 @@ import '../../../../core/constants/typedef.dart';
 import '../entities/auth_entity.dart';
 import '../repositories/auth_repository.dart';
 
-class LoginWithUsernameAndPasswordUC
-    implements UseCaseHasParams<FRespData<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
+class LoginWithUsernameAndPasswordUC implements UseCaseHasParams<FRespData<AuthEntity>, LoginWithUsernameAndPasswordUCParams> {
   final AuthRepository _authRepository;
 
   LoginWithUsernameAndPasswordUC(this._authRepository);
@@ -20,7 +19,6 @@ class LoginWithUsernameAndPasswordUC
         await _authRepository.cacheAuth(ok.data),
       },
     );
-
 
     return resEither;
   }

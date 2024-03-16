@@ -1,7 +1,7 @@
 import 'package:flutter_vtv/core/constants/typedef.dart';
 
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_dto.dart';
+import '../../domain/response/product_resp.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../data_sources/search_product_data_source.dart';
 
@@ -11,7 +11,7 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
   final SearchProductDataSource _searchProductDataSource;
 
   @override
-  FRespData<ProductDTO> getSearchProductPriceRangeSort(
+  FRespData<ProductResp> getSearchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -20,7 +20,8 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
     int maxPrice,
   ) async {
     return handleDataResponseFromDataSource(
-      dataExecute: () async => _searchProductDataSource.searchProductPriceRangeSort(
+      dataCallback: () async =>
+          _searchProductDataSource.searchProductPriceRangeSort(
         page,
         size,
         keyword,
@@ -45,9 +46,11 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
   }
 
   @override
-  FRespData<ProductDTO> searchProductSort(int page, int size, String keyword, String sort) async {
+  FRespData<ProductResp> searchProductSort(
+      int page, int size, String keyword, String sort) async {
     return handleDataResponseFromDataSource(
-      dataExecute: () => _searchProductDataSource.searchProductSort(page, size, keyword, sort),
+      dataCallback: () =>
+          _searchProductDataSource.searchProductSort(page, size, keyword, sort),
     );
     // try {
     //   final result = await _searchProductDataSource.searchProductSort(page, size, keyword, sort);
