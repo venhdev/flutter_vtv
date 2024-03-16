@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
-import '../../../../service_locator.dart';
-import '../../../cart/domain/repository/cart_repository.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/entities/product_entity.dart';
 
 //! this page should use to easily pop back to the previous screen
@@ -127,11 +125,12 @@ class ProductDetailPage extends StatelessWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () async {
-                      final resultEither = await sl<CartRepository>().addToCart(variant.productVariantId, 1);
-                      resultEither.fold(
-                        (l) => log('error: $l'),
-                        (r) => log('success: $r'),
-                      );
+                      // final resultEither = await sl<CartRepository>().addToCart(variant.productVariantId, 1);
+                      // resultEither.fold(
+                      //   (l) => log('error: $l'),
+                      //   (r) => log('success: $r'),
+                      // );
+                      context.read<CartBloc>().add(AddToCart(variant.productVariantId, 1));
                     },
                   ),
                 );

@@ -37,9 +37,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
     _currentPage = 1;
     _loadData(_currentPage);
     widget.scrollController.addListener(() {
-      if (widget.scrollController.position.pixels ==
-              widget.scrollController.position.maxScrollExtent &&
-          !_isLoading) {
+      if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent && !_isLoading) {
         _loadData(_currentPage);
       }
     });
@@ -47,9 +45,11 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
 
   Future<void> _loadData(int page) async {
     if (!_isLoading) {
-      setState(() {
-        _isLoading = true;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
 
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -71,10 +71,12 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         },
       );
 
-      setState(() {
-        _products.addAll(data);
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _products.addAll(data);
+          _isLoading = false;
+        });
+      }
     }
   }
 

@@ -5,18 +5,18 @@ import 'package:equatable/equatable.dart';
 import 'cart_by_shop_dto.dart';
 
 class CartResp extends Equatable {
-  final String username;
+  // final String username;
   final int count;
   final List<CartByShopDTO> cartByShopDTOs;
 
   const CartResp({
-    required this.username,
+    // required this.username,
     required this.count,
     required this.cartByShopDTOs,
   });
 
   factory CartResp.fromMap(Map<String, dynamic> data) => CartResp(
-        username: data['username'] as String,
+        // username: data['username'] as String,
         count: data['count'] as int,
         cartByShopDTOs: (data['listCartByShopDTOs'] as List<dynamic>)
             .map(
@@ -49,7 +49,7 @@ class CartResp extends Equatable {
     List<CartByShopDTO>? cartByShopDTOs,
   }) {
     return CartResp(
-      username: username ?? this.username,
+      // username: username ?? this.username,
       count: count ?? this.count,
       cartByShopDTOs: cartByShopDTOs ?? this.cartByShopDTOs,
     );
@@ -61,7 +61,7 @@ class CartResp extends Equatable {
   @override
   List<Object?> get props {
     return [
-      username,
+      // username,
       count,
       cartByShopDTOs,
     ];

@@ -11,6 +11,8 @@ import '../../domain/response/cart_resp.dart';
 abstract class CartDataSource {
   Future<DataResponse<CartResp>> getCarts();
   Future<SuccessResponse> addToCart(int productVariantId, int quantity);
+  Future<SuccessResponse> deleteToCart(String cartId);
+  Future<SuccessResponse> deleteToCartByShopId(String shopId);
 }
 
 class CartDataSourceImpl extends CartDataSource {
@@ -40,7 +42,7 @@ class CartDataSourceImpl extends CartDataSource {
       'productVariantId': productVariantId.toString(),
       'quantity': quantity.toString(),
     };
-    
+
     final response = await _client.post(
       baseUri(path: kAPICartAddURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -50,6 +52,32 @@ class CartDataSourceImpl extends CartDataSource {
     return handleResponseNoData(
       response,
       kAPICartGetListURL,
+    );
+  }
+
+  @override
+  Future<SuccessResponse> deleteToCart(String cartId) async {
+    final response = await _client.delete(
+      baseUri(path: '$kAPICartDeleteURL/$cartId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseNoData(
+      response,
+      kAPICartDeleteURL,
+    );
+  }
+  
+  @override
+  Future<SuccessResponse> deleteToCartByShopId(String shopId) async{
+    final response = await _client.delete(
+      baseUri(path: '$kAPICartDeleteByShopIdURL/$shopId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseNoData(
+      response,
+      kAPICartDeleteByShopIdURL,
     );
   }
 }
