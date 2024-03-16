@@ -42,7 +42,7 @@ class ProductDetailPage extends StatelessWidget {
                 },
                 child: Image.network(
                   product.image,
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.4,
                   fit: BoxFit.fitWidth,
                 ),
               ),

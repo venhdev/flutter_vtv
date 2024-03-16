@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/features/home/presentation/components/search_components/btn_filter.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/best_selling_product_list.dart';
 import '../components/product_components/category_list.dart';
 import '../components/product_components/lazy_product_list_builder.dart';
-import '../components/search_components/search_bar.dart';
-import 'search_products_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,7 +55,7 @@ class _HomePageState extends State<HomePage> {
       );
     }
     return Scaffold(
-      appBar: _buildHomePageAppBar(context),
+      appBar: buildAppBar(context, clearOnSubmit: true),
       body: RefreshIndicator(
         onRefresh: () async {
           _refresh(); // Remove all widget and re-render due to call API
@@ -181,26 +178,4 @@ class _HomePageState extends State<HomePage> {
   //   //   ),
   //   // );
   // }
-
-  AppBar _buildHomePageAppBar(BuildContext context) {
-    return AppBar(
-      title: Text(
-        "VTV",
-        style: GoogleFonts.ribeye(
-          fontSize: 36,
-          fontWeight: FontWeight.w400,
-          color: Colors.black87,
-        ),
-      ),
-      actions: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          child: SearchBarComponent(
-            clearOnSubmit: true,
-            onSubmitted: (text) => context.go(SearchProductsPage.route, extra: text),
-          ),
-        ),
-      ],
-    );
-  }
 }
