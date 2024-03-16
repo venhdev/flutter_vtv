@@ -19,6 +19,7 @@ SuccessResponse handleResponseNoData(Response response, String url) {
     return SuccessResponse(
       code: response.statusCode,
       message: decodedBody['message'],
+      status: decodedBody['status'] ?? 'unknown status',
     );
   } else {
     throwResponseException(
@@ -79,10 +80,10 @@ Never throwResponseException({
 
 // handle data response from data source
 FRespData<T> handleDataResponseFromDataSource<T>({
-  required Future<DataResponse<T>> Function() dataExecute,
+  required Future<DataResponse<T>> Function() dataCallback,
 }) async {
   try {
-    return Right(await dataExecute());
+    return Right(await dataCallback());
   } on ClientException catch (e) {
     return Left(ClientError(code: e.code, message: e.message));
   } on ServerException catch (e) {
@@ -94,10 +95,11 @@ FRespData<T> handleDataResponseFromDataSource<T>({
 
 // handle success response from data source
 FResp handleSuccessResponseFromDataSource({
-  SuccessResponse? data,
+  // SuccessResponse? data,
+  required Future<SuccessResponse> Function() noDataCallback,
 }) async {
   try {
-    return Right(data!);
+    return Right(await noDataCallback());
   } on ClientException catch (e) {
     return Left(ClientError(code: e.code, message: e.message));
   } on ServerException catch (e) {

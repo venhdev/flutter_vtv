@@ -3,10 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-const loadingWidget = Center(
-  child: CircularProgressIndicator(),
-);
-
 class MessageScreen extends StatelessWidget {
   const MessageScreen({
     super.key,

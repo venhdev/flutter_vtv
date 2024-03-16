@@ -12,9 +12,9 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/pages/user_detail_page.dart';
-import '../../features/auth/presentation/pages/user_home.dart';
+import '../../features/auth/presentation/pages/user_home_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
-import '../../features/home/presentation/pages/search_products_page.dart';
+import '../../features/home/presentation/pages/search_page.dart';
 import 'extra_codec.dart';
 
 part 'routes.dart';

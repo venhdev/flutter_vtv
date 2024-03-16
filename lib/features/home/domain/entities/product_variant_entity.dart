@@ -72,7 +72,8 @@ class ProductVariantEntity extends Equatable {
       productId: map['productId'].toInt() as int,
       productName: map['productName'] as String,
       productImage: map['productImage'] as String,
-      attributes: AttributeEntity.fromList(map['attributeDTOs'] as List<dynamic>),
+      attributes:
+          AttributeEntity.fromList(map['attributeDTOs'] as List<dynamic>),
     );
   }
 

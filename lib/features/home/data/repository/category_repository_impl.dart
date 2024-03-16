@@ -22,7 +22,7 @@ class CategoryRepositoryImpl extends CategoryRepository {
     // }
 
     return await handleDataResponseFromDataSource(
-      dataExecute: () async => _categoryDataSource.getAllParentCategories(),
+      dataCallback: () async => _categoryDataSource.getAllParentCategories(),
     );
   }
 }

@@ -17,9 +17,6 @@ import 'core/notification/local_notification_manager.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'service_locator.dart';
 
-
-
-
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);

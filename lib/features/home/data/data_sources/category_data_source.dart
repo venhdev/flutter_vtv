@@ -18,13 +18,13 @@ class CategoryDataSourceImpl implements CategoryDataSource {
   Future<DataResponse<List<CategoryModel>>> getAllParentCategories() async {
     // send request
     final response = await _client.get(
-      baseUri(path: kAPIGetAllCategoryURL),
+      baseUri(path: kAPIAllCategoryURL),
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<List<CategoryModel>>(
       response,
-      kAPIGetAllCategoryURL,
+      kAPIAllCategoryURL,
       (jsonMap) => CategoryModel.fromMapToList(jsonMap),
     );
 

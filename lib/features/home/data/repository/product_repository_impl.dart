@@ -5,7 +5,7 @@ import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_dto.dart';
+import '../../domain/response/product_resp.dart';
 import '../../domain/repository/product_repository.dart';
 
 class ProductRepositoryImpl extends ProductRepository {
@@ -14,9 +14,11 @@ class ProductRepositoryImpl extends ProductRepository {
   final ProductDataSource _productDataSource;
 
   @override
-  FRespData<ProductDTO> getSuggestionProductsRandomly(int page, int size) async {
+  FRespData<ProductResp> getSuggestionProductsRandomly(
+      int page, int size) async {
     try {
-      final result = await _productDataSource.getSuggestionProductsRandomly(page, size);
+      final result =
+          await _productDataSource.getSuggestionProductsRandomly(page, size);
       return Right(result);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));
@@ -28,7 +30,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<ProductDTO> getProductFilterByPriceRange(
+  FRespData<ProductResp> getProductFilterByPriceRange(
     int page,
     int size,
     int minPrice,
@@ -36,7 +38,7 @@ class ProductRepositoryImpl extends ProductRepository {
     String filter,
   ) async {
     return await handleDataResponseFromDataSource(
-      dataExecute: () async => _productDataSource.getProductFilterByPriceRange(
+      dataCallback: () async => _productDataSource.getProductFilterByPriceRange(
         page: page,
         size: size,
         minPrice: minPrice,
@@ -45,11 +47,13 @@ class ProductRepositoryImpl extends ProductRepository {
       ),
     );
   }
-  
+
   @override
-  FRespData<ProductDTO> getProductFilter(int page, int size) async {
+  FRespData<ProductResp> getProductFilter(
+      int page, int size, String sortType) async {
     return handleDataResponseFromDataSource(
-      dataExecute: () => _productDataSource.getProductFilter(page, size),
+      dataCallback: () =>
+          _productDataSource.getProductFilter(page, size, sortType),
     );
   }
 }

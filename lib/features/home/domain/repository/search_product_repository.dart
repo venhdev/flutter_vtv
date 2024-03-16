@@ -1,18 +1,22 @@
 import '../../../../core/constants/typedef.dart';
-import '../dto/product_dto.dart';
+import '../response/product_resp.dart';
 
 abstract class SearchProductRepository {
+  /// Search keyword + sort + price range
+  FRespData<ProductResp> getSearchProductPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+  );
 
-  FRespData<ProductDTO> searchAndPriceRangePageProductBySort(
-      int page,
-      int size,
-      String keyword,
-      String sort,
-      int minPrice,
-      int maxPrice);
-
-  FRespData<ProductDTO> searchPageProductBySort(
-      int page, int size, String keyword, String sort);
-
-
+  /// Search keyword + sort (no price range)
+  FRespData<ProductResp> searchProductSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+  );
 }

@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - Register
 - Logout
 - Change Password, Forgot password
-- Show Category, Product
+- Show Category, Product(Lazy)
 - Search Product
 - Flash screen and icon launcher
 
