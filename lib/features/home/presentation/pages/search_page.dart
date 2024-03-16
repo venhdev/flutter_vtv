@@ -2,27 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/features/home/domain/dto/product_dto.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../components/product_components/product_list_builder.dart';
 import '../components/search_components/btn_filter.dart';
-import '../components/search_components/search_bar.dart';
 
-class SearchProductsPage extends StatefulWidget {
+class SearchPage extends StatefulWidget {
   static const String routeName = 'search';
   static const String route = '/home/$routeName';
 
   final String keywords;
 
-  const SearchProductsPage({super.key, required this.keywords});
+  const SearchPage({super.key, required this.keywords});
 
   @override
-  State<SearchProductsPage> createState() => _SearchProductsPageState();
+  State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchProductsPageState extends State<SearchProductsPage> {
+class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchController = TextEditingController();
   final pageSize = 6;
 
@@ -48,30 +47,40 @@ class _SearchProductsPageState extends State<SearchProductsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "VTV",
-          style: GoogleFonts.ribeye(
-            fontSize: 36,
-            fontWeight: FontWeight.w400,
-            color: Colors.black87,
-          ),
-        ),
-        actions: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: SearchBarComponent(
-              controller: searchController,
-              onSubmitted: (text) => {
-                // context.go(SearchProductsPage.route, extra: text),
-                setState(() {
-                  currentSearchText = text;
-                  currentPage = 1; // Reset to the first page when search text changes
-                }),
-              },
-            ),
-          ),
-        ],
+      // appBar: AppBar(
+      //   title: Text(
+      //     "VTV",
+      //     style: GoogleFonts.ribeye(
+      //       fontSize: 36,
+      //       fontWeight: FontWeight.w400,
+      //       color: Colors.black87,
+      //     ),
+      //   ),
+      //   actions: [
+      //     SizedBox(
+      //       width: MediaQuery.of(context).size.width * 0.7,
+      //       child: SearchBarComponent(
+      //         controller: searchController,
+      //         onSubmitted: (text) => {
+      //           // context.go(SearchProductsPage.route, extra: text),
+      //           setState(() {
+      //             currentSearchText = text;
+      //             currentPage = 1; // Reset to the first page when search text changes
+      //           }),
+      //         },
+      //       ),
+      //     ),
+      //   ],
+      // ),
+      appBar: buildAppBar(
+        context,
+        searchController: searchController,
+        onSubmittedCallback: (text) {
+          setState(() {
+            currentSearchText = text;
+            currentPage = 1; // Reset to the first page when search text changes
+          });
+        },
       ),
       body: ListView(
         children: [

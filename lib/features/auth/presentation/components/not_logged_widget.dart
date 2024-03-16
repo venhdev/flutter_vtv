@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import 'user_app_bar.dart';
+import '../../../../core/presentation/components/app_bar.dart';
 
 class NotLoggedWidget extends StatelessWidget {
   const NotLoggedWidget({
@@ -12,7 +12,7 @@ class NotLoggedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildUserAppBar(context),
+      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

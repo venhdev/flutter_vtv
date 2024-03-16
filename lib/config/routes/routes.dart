@@ -9,10 +9,10 @@ final _routes = <RouteBase>[
     },
     routes: [
       GoRoute(
-        path: SearchProductsPage.routeName, // 'home/search'
+        path: SearchPage.routeName, // 'home/search'
         builder: (context, state) {
           final String keywords = state.extra as String;
-          return SearchProductsPage(keywords: keywords);
+          return SearchPage(keywords: keywords);
         },
         // routes: [
         //   GoRoute(

@@ -21,7 +21,7 @@ class ProductListBuilder extends StatelessWidget {
         assert(showPageNumber == false || (currentPage != null && onPageChanged != null));
 
   final Future<RespData<ProductDTO>> future;
-  final String? keywords;
+  final String? keywords; // for search page
   final int crossAxisCount;
 
   // for showing page number component at the bottom
@@ -46,10 +46,10 @@ class ProductListBuilder extends StatelessWidget {
             ),
             (dataResp) => Builder(builder: (context) {
               if (dataResp.data.products.isEmpty) {
-                return Center(
+                return const Center(
                   child: Text(
-                    keywords == null ? 'Không tìm thấy sản phẩm nào' : 'Không tìm thấy sản phẩm nào cho từ khóa:  "$keywords"',
-                    style: const TextStyle(color: Colors.red),
+                    'Không tìm thấy sản phẩm phù hợp',
+                    style: TextStyle(color: Colors.red),
                   ),
                 );
               }
