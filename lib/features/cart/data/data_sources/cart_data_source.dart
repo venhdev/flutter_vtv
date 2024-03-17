@@ -11,6 +11,7 @@ import '../../domain/response/cart_resp.dart';
 abstract class CartDataSource {
   Future<DataResponse<CartResp>> getCarts();
   Future<SuccessResponse> addToCart(int productVariantId, int quantity);
+  Future<SuccessResponse> updateCart(int productVariantId, int quantity);
   Future<SuccessResponse> deleteToCart(String cartId);
   Future<SuccessResponse> deleteToCartByShopId(String shopId);
 }
@@ -78,6 +79,23 @@ class CartDataSourceImpl extends CartDataSource {
     return handleResponseNoData(
       response,
       kAPICartDeleteByShopIdURL,
+    );
+  }
+  
+  @override
+  Future<SuccessResponse> updateCart(int productVariantId, int quantity) async{
+    final response = await _client.put(
+      baseUri(path: kAPICartUpdateURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: jsonEncode({
+        'productVariantId': productVariantId,
+        'quantity': quantity,
+      }),
+    );
+
+    return handleResponseNoData(
+      response,
+      kAPICartUpdateURL,
     );
   }
 }

@@ -6,35 +6,42 @@ import 'package:flutter_vtv/features/cart/domain/response/cart_resp.dart';
 import '../data_sources/cart_data_source.dart';
 
 class CartRepositoryImpl extends CartRepository {
-  CartRepositoryImpl(this.cartDataSource);
+  CartRepositoryImpl(this._cartDataSource);
 
-  final CartDataSource cartDataSource;
+  final CartDataSource _cartDataSource;
 
   @override
   FRespData<CartResp> getCarts() async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => cartDataSource.getCarts(),
+      dataCallback: () => _cartDataSource.getCarts(),
     );
   }
 
   @override
   FResp addToCart(int productVariantId, int quantity) {
     return handleSuccessResponseFromDataSource(
-      noDataCallback: () => cartDataSource.addToCart(productVariantId, quantity),
+      noDataCallback: () => _cartDataSource.addToCart(productVariantId, quantity),
     );
   }
 
   @override
   FResp deleteCart(String cartId) async {
     return handleSuccessResponseFromDataSource(
-      noDataCallback: () => cartDataSource.deleteToCart(cartId),
+      noDataCallback: () => _cartDataSource.deleteToCart(cartId),
     );
   }
 
   @override
   FResp deleteCartByShopId(String cartId) async {
     return handleSuccessResponseFromDataSource(
-      noDataCallback: () => cartDataSource.deleteToCartByShopId(cartId),
+      noDataCallback: () => _cartDataSource.deleteToCartByShopId(cartId),
+    );
+  }
+
+  @override
+  FResp updateCart(int productVariantId, int quantity) async {
+    return handleSuccessResponseFromDataSource(
+      noDataCallback: () => _cartDataSource.updateCart(productVariantId, quantity),
     );
   }
 }

@@ -10,12 +10,14 @@ class IconTextButton extends StatelessWidget {
     required this.text,
     this.width,
     this.backgroundColor,
+    this.reverse = false,
   });
   final IconData icon;
   final String text;
   final double? width;
   final Color? backgroundColor;
   final void Function()? onPressed;
+  final bool reverse;
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +33,29 @@ class IconTextButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon),
-            const SizedBox(width: 4),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            if (reverse) ...[
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
+              const SizedBox(width: 4),
+              Icon(icon),
+            ] else ...[
+              Icon(icon),
+              const SizedBox(width: 4),
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ]
           ],
         ),
       ),
