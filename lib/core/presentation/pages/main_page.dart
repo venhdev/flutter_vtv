@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_state.dart';
+import '../../../features/cart/presentation/pages/cart_page.dart';
+import '../../../features/home/presentation/pages/product_detail_page.dart';
 import 'intro_page.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
@@ -66,26 +68,39 @@ class MainPage extends StatelessWidget {
                   },
                 )
               : null,
-          bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart),
-                tooltip: 'Trang chủ',
-                label: 'Trang chủ', // index => 0
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                tooltip: 'Tài khoản',
-                label: 'Tài khoản', // index => 1
-                backgroundColor: Colors.blue,
-              ),
-            ],
-            currentIndex: _calculateSelectedIndex(context),
-            onTap: (int idx) => _onItemTapped(idx, context),
-          ),
+          bottomNavigationBar: _shouldShowBottomNavigationBar(context)
+              ? BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.shopping_cart),
+                      tooltip: 'Trang chủ',
+                      label: 'Trang chủ', // index => 0
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      tooltip: 'Tài khoản',
+                      label: 'Tài khoản', // index => 1
+                      backgroundColor: Colors.blue,
+                    ),
+                  ],
+                  currentIndex: _calculateSelectedIndex(context),
+                  onTap: (int idx) => _onItemTapped(idx, context),
+                )
+              : null,
         );
       },
     );
+  }
+
+  bool _shouldShowBottomNavigationBar(BuildContext context) {
+    final String location = GoRouterState.of(context).uri.toString();
+    switch (location) {
+      case CartPage.route:
+      case ProductDetailPage.route:
+        return false;
+      default:
+        return true;
+    }
   }
 
   int _calculateSelectedIndex(BuildContext context) {
