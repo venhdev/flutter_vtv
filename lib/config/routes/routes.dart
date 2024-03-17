@@ -9,6 +9,13 @@ final _routes = <RouteBase>[
     },
     routes: [
       GoRoute(
+        path: ProductDetailPage.routeName, // 'home/product-detail'
+        builder: (context, state) {
+          final ProductEntity product = state.extra as ProductEntity;
+          return ProductDetailPage(product: product);
+        },
+      ),
+      GoRoute(
         path: SearchPage.routeName, // 'home/search'
         builder: (context, state) {
           final String keywords = state.extra as String;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/helpers/helpers.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
@@ -15,12 +16,7 @@ class ProductItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          //? allow user easily pop back to the previous screen
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ProductDetailPage(product: product),
-            ),
-          );
+          context.go(ProductDetailPage.route, extra: product);
         },
         child: Column(
           children: [

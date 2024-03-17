@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/typedef.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
@@ -51,11 +52,12 @@ class BestSellingProductListBuilder extends StatelessWidget {
                         image: product.image,
                         height: 90,
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetailPage(product: product),
-                            ),
-                          );
+                          // Navigator.of(context).push(
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ProductDetailPage(product: product),
+                          //   ),
+                          // );
+                          context.go(ProductDetailPage.route, extra: product);
                         },
                       );
                     },
