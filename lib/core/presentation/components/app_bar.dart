@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../features/auth/presentation/bloc/auth_cubit.dart';
 import '../../../features/cart/presentation/bloc/cart_bloc.dart';
 import '../../../features/cart/presentation/pages/cart_page.dart';
 import '../../../features/home/presentation/components/search_components/search_bar.dart';
@@ -40,7 +41,7 @@ AppBar buildAppBar(
             },
           ),
         ),
-      // icon cart badge
+      // icon cart badge (number of items in cart)
       const CartBadge(),
 
       // icon chat
@@ -67,12 +68,17 @@ class CartBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Badge(
-      label: BlocBuilder<CartBloc, CartState>(
+      label: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          if (state is CartLoaded) {
-            return Text(state.cart.count.toString());
-          }
-          return const SizedBox.shrink();
+          if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
+          return BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              if (state is CartLoaded) {
+                return Text(state.cart.count.toString());
+              }
+              return const SizedBox.shrink();
+            },
+          );
         },
       ),
       backgroundColor: Colors.orange,

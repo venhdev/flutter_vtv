@@ -16,6 +16,10 @@ class CartPage extends StatelessWidget {
       builder: (context, state) {
         if (state is CartLoaded) {
           return Scaffold(
+            bottomSheet: Container(
+              color: Colors.yellow,
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
             body: NestedScrollView(
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
@@ -26,23 +30,12 @@ class CartPage extends StatelessWidget {
                   ),
                 ];
               },
-              body: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: state.cart.cartByShopDTOs.length,
-                      itemBuilder: (context, shopIndex) {
-                        return CartsByShop(state.cart.cartByShopDTOs[shopIndex]);
-                      },
-                    ),
-                  ),
-                  // total price
-                  Container(
-                    color: Colors.yellow,
-                    height: MediaQuery.of(context).size.height * 0.1,
-                  ),
-                ],
+              body: ListView.builder(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1 + 12),
+                itemCount: state.cart.cartByShopDTOs.length,
+                itemBuilder: (context, shopIndex) {
+                  return CartsByShop(state.cart.cartByShopDTOs[shopIndex]);
+                },
               ),
             ),
           );

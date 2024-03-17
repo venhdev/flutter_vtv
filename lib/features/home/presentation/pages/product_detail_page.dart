@@ -6,6 +6,7 @@ import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/entities/product_entity.dart';
+import '../components/product_components/sheet_add_to_cart.dart';
 
 //! this page should use to easily pop back to the previous screen
 /*
@@ -20,13 +21,12 @@ class ProductDetailPage extends StatelessWidget {
 
   final ProductEntity product;
 
+  static const String routeName = 'product-detail';
+  static const String route = '/home/product-detail';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(product.name),
-      //   backgroundColor: Colors.transparent,
-      // ),
       appBar: buildAppBar(context, title: product.name, showSearchBar: false, automaticallyImplyLeading: true),
       body: SingleChildScrollView(
         child: Column(
@@ -95,6 +95,25 @@ class ProductDetailPage extends StatelessWidget {
               ),
             ),
 
+            // button to add to cart
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isDismissible: true,
+                    showDragHandle: true,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return BottomSheetAddToCart(product: product);
+                    },
+                  );
+                },
+                child: const Text('Add to cart'),
+              ),
+            ),
+
             const SizedBox(height: 32),
 
             // list product variants
@@ -114,7 +133,7 @@ class ProductDetailPage extends StatelessWidget {
                       Text('quantity: ${variant.quantity}'),
                       Text('originalPrice: ${variant.originalPrice}'),
                       Text('attributes: ${variant.attributes.toString()}'),
-                      Text(formatCurrency(variant.price)),
+                      Text('price: ${formatCurrency(variant.price)}'),
                     ],
                   ),
                   leading: CircleAvatar(
