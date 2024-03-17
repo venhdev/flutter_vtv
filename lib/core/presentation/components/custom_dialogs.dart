@@ -4,7 +4,7 @@ Future<T?> showMyDialogToConfirm<T>({
   required BuildContext context,
   required String title,
   required String content,
-  required VoidCallback? onConfirm,
+  VoidCallback? onConfirm,
 }) async {
   return await showDialog(
     context: context,
@@ -20,23 +20,26 @@ Future<T?> showMyDialogToConfirm<T>({
         ),
         content: Text(content),
         actions: [
-          ButtonBar(
-            alignment: MainAxisAlignment.spaceBetween, // Đặt căn chỉnh của nút
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text('Không', style: TextStyle(color: Colors.red)),
-              ),
-              TextButton(
-                onPressed: () async {
-                  onConfirm?.call();
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text('Có', style: TextStyle(color: Colors.green)),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ButtonBar(
+              alignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text('Không', style: TextStyle(color: Colors.red)),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    onConfirm?.call();
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Có', style: TextStyle(color: Colors.green)),
+                ),
+              ],
+            ),
           ),
         ],
       );

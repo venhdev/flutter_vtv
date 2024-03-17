@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../features/cart/presentation/bloc/cart_bloc.dart';
-import '../../../features/cart/presentation/screens/cart_screen.dart';
+import '../../../features/cart/presentation/pages/cart_page.dart';
 import '../../../features/home/presentation/components/search_components/search_bar.dart';
 import '../../../features/home/presentation/pages/search_page.dart';
 
