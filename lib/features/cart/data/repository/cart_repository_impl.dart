@@ -39,9 +39,9 @@ class CartRepositoryImpl extends CartRepository {
   }
 
   @override
-  FResp updateCart(int productVariantId, int quantity) async {
+  FResp updateCart(String cartId, int quantity) async {
     return handleSuccessResponseFromDataSource(
-      noDataCallback: () => _cartDataSource.updateCart(productVariantId, quantity),
+      noDataCallback: () => _cartDataSource.updateCart(cartId, quantity),
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/helpers/helpers.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../core/presentation/pages/photo_view.dart';
+import '../../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../../domain/entities/product_variant_entity.dart';
 
@@ -170,7 +171,7 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
             ),
             onPressed: () {
               if (_variant != null) {
-                Fluttertoast.showToast(msg: 'fake thêm vào giỏ hàng');
+                context.read<CartBloc>().add(AddToCart(_variant!.productVariantId, _quantity));
                 Navigator.pop(context);
               }
             },

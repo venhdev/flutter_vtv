@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/custom_dialogs.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../bloc/cart_bloc.dart';
 
@@ -73,14 +72,22 @@ class _CartItemState extends State<CartItem> {
                       IconButton(
                         icon: const Icon(Icons.remove),
                         onPressed: () {
-                          throw UnimplementedError();
+                          context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, -1));
+                          // sl<CartRepository>().updateCart(
+                          //   widget.cart.cartId,
+                          //   -1,
+                          // );
                         },
                       ),
                       Text(widget.cart.quantity.toString()),
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
-                          throw UnimplementedError();
+                          context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, 1));
+                          // sl<CartRepository>().updateCart(
+                          //   widget.cart.cartId,
+                          //   1,
+                          // );
                         },
                       ),
                     ],
@@ -121,14 +128,14 @@ class _CartItemState extends State<CartItem> {
           onPressed: (context) async {
             // show dialog to confirm delete
             // context.read<CartBloc>().add(DeleteCart(cartByShop.carts[cartIndex].cartId));
-            final isConfirm = await showMyDialogToConfirm(
-              context: context,
-              title: 'Xóa khỏi giỏ hàng',
-              content: 'Bạn có chắc chắn muốn xóa?',
-            );
-            if (isConfirm) {
-              _handleDeleteSingleCart(widget.cart.cartId);
-            }
+            // final isConfirm = await showMyDialogToConfirm(
+            //   context: context,
+            //   title: 'Xóa khỏi giỏ hàng',
+            //   content: 'Bạn có chắc chắn muốn xóa?',
+            // );
+            _handleDeleteSingleCart(widget.cart.cartId);
+            // if (isConfirm) {
+            // }
           },
           backgroundColor: const Color(0xFFFE4A49),
           foregroundColor: Colors.white,

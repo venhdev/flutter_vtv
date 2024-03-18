@@ -44,12 +44,6 @@ AppBar buildAppBar(
       // icon cart badge (number of items in cart)
       const CartBadge(),
 
-      // icon chat
-      const IconButton.outlined(
-        onPressed: null,
-        icon: Icon(Icons.chat_outlined),
-      ),
-
       // icon settings
       if (showSettingButton)
         IconButton.outlined(
@@ -67,25 +61,54 @@ class CartBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Badge(
-      label: BlocBuilder<AuthCubit, AuthState>(
-        builder: (context, state) {
-          if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
-          return BlocBuilder<CartBloc, CartState>(
-            builder: (context, state) {
-              if (state is CartLoaded) {
-                return Text(state.cart.count.toString());
-              }
-              return const SizedBox.shrink();
-            },
-          );
-        },
-      ),
-      backgroundColor: Colors.orange,
-      child: IconButton.outlined(
-        onPressed: () => context.go(CartPage.route),
-        icon: const Icon(Icons.shopping_cart_outlined),
-      ),
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
+        return Row(
+          children: [
+            BlocBuilder<CartBloc, CartState>(
+              builder: (context, state) {
+                if (state is CartLoaded) {
+                  return Badge(
+                    label: Text(state.cart.count.toString()),
+                    backgroundColor: Colors.orange,
+                    child: IconButton.outlined(
+                      onPressed: () => context.go(CartPage.route),
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            // icon chat
+            const IconButton.outlined(
+              onPressed: null,
+              icon: Icon(Icons.chat_outlined),
+            ),
+          ],
+        );
+      },
     );
   }
 }
+    // return Badge(
+    //   label: BlocBuilder<AuthCubit, AuthState>(
+    //     builder: (context, state) {
+    //       if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
+    //       return BlocBuilder<CartBloc, CartState>(
+    //         builder: (context, state) {
+    //           if (state is CartLoaded) {
+    //             return Text(state.cart.count.toString());
+    //           }
+    //           return const SizedBox.shrink();
+    //         },
+    //       );
+    //     },
+    //   ),
+    //   backgroundColor: Colors.orange,
+    //   child: IconButton.outlined(
+    //     onPressed: () => context.go(CartPage.route),
+    //     icon: const Icon(Icons.shopping_cart_outlined),
+    //   ),
+    // );

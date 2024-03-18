@@ -27,6 +27,20 @@ final _routes = <RouteBase>[
         builder: (context, state) {
           return const CartPage();
         },
+        routes: [
+          GoRoute(
+            path: AddressPage.routeName, // 'home/cart/address'
+            builder: (context, state) {
+              return const AddressPage();
+            },
+          ),
+          // GoRoute(
+          //   path: PaymentPage.routeName, // 'home/cart/payment'
+          //   builder: (context, state) {
+          //     return const PaymentPage();
+          //   },
+          // ),
+        ],
       ),
     ],
   ),

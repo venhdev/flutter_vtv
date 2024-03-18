@@ -11,7 +11,7 @@ import '../../domain/response/cart_resp.dart';
 abstract class CartDataSource {
   Future<DataResponse<CartResp>> getCarts();
   Future<SuccessResponse> addToCart(int productVariantId, int quantity);
-  Future<SuccessResponse> updateCart(int productVariantId, int quantity);
+  Future<SuccessResponse> updateCart(String cartId, int quantity);
   Future<SuccessResponse> deleteToCart(String cartId);
   Future<SuccessResponse> deleteToCartByShopId(String shopId);
 }
@@ -68,9 +68,9 @@ class CartDataSourceImpl extends CartDataSource {
       kAPICartDeleteURL,
     );
   }
-  
+
   @override
-  Future<SuccessResponse> deleteToCartByShopId(String shopId) async{
+  Future<SuccessResponse> deleteToCartByShopId(String shopId) async {
     final response = await _client.delete(
       baseUri(path: '$kAPICartDeleteByShopIdURL/$shopId'),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -81,16 +81,20 @@ class CartDataSourceImpl extends CartDataSource {
       kAPICartDeleteByShopIdURL,
     );
   }
-  
+
   @override
-  Future<SuccessResponse> updateCart(int productVariantId, int quantity) async{
+  Future<SuccessResponse> updateCart(String cartId, int quantity) async {
     final response = await _client.put(
-      baseUri(path: kAPICartUpdateURL),
+      baseUri(
+        path: '$kAPICartUpdateURL/$cartId',
+        queryParameters: {
+          'quantity': quantity.toString(),
+        },
+      ),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      body: jsonEncode({
-        'productVariantId': productVariantId,
-        'quantity': quantity,
-      }),
+      // body: jsonEncode({
+      //   'quantity': quantity,
+      // }),
     );
 
     return handleResponseNoData(
