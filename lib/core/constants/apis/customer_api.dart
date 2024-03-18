@@ -9,6 +9,6 @@ const String kAPICustomerProfileURL = '/customer/profile'; // GET, PUT
 //! cart-controller
 const String kAPICartGetListURL = '/customer/cart/get-list'; // GET
 const String kAPICartAddURL = '/customer/cart/add'; // POST
-const String kAPICartUpdateURL = '/customer/cart/update'; // PUT
+const String kAPICartUpdateURL = '/customer/cart/update'; // PUT /{'cartId'} --uuid
 const String kAPICartDeleteURL = '/customer/cart/delete'; // DELETE {:cartId} --uuid
 const String kAPICartDeleteByShopIdURL = '/customer/cart/delete-by-shop-id'; // DELETE {:shopId}

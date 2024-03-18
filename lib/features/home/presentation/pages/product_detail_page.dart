@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/entities/product_entity.dart';
 import '../components/product_components/sheet_add_to_cart.dart';
 
@@ -117,44 +115,44 @@ class ProductDetailPage extends StatelessWidget {
             const SizedBox(height: 32),
 
             // list product variants
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: product.productVariant.length,
-              itemBuilder: (context, index) {
-                final variant = product.productVariant[index];
-                return ListTile(
-                  title: Text(variant.productName),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('productVariantId: ${variant.productVariantId}'),
-                      Text('sku: ${variant.sku}'),
-                      Text('quantity: ${variant.quantity}'),
-                      Text('originalPrice: ${variant.originalPrice}'),
-                      Text('attributes: ${variant.attributes.toString()}'),
-                      Text('price: ${formatCurrency(variant.price)}'),
-                    ],
-                  ),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      variant.image.isNotEmpty ? variant.image : product.image,
-                    ),
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () async {
-                      // final resultEither = await sl<CartRepository>().addToCart(variant.productVariantId, 1);
-                      // resultEither.fold(
-                      //   (l) => log('error: $l'),
-                      //   (r) => log('success: $r'),
-                      // );
-                      context.read<CartBloc>().add(AddToCart(variant.productVariantId, 1));
-                    },
-                  ),
-                );
-              },
-            ),
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   itemCount: product.productVariant.length,
+            //   itemBuilder: (context, index) {
+            //     final variant = product.productVariant[index];
+            //     return ListTile(
+            //       title: Text(variant.productName),
+            //       subtitle: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text('productVariantId: ${variant.productVariantId}'),
+            //           Text('sku: ${variant.sku}'),
+            //           Text('quantity: ${variant.quantity}'),
+            //           Text('originalPrice: ${variant.originalPrice}'),
+            //           Text('attributes: ${variant.attributes.toString()}'),
+            //           Text('price: ${formatCurrency(variant.price)}'),
+            //         ],
+            //       ),
+            //       leading: CircleAvatar(
+            //         backgroundImage: NetworkImage(
+            //           variant.image.isNotEmpty ? variant.image : product.image,
+            //         ),
+            //       ),
+            //       trailing: IconButton(
+            //         icon: const Icon(Icons.add),
+            //         onPressed: () async {
+            //           // final resultEither = await sl<CartRepository>().addToCart(variant.productVariantId, 1);
+            //           // resultEither.fold(
+            //           //   (l) => log('error: $l'),
+            //           //   (r) => log('success: $r'),
+            //           // );
+            //           context.read<CartBloc>().add(AddToCart(variant.productVariantId, 1));
+            //         },
+            //       ),
+            //     );
+            //   },
+            // ),
 
             // button to add to cart (always align at bottom of the screen)
             // Align(

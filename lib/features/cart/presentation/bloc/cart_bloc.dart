@@ -11,6 +11,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc(this._cartRepository) : super(CartInitial()) {
     on<FetchCart>(_onFetchCart);
     on<AddToCart>(_onAddToCart);
+    on<UpdateCart>(_onUpdateCart);
     on<DeleteCart>(_onRemoveCart);
     on<DeleteCartByShopId>(_onDeleteCartByShopId);
   }
@@ -29,14 +30,28 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
-    emit(CartLoading());
+    // emit(CartLoading());
 
     final resp = await _cartRepository.addToCart(event.productVariantId, event.quantity);
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
       (ok) {
-        emit(CartSuccess(message: ok.message));
+        // emit(CartSuccess(message: ok.message));
+        add(FetchCart());
+      },
+    );
+  }
+
+  void _onUpdateCart(UpdateCart event, Emitter<CartState> emit) async {
+    // emit(CartLoading());
+
+    final resp = await _cartRepository.updateCart(event.cartId, event.quantity);
+
+    resp.fold(
+      (error) => emit(CartError(message: error.message)),
+      (ok) {
+        // emit(CartSuccess(message: ok.message));
         add(FetchCart());
       },
     );

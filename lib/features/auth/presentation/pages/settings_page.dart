@@ -54,7 +54,6 @@ class SettingsPage extends StatelessWidget {
   }
 
   // change password button
-
   TextButton _buildChangePasswordButton(BuildContext context) {
     return TextButton(
       onPressed: () {
