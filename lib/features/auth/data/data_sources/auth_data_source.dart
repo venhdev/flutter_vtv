@@ -15,17 +15,21 @@ import '../models/auth_model.dart';
 
 abstract class AuthDataSource {
   // ======================  Auth controller ======================
-  Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(String username, String password);
+  Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(
+      String username, String password);
   Future<SuccessResponse> register(RegisterParams registerDTO);
-  Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken); // use for logout
-  Future<DataResponse<String>> getNewAccessToken(String refreshToken); // handing expired token
+  Future<SuccessResponse> logoutAndRevokeRefreshToken(
+      String refreshToken); // use for logout
+  Future<DataResponse<String>> getNewAccessToken(
+      String refreshToken); // handing expired token
   // ======================  Auth controller ======================
 
   // ======================  Customer controller ======================
   // Get user's profile
   Future<DataResponse<AuthModel>> getUserProfile();
   // Edit user's profile
-  Future<DataResponse<UserInfoModel>> editUserProfile({required UserInfoModel newInfo});
+  Future<DataResponse<UserInfoModel>> editUserProfile(
+      {required UserInfoModel newInfo});
 
   /// Request send OTP to the user's email
   Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username);
@@ -52,7 +56,8 @@ class AuthDataSourceImpl implements AuthDataSource {
   AuthDataSourceImpl(this._client, this._fcmManager, this._secureStorageHelper);
 
   @override
-  Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(String username, String password) async {
+  Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(
+      String username, String password) async {
     final fcmToken = _fcmManager.currentFCMToken;
 
     final body = {
@@ -90,7 +95,8 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken) async {
+  Future<SuccessResponse> logoutAndRevokeRefreshToken(
+      String refreshToken) async {
     // body contains fcmToken
     final body = {
       'fcmToken': _fcmManager.currentFCMToken,
@@ -146,7 +152,8 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username) async {
+  Future<SuccessResponse> sendOTPForResetPasswordViaUsername(
+      String username) async {
     final response = await _client.get(
       baseUri(
         path: kAPICustomerForgotPasswordURL,
@@ -195,7 +202,8 @@ class AuthDataSourceImpl implements AuthDataSource {
     // send request
     final response = await _client.patch(
       baseUri(path: kAPICustomerChangePasswordURL),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(body),
     );
 
@@ -203,11 +211,13 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<DataResponse<UserInfoModel>> editUserProfile({required UserInfoModel newInfo}) async {
+  Future<DataResponse<UserInfoModel>> editUserProfile(
+      {required UserInfoModel newInfo}) async {
     // send request
     final response = await _client.put(
       baseUri(path: kAPICustomerProfileURL),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: newInfo.toJson(),
     );
 
@@ -239,7 +249,8 @@ class AuthDataSourceImpl implements AuthDataSource {
     // send request
     final response = await _client.get(
       baseUri(path: kAPICustomerProfileURL),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     // decode response using utf8

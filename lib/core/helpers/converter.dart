@@ -12,7 +12,8 @@ DateTime convertStringToDateTime(
     if (RegExp(r'\W').hasMatch(pattern.pattern!)) {
       return pattern.parse(date);
     } else {
-      throw const FormatException('{pattern} must have separator. ex: "dd-MM-yyyy"');
+      throw const FormatException(
+          '{pattern} must have separator. ex: "dd-MM-yyyy"');
     }
   }
   return DateTime.parse(date);

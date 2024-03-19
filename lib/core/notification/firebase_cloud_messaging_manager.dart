@@ -50,7 +50,8 @@ class FirebaseCloudMessagingManager {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       log('[FCM] User granted permission');
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
       log('[FCM] User granted provisional permission');
     } else {
       log('[FCM] User declined or has not accepted permission');

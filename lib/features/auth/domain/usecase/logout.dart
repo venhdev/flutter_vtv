@@ -10,8 +10,10 @@ class LogoutUC implements UseCaseHasParams<FResp, String> {
   FResp call(String params) async {
     final resEither = await _authRepository.logout(params);
     resEither.fold(
-      (error) => _authRepository.deleteAuth(), // even if logout failed, delete token in local storage
-      (ok) => _authRepository.deleteAuth(), // delete token in local storage when logout success
+      (error) => _authRepository
+          .deleteAuth(), // even if logout failed, delete token in local storage
+      (ok) => _authRepository
+          .deleteAuth(), // delete token in local storage when logout success
     );
     return resEither;
   }

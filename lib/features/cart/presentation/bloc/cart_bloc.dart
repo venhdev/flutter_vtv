@@ -45,7 +45,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   void _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
-    final resp = await _cartRepository.addToCart(event.productVariantId, event.quantity);
+    final resp =
+        await _cartRepository.addToCart(event.productVariantId, event.quantity);
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
@@ -101,7 +102,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final newCartState = prevState.cart.copyWith(
           cartByShopDTOs: prevState.cart.cartByShopDTOs.map(
             (cartsByShop) {
-              if (cartsByShop.shopId == prevState.cart.cartByShopDTOs[event.shopIndex].shopId) {
+              if (cartsByShop.shopId ==
+                  prevState.cart.cartByShopDTOs[event.shopIndex].shopId) {
                 return cartsByShop.copyWith(
                   carts: cartsByShop.carts.map(
                     (c) {
@@ -110,7 +112,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                           // fetch cart
                           add(FetchCart());
                         } else {
-                          return c.copyWith(quantity: c.quantity + event.quantity);
+                          return c.copyWith(
+                              quantity: c.quantity + event.quantity);
                         }
                       }
                       return c;
@@ -141,7 +144,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
-  void _onDeleteCartByShopId(DeleteCartByShopId event, Emitter<CartState> emit) async {
+  void _onDeleteCartByShopId(
+      DeleteCartByShopId event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
     final resp = await _cartRepository.deleteCartByShopId(event.shopId);

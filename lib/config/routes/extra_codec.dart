@@ -51,7 +51,13 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       return null;
     }
     switch (input) {
-      case String _ || Uri _ || DateTime _ || bool _ || double _ || num _ || int _:
+      case String _ ||
+            Uri _ ||
+            DateTime _ ||
+            bool _ ||
+            double _ ||
+            num _ ||
+            int _:
         return input;
       case UserInfoEntity _:
         return <Object?>[

@@ -36,13 +36,17 @@ class AuthModel extends AuthEntity {
     return AuthModel(
       accessToken: map['access_token'] as String,
       refreshToken: map['refresh_token'] as String,
-      userInfo: UserInfoModel.fromMap(map['customerDTO'] as Map<String, dynamic>).toEntity(),
+      userInfo:
+          UserInfoModel.fromMap(map['customerDTO'] as Map<String, dynamic>)
+              .toEntity(),
     );
   }
 
   String toJson() => json.encode(toMap());
 
   /// - [source] is Json String
-  factory AuthModel.fromJson(String source) => AuthModel.fromMap(json.decode(source) as Map<String, dynamic>);
-  factory AuthModel.fromJsonMap(Map<String, dynamic> source) => AuthModel.fromMap(source);
+  factory AuthModel.fromJson(String source) =>
+      AuthModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AuthModel.fromJsonMap(Map<String, dynamic> source) =>
+      AuthModel.fromMap(source);
 }

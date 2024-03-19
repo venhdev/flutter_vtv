@@ -22,12 +22,14 @@ class _DevPageState extends State<DevPage> {
     } else {
       devDOMAIN = newDomain;
       await sl<SharedPreferencesHelper>().I.setString('devDomain', devDOMAIN);
-      Fluttertoast.showToast(msg: 'Server domain has been changed to $devDOMAIN');
+      Fluttertoast.showToast(
+          msg: 'Server domain has been changed to $devDOMAIN');
       setState(() {});
     }
   }
 
-  TextEditingController domainTextController = TextEditingController(text: devDOMAIN);
+  TextEditingController domainTextController =
+      TextEditingController(text: devDOMAIN);
 
   @override
   Widget build(BuildContext context) {

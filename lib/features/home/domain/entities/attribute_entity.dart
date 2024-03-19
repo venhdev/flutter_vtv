@@ -50,7 +50,8 @@ class AttributeEntity extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory AttributeEntity.fromJson(String source) => AttributeEntity.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AttributeEntity.fromJson(String source) =>
+      AttributeEntity.fromMap(json.decode(source) as Map<String, dynamic>);
 
   static List<AttributeEntity> fromList(List<dynamic> map) {
     return List<AttributeEntity>.from(

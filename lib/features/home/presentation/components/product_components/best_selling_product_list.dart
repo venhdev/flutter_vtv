@@ -38,7 +38,8 @@ class BestSellingProductListBuilder extends StatelessWidget {
             } else {
               return snapshot.data!.fold(
                 (err) => Center(
-                  child: Text('Error: $err', style: const TextStyle(color: Colors.red)),
+                  child: Text('Error: $err',
+                      style: const TextStyle(color: Colors.red)),
                 ),
                 (ok) => SizedBox(
                   height: 120,

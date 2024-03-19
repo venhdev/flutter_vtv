@@ -84,7 +84,8 @@ class TextFieldCustom extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: focusedBorderColor ?? Theme.of(context).colorScheme.primaryContainer,
+                color: focusedBorderColor ??
+                    Theme.of(context).colorScheme.primaryContainer,
                 width: 2.0,
               ),
             ),

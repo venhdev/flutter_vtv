@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../entities/cart_entity.dart';
 
+// Carts of a shop
 class CartByShopDTO extends Equatable {
   final int shopId;
   final String shopName;

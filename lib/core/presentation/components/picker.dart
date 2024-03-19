@@ -4,7 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../helpers/converter.dart';
 
 /// Return the same [date] with the [time] set
-DateTime copyTimeOfDay(DateTime date, TimeOfDay time) => DateTime(date.year, date.month, date.day, time.hour, time.minute);
+DateTime copyTimeOfDay(DateTime date, TimeOfDay time) =>
+    DateTime(date.year, date.month, date.day, time.hour, time.minute);
 
 Future<DateTime?> showMyDatePicker(
   BuildContext context, {
@@ -49,8 +50,11 @@ class MyDatePicker extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: const Icon(Icons.calendar_today),
-      trailing: date != null ? IconButton(onPressed: onPressedClose, icon: const Icon(Icons.close)) : null,
-      title: Text(date == null ? 'Set due date' : convertDateTimeToString(date!)),
+      trailing: date != null
+          ? IconButton(onPressed: onPressedClose, icon: const Icon(Icons.close))
+          : null,
+      title:
+          Text(date == null ? 'Set due date' : convertDateTimeToString(date!)),
     );
   }
 }
@@ -72,8 +76,12 @@ class MyTimePicker extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: const Icon(Icons.calendar_today),
-      trailing: date != null ? IconButton(onPressed: onPressedClose, icon: const Icon(Icons.close)) : null,
-      title: Text(date == null ? 'Set due date' : convertDateTimeToString(date!, pattern: 'HH:mm a')),
+      trailing: date != null
+          ? IconButton(onPressed: onPressedClose, icon: const Icon(Icons.close))
+          : null,
+      title: Text(date == null
+          ? 'Set due date'
+          : convertDateTimeToString(date!, pattern: 'HH:mm a')),
     );
   }
 }
@@ -97,8 +105,12 @@ class MyDateTimePicker extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: const Icon(Icons.calendar_today),
-      trailing: date != null ? IconButton(onPressed: onPressedClose, icon: const Icon(Icons.close)) : null,
-      title: Text(date == null ? 'Set due date' : 'Due Date: ${convertDateTimeToString(date!)}'),
+      trailing: date != null
+          ? IconButton(onPressed: onPressedClose, icon: const Icon(Icons.close))
+          : null,
+      title: Text(date == null
+          ? 'Set due date'
+          : 'Due Date: ${convertDateTimeToString(date!)}'),
       subtitle: date != null
           ? Row(
               children: [
@@ -107,7 +119,9 @@ class MyDateTimePicker extends StatelessWidget {
                 TextButton(
                   onPressed: onTapTime,
                   child: Text(
-                    date == null ? 'Set time' : convertDateTimeToString(date!, pattern: 'HH:mm a'),
+                    date == null
+                        ? 'Set time'
+                        : convertDateTimeToString(date!, pattern: 'HH:mm a'),
                     style: const TextStyle(color: Colors.black),
                   ),
                 )

@@ -26,7 +26,8 @@ class CartDataSourceImpl extends CartDataSource {
   Future<DataResponse<CartResp>> getCarts() async {
     final response = await _client.get(
       baseUri(path: kAPICartGetListURL),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<CartResp>(
@@ -46,7 +47,8 @@ class CartDataSourceImpl extends CartDataSource {
 
     final response = await _client.post(
       baseUri(path: kAPICartAddURL),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(body),
     );
 
@@ -60,7 +62,8 @@ class CartDataSourceImpl extends CartDataSource {
   Future<SuccessResponse> deleteToCart(String cartId) async {
     final response = await _client.delete(
       baseUri(path: '$kAPICartDeleteURL/$cartId'),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseNoData(
@@ -73,7 +76,8 @@ class CartDataSourceImpl extends CartDataSource {
   Future<SuccessResponse> deleteToCartByShopId(String shopId) async {
     final response = await _client.delete(
       baseUri(path: '$kAPICartDeleteByShopIdURL/$shopId'),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseNoData(
@@ -91,7 +95,8 @@ class CartDataSourceImpl extends CartDataSource {
           'quantity': quantity.toString(),
         },
       ),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      headers:
+          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       // body: jsonEncode({
       //   'quantity': quantity,
       // }),

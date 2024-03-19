@@ -8,7 +8,7 @@ import 'attribute_entity.dart';
 class ProductVariantEntity extends Equatable {
   final int productVariantId;
   final String sku;
-  final String image;
+  final String image; // may return empty string -> productImage
   final int? originalPrice;
   final int price;
   final int quantity;

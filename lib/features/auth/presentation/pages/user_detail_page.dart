@@ -52,7 +52,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Set the background color to transparent
+        backgroundColor:
+            Colors.transparent, // Set the background color to transparent
         title: const Text('Thông tin cá nhân'),
       ),
       body: Padding(
@@ -100,13 +101,15 @@ class _UserDetailPageState extends State<UserDetailPage> {
                             onPressed: () {
                               Navigator.pop(context, true);
                             },
-                            child: const Text('Nam', style: TextStyle(fontSize: 16)),
+                            child: const Text('Nam',
+                                style: TextStyle(fontSize: 16)),
                           ),
                           SimpleDialogOption(
                             onPressed: () {
                               Navigator.pop(context, false);
                             },
-                            child: const Text('Nữ', style: TextStyle(fontSize: 16)),
+                            child: const Text('Nữ',
+                                style: TextStyle(fontSize: 16)),
                           ),
                         ],
                       ),
@@ -140,7 +143,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       confirmText: 'Chọn',
                       context: context,
                       firstDate: DateTime(1900),
-                      lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
+                      lastDate: DateTime(
+                          DateTime.now().year - 12), // least 12 years old
                     );
 
                     if (pickedDate != null) {

@@ -19,7 +19,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _isCodeSent = false;
   bool _isSendingCode = false;
@@ -39,7 +40,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         _isSendingCode = true;
       });
 
-      sl<AuthRepository>().sendOTPForResetPassword(_emailController.text).then((resultEither) {
+      sl<AuthRepository>()
+          .sendOTPForResetPassword(_emailController.text)
+          .then((resultEither) {
         if (mounted) {
           setState(() {
             _isSendingCode = false;
@@ -58,7 +61,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                     SnackBar(
-                      content: Text(success.message ?? 'Gửi mã xác nhận thành công'),
+                      content:
+                          Text(success.message ?? 'Gửi mã xác nhận thành công'),
                     ),
                   );
                 _isCodeSent = true;
@@ -75,7 +79,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final otp = _codeController.text;
     final newPassword = _passwordController.text;
 
-    sl<AuthRepository>().resetPasswordViaOTP(username, otp, newPassword).then((resultEither) {
+    sl<AuthRepository>()
+        .resetPasswordViaOTP(username, otp, newPassword)
+        .then((resultEither) {
       resultEither.fold(
         (failure) {
           ScaffoldMessenger.of(context)
@@ -150,7 +156,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     isRequired: true,
                     suffixIcon: IconButton(
                       onPressed: () async => await handleSendCode(),
-                      icon: _isSendingCode ? const CircularProgressIndicator() : const Icon(Icons.send),
+                      icon: _isSendingCode
+                          ? const CircularProgressIndicator()
+                          : const Icon(Icons.send),
                     ),
                   ),
                   // when code is sent add more fields to form
@@ -206,7 +214,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {

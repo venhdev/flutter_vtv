@@ -20,7 +20,8 @@ class CartRepositoryImpl extends CartRepository {
   @override
   FResp addToCart(int productVariantId, int quantity) {
     return handleSuccessResponseFromDataSource(
-      noDataCallback: () => _cartDataSource.addToCart(productVariantId, quantity),
+      noDataCallback: () =>
+          _cartDataSource.addToCart(productVariantId, quantity),
     );
   }
 

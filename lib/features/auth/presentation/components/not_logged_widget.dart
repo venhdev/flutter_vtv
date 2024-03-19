@@ -12,7 +12,8 @@ class NotLoggedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false),
+      appBar:
+          buildAppBar(context, showSettingButton: true, showSearchBar: false),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -32,8 +33,10 @@ class NotLoggedWidget extends StatelessWidget {
             TextButton(
               onPressed: () => context.go('/user/login'),
               style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                backgroundColor:
+                    Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               child: const Text(
                 'Đăng nhập',

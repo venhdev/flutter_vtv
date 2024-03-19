@@ -50,7 +50,8 @@ class SecureStorageHelper {
     try {
       await _storage.write(key: _keyAuth, value: jsonData);
     } catch (e) {
-      throw CacheException(message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
+      throw CacheException(
+          message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
     }
   }
 
@@ -61,7 +62,8 @@ class SecureStorageHelper {
       final newAuth = auth.copyWith(userInfo: newInfo);
       await cacheAuth(AuthModel.fromEntity(newAuth).toJson());
     } catch (e) {
-      throw CacheException(message: 'Có lỗi xảy ra khi cập nhật thông tin người dùng!');
+      throw CacheException(
+          message: 'Có lỗi xảy ra khi cập nhật thông tin người dùng!');
     }
   }
 

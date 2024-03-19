@@ -40,7 +40,8 @@ class CategoryList extends StatelessWidget {
             if (snapshot.hasData) {
               return snapshot.data!.fold(
                 (l) => Center(
-                  child: Text('Error: $l', style: const TextStyle(color: Colors.red)),
+                  child: Text('Error: $l',
+                      style: const TextStyle(color: Colors.red)),
                 ),
                 (r) => SizedBox(
                   height: 100,

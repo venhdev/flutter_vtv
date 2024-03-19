@@ -59,7 +59,8 @@ class RegisterParams {
 
   String toJson() => json.encode(toMap());
 
-  factory RegisterParams.fromJson(String source) => RegisterParams.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory RegisterParams.fromJson(String source) =>
+      RegisterParams.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -80,6 +81,11 @@ class RegisterParams {
 
   @override
   int get hashCode {
-    return username.hashCode ^ password.hashCode ^ email.hashCode ^ gender.hashCode ^ fullName.hashCode ^ birthday.hashCode;
+    return username.hashCode ^
+        password.hashCode ^
+        email.hashCode ^
+        gender.hashCode ^
+        fullName.hashCode ^
+        birthday.hashCode;
   }
 }

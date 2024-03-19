@@ -18,7 +18,8 @@ class ProductListBuilder extends StatelessWidget {
     this.onPageChanged,
     this.keywords,
   })  : assert(crossAxisCount > 0),
-        assert(showPageNumber == false || (currentPage != null && onPageChanged != null));
+        assert(showPageNumber == false ||
+            (currentPage != null && onPageChanged != null));
 
   final Future<RespData<ProductResp>> future;
   final String? keywords; // for search page
@@ -42,7 +43,8 @@ class ProductListBuilder extends StatelessWidget {
         if (snapshot.hasData) {
           return snapshot.data!.fold(
             (errorResp) => Center(
-              child: Text('Error: ${errorResp.message}', style: const TextStyle(color: Colors.red)),
+              child: Text('Error: ${errorResp.message}',
+                  style: const TextStyle(color: Colors.red)),
             ),
             (dataResp) => Builder(builder: (context) {
               if (dataResp.data.products.isEmpty) {
