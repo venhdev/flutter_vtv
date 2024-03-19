@@ -35,18 +35,56 @@ class CartPage extends StatelessWidget {
                         receiver: 'Nguyễn Văn A',
                         phone: '8172468364',
                         margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        padding: const EdgeInsets.all(4),
                       ),
                     ),
                   ),
                 ),
               ];
             },
-            body: ListView.builder(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1 + 12),
-              itemCount: state.cart.cartByShopDTOs.length,
-              itemBuilder: (context, shopIndex) {
-                return CartsByShop(state.cart.cartByShopDTOs[shopIndex]);
+            body: RefreshIndicator(
+              displacement: 18,
+              onRefresh: () async {
+                context.read<CartBloc>().add(FetchCart());
               },
+              child: state.cart.cartByShopDTOs.isNotEmpty
+                  ? ListView.builder(
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1),
+                      itemCount: state.cart.cartByShopDTOs.length,
+                      itemBuilder: (context, shopIndex) {
+                        return CartsByShop(
+                          state.cart.cartByShopDTOs[shopIndex],
+                          onUpdateCartCallback: (cartId, quantity, cartIndex) {
+                            context.read<CartBloc>().add(UpdateCart(
+                                  cartId: cartId,
+                                  quantity: quantity,
+                                  cartIndex: cartIndex,
+                                  shopIndex: shopIndex,
+                                ));
+                          },
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // icon empty cart
+                          const Icon(
+                            Icons.remove_shopping_cart_rounded,
+                            size: 50,
+                          ),
+                          const Text('Giỏ hàng trống'),
+                          // button continue shopping
+                          GestureDetector(
+                            onTap: () {
+                              GoRouter.of(context).go('/home');
+                            },
+                            child: const Text('Tiếp tục mua sắm', style: TextStyle(decoration: TextDecoration.underline)),
+                          )
+                        ],
+                      ),
+                    ),
             ),
           );
         } else if (state is CartLoading) {

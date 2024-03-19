@@ -5,6 +5,8 @@ Future<T?> showMyDialogToConfirm<T>({
   required String title,
   required String content,
   VoidCallback? onConfirm,
+  String confirmText = 'Có',
+  String dismissText = 'Không',
 }) async {
   return await showDialog(
     context: context,
@@ -18,7 +20,7 @@ Future<T?> showMyDialogToConfirm<T>({
             fontWeight: FontWeight.bold,
           ),
         ),
-        content: Text(content),
+        content: Text(content, textAlign: TextAlign.center),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -29,14 +31,14 @@ Future<T?> showMyDialogToConfirm<T>({
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  child: const Text('Không', style: TextStyle(color: Colors.red)),
+                  child: Text(dismissText, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
                 ),
                 TextButton(
                   onPressed: () async {
                     onConfirm?.call();
                     Navigator.of(context).pop(true);
                   },
-                  child: const Text('Có', style: TextStyle(color: Colors.green)),
+                  child: Text(confirmText, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

@@ -20,7 +20,7 @@ final class CartLoaded extends CartState {
 
   const CartLoaded(
     this.cart, {
-    required super.message,
+    super.message,
   });
 
   @override

@@ -9,6 +9,7 @@ class AddressSummary extends StatelessWidget {
     required this.phone,
     this.icon = Icons.chevron_right,
     this.margin,
+    this.padding = const EdgeInsets.all(12),
   });
 
   final void Function()? onTap;
@@ -18,6 +19,7 @@ class AddressSummary extends StatelessWidget {
 
   final IconData? icon;
   final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class AddressSummary extends StatelessWidget {
           ),
         ),
         margin: margin ?? const EdgeInsets.all(4),
-        padding: const EdgeInsets.all(12),
+        padding: padding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

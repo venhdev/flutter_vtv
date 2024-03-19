@@ -26,6 +26,35 @@ class ProductDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context, title: product.name, showSearchBar: false, automaticallyImplyLeading: true),
+      // bottomSheet AddToCart & BuyNow button
+      bottomSheet: Row(
+        children: [
+          Expanded(
+            child: TextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isDismissible: true,
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return BottomSheetAddToCart(product: product);
+                  },
+                );
+              },
+              child: const Text('Thêm vào giỏ hàng'),
+            ),
+          ),
+          Expanded(
+            child: TextButton(
+              onPressed: () {
+                // buy now
+              },
+              child: const Text('Mua ngay'),
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,23 +123,23 @@ class ProductDetailPage extends StatelessWidget {
             ),
 
             // button to add to cart
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isDismissible: true,
-                    showDragHandle: true,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return BottomSheetAddToCart(product: product);
-                    },
-                  );
-                },
-                child: const Text('Add to cart'),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16),
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       showModalBottomSheet(
+            //         context: context,
+            //         isDismissible: true,
+            //         showDragHandle: true,
+            //         isScrollControlled: true,
+            //         builder: (context) {
+            //           return BottomSheetAddToCart(product: product);
+            //         },
+            //       );
+            //     },
+            //     child: const Text('Add to cart'),
+            //   ),
+            // ),
 
             const SizedBox(height: 32),
 
