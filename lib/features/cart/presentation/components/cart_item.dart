@@ -1,27 +1,23 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_vtv/core/presentation/components/custom_dialogs.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../bloc/cart_bloc.dart';
 
-class CartItem extends StatefulWidget {
+class CartItem extends StatelessWidget {
   const CartItem(
     this.cart, {
     super.key,
+    required this.onUpdateCartCallback,
   });
 
   final CartEntity cart;
-
-  @override
-  State<CartItem> createState() => _CartItemState();
-}
-
-class _CartItemState extends State<CartItem> {
-  void _handleDeleteSingleCart(String cartId) {
-    context.read<CartBloc>().add(DeleteCart(cartId));
-  }
+  final Function(String cartId, int quantity) onUpdateCartCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +37,7 @@ class _CartItemState extends State<CartItem> {
                 ),
                 // product info (image, name, price, quantity, total price, delete button)
                 Image.network(
-                  widget.cart.productImage!,
+                  cart.productImage!,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -54,14 +50,14 @@ class _CartItemState extends State<CartItem> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.cart.productName,
+                    cart.productName,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text(formatCurrency(widget.cart.productVariant.price),
+                  Text(formatCurrency(cart.productVariant.price),
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.orange,
@@ -71,19 +67,34 @@ class _CartItemState extends State<CartItem> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, -1));
+                        onPressed: () async {
+                          if (cart.quantity == 1) {
+                            final bool? isConfirm = await showMyDialogToConfirm(
+                              context: context,
+                              title: 'Xóa khỏi giỏ hàng',
+                              content: 'Hành động này không thể hoàn tác',
+                              confirmText: 'Xóa',
+                              dismissText: 'Hủy',
+                            );
+                            if (isConfirm ?? false) {
+                              onUpdateCartCallback(cart.cartId, -1);
+                            }
+                          } else {
+                            onUpdateCartCallback(cart.cartId, -1);
+                          }
+                          // context.read<CartBloc>().add(UpdateCart(cart.cartId, -1));
                           // sl<CartRepository>().updateCart(
                           //   widget.cart.cartId,
                           //   -1,
                           // );
                         },
                       ),
-                      Text(widget.cart.quantity.toString()),
+                      Text(cart.quantity.toString()),
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
-                          context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, 1));
+                          onUpdateCartCallback(cart.cartId, 1);
+                          // context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, 1));
                           // sl<CartRepository>().updateCart(
                           //   widget.cart.cartId,
                           //   1,
@@ -133,7 +144,8 @@ class _CartItemState extends State<CartItem> {
             //   title: 'Xóa khỏi giỏ hàng',
             //   content: 'Bạn có chắc chắn muốn xóa?',
             // );
-            _handleDeleteSingleCart(widget.cart.cartId);
+            // _handleDeleteSingleCart(cart.cartId);
+            context.read<CartBloc>().add(DeleteCart(cart.cartId));
             // if (isConfirm) {
             // }
           },

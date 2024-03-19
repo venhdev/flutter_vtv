@@ -7,6 +7,8 @@ sealed class CartEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class InitialCart extends CartEvent {}
+
 final class FetchCart extends CartEvent {}
 
 final class AddToCart extends CartEvent {
@@ -22,8 +24,15 @@ final class AddToCart extends CartEvent {
 final class UpdateCart extends CartEvent {
   final String cartId;
   final int quantity;
+  final int cartIndex;
+  final int shopIndex;
 
-  const UpdateCart(this.cartId, this.quantity);
+  const UpdateCart({
+    required this.cartId,
+    required this.quantity,
+    required this.cartIndex,
+    required this.shopIndex,
+  });
 
   @override
   List<Object> get props => [cartId, quantity];

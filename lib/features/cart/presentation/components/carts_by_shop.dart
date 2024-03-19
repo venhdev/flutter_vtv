@@ -8,12 +8,15 @@ class CartsByShop extends StatelessWidget {
   const CartsByShop(
     this.cartByShop, {
     super.key,
+    required this.onUpdateCartCallback,
   });
 
   final CartByShopDTO cartByShop;
+  final Function(String cartId, int quantity, int cartIndex) onUpdateCartCallback;
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('[CartsByShop] render length: ${cartByShop.carts.length}');
     return Container(
       padding: const EdgeInsets.only(bottom: 12.0),
       decoration: BoxDecoration(
@@ -45,7 +48,13 @@ class CartsByShop extends StatelessWidget {
       padding: EdgeInsets.zero,
       itemCount: cartByShop.carts.length,
       itemBuilder: (context, cartIndex) {
-        return CartItem(cartByShop.carts[cartIndex]);
+        return CartItem(
+          cartByShop.carts[cartIndex],
+          onUpdateCartCallback: (cartId, quantity) {
+            // context.read<CartBloc>().add(UpdateCart(cartId, quantity));
+            onUpdateCartCallback(cartId, quantity, cartIndex);
+          },
+        );
       },
     );
   }

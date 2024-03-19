@@ -69,6 +69,12 @@ class CartBadge extends StatelessWidget {
             BlocBuilder<CartBloc, CartState>(
               builder: (context, state) {
                 if (state is CartLoaded) {
+                  if (state.cart.count == 0) {
+                    return IconButton.outlined(
+                      onPressed: () => context.go(CartPage.route),
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                    );
+                  }
                   return Badge(
                     label: Text(state.cart.count.toString()),
                     backgroundColor: Colors.orange,
@@ -78,7 +84,9 @@ class CartBadge extends StatelessWidget {
                     ),
                   );
                 }
-                return const SizedBox.shrink();
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               },
             ),
             // icon chat
