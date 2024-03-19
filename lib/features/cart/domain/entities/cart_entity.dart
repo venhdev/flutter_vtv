@@ -30,8 +30,11 @@ class CartEntity extends Equatable {
         productId: data['productId'] as int,
         productName: data['productName'] as String,
         productImage: data['productImage'] as String?,
-        updateAt: data['updateAt'] == null ? null : DateTime.parse(data['updateAt'] as String),
-        productVariant: ProductVariantEntity.fromMap(data['productVariantDTO'] as Map<String, dynamic>),
+        updateAt: data['updateAt'] == null
+            ? null
+            : DateTime.parse(data['updateAt'] as String),
+        productVariant: ProductVariantEntity.fromMap(
+            data['productVariantDTO'] as Map<String, dynamic>),
       );
 
   // Map<String, dynamic> toMap() => {
@@ -52,7 +55,9 @@ class CartEntity extends Equatable {
   }
 
   static List<CartEntity> fromJsonList(List<dynamic> listData) {
-    return listData.map((e) => CartEntity.fromMap(e as Map<String, dynamic>)).toList();
+    return listData
+        .map((e) => CartEntity.fromMap(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// `dart:convert`

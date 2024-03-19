@@ -25,7 +25,10 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, title: product.name, showSearchBar: false, automaticallyImplyLeading: true),
+      appBar: buildAppBar(context,
+          title: product.name,
+          showSearchBar: false,
+          automaticallyImplyLeading: true),
       // bottomSheet AddToCart & BuyNow button
       bottomSheet: Row(
         children: [
@@ -67,7 +70,8 @@ class ProductDetailPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PhotoViewPage(imageUrl: product.image),
+                      builder: (context) =>
+                          PhotoViewPage(imageUrl: product.image),
                     ),
                   );
                 },

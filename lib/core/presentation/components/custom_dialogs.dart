@@ -31,14 +31,18 @@ Future<T?> showMyDialogToConfirm<T>({
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  child: Text(dismissText, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                  child: Text(dismissText,
+                      style: const TextStyle(
+                          color: Colors.grey, fontWeight: FontWeight.bold)),
                 ),
                 TextButton(
                   onPressed: () async {
                     onConfirm?.call();
                     Navigator.of(context).pop(true);
                   },
-                  child: Text(confirmText, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  child: Text(confirmText,
+                      style: const TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

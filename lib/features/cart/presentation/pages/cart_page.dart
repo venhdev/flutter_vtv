@@ -19,7 +19,8 @@ class CartPage extends StatelessWidget {
       builder: (context, state) {
         if (state is CartLoaded) {
           return NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
                   title: Text('Giỏ hàng (${state.cart.count})'),
@@ -31,11 +32,12 @@ class CartPage extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: AddressSummary(
                         onTap: () => GoRouter.of(context).go(AddressPage.route),
-                        address: 'Hà Nội, Việt Nam Hà Nội, Việt NamHà Nội, Việt Nam vHà Nội, Việt Nam',
+                        address:
+                            'Hà Nội, Việt Nam Hà Nội, Việt NamHà Nội, Việt Nam vHà Nội, Việt Nam',
                         receiver: 'Nguyễn Văn A',
                         phone: '8172468364',
-                        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                        padding: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                       ),
                     ),
                   ),
@@ -49,7 +51,8 @@ class CartPage extends StatelessWidget {
               },
               child: state.cart.cartByShopDTOs.isNotEmpty
                   ? ListView.builder(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1),
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.1),
                       itemCount: state.cart.cartByShopDTOs.length,
                       itemBuilder: (context, shopIndex) {
                         return CartsByShop(
@@ -80,7 +83,9 @@ class CartPage extends StatelessWidget {
                             onTap: () {
                               GoRouter.of(context).go('/home');
                             },
-                            child: const Text('Tiếp tục mua sắm', style: TextStyle(decoration: TextDecoration.underline)),
+                            child: const Text('Tiếp tục mua sắm',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline)),
                           )
                         ],
                       ),

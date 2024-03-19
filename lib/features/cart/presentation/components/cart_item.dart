@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_vtv/core/presentation/components/custom_dialogs.dart';
 
 import '../../../../core/helpers/helpers.dart';
+import '../../../../core/presentation/components/image_cacheable.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../bloc/cart_bloc.dart';
 
@@ -36,8 +37,10 @@ class CartItem extends StatelessWidget {
                   onChanged: (value) {},
                 ),
                 // product info (image, name, price, quantity, total price, delete button)
-                Image.network(
-                  cart.productImage!,
+                ImageCacheable(
+                  cart.productVariant.image.isNotEmpty
+                      ? cart.productVariant.image
+                      : cart.productVariant.productImage,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,

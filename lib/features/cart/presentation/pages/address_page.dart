@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../components/address_summary.dart';
+import 'add_address_page.dart';
 
 class AddressPage extends StatelessWidget {
   const AddressPage({super.key});
@@ -15,31 +18,60 @@ class AddressPage extends StatelessWidget {
         title: const Text('Địa chỉ giao hàng'),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return Row(
-            children: [
-              Checkbox(
-                value: false,
-                onChanged: (value) {
-                  // TODO set default address
-                },
-              ),
-              Expanded(
-                child: AddressSummary(
-                  onTap: () {
-                    // TODO edit address
+      body: Column(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return Row(
+                children: [
+                  Checkbox(
+                    value: false,
+                    onChanged: (value) {
+                      // TODO set default address
+                    },
+                  ),
+                  Expanded(
+                    child: AddressSummary(
+                      onTap: () {
+                        // TODO edit address
+                      },
+                      address: 'Hà Nội, Việt Nam',
+                      receiver: 'Nguyễn Văn A',
+                      phone: '8172468364',
+                      icon: Icons.edit,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          TextButton(
+            onPressed: () async {
+              // GoRouter.of(context).go('/home/cart/address/add');
+              final result = await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const AddAddressPage();
                   },
-                  address: 'Hà Nội, Việt Nam',
-                  receiver: 'Nguyễn Văn A',
-                  phone: '8172468364',
-                  icon: Icons.edit,
                 ),
-              ),
-            ],
-          );
-        },
+              );
+
+              log('result: $result');
+            },
+            style: TextButton.styleFrom(
+              backgroundColor:
+                  Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text(
+              'Thêm địa chỉ mới',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          )
+        ],
       ),
     );
   }

@@ -57,7 +57,8 @@ class IntroPage extends StatelessWidget {
 
   GestureDetector _buildStartButton(BuildContext context) {
     return GestureDetector(
-      onTap: () async => await Provider.of<AppState>(context, listen: false).started(),
+      onTap: () async =>
+          await Provider.of<AppState>(context, listen: false).started(),
       child: Container(
         width: 328,
         height: 48,

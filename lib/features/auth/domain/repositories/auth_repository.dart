@@ -9,7 +9,8 @@ abstract class AuthRepository {
   FResult<AuthEntity> retrieveAuth(); // local storage
 
   //* login
-  FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password);
+  FRespData<AuthEntity> loginWithUsernameAndPassword(
+      String username, String password);
   FResult<void> cacheAuth(AuthEntity authEntity);
 
   // change password
@@ -32,7 +33,8 @@ abstract class AuthRepository {
   //* forgot password
   /// send otp code to email that match with [username]
   FResp sendOTPForResetPassword(String username);
-  FResp resetPasswordViaOTP(String username, String otpCode, String newPassword);
+  FResp resetPasswordViaOTP(
+      String username, String otpCode, String newPassword);
 
   // ----------------- Auth -----------------
 }

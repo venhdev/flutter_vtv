@@ -20,7 +20,8 @@ AppBar buildAppBar(
   bool automaticallyImplyLeading = false,
 }) {
   // title & search bar can't be shown at the same time
-  assert(title == null || showSearchBar == false, 'title & search bar can\'t be shown at the same time');
+  assert(title == null || showSearchBar == false,
+      'title & search bar can\'t be shown at the same time');
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     leading: leading,
@@ -63,7 +64,8 @@ class CartBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
+        if (state.status != AuthStatus.authenticated)
+          return const SizedBox.shrink();
         return Row(
           children: [
             BlocBuilder<CartBloc, CartState>(
@@ -100,23 +102,23 @@ class CartBadge extends StatelessWidget {
     );
   }
 }
-    // return Badge(
-    //   label: BlocBuilder<AuthCubit, AuthState>(
-    //     builder: (context, state) {
-    //       if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
-    //       return BlocBuilder<CartBloc, CartState>(
-    //         builder: (context, state) {
-    //           if (state is CartLoaded) {
-    //             return Text(state.cart.count.toString());
-    //           }
-    //           return const SizedBox.shrink();
-    //         },
-    //       );
-    //     },
-    //   ),
-    //   backgroundColor: Colors.orange,
-    //   child: IconButton.outlined(
-    //     onPressed: () => context.go(CartPage.route),
-    //     icon: const Icon(Icons.shopping_cart_outlined),
-    //   ),
-    // );
+// return Badge(
+//   label: BlocBuilder<AuthCubit, AuthState>(
+//     builder: (context, state) {
+//       if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
+//       return BlocBuilder<CartBloc, CartState>(
+//         builder: (context, state) {
+//           if (state is CartLoaded) {
+//             return Text(state.cart.count.toString());
+//           }
+//           return const SizedBox.shrink();
+//         },
+//       );
+//     },
+//   ),
+//   backgroundColor: Colors.orange,
+//   child: IconButton.outlined(
+//     onPressed: () => context.go(CartPage.route),
+//     icon: const Icon(Icons.shopping_cart_outlined),
+//   ),
+// );

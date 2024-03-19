@@ -15,7 +15,8 @@ class LoggedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
+      appBar: buildAppBar(context,
+          showSettingButton: true, showSearchBar: false, title: 'User'),
       body: Column(
         children: [
           InkWell(
@@ -29,7 +30,8 @@ class LoggedWidget extends StatelessWidget {
                 const SizedBox(width: 12),
                 const CircleAvatar(
                   radius: 30,
-                  backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
+                  backgroundImage:
+                      AssetImage('assets/images/placeholders/a1.png'),
                 ),
 
                 const SizedBox(width: 12),

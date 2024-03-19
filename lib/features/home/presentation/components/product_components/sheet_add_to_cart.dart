@@ -117,7 +117,10 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                               fit: BoxFit.cover,
                             ),
                             const SizedBox(width: 4),
-                            Text(variant.productName, style: const TextStyle(fontWeight: FontWeight.normal)),
+                            Text(
+                              variant.sku,
+                              style: const TextStyle(fontWeight: FontWeight.normal),
+                            ),
                           ],
                         ),
                       ),
@@ -127,6 +130,9 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
             ),
           ),
           const Divider(color: Colors.grey),
+
+          // attribute
+          // Text(_variant!.attributes.toString()),
 
           // quantity
           Row(

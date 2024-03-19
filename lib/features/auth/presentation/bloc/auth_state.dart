@@ -20,7 +20,8 @@ class AuthState extends Equatable {
   const AuthState.unknown() : this._();
   const AuthState.authenticating() : this._(status: AuthStatus.authenticating);
 
-  const AuthState.authenticated(AuthEntity auth, {String? message, int? code, String? redirectTo})
+  const AuthState.authenticated(AuthEntity auth,
+      {String? message, int? code, String? redirectTo})
       : this._(
           status: AuthStatus.authenticated,
           auth: auth,
@@ -29,7 +30,8 @@ class AuthState extends Equatable {
           redirectTo: redirectTo,
         );
 
-  const AuthState.unauthenticated({String? message, int? code, String? redirectTo})
+  const AuthState.unauthenticated(
+      {String? message, int? code, String? redirectTo})
       : this._(
           status: AuthStatus.unauthenticated,
           message: message,

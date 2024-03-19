@@ -37,7 +37,9 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
     _currentPage = 1;
     _loadData(_currentPage);
     widget.scrollController.addListener(() {
-      if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent && !_isLoading) {
+      if (widget.scrollController.position.pixels ==
+              widget.scrollController.position.maxScrollExtent &&
+          !_isLoading) {
         _loadData(_currentPage);
       }
     });

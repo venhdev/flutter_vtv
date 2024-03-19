@@ -60,7 +60,8 @@ class SettingsPage extends StatelessWidget {
         GoRouter.of(context).go('/user/settings/change-password');
       },
       style: TextButton.styleFrom(
-        backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+        backgroundColor:
+            Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: const Text(
@@ -78,7 +79,8 @@ class SettingsPage extends StatelessWidget {
             title: 'Đăng xuất',
             content: 'Bạn có chắc chắn muốn đăng xuất?',
             onConfirm: () async {
-              final refreshToken = context.read<AuthCubit>().state.auth!.refreshToken;
+              final refreshToken =
+                  context.read<AuthCubit>().state.auth!.refreshToken;
               await context.read<AuthCubit>().logout(refreshToken).then((_) {
                 // redirect to user home
                 GoRouter.of(context).go('/user');
@@ -86,7 +88,8 @@ class SettingsPage extends StatelessWidget {
             });
       },
       style: TextButton.styleFrom(
-        backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+        backgroundColor:
+            Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: BlocBuilder<AuthCubit, AuthState>(

@@ -108,7 +108,9 @@ class UserInfoModel extends UserInfoEntity {
       fullName: map['fullName'] as String?,
       gender: map['gender'] as bool?,
       email: map['email'] as String?,
-      birthday: map['birthday'] != null ? DateTime.parse(map['birthday'] as String) : null,
+      birthday: map['birthday'] != null
+          ? DateTime.parse(map['birthday'] as String)
+          : null,
       status: status,
       roles: roles,
     );
@@ -116,5 +118,6 @@ class UserInfoModel extends UserInfoEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory UserInfoModel.fromJson(String source) => UserInfoModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserInfoModel.fromJson(String source) =>
+      UserInfoModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

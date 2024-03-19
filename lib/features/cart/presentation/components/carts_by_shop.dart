@@ -12,7 +12,8 @@ class CartsByShop extends StatelessWidget {
   });
 
   final CartByShopDTO cartByShop;
-  final Function(String cartId, int quantity, int cartIndex) onUpdateCartCallback;
+  final Function(String cartId, int quantity, int cartIndex)
+      onUpdateCartCallback;
 
   @override
   Widget build(BuildContext context) {

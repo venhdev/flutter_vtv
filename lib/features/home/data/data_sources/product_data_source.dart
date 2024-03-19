@@ -6,9 +6,11 @@ import '../../../../core/network/response_handler.dart';
 import '../../domain/response/product_resp.dart';
 
 abstract class ProductDataSource {
-  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(int page, int size);
+  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(
+      int page, int size);
 
-  Future<DataResponse<ProductResp>> getProductFilter(int page, int size, String sortType);
+  Future<DataResponse<ProductResp>> getProductFilter(
+      int page, int size, String sortType);
 
   Future<DataResponse<ProductResp>> getProductFilterByPriceRange({
     required int page,
@@ -24,7 +26,8 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   ProductDataSourceImpl(this._client);
   @override
-  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(int page, int size) async {
+  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(
+      int page, int size) async {
     // send request
     final response = await _client.get(
       baseUri(
@@ -94,7 +97,8 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductResp>> getProductFilter(int page, int size, String sortType) async {
+  Future<DataResponse<ProductResp>> getProductFilter(
+      int page, int size, String sortType) async {
     final response = await _client.get(
       baseUri(
         path: '$kAPIProductFilterURL/$sortType',

@@ -5,7 +5,8 @@ import '../../../../core/network/response_handler.dart';
 import '../../domain/response/product_resp.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductResp>> searchProductSort(int page, int size, String keyword, String sort);
+  Future<DataResponse<ProductResp>> searchProductSort(
+      int page, int size, String keyword, String sort);
 
   Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
     int page,
@@ -23,7 +24,8 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductResp>> searchProductSort(int page, int size, String keyword, String sort) async {
+  Future<DataResponse<ProductResp>> searchProductSort(
+      int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(

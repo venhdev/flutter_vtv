@@ -47,28 +47,34 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<Connectivity>(connectivity);
 
   //! Core - Helpers - Managers
-  sl.registerSingleton<SharedPreferencesHelper>(SharedPreferencesHelper(sharedPreferences));
+  sl.registerSingleton<SharedPreferencesHelper>(
+      SharedPreferencesHelper(sharedPreferences));
   sl.registerSingleton<SecureStorageHelper>(SecureStorageHelper(secureStorage));
 
-  sl.registerSingleton<LocalNotificationManager>(LocalNotificationManager(flutterLocalNotificationsPlugin));
-  sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
+  sl.registerSingleton<LocalNotificationManager>(
+      LocalNotificationManager(flutterLocalNotificationsPlugin));
+  sl.registerSingleton<FirebaseCloudMessagingManager>(
+      FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
   sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl()));
-  sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
+  sl.registerSingleton<SearchProductDataSource>(
+      SearchProductDataSourceImpl(sl()));
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<CategoryRepository>(CategoryRepositoryImpl(sl()));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
-  sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
+  sl.registerSingleton<SearchProductRepository>(
+      SearchProductRepositoryImpl(sl()));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
 
   //! UseCase
-  sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
+  sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(
+      () => LoginWithUsernameAndPasswordUC(sl()));
   sl.registerLazySingleton<LogoutUC>(() => LogoutUC(sl()));
   sl.registerLazySingleton<CheckTokenUC>(() => CheckTokenUC(sl()));
 

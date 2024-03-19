@@ -26,7 +26,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool? _gender;
   DateTime? _dob;
@@ -100,13 +101,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                   onPressed: () {
                                     Navigator.pop(context, true);
                                   },
-                                  child: const Text('Nam', style: TextStyle(fontSize: 16)),
+                                  child: const Text('Nam',
+                                      style: TextStyle(fontSize: 16)),
                                 ),
                                 SimpleDialogOption(
                                   onPressed: () {
                                     Navigator.pop(context, false);
                                   },
-                                  child: const Text('Nữ', style: TextStyle(fontSize: 16)),
+                                  child: const Text('Nữ',
+                                      style: TextStyle(fontSize: 16)),
                                 ),
                               ],
                             ),
@@ -136,11 +139,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           final pickedDate = await showDatePicker(
                             context: context,
                             firstDate: DateTime(1900),
-                            lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
+                            lastDate: DateTime(
+                                DateTime.now().year - 12), // least 12 years old
                           );
 
                           if (pickedDate != null) {
-                            _dobController.text = convertDateTimeToString(pickedDate, pattern: 'dd/MM/yyyy');
+                            _dobController.text = convertDateTimeToString(
+                                pickedDate,
+                                pattern: 'dd/MM/yyyy');
                             _dob = pickedDate;
                           }
                         },
