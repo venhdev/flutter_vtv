@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/components/custom_buttons.dart';
-import '../../domain/response/cart_by_shop_dto.dart';
+import '../../domain/dto/cart_by_shop_dto.dart';
 import 'cart_item.dart';
 
 class CartsByShop extends StatelessWidget {

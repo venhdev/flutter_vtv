@@ -1,5 +1,5 @@
 import '../../../../core/constants/typedef.dart';
-import '../response/product_resp.dart';
+import '../dto/product_resp.dart';
 
 abstract class SearchProductRepository {
   /// Search keyword + sort + price range

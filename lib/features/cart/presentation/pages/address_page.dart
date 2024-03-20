@@ -1,7 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../service_locator.dart';
+import '../../data/data_sources/cart_data_source.dart';
 import '../components/address_summary.dart';
 import 'add_address_page.dart';
 
@@ -9,7 +10,8 @@ class AddressPage extends StatelessWidget {
   const AddressPage({super.key});
 
   static const routeName = 'address';
-  static const route = '/home/cart/address';
+  static const pathName = 'address';
+  static const path = '/home/cart/address';
 
   @override
   Widget build(BuildContext context) {
@@ -20,51 +22,52 @@ class AddressPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Row(
-                children: [
-                  Checkbox(
-                    value: false,
-                    onChanged: (value) {
-                      // TODO set default address
+          FutureBuilder(
+              future: sl<CartDataSource>().getAllAddress(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final listAddress = snapshot.data!.data;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: listAddress.length,
+                    itemBuilder: (context, index) {
+                      final address = listAddress[index];
+                      return Row(
+                        children: [
+                          Checkbox(
+                            value: address.status == "ACTIVE",
+                            onChanged: (value) {
+                              // TODO set default address
+                            },
+                          ),
+                          Expanded(
+                            child: AddressSummary(
+                              onTap: () {
+                                // TODO edit address
+                              },
+                              address:
+                                  '${address.fullAddress!}, ${address.wardFullName!}, ${address.districtFullName!}, ${address.provinceFullName!}',
+                              receiver: address.fullName!,
+                              phone: address.phone!,
+                              icon: Icons.edit,
+                            ),
+                          ),
+                        ],
+                      );
                     },
-                  ),
-                  Expanded(
-                    child: AddressSummary(
-                      onTap: () {
-                        // TODO edit address
-                      },
-                      address: 'Hà Nội, Việt Nam',
-                      receiver: 'Nguyễn Văn A',
-                      phone: '8172468364',
-                      icon: Icons.edit,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
           TextButton(
             onPressed: () async {
-              // GoRouter.of(context).go('/home/cart/address/add');
-              final result = await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const AddAddressPage();
-                  },
-                ),
-              );
-
-              log('result: $result');
+              GoRouter.of(context).goNamed(AddAddressPage.routeName);
             },
             style: TextButton.styleFrom(
-              backgroundColor:
-                  Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             child: const Text(
               'Thêm địa chỉ mới',

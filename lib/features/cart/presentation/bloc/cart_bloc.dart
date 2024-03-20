@@ -2,15 +2,16 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
 
 import '../../domain/repository/cart_repository.dart';
-import '../../domain/response/cart_resp.dart';
+import '../../domain/dto/cart_resp.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  CartBloc(this._cartRepository) : super(CartInitial()) {
+  CartBloc(this._cartRepository, this._secureStorage) : super(CartInitial()) {
     on<InitialCart>(_onInitialCart);
     on<FetchCart>(_onFetchCart);
     on<AddToCart>(_onAddToCart);
@@ -20,9 +21,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   final CartRepository _cartRepository;
+  final SecureStorageHelper _secureStorage;
 
   void _onInitialCart(InitialCart event, Emitter<CartState> emit) async {
     emit(CartLoading());
+    // check if user is logged in
+    final isLoggedIn = await _secureStorage.isLogin;
+    if (!isLoggedIn) {
+      emit(const CartError(message: 'Bạn cần đăng nhập để xem giỏ hàng'));
+      return;
+    }
     final resp = await _cartRepository.getCarts();
 
     resp.fold(

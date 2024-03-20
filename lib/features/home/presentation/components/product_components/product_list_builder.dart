@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../domain/response/product_resp.dart';
+import '../../../domain/dto/product_resp.dart';
 import 'page_number.dart';
 import 'product_item.dart';
 

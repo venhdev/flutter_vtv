@@ -80,7 +80,7 @@ Future<void> initializeLocator() async {
 
   //! Bloc
   sl.registerFactory(() => AuthCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => CartBloc(sl()));
+  sl.registerFactory(() => CartBloc(sl(), sl()));
 }
 
 // <https://pub.dev/packages/get_it>

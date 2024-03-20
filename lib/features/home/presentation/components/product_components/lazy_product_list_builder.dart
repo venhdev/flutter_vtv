@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../domain/response/product_resp.dart';
+import '../../../domain/dto/product_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import 'product_item.dart';
 

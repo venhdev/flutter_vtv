@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/features/cart/presentation/pages/add_address_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_state.dart';
+import '../../../features/cart/presentation/pages/address_page.dart';
 import '../../../features/cart/presentation/pages/cart_page.dart';
 import '../../../features/home/presentation/pages/product_detail_page.dart';
 import 'intro_page.dart';
@@ -95,8 +97,10 @@ class MainPage extends StatelessWidget {
   bool _shouldShowBottomNavigationBar(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     switch (location) {
-      case CartPage.route:
-      case ProductDetailPage.route:
+      case CartPage.path:
+      case ProductDetailPage.path:
+      case AddressPage.path:
+      case AddAddressPage.path:
         return false;
       default:
         return true;

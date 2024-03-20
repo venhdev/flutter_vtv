@@ -52,6 +52,8 @@ class AuthState extends Equatable {
   final AuthEntity? auth;
   final String? message;
   final int? code;
+
+  /// Redirect to a specific page (when code = 200)
   final String? redirectTo;
 
   @override

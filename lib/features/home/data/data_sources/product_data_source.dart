@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http show Client;
 
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/response/product_resp.dart';
+import '../../domain/dto/product_resp.dart';
 
 abstract class ProductDataSource {
   Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(

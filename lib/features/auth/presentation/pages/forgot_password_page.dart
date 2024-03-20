@@ -8,6 +8,8 @@ import '../components/text_field_custom.dart';
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 
+  static const String pathName = 'forgot-password';
+  static const String path = '/user/forgot-password';
   static const String routeName = 'forgot-password';
 
   @override

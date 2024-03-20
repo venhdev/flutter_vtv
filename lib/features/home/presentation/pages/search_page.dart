@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/features/home/domain/response/product_resp.dart';
+import 'package:flutter_vtv/features/home/domain/dto/product_resp.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
@@ -10,8 +10,9 @@ import '../components/product_components/product_list_builder.dart';
 import '../components/search_components/btn_filter.dart';
 
 class SearchPage extends StatefulWidget {
+  static const String pathName = 'search';
   static const String routeName = 'search';
-  static const String route = '/home/$routeName';
+  static const String path = '/home/search';
 
   final String keywords;
 

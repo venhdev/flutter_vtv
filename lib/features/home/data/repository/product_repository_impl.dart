@@ -5,7 +5,7 @@ import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/response/product_resp.dart';
+import '../../domain/dto/product_resp.dart';
 import '../../domain/repository/product_repository.dart';
 
 class ProductRepositoryImpl extends ProductRepository {

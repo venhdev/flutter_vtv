@@ -16,7 +16,7 @@ class ProductItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          context.go(ProductDetailPage.route, extra: product);
+          context.go(ProductDetailPage.path, extra: product);
         },
         child: Column(
           children: [

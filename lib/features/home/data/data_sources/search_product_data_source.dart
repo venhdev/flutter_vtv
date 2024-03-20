@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http show Client;
 import '../../../../core/network/base_response.dart';
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/response/product_resp.dart';
+import '../../domain/dto/product_resp.dart';
 
 abstract class SearchProductDataSource {
   Future<DataResponse<ProductResp>> searchProductSort(

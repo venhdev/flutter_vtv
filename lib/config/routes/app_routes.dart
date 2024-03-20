@@ -13,6 +13,7 @@ import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/pages/user_detail_page.dart';
 import '../../features/auth/presentation/pages/user_home_page.dart';
+import '../../features/cart/presentation/pages/add_address_page.dart';
 import '../../features/cart/presentation/pages/address_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/domain/entities/product_entity.dart';

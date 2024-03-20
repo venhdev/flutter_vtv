@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/features/cart/domain/dto/address_dto.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../service_locator.dart';
+import '../../data/data_sources/cart_data_source.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
@@ -11,7 +14,8 @@ class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   static const routeName = 'cart';
-  static const route = '/home/cart';
+  static const pathName = 'cart';
+  static const path = '/home/cart';
 
   @override
   Widget build(BuildContext context) {
@@ -19,28 +23,13 @@ class CartPage extends StatelessWidget {
       builder: (context, state) {
         if (state is CartLoaded) {
           return NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
                   title: Text('Giỏ hàng (${state.cart.count})'),
                   floating: true,
                   backgroundColor: Colors.transparent,
-                  bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(120),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AddressSummary(
-                        onTap: () => GoRouter.of(context).go(AddressPage.route),
-                        address:
-                            'Hà Nội, Việt Nam Hà Nội, Việt NamHà Nội, Việt Nam vHà Nội, Việt Nam',
-                        receiver: 'Nguyễn Văn A',
-                        phone: '8172468364',
-                        margin: const EdgeInsets.all(8),
-                        padding: const EdgeInsets.all(8),
-                      ),
-                    ),
-                  ),
+                  bottom: _buildAddress(context),
                 ),
               ];
             },
@@ -51,8 +40,7 @@ class CartPage extends StatelessWidget {
               },
               child: state.cart.cartByShopDTOs.isNotEmpty
                   ? ListView.builder(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.1),
+                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1),
                       itemCount: state.cart.cartByShopDTOs.length,
                       itemBuilder: (context, shopIndex) {
                         return CartsByShop(
@@ -83,9 +71,7 @@ class CartPage extends StatelessWidget {
                             onTap: () {
                               GoRouter.of(context).go('/home');
                             },
-                            child: const Text('Tiếp tục mua sắm',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline)),
+                            child: const Text('Tiếp tục mua sắm', style: TextStyle(decoration: TextDecoration.underline)),
                           )
                         ],
                       ),
@@ -105,6 +91,35 @@ class CartPage extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       },
+    );
+  }
+
+  PreferredSize _buildAddress(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(120),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FutureBuilder(
+            future: sl<CartDataSource>().getAllAddress(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                // find the default address has "status": "ACTIVE",
+                final defaultAddress = snapshot.data!.data.firstWhere((element) => element.status == 'ACTIVE');
+                return AddressSummary(
+                  onTap: () => GoRouter.of(context).go(AddressPage.path),
+                  address:
+                      '${defaultAddress.fullAddress!}, ${defaultAddress.wardFullName!}, ${defaultAddress.districtFullName!}, ${defaultAddress.provinceFullName!}',
+                  receiver: defaultAddress.fullName!,
+                  phone: defaultAddress.phone!,
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }),
+      ),
     );
   }
 }

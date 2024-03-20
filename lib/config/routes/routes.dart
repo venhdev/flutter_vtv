@@ -1,38 +1,52 @@
 part of 'app_routes.dart';
 
 final _routes = <RouteBase>[
-  // Home Route
+  // Home Route --root -> need '/'
   GoRoute(
-    path: '/${HomePage.routeName}', // '/home'
+    path: '/${HomePage.pathName}', // '/home'
+    name: HomePage.routeName, // 'home'
     builder: (BuildContext context, GoRouterState state) {
       return const HomePage();
     },
     routes: [
       GoRoute(
-        path: ProductDetailPage.routeName, // 'home/product-detail'
+        path: ProductDetailPage.pathName, // 'home/product-detail'
+        name: ProductDetailPage.routeName, // product-detail
         builder: (context, state) {
           final ProductEntity product = state.extra as ProductEntity;
           return ProductDetailPage(product: product);
         },
       ),
       GoRoute(
-        path: SearchPage.routeName, // 'home/search'
+        path: SearchPage.pathName, // 'home/search'
+        name: SearchPage.routeName, // search
         builder: (context, state) {
           final String keywords = state.extra as String;
           return SearchPage(keywords: keywords);
         },
       ),
       GoRoute(
-        path: CartPage.routeName, // 'home/cart'
+        path: CartPage.pathName, // 'home/cart'
+        name: CartPage.routeName,
         builder: (context, state) {
           return const CartPage();
         },
         routes: [
           GoRoute(
-            path: AddressPage.routeName, // 'home/cart/address'
+            path: AddressPage.pathName, // 'home/cart/address'
+            name: AddressPage.pathName,
             builder: (context, state) {
               return const AddressPage();
             },
+            routes: [
+              GoRoute(
+                path: AddAddressPage.pathName, // 'home/cart/address/add'
+                name: AddAddressPage.routeName,
+                builder: (context, state) {
+                  return const AddAddressPage();
+                },
+              ),
+            ],
           ),
           // GoRoute(
           //   path: PaymentPage.routeName, // 'home/cart/payment'
@@ -46,37 +60,45 @@ final _routes = <RouteBase>[
   ),
   // User Route
   GoRoute(
-    path: '/${UserHomePage.routeName}', // '/user'
+    path: '/${UserHomePage.pathName}', // '/user'
+    name: UserHomePage.routeName, // 'user'
     builder: (BuildContext context, GoRouterState state) {
       return const UserHomePage(); // contain login page
     },
     routes: [
       GoRoute(
-        path: LoginPage.routeName, // '/user/login'
+        path: LoginPage.pathName, // '/user/login'
+        name: LoginPage.routeName, // login
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: RegisterPage.routeName, // '/user/register'
+        path: RegisterPage.pathName, // '/user/register'
+        name: RegisterPage.routeName, // register
         builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
-        path: ForgotPasswordPage.routeName, // '/user/forgot-password'
+        path: ForgotPasswordPage.pathName, // '/user/forgot-password'
+        name: ForgotPasswordPage.routeName, // forgot-password
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
         // get extra from state
-        path: UserDetailPage.routeName, // '/user/detail'
+        path: UserDetailPage.pathName, // '/user/detail'
+        name: UserDetailPage.routeName, // user-detail
         builder: (context, state) {
           final userInfo = state.extra as UserInfoEntity;
           return UserDetailPage(userInfo: userInfo);
         },
       ),
       GoRoute(
-        path: SettingsPage.routeName, // '/user/settings'
+        path: SettingsPage.pathName, // '/user/settings'
+        name: SettingsPage.routeName, // settings
         builder: (context, state) => const SettingsPage(),
         routes: [
           GoRoute(
-            path: ChangePasswordPage.routeName,
+            path:
+                ChangePasswordPage.pathName, // '/user/settings/change-password'
+            name: ChangePasswordPage.routeName, // change-password
             builder: (context, state) => const ChangePasswordPage(),
           ),
         ],
