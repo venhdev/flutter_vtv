@@ -50,7 +50,7 @@ void main() async {
         create: (context) => appState,
       ),
       BlocProvider(create: (context) => authCubit),
-      BlocProvider(create: (context) => sl<CartBloc>()..add(FetchCart())),
+      BlocProvider(create: (context) => sl<CartBloc>()..add(InitialCart())),
     ],
     child: const VTVApp(),
   ));

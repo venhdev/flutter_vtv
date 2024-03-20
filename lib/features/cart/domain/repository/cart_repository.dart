@@ -1,5 +1,5 @@
 import '../../../../core/constants/typedef.dart';
-import '../response/cart_resp.dart';
+import '../dto/cart_resp.dart';
 
 abstract class CartRepository {
   FRespData<CartResp> getCarts();

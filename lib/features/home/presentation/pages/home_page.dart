@@ -14,6 +14,7 @@ import '../components/product_components/lazy_product_list_builder.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  static const String pathName = 'home';
   static const String routeName = 'home';
 
   @override
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _refresh() async {
     setState(() {
       isRefreshing = true;
+      context.read<CartBloc>().add(InitialCart());
     });
     await Future.delayed(const Duration(milliseconds: 300));
     setState(() {
@@ -61,7 +63,6 @@ class _HomePageState extends State<HomePage> {
       body: RefreshIndicator(
         onRefresh: () async {
           _refresh(); // Remove all widget and re-render due to call API
-          context.read<CartBloc>().add(FetchCart());
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),

@@ -16,3 +16,20 @@ const String kAPICartDeleteURL =
     '/customer/cart/delete'; // DELETE {:cartId} --uuid
 const String kAPICartDeleteByShopIdURL =
     '/customer/cart/delete-by-shop-id'; // DELETE {:shopId}
+
+//! *location*
+// province
+const String kAPILocationProvinceGetAllURL =
+    '/location/province/get-all'; // GET
+// district
+const String kAPILocationDistrictGetAllByProvinceCodeURL =
+    '/location/district/get-all-by-province-code'; // GET /{provinceCode}
+// ward
+const String kAPILocationWardGetAllByDistrictCodeURL =
+    '/location/ward/get-all-by-district-code'; // GET /{districtCode}
+const String kAPILocationWardFullAddressURL =
+    '/location/ward/full-address'; // GET /{wardCode}
+
+//! address-controller
+const String kAPIAddressAddURL = '/customer/address/add';
+const String kAPIAddressAllURL = '/customer/address/all';

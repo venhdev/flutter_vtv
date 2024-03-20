@@ -50,13 +50,17 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PhotoViewPage(
-                        imageUrl: _variant?.image.isNotEmpty ?? false ? _variant!.image : widget.product.image,
+                        imageUrl: _variant?.image.isNotEmpty ?? false
+                            ? _variant!.image
+                            : widget.product.image,
                       ),
                     ),
                   );
                 },
                 child: ImageCacheable(
-                  (_variant?.image.isNotEmpty ?? false) ? _variant!.image : widget.product.image,
+                  (_variant?.image.isNotEmpty ?? false)
+                      ? _variant!.image
+                      : widget.product.image,
                   width: 100,
                   height: 100,
                 ),
@@ -111,7 +115,9 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ImageCacheable(
-                              variant.image.isNotEmpty ? variant.image : widget.product.image,
+                              variant.image.isNotEmpty
+                                  ? variant.image
+                                  : widget.product.image,
                               height: 38,
                               width: 38,
                               fit: BoxFit.cover,
@@ -119,7 +125,8 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                             const SizedBox(width: 4),
                             Text(
                               variant.sku,
-                              style: const TextStyle(fontWeight: FontWeight.normal),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.normal),
                             ),
                           ],
                         ),
@@ -173,11 +180,14 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
           ElevatedButton(
             // change backgroundColor
             style: ElevatedButton.styleFrom(
-              backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
+              backgroundColor:
+                  _variant != null ? Colors.orange[300] : Colors.grey[300],
             ),
             onPressed: () {
               if (_variant != null) {
-                context.read<CartBloc>().add(AddToCart(_variant!.productVariantId, _quantity));
+                context
+                    .read<CartBloc>()
+                    .add(AddToCart(_variant!.productVariantId, _quantity));
                 Navigator.pop(context);
               }
             },

@@ -1,7 +1,7 @@
 import 'package:flutter_vtv/core/constants/typedef.dart';
 
 import '../../../../core/network/response_handler.dart';
-import '../../domain/response/product_resp.dart';
+import '../../domain/dto/product_resp.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../data_sources/search_product_data_source.dart';
 

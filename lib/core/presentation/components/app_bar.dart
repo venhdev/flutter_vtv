@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -37,7 +39,7 @@ AppBar buildAppBar(
               if (onSubmittedCallback != null) {
                 onSubmittedCallback(text);
               } else {
-                context.go(SearchPage.route, extra: text);
+                context.go(SearchPage.path, extra: text);
               }
             },
           ),
@@ -64,40 +66,45 @@ class CartBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        if (state.status != AuthStatus.authenticated)
+        if (state.status != AuthStatus.authenticated) {
           return const SizedBox.shrink();
-        return Row(
-          children: [
-            BlocBuilder<CartBloc, CartState>(
-              builder: (context, state) {
-                if (state is CartLoaded) {
-                  if (state.cart.count == 0) {
-                    return IconButton.outlined(
-                      onPressed: () => context.go(CartPage.route),
-                      icon: const Icon(Icons.shopping_cart_outlined),
+        } else {
+          return Row(
+            children: [
+              BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  if (state is CartLoaded) {
+                    if (state.cart.count == 0) {
+                      return IconButton.outlined(
+                        onPressed: () => context.go(CartPage.path),
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                      );
+                    }
+                    return Badge(
+                      label: Text(state.cart.count.toString()),
+                      backgroundColor: Colors.orange,
+                      child: IconButton.outlined(
+                        onPressed: () => context.go(CartPage.path),
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                      ),
                     );
                   }
-                  return Badge(
-                    label: Text(state.cart.count.toString()),
-                    backgroundColor: Colors.orange,
-                    child: IconButton.outlined(
-                      onPressed: () => context.go(CartPage.route),
-                      icon: const Icon(Icons.shopping_cart_outlined),
-                    ),
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            ),
-            // icon chat
-            const IconButton.outlined(
-              onPressed: null,
-              icon: Icon(Icons.chat_outlined),
-            ),
-          ],
-        );
+                },
+              ),
+              // icon chat
+              IconButton.outlined(
+                onPressed: () {
+                  log(context.read<CartBloc>().state.toString());
+                  // context.read<CartBloc>().add(InitialCart());
+                },
+                icon: const Icon(Icons.chat_outlined),
+              ),
+            ],
+          );
+        }
       },
     );
   }

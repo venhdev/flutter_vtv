@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/typedef.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
-import '../../../domain/response/product_resp.dart';
+import '../../../domain/dto/product_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';
 
@@ -58,7 +58,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
                           //     builder: (context) => ProductDetailPage(product: product),
                           //   ),
                           // );
-                          context.go(ProductDetailPage.route, extra: product);
+                          context.go(ProductDetailPage.path, extra: product);
                         },
                       );
                     },

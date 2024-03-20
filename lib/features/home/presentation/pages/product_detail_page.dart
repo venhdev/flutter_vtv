@@ -19,8 +19,9 @@ class ProductDetailPage extends StatelessWidget {
 
   final ProductEntity product;
 
+  static const String pathName = 'product-detail';
   static const String routeName = 'product-detail';
-  static const String route = '/home/product-detail';
+  static const String path = '/home/product-detail';
 
   @override
   Widget build(BuildContext context) {

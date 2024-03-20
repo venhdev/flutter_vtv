@@ -9,10 +9,10 @@ class WardEntity extends Equatable {
   final String administrativeUnitShortName;
 
   const WardEntity({
-   required this.wardCode,
-   required this.name,
-   required this.fullName,
-   required this.administrativeUnitShortName,
+    required this.wardCode,
+    required this.name,
+    required this.fullName,
+    required this.administrativeUnitShortName,
   });
 
   factory WardEntity.fromMap(Map<String, dynamic> data) => WardEntity(

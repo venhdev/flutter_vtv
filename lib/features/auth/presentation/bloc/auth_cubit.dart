@@ -43,8 +43,10 @@ class AuthCubit extends Cubit<AuthState> {
             // get new access token failed
             (failure) => emit(
                 AuthState.authenticated(authEntity, message: failure.message)),
-            (newAccessToken) => emit(AuthState.authenticated(
-                authEntity.copyWith(accessToken: newAccessToken))),
+            (newAccessToken) => emit(
+              AuthState.authenticated(
+                  authEntity.copyWith(accessToken: newAccessToken)),
+            ),
           );
         },
       );

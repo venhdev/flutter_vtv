@@ -9,6 +9,8 @@ import '../components/text_field_custom.dart';
 class UserDetailPage extends StatefulWidget {
   const UserDetailPage({super.key, required this.userInfo});
 
+  static const String pathName = 'user-detail';
+  static const String path = '/user/detail';
   static const String routeName = 'user-detail';
 
   final UserInfoEntity userInfo;

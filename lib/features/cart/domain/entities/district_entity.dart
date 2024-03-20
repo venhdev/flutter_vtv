@@ -9,10 +9,10 @@ class DistrictEntity extends Equatable {
   final String administrativeUnitShortName;
 
   const DistrictEntity({
-   required this.districtCode,
-   required this.name,
-   required this.fullName,
-   required this.administrativeUnitShortName,
+    required this.districtCode,
+    required this.name,
+    required this.fullName,
+    required this.administrativeUnitShortName,
   });
 
   factory DistrictEntity.fromMap(Map<String, dynamic> data) {

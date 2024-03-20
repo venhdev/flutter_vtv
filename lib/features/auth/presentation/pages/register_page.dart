@@ -12,7 +12,9 @@ import '../components/text_field_custom.dart';
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
+  static const String pathName = 'register';
   static const String routeName = 'register';
+  static const String path = '/user/register';
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
