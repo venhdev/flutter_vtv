@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../domain/entities/product_entity.dart';
 import '../components/product_components/sheet_add_to_cart.dart';
@@ -14,7 +14,7 @@ import '../components/product_components/sheet_add_to_cart.dart';
     ),
   );
 */
-class ProductDetailPage extends StatelessWidget {
+class ProductDetailPage extends StatefulWidget {
   const ProductDetailPage({super.key, required this.product});
 
   final ProductEntity product;
@@ -24,44 +24,58 @@ class ProductDetailPage extends StatelessWidget {
   static const String path = '/home/product-detail';
 
   @override
+  State<ProductDetailPage> createState() => _ProductDetailPageState();
+}
+
+class _ProductDetailPageState extends State<ProductDetailPage> {
+  bool _showBottomSheet = true;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse && _showBottomSheet) {
+      setState(() {
+        _showBottomSheet = false;
+      });
+    } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward && !_showBottomSheet) {
+      setState(() {
+        _showBottomSheet = true;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context,
-          title: product.name,
-          showSearchBar: false,
-          automaticallyImplyLeading: true),
-      // bottomSheet AddToCart & BuyNow button
-      bottomSheet: Row(
-        children: [
-          Expanded(
-            child: TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isDismissible: true,
-                  showDragHandle: true,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return BottomSheetAddToCart(product: product);
-                  },
-                );
-              },
-              child: const Text('Thêm vào giỏ hàng'),
-            ),
-          ),
-          Expanded(
-            child: TextButton(
-              onPressed: () {
-                // buy now
-              },
-              child: const Text('Mua ngay'),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      // appBar: buildAppBar(
+      //   context,
+      //   title: product.name,
+      //   showSearchBar: false,
+      //   automaticallyImplyLeading: true,
+      // ),
+      bottomSheet: _showBottomSheet ? _buildBtnAddToCartAndBuyNow(context) : null,
+      body: GestureDetector(
+        onTap: () {
+          if (!_showBottomSheet) {
+            setState(() {
+              _showBottomSheet = true;
+            });
+          }
+        },
+        child: ListView(
+          controller: _scrollController,
           children: <Widget>[
             // image of the product
             Align(
@@ -71,15 +85,51 @@ class ProductDetailPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          PhotoViewPage(imageUrl: product.image),
+                      builder: (context) => PhotoViewPage(imageUrl: widget.product.image),
                     ),
                   );
                 },
-                child: Image.network(
-                  product.image,
+                child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.4,
-                  fit: BoxFit.fitWidth,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        widget.product.image,
+                        fit: BoxFit.fitWidth,
+                      ),
+                      // back button
+                      Positioned(
+                        top: 16,
+                        left: 16,
+                        child: IconButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.6),
+                            ),
+                          ),
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      // favorite button
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: IconButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              Colors.white.withOpacity(0.6),
+                            ),
+                          ),
+                          icon: const Icon(Icons.favorite_border),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -90,7 +140,7 @@ class ProductDetailPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                product.name,
+                widget.product.name,
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -104,9 +154,9 @@ class ProductDetailPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                product.cheapestPrice != product.mostExpensivePrice
-                    ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
-                    : formatCurrency(product.cheapestPrice),
+                widget.product.cheapestPrice != widget.product.mostExpensivePrice
+                    ? '${formatCurrency(widget.product.cheapestPrice)} - ${formatCurrency(widget.product.mostExpensivePrice)}'
+                    : formatCurrency(widget.product.cheapestPrice),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -120,7 +170,7 @@ class ProductDetailPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                product.description,
+                widget.product.description,
                 style: const TextStyle(
                   fontSize: 16,
                 ),
@@ -145,8 +195,6 @@ class ProductDetailPage extends StatelessWidget {
             //     child: const Text('Add to cart'),
             //   ),
             // ),
-
-            const SizedBox(height: 32),
 
             // list product variants
             // ListView.builder(
@@ -187,23 +235,40 @@ class ProductDetailPage extends StatelessWidget {
             //     );
             //   },
             // ),
-
-            // button to add to cart (always align at bottom of the screen)
-            // Align(
-            //   alignment: Alignment.bottomCenter,
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(16),
-            //     child: ElevatedButton(
-            //       onPressed: () {
-            //         // add to cart
-            //       },
-            //       child: const Text('Add to cart'),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBtnAddToCartAndBuyNow(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isDismissible: true,
+                showDragHandle: true,
+                isScrollControlled: true,
+                builder: (context) {
+                  return BottomSheetAddToCart(product: widget.product);
+                },
+              );
+            },
+            child: const Text('Thêm vào giỏ hàng'),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            onPressed: () {
+              // buy now
+            },
+            child: const Text('Mua ngay'),
+          ),
+        ),
+      ],
     );
   }
 }

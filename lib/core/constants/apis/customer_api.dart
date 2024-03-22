@@ -31,5 +31,6 @@ const String kAPILocationWardFullAddressURL =
     '/location/ward/full-address'; // GET /{wardCode}
 
 //! address-controller
-const String kAPIAddressAddURL = '/customer/address/add';
-const String kAPIAddressAllURL = '/customer/address/all';
+const String kAPIAddressAddURL = '/customer/address/add'; // POST
+const String kAPIAddressAllURL = '/customer/address/all'; // GET
+const String kAPIAddressUpdateStatusURL = '/customer/address/update/status'; // PATCH

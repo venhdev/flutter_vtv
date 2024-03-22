@@ -14,15 +14,15 @@ abstract class AuthRepository {
   FResult<void> cacheAuth(AuthEntity authEntity);
 
   // change password
-  FResp changePassword(String oldPassword, String newPassword);
+  FRespEither changePassword(String oldPassword, String newPassword);
   FRespData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo);
 
   //* logout
-  FResp logout(String refreshToken);
+  FRespEither logout(String refreshToken);
   FResult<void> deleteAuth();
 
   //* register
-  FResp register(RegisterParams registerParams);
+  FRespEither register(RegisterParams registerParams);
 
   /// Whether [accessToken] is expired or not. Returns true if expired, false if not
   FResult<bool> isExpiredToken(String accessToken);
@@ -32,8 +32,8 @@ abstract class AuthRepository {
 
   //* forgot password
   /// send otp code to email that match with [username]
-  FResp sendOTPForResetPassword(String username);
-  FResp resetPasswordViaOTP(
+  FRespEither sendOTPForResetPassword(String username);
+  FRespEither resetPasswordViaOTP(
       String username, String otpCode, String newPassword);
 
   // ----------------- Auth -----------------

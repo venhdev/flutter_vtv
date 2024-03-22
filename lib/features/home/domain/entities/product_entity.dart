@@ -67,17 +67,18 @@ class ProductEntity extends Equatable {
       status: map['status'] as String,
       categoryId: map['categoryId'].toInt() as int,
       brandId: map['brandId']?.toInt() as int?,
-      productVariant: ProductVariantEntity.fromList(
-          map['productVariantDTOs'] as List<dynamic>),
+      productVariant: map['productVariantDTOs'] != null
+          ? ProductVariantEntity.fromList(
+              map['productVariantDTOs'] as List<dynamic>,
+            )
+          : [],
     );
   }
 
-  factory ProductEntity.fromJson(String source) =>
-      ProductEntity.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ProductEntity.fromJson(String source) => ProductEntity.fromMap(json.decode(source) as Map<String, dynamic>);
 
   static List<ProductEntity> fromList(List<dynamic> list) {
-    return List<ProductEntity>.from(
-        list.map((e) => ProductEntity.fromMap(e as Map<String, dynamic>)));
+    return List<ProductEntity>.from(list.map((e) => ProductEntity.fromMap(e as Map<String, dynamic>)));
   }
 
   @override
@@ -110,7 +111,7 @@ class ProductEntity extends Equatable {
       'status': status,
       'categoryId': categoryId,
       'brandId': brandId,
-      'productVariant': productVariant.map((x) => x.toMap()).toList(),
+      'productVariantDTOs': productVariant.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -118,15 +119,11 @@ class ProductEntity extends Equatable {
 
   // get cheapest price of the product in the list of product variants
   int get cheapestPrice {
-    return productVariant
-        .map((e) => e.price)
-        .reduce((value, element) => value < element ? value : element);
+    return productVariant.map((e) => e.price).reduce((value, element) => value < element ? value : element);
   }
 
   // get the most expensive price of the product in the list of product variants
   int get mostExpensivePrice {
-    return productVariant
-        .map((e) => e.price)
-        .reduce((value, element) => value > element ? value : element);
+    return productVariant.map((e) => e.price).reduce((value, element) => value > element ? value : element);
   }
 }

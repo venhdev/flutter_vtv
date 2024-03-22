@@ -30,6 +30,9 @@ import 'features/home/domain/repository/product_repository.dart';
 import 'features/home/data/data_sources/search_product_data_source.dart';
 import 'features/home/data/repository/search_product_repository_impl.dart';
 import 'features/home/domain/repository/search_product_repository.dart';
+import 'features/profile/data/data_sources/profile_data_source.dart';
+import 'features/profile/data/repository/profile_repository_impl.dart';
+import 'features/profile/domain/repository/profile_repository.dart';
 
 // Service locator
 GetIt sl = GetIt.instance;
@@ -47,34 +50,30 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<Connectivity>(connectivity);
 
   //! Core - Helpers - Managers
-  sl.registerSingleton<SharedPreferencesHelper>(
-      SharedPreferencesHelper(sharedPreferences));
+  sl.registerSingleton<SharedPreferencesHelper>(SharedPreferencesHelper(sharedPreferences));
   sl.registerSingleton<SecureStorageHelper>(SecureStorageHelper(secureStorage));
 
-  sl.registerSingleton<LocalNotificationManager>(
-      LocalNotificationManager(flutterLocalNotificationsPlugin));
-  sl.registerSingleton<FirebaseCloudMessagingManager>(
-      FirebaseCloudMessagingManager(fMessaging));
+  sl.registerSingleton<LocalNotificationManager>(LocalNotificationManager(flutterLocalNotificationsPlugin));
+  sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
   sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl()));
-  sl.registerSingleton<SearchProductDataSource>(
-      SearchProductDataSourceImpl(sl()));
+  sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<CategoryRepository>(CategoryRepositoryImpl(sl()));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
-  sl.registerSingleton<SearchProductRepository>(
-      SearchProductRepositoryImpl(sl()));
+  sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
+  sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
 
   //! UseCase
-  sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(
-      () => LoginWithUsernameAndPasswordUC(sl()));
+  sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
   sl.registerLazySingleton<LogoutUC>(() => LogoutUC(sl()));
   sl.registerLazySingleton<CheckTokenUC>(() => CheckTokenUC(sl()));
 

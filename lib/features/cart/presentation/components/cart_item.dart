@@ -31,8 +31,14 @@ class CartItem extends StatelessWidget {
               children: [
                 // checkbox
                 Checkbox(
-                  value: false,
-                  onChanged: (value) {},
+                  value: context.read<CartBloc>().state.selectedCartIds.contains(cart.cartId),
+                  onChanged: (value) {
+                    if (value!) {
+                      context.read<CartBloc>().add(SelectCart(cart.cartId));
+                    } else {
+                      context.read<CartBloc>().add(UnSelectCart(cart.cartId));
+                    }
+                  },
                 ),
                 // product info (image, name, price, quantity, total price, delete button)
                 ImageCacheable(
