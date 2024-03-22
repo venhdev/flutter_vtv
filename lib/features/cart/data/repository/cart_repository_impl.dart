@@ -18,7 +18,7 @@ class CartRepositoryImpl extends CartRepository {
   }
 
   @override
-  FResp addToCart(int productVariantId, int quantity) {
+  FRespEither addToCart(int productVariantId, int quantity) {
     return handleSuccessResponseFromDataSource(
       noDataCallback: () =>
           _cartDataSource.addToCart(productVariantId, quantity),
@@ -26,21 +26,21 @@ class CartRepositoryImpl extends CartRepository {
   }
 
   @override
-  FResp deleteCart(String cartId) async {
+  FRespEither deleteCart(String cartId) async {
     return handleSuccessResponseFromDataSource(
       noDataCallback: () => _cartDataSource.deleteToCart(cartId),
     );
   }
 
   @override
-  FResp deleteCartByShopId(String cartId) async {
+  FRespEither deleteCartByShopId(String cartId) async {
     return handleSuccessResponseFromDataSource(
       noDataCallback: () => _cartDataSource.deleteToCartByShopId(cartId),
     );
   }
 
   @override
-  FResp updateCart(String cartId, int quantity) async {
+  FRespEither updateCart(String cartId, int quantity) async {
     return handleSuccessResponseFromDataSource(
       noDataCallback: () => _cartDataSource.updateCart(cartId, quantity),
     );

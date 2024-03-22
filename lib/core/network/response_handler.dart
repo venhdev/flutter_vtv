@@ -94,7 +94,7 @@ FRespData<T> handleDataResponseFromDataSource<T>({
 }
 
 // handle success response from data source
-FResp handleSuccessResponseFromDataSource({
+FRespEither handleSuccessResponseFromDataSource({
   // SuccessResponse? data,
   required Future<SuccessResponse> Function() noDataCallback,
 }) async {

@@ -67,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResp logout(String refreshToken) async {
+  FRespEither logout(String refreshToken) async {
     try {
       final resOK =
           await _authDataSource.logoutAndRevokeRefreshToken(refreshToken);
@@ -129,7 +129,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResp register(RegisterParams registerParams) async {
+  FRespEither register(RegisterParams registerParams) async {
     try {
       final resOK = await _authDataSource.register(registerParams);
       return Right(resOK);
@@ -145,7 +145,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResp changePassword(String oldPassword, String newPassword) async {
+  FRespEither changePassword(String oldPassword, String newPassword) async {
     try {
       final username = await _secureStorageHelper.username;
       final resOK = await _authDataSource.changePassword(
@@ -182,7 +182,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResp sendOTPForResetPassword(String username) async {
+  FRespEither sendOTPForResetPassword(String username) async {
     try {
       final resOK =
           await _authDataSource.sendOTPForResetPasswordViaUsername(username);
@@ -197,7 +197,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FResp resetPasswordViaOTP(
+  FRespEither resetPasswordViaOTP(
       String username, String otpCode, String newPassword) async {
     try {
       final resOK = await _authDataSource.resetPassword(

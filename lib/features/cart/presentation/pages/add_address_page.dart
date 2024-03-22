@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../service_locator.dart';
-import '../../data/data_sources/cart_data_source.dart';
-import '../../domain/dto/add_address_param.dart';
+import '../../../profile/data/data_sources/profile_data_source.dart';
+import '../../../profile/domain/dto/add_address_param.dart';
 
 class AddAddressPage extends StatefulWidget {
   const AddAddressPage({super.key});
@@ -32,14 +32,28 @@ class _AddAddressPageState extends State<AddAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Thêm địa chỉ'),
-          centerTitle: true,
-          leading: IconButton(
+        title: const Text('Thêm địa chỉ'),
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop('address');
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+        actions: [
+          // reset button
+          TextButton(
             onPressed: () {
-              Navigator.of(context).pop('address');
+              setState(() {
+                _provinceName = null;
+                _districtName = null;
+                _wardName = null;
+              });
             },
-            icon: const Icon(Icons.arrow_back),
-          )),
+            child: const Text('Thiết lập lại'),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -55,47 +69,48 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 : _districtName == null
                     ? const SizedBox.shrink()
                     : const Text('Chọn phường/xã'),
-            _wardName == null
-                ? Expanded(
-                    child: FutureBuilder<dynamic>(
-                        future: _provinceName == null
-                            ? sl<CartDataSource>().getProvinces()
-                            : _districtName == null
-                                ? sl<CartDataSource>().getDistrictsByProvinceCode(_provinceCode!)
-                                : sl<CartDataSource>().getWardsByDistrictCode(_districtCode!),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ListView.builder(
-                              itemCount: snapshot.data!.data.length,
-                              itemBuilder: (context, index) {
-                                final obj = snapshot.data!.data[index];
-                                return ListTile(
-                                  title: Text(obj.name),
-                                  onTap: () {
-                                    setState(() {
-                                      if (_provinceName == null) {
-                                        _provinceName = obj.name;
-                                        _provinceCode = obj.provinceCode;
-                                      } else if (_districtName == null) {
-                                        _districtName = obj.name;
-                                        _districtCode = obj.districtCode;
-                                      } else {
-                                        _wardName = obj.name;
-                                        _wardCode = obj.wardCode;
-                                      }
-                                    });
-                                  },
-                                );
+            if (_wardName == null)
+              Expanded(
+                child: FutureBuilder<dynamic>(
+                    future: _provinceName == null
+                        ? sl<ProfileDataSource>().getProvinces()
+                        : _districtName == null
+                            ? sl<ProfileDataSource>().getDistrictsByProvinceCode(_provinceCode!)
+                            : sl<ProfileDataSource>().getWardsByDistrictCode(_districtCode!),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.data.length,
+                          itemBuilder: (context, index) {
+                            final obj = snapshot.data!.data[index];
+                            return ListTile(
+                              title: Text(obj.name),
+                              onTap: () {
+                                setState(() {
+                                  if (_provinceName == null) {
+                                    _provinceName = obj.name;
+                                    _provinceCode = obj.provinceCode;
+                                  } else if (_districtName == null) {
+                                    _districtName = obj.name;
+                                    _districtCode = obj.districtCode;
+                                  } else {
+                                    _wardName = obj.name;
+                                    _wardCode = obj.wardCode;
+                                  }
+                                });
                               },
                             );
-                          }
+                          },
+                        );
+                      }
 
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }),
-                  )
-                : const SizedBox.shrink(),
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }),
+              )
+            else
+              const SizedBox.shrink(),
             // Full address text field
             if (_wardName != null) ...[
               // Full address text field
@@ -142,7 +157,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   onPressed: () {
                     // Navigator.of(context).pop('address');
                     try {
-                      sl<CartDataSource>()
+                      sl<ProfileDataSource>()
                           .addAddress(
                             AddAddressParam(
                               provinceName: _provinceName,
@@ -155,14 +170,11 @@ class _AddAddressPageState extends State<AddAddressPage> {
                             ),
                           )
                           .then((resp) => Fluttertoast.showToast(msg: resp.message!));
-
-                      // pop
-                      Navigator.of(context).pop();
                     } catch (e) {
                       Fluttertoast.showToast(msg: e.toString());
                     }
 
-                    Navigator.of(context).pop('address');
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Lưu địa chỉ'),
                 ),

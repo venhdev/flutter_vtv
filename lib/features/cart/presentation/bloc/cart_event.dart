@@ -55,3 +55,21 @@ final class DeleteCartByShopId extends CartEvent {
   @override
   List<Object> get props => [shopId];
 }
+
+final class SelectCart extends CartEvent {
+  final String cartId;
+
+  const SelectCart(this.cartId);
+
+  @override
+  List<Object> get props => [cartId];
+}
+
+final class UnSelectCart extends CartEvent {
+  final String cartId;
+
+  const UnSelectCart(this.cartId);
+
+  @override
+  List<Object> get props => [cartId];
+}

@@ -18,6 +18,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UpdateCart>(_onUpdateCart);
     on<DeleteCart>(_onRemoveCart);
     on<DeleteCartByShopId>(_onDeleteCartByShopId);
+    on<SelectCart>(_onSelectCart);
+    on<UnSelectCart>(_onUnSelectCart);
   }
 
   final CartRepository _cartRepository;
@@ -53,8 +55,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   void _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
-    final resp =
-        await _cartRepository.addToCart(event.productVariantId, event.quantity);
+    final resp = await _cartRepository.addToCart(event.productVariantId, event.quantity);
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
@@ -76,10 +77,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     resp.fold(
       (error) => emit(CartError(message: error.message)),
       (ok) {
+        // log('prevState.quantity ${prevState.cart.cartByShopDTOs[event.shopIndex].carts[event.cartIndex].quantity}');
+        // log('event.quantity ${event.quantity}');
+
         // emit(CartSuccess(message: ok.message));
         // add(FetchCart());
-        log('prevState.quantity ${prevState.cart.cartByShopDTOs[event.shopIndex].carts[event.cartIndex].quantity}');
-        log('event.quantity ${event.quantity}');
         //? no re-render, so update cart in local state
         // final newCartState = prevState.cart.copyWith(
         //   cartByShopDTOs: prevState.cart.cartByShopDTOs.map(
@@ -110,8 +112,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final newCartState = prevState.cart.copyWith(
           cartByShopDTOs: prevState.cart.cartByShopDTOs.map(
             (cartsByShop) {
-              if (cartsByShop.shopId ==
-                  prevState.cart.cartByShopDTOs[event.shopIndex].shopId) {
+              if (cartsByShop.shopId == prevState.cart.cartByShopDTOs[event.shopIndex].shopId) {
                 return cartsByShop.copyWith(
                   carts: cartsByShop.carts.map(
                     (c) {
@@ -120,8 +121,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                           // fetch cart
                           add(FetchCart());
                         } else {
-                          return c.copyWith(
-                              quantity: c.quantity + event.quantity);
+                          return c.copyWith(quantity: c.quantity + event.quantity);
                         }
                       }
                       return c;
@@ -152,8 +152,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
-  void _onDeleteCartByShopId(
-      DeleteCartByShopId event, Emitter<CartState> emit) async {
+  void _onDeleteCartByShopId(DeleteCartByShopId event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
     final resp = await _cartRepository.deleteCartByShopId(event.shopId);
@@ -165,5 +164,21 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         add(FetchCart());
       },
     );
+  }
+
+  void _onSelectCart(SelectCart event, Emitter<CartState> emit) async {
+    final prev = (state as CartLoaded);
+    // emit(prev.copyWith(selectedCartIds: prev.selectedCartIds..add(event.cartId)));
+    emit(prev.copyWith(
+      selectedCartIds: [...prev.selectedCartIds, event.cartId],
+    ));
+  }
+
+  void _onUnSelectCart(UnSelectCart event, Emitter<CartState> emit) async {
+    final prev = (state as CartLoaded);
+    // emit(prev.copyWith(selectedCartIds: prev.selectedCartIds..remove(event.cartId)));
+    emit(prev.copyWith(
+      selectedCartIds: prev.selectedCartIds.where((id) => id != event.cartId).toList(),
+    ));
   }
 }

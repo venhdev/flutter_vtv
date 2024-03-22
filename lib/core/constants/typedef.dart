@@ -13,7 +13,7 @@ typedef Result<T> = Either<Failure, T>;
 /// - [Failure] will be returned when failure
 typedef FResult<T> = Future<Result<T>>;
 
-typedef Resp = Either<ErrorResponse, SuccessResponse>;
+typedef RespEither = Either<ErrorResponse, SuccessResponse>;
 typedef RespData<T> = Either<ErrorResponse, DataResponse<T>>;
 
 /// => Future<Either<ErrorResponse, SuccessResponse>>
@@ -22,7 +22,7 @@ typedef RespData<T> = Either<ErrorResponse, DataResponse<T>>;
 ///   + [SuccessResponse] will be returned when success
 ///
 /// - Notes: [FRespData] when response contains data
-typedef FResp = Future<Resp>;
+typedef FRespEither = Future<RespEither>;
 
 /// [T] is data type in 'data' property
 ///
@@ -31,5 +31,5 @@ typedef FResp = Future<Resp>;
 ///   + [RespData] will be returned when success
 ///
 ///
-/// - Notes: [FResp] when response contains no data
+/// - Notes: [FRespEither] when response contains no data
 typedef FRespData<T> = Future<RespData<T>>;
