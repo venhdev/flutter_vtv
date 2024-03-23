@@ -10,7 +10,6 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   static const String routeName = 'login';
-  static const String pathName = 'login';
 
   @override
   State<LoginPage> createState() => _LoginPageState();

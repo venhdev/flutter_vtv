@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/presentation/components/custom_widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/screens/address_page.dart';
+import '../../domain/repository/cart_repository.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
@@ -14,7 +16,6 @@ class CartPage extends StatefulWidget {
   const CartPage({super.key});
 
   static const routeName = 'cart';
-  static const pathName = 'cart';
   static const path = '/home/cart';
 
   @override
@@ -40,14 +41,45 @@ class _CartPageState extends State<CartPage> {
               child: BlocBuilder<CartBloc, CartState>(
                 builder: (context, state) {
                   if (state is CartLoaded) {
-                    return Text(
-                      '${state.cart}đ',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    if (state.selectedCartIds.isEmpty) {
+                      return const Text('0đ');
+                    }
+                    return FutureBuilder(
+                      future: sl<CartRepository>().createOrderByCartIds(state.selectedCartIds),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final respEither = snapshot.data!;
+                          return respEither.fold(
+                            (error) => MessageScreen.error(error.toString()),
+                            (ok) => Text(
+                              formatCurrency(ok.data.order.totalPrice),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          );
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
                     );
                   }
-                  return const Text('0đ');
+
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 },
               ),
+              // child: BlocBuilder<CartBloc, CartState>(
+              //   builder: (context, state) {
+              //     if (state is CartLoaded) {
+              //       return Text(
+              //         '${state.cart}đ',
+              //         style: const TextStyle(fontWeight: FontWeight.bold),
+              //       );
+              //     }
+              //     return const Text('0đ');
+              //   },
+              // ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -169,9 +201,9 @@ class _CartPageState extends State<CartPage> {
                         );
                       },
                       address:
-                          '${defaultAddress.fullAddress!}, ${defaultAddress.wardFullName!}, ${defaultAddress.districtFullName!}, ${defaultAddress.provinceFullName!}',
-                      receiver: defaultAddress.fullName!,
-                      phone: defaultAddress.phone!,
+                          '${defaultAddress.fullAddress}, ${defaultAddress.wardFullName}, ${defaultAddress.districtFullName}, ${defaultAddress.provinceFullName}',
+                      receiver: defaultAddress.fullName,
+                      phone: defaultAddress.phone,
                       margin: const EdgeInsets.all(8),
                       padding: const EdgeInsets.all(8),
                     );

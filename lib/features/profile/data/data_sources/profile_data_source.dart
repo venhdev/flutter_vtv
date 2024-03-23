@@ -7,7 +7,7 @@ import '../../../../core/helpers/secure_storage_helper.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
 import '../../domain/dto/add_address_param.dart';
-import '../../domain/dto/address_dto.dart';
+import '../../domain/entities/address_dto.dart';
 import '../../domain/entities/district_entity.dart';
 import '../../domain/entities/province_entity.dart';
 import '../../domain/entities/ward_entity.dart';
@@ -21,7 +21,7 @@ abstract class ProfileDataSource {
   Future<SuccessResponse> updateAddressStatus(int addressId);
 
   //! address
-  Future<DataResponse<List<AddressDTO>>> getAllAddress();
+  Future<DataResponse<List<AddressEntity>>> getAllAddress();
   Future<SuccessResponse> addAddress(AddAddressParam addAddressParam);
 }
 
@@ -31,18 +31,18 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   ProfileDataSourceImpl(this._client, this._secureStorageHelper);
   @override
-  Future<DataResponse<List<AddressDTO>>> getAllAddress() async {
+  Future<DataResponse<List<AddressEntity>>> getAllAddress() async {
     final response = await _client.get(
       baseUri(path: kAPIAddressAllURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
-    return handleResponseWithData<List<AddressDTO>>(
+    return handleResponseWithData<List<AddressEntity>>(
       response,
       kAPIAddressAllURL,
       (data) => (data['addressDTOs'] as List<dynamic>)
           .map(
-            (address) => AddressDTO.fromMap(address),
+            (address) => AddressEntity.fromMap(address),
           )
           .toList(),
     );

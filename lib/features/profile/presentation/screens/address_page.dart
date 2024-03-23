@@ -6,14 +6,13 @@ import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/pages/add_address_page.dart';
-import '../../domain/dto/address_dto.dart';
+import '../../domain/entities/address_dto.dart';
 import '../../domain/repository/profile_repository.dart';
 
 class AddressPage extends StatefulWidget {
   const AddressPage({super.key});
 
   static const routeName = 'address';
-  static const pathName = 'address';
   static const path = '/home/cart/address';
 
   @override
@@ -73,7 +72,7 @@ class _AddressPageState extends State<AddressPage> {
     );
   }
 
-  ListView _buildAddressList(List<AddressDTO> listAddress) {
+  ListView _buildAddressList(List<AddressEntity> listAddress) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: listAddress.length,
@@ -99,7 +98,7 @@ class _AddressPageState extends State<AddressPage> {
               groupValue: true,
               onChanged: (value) async {
                 final respEither =
-                    await sl<ProfileRepository>().updateAddressStatus(address.addressId!);
+                    await sl<ProfileRepository>().updateAddressStatus(address.addressId);
                 respEither.fold(
                   (error) => Fluttertoast.showToast(msg: error.message!),
                   (ok) {
@@ -115,9 +114,9 @@ class _AddressPageState extends State<AddressPage> {
                   // TODO edit address
                 },
                 address:
-                    '${address.fullAddress!}, ${address.wardFullName!}, ${address.districtFullName!}, ${address.provinceFullName!}',
-                receiver: address.fullName!,
-                phone: address.phone!,
+                    '${address.fullAddress}, ${address.wardFullName}, ${address.districtFullName}, ${address.provinceFullName}',
+                receiver: address.fullName,
+                phone: address.phone,
                 icon: Icons.edit,
               ),
             ),

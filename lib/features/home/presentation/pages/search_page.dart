@@ -10,7 +10,6 @@ import '../components/product_components/product_list_builder.dart';
 import '../components/search_components/btn_filter.dart';
 
 class SearchPage extends StatefulWidget {
-  static const String pathName = 'search';
   static const String routeName = 'search';
   static const String path = '/home/search';
 

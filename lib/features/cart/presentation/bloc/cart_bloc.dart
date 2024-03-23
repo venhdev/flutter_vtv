@@ -132,8 +132,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               return cartsByShop;
             },
           ).toList(),
+
         );
-        emit(CartLoaded(newCartState));
+        emit(prevState.copyWith(cart: newCartState));
       },
     );
   }

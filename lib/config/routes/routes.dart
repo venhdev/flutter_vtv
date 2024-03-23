@@ -3,14 +3,14 @@ part of 'app_routes.dart';
 final _routes = <RouteBase>[
   // Home Route --root -> need '/'
   GoRoute(
-    path: '/${HomePage.pathName}', // '/home'
+    path: '/${HomePage.routeName}', // '/home'
     name: HomePage.routeName, // 'home'
     builder: (BuildContext context, GoRouterState state) {
       return const HomePage();
     },
     routes: [
       GoRoute(
-        path: ProductDetailPage.pathName, // 'home/product-detail'
+        path: ProductDetailPage.routeName, // 'home/product-detail'
         name: ProductDetailPage.routeName, // product-detail
         builder: (context, state) {
           final ProductEntity product = state.extra as ProductEntity;
@@ -18,7 +18,7 @@ final _routes = <RouteBase>[
         },
       ),
       GoRoute(
-        path: SearchPage.pathName, // 'home/search'
+        path: SearchPage.routeName, // 'home/search'
         name: SearchPage.routeName, // search
         builder: (context, state) {
           final String keywords = state.extra as String;
@@ -26,21 +26,21 @@ final _routes = <RouteBase>[
         },
       ),
       GoRoute(
-        path: CartPage.pathName, // 'home/cart'
+        path: CartPage.routeName, // 'home/cart'
         name: CartPage.routeName,
         builder: (context, state) {
           return const CartPage();
         },
         routes: [
           GoRoute(
-            path: AddressPage.pathName, // 'home/cart/address'
-            name: AddressPage.pathName,
+            path: AddressPage.routeName, // 'home/cart/address'
+            name: AddressPage.routeName,
             builder: (context, state) {
               return const AddressPage();
             },
             routes: [
               GoRoute(
-                path: AddAddressPage.pathName, // 'home/cart/address/add'
+                path: AddAddressPage.routeName, // 'home/cart/address/add'
                 name: AddAddressPage.routeName,
                 builder: (context, state) {
                   return const AddAddressPage();
@@ -48,42 +48,44 @@ final _routes = <RouteBase>[
               ),
             ],
           ),
-          // GoRoute(
-          //   path: PaymentPage.routeName, // 'home/cart/payment'
-          //   builder: (context, state) {
-          //     return const PaymentPage();
-          //   },
-          // ),
+          GoRoute(
+            path: CheckoutPage.routeName, // 'home/cart/checkout'
+            name: CheckoutPage.routeName,
+            builder: (context, state) {
+              final List<String> cartIds = state.extra as List<String>;
+              return CheckoutPage(cartIds: cartIds);
+            },
+          ),
         ],
       ),
     ],
   ),
   // User Route
   GoRoute(
-    path: '/${UserHomePage.pathName}', // '/user'
+    path: '/${UserHomePage.routeName}', // '/user'
     name: UserHomePage.routeName, // 'user'
     builder: (BuildContext context, GoRouterState state) {
       return const UserHomePage(); // contain login page
     },
     routes: [
       GoRoute(
-        path: LoginPage.pathName, // '/user/login'
+        path: LoginPage.routeName, // '/user/login'
         name: LoginPage.routeName, // login
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
-        path: RegisterPage.pathName, // '/user/register'
+        path: RegisterPage.routeName, // '/user/register'
         name: RegisterPage.routeName, // register
         builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
-        path: ForgotPasswordPage.pathName, // '/user/forgot-password'
+        path: ForgotPasswordPage.routeName, // '/user/forgot-password'
         name: ForgotPasswordPage.routeName, // forgot-password
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
         // get extra from state
-        path: UserDetailPage.pathName, // '/user/detail'
+        path: UserDetailPage.routeName, // '/user/detail'
         name: UserDetailPage.routeName, // user-detail
         builder: (context, state) {
           final userInfo = state.extra as UserInfoEntity;
@@ -91,13 +93,12 @@ final _routes = <RouteBase>[
         },
       ),
       GoRoute(
-        path: SettingsPage.pathName, // '/user/settings'
+        path: SettingsPage.routeName, // '/user/settings'
         name: SettingsPage.routeName, // settings
         builder: (context, state) => const SettingsPage(),
         routes: [
           GoRoute(
-            path:
-                ChangePasswordPage.pathName, // '/user/settings/change-password'
+            path: ChangePasswordPage.routeName, // '/user/settings/change-password'
             name: ChangePasswordPage.routeName, // change-password
             builder: (context, state) => const ChangePasswordPage(),
           ),
