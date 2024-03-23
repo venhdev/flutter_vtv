@@ -1,7 +1,7 @@
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/core/network/response_handler.dart';
 import 'package:flutter_vtv/features/profile/domain/dto/add_address_param.dart';
-import 'package:flutter_vtv/features/profile/domain/dto/address_dto.dart';
+import 'package:flutter_vtv/features/profile/domain/entities/address_dto.dart';
 import 'package:flutter_vtv/features/profile/domain/entities/district_entity.dart';
 import 'package:flutter_vtv/features/profile/domain/entities/province_entity.dart';
 import 'package:flutter_vtv/features/profile/domain/entities/ward_entity.dart';
@@ -21,7 +21,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  FRespData<List<AddressDTO>> getAllAddress() async {
+  FRespData<List<AddressEntity>> getAllAddress() async {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => await _profileDataSource.getAllAddress(),
     );

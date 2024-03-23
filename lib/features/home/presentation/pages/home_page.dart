@@ -14,7 +14,6 @@ import '../components/product_components/lazy_product_list_builder.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  static const String pathName = 'home';
   static const String routeName = 'home';
 
   @override

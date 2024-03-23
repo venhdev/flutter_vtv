@@ -28,6 +28,6 @@ bool isValidEmail(String email) {
 String formatCurrency(int value, {bool showUnit = true, String? unit = 'đ'}) {
   var f = NumberFormat.decimalPattern();
   if (!showUnit) return f.format(value);
-  return '${f.format(value)} $unit';
+  return '${f.format(value)}$unit';
   // return value.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
 }

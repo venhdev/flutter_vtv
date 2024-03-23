@@ -8,9 +8,8 @@ import '../bloc/auth_cubit.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  static const String pathName = 'settings';
-  static const String path = 'settings';
   static const String routeName = 'settings';
+  static const String path = 'settings';
 
   @override
   Widget build(BuildContext context) {

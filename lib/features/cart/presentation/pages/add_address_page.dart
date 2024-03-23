@@ -8,9 +8,8 @@ import '../../../profile/domain/dto/add_address_param.dart';
 class AddAddressPage extends StatefulWidget {
   const AddAddressPage({super.key});
 
-  static const routeName = 'add_address';
-  static const path = '/home/cart/address/add';
-  static const pathName = 'add';
+  static const routeName = 'add-address';
+  static const path = '/home/cart/address/add-address';
 
   @override
   State<AddAddressPage> createState() => _AddAddressPageState();

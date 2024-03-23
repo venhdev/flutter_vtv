@@ -19,7 +19,6 @@ class ProductDetailPage extends StatefulWidget {
 
   final ProductEntity product;
 
-  static const String pathName = 'product-detail';
   static const String routeName = 'product-detail';
   static const String path = '/home/product-detail';
 

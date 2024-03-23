@@ -1,6 +1,6 @@
 import '../../../../core/constants/typedef.dart';
 import '../dto/add_address_param.dart';
-import '../dto/address_dto.dart';
+import '../entities/address_dto.dart';
 import '../entities/district_entity.dart';
 import '../entities/province_entity.dart';
 import '../entities/ward_entity.dart';
@@ -14,6 +14,6 @@ abstract class ProfileRepository {
   FRespEither updateAddressStatus(int addressId);
 
   //! address
-  FRespData<List<AddressDTO>> getAllAddress();
+  FRespData<List<AddressEntity>> getAllAddress();
   FRespEither addAddress(AddAddressParam addAddressParam);
 }
