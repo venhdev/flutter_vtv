@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -95,12 +93,13 @@ class CartBadge extends StatelessWidget {
                 },
               ),
               // icon chat
-              IconButton.outlined(
-                onPressed: () {
-                  log(context.read<CartBloc>().state.toString());
-                  // context.read<CartBloc>().add(InitialCart());
-                },
-                icon: const Icon(Icons.chat_outlined),
+              const IconButton.outlined(
+                onPressed: null,
+                // onPressed: () {
+                //   // log(context.read<CartBloc>().state.toString());
+                //   // context.read<CartBloc>().add(InitialCart());
+                // },
+                icon: Icon(Icons.chat_outlined),
               ),
             ],
           );
