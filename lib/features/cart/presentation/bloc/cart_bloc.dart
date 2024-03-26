@@ -22,7 +22,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UnSelectCart>(_onUnSelectCart);
   }
 
-  final CartRepository _cartRepository;
+  final CartRepository _cartRepository; 
   final SecureStorageHelper _secureStorage;
 
   void _onInitialCart(InitialCart event, Emitter<CartState> emit) async {

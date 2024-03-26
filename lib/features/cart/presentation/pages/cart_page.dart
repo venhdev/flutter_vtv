@@ -26,72 +26,68 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Container(
-        height: 50,
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Tổng cộng: '),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: BlocBuilder<CartBloc, CartState>(
-                builder: (context, state) {
-                  if (state is CartLoaded) {
-                    if (state.selectedCartIds.isEmpty) {
-                      return const Text('0đ');
-                    }
-                    return FutureBuilder(
-                      future: sl<CartRepository>().createOrderByCartIds(state.selectedCartIds),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          final respEither = snapshot.data!;
-                          return respEither.fold(
-                            (error) => MessageScreen.error(error.toString()),
-                            (ok) => Text(
-                              formatCurrency(ok.data.order.totalPrice),
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          );
-                        }
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+      bottomSheet: BlocBuilder<CartBloc, CartState>(
+        builder: (context, state) {
+          if (state is CartLoaded) {
+            if (state.selectedCartIds.isEmpty) {
+              return const SizedBox();
+            }
+            return Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 5.0,
+                  ),
+                ],
+              ),
+              child: FutureBuilder(
+                future: sl<CartRepository>().createOrderByCartIds(state.selectedCartIds),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final respEither = snapshot.data!;
+                    return respEither.fold(
+                      (error) {
+                        return MessageScreen.error(error.message.toString());
                       },
+                      (ok) => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('Tổng cộng: '),
+                          ),
+                          Text(
+                            formatCurrency(ok.data.order.totalPrice),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                GoRouter.of(context).go('/home/cart/checkout');
+                              },
+                              child: const Text('Thanh toán'),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }
-
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 },
               ),
-              // child: BlocBuilder<CartBloc, CartState>(
-              //   builder: (context, state) {
-              //     if (state is CartLoaded) {
-              //       return Text(
-              //         '${state.cart}đ',
-              //         style: const TextStyle(fontWeight: FontWeight.bold),
-              //       );
-              //     }
-              //     return const Text('0đ');
-              //   },
-              // ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  GoRouter.of(context).go('/home/cart/checkout');
-                },
-                child: const Text('Thanh toán'),
-              ),
-            ),
-          ],
-        ),
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
