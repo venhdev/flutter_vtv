@@ -43,17 +43,17 @@ class OrderItemEntity extends Equatable {
     );
   }
 
-  // Map<String, dynamic> toMap() {
-  //   return <String, dynamic>{
-  //     'orderItemId': orderItemId,
-  //     'orderId': orderId,
-  //     'cartId': cartId,
-  //     'quantity': quantity,
-  //     'price': price,
-  //     'totalPrice': totalPrice,
-  //     'productVariant': productVariant.toMap(),
-  //   };
-  // }
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'orderItemId': orderItemId,
+      'orderId': orderId,
+      'cartId': cartId,
+      'quantity': quantity,
+      'price': price,
+      'totalPrice': totalPrice,
+      'productVariant': productVariant.toMap(),
+    };
+  }
 
   factory OrderItemEntity.fromMap(Map<String, dynamic> map) {
     return OrderItemEntity(
@@ -67,7 +67,7 @@ class OrderItemEntity extends Equatable {
     );
   }
 
-  // String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap());
 
   factory OrderItemEntity.fromJson(String source) =>
       OrderItemEntity.fromMap(json.decode(source) as Map<String, dynamic>);

@@ -9,7 +9,14 @@ sealed class CartEvent extends Equatable {
 
 final class InitialCart extends CartEvent {}
 
-final class FetchCart extends CartEvent {}
+final class FetchCart extends CartEvent {
+  final List<String> selectedCartIds;
+
+  const FetchCart({this.selectedCartIds = const []});
+
+  @override
+  List<Object> get props => [selectedCartIds];
+}
 
 final class AddToCart extends CartEvent {
   final int productVariantId;

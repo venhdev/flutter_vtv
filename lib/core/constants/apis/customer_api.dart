@@ -31,3 +31,4 @@ const String kAPIAddressUpdateStatusURL = '/customer/address/update/status'; // 
 
 //! order-controller
 const String kAPIOrderCreateByCartIdsURL = '/customer/order/create/by-cartIds'; // POST
+const String kAPIOrderCreateUpdateWithCartURL = '/customer/order/create-update/with-cart'; // POST

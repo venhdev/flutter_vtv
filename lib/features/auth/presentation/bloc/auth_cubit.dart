@@ -45,6 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
             // get new access token failed
             (failure) => emit(AuthState.authenticated(authEntity, message: failure.message)),
             (newAccessToken) {
+              log('new access token (null if old token still valid): $newAccessToken');
               log('prev auth token: ${authEntity.accessToken}');
               final newAuth = authEntity.copyWith(accessToken: newAccessToken);
               log('new auth token: ${newAuth.accessToken}');

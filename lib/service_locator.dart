@@ -24,9 +24,7 @@ import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
-import 'features/home/data/repository/category_repository_impl.dart';
 import 'features/home/data/repository/product_repository_impl.dart';
-import 'features/home/domain/repository/category_repository.dart';
 import 'features/home/domain/repository/product_repository.dart';
 import 'features/home/data/data_sources/search_product_data_source.dart';
 import 'features/home/data/repository/search_product_repository_impl.dart';
@@ -69,8 +67,7 @@ Future<void> initializeLocator() async {
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
-  sl.registerSingleton<CategoryRepository>(CategoryRepositoryImpl(sl()));
-  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
+  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));

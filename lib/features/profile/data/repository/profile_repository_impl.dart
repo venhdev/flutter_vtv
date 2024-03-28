@@ -14,9 +14,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   final ProfileDataSource _profileDataSource;
 
   @override
-  FRespEither addAddress(AddAddressParam addAddressParam) async {
-    return await handleSuccessResponseFromDataSource(
-      noDataCallback: () async => await _profileDataSource.addAddress(addAddressParam),
+  FRespData<AddressEntity> addAddress(AddAddressParam addAddressParam) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => await _profileDataSource.addAddress(addAddressParam),
     );
   }
 

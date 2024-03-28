@@ -1,47 +1,59 @@
 import 'package:flutter/material.dart';
 
+import '../../../profile/domain/entities/address_dto.dart';
+
 class AddressSummary extends StatelessWidget {
   const AddressSummary({
     super.key,
-    this.onTap,
     required this.address,
-    required this.receiver,
-    required this.phone,
-    this.icon = Icons.chevron_right,
+    this.onTap,
+    this.prefixIcon = Icons.location_on_outlined,
+    this.suffixIcon = Icons.chevron_right,
     this.margin,
     this.padding = const EdgeInsets.all(12),
+    this.maxLines,
+    this.overflow,
   });
 
-  final void Function()? onTap;
-  final String address;
-  final String receiver;
-  final String phone;
+  final AddressEntity address;
 
-  final IconData? icon;
+  final void Function()? onTap;
+
+  final IconData? suffixIcon;
+  final IconData? prefixIcon;
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap == null ? null : () => onTap!(),
       borderRadius: BorderRadius.circular(12),
+      overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: Colors.grey.withOpacity(0.4),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.5),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
-        margin: margin ?? const EdgeInsets.all(4),
+        margin: margin,
         padding: padding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // icon address
-            const Icon(Icons.location_on_outlined),
+            if (prefixIcon != null) Icon(prefixIcon),
             const SizedBox(width: 6),
             // address info
             Expanded(
@@ -51,13 +63,14 @@ class AddressSummary extends StatelessWidget {
                 children: [
                   Text.rich(
                     style: const TextStyle(fontSize: 14),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: maxLines,
+                    overflow: overflow,
                     TextSpan(
                       text: 'Địa chỉ nhận hàng: ',
                       children: [
                         TextSpan(
-                          text: address,
+                          text:
+                              '${address.fullAddress}, ${address.wardFullName}, ${address.districtFullName}, ${address.provinceFullName}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -68,12 +81,12 @@ class AddressSummary extends StatelessWidget {
                   ),
                   // receiver
                   Text(
-                    'Người nhận: $receiver',
+                    'Người nhận: ${address.fullName}',
                     style: const TextStyle(fontSize: 14),
                   ),
                   // phone
                   Text(
-                    'Số điện thoại: $phone',
+                    'Số điện thoại: ${address.phone}',
                     style: const TextStyle(fontSize: 14),
                   ),
                 ],
@@ -81,7 +94,7 @@ class AddressSummary extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             // > icon
-            Icon(icon),
+            if (suffixIcon != null) Icon(suffixIcon),
           ],
         ),
       ),

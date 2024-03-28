@@ -26,7 +26,7 @@ class UserHomePage extends StatelessWidget {
             );
         }
         if (state.status == AuthStatus.unauthenticated) {
-          context.read<CartBloc>().add(FetchCart());
+          context.read<CartBloc>().add(const FetchCart());
           if (state.code == 200 && state.redirectTo != null) {
             context.go(state.redirectTo!);
           }

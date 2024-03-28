@@ -1,13 +1,14 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
 class VoucherOrderEntity extends Equatable {
-  final int voucherOrderId;
+  final int? voucherOrderId;
   final int voucherId;
   final String voucherName;
   final bool type;
-  final String orderId;
+  final String? orderId;
 
   const VoucherOrderEntity({
     required this.voucherOrderId,
@@ -33,27 +34,21 @@ class VoucherOrderEntity extends Equatable {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'voucherOrderId': voucherOrderId,
-      'voucherId': voucherId,
-      'voucherName': voucherName,
-      'type': type,
-      'orderId': orderId,
-    };
+  static List<VoucherOrderEntity> fromList(List<dynamic> mapList) {
+    return List<VoucherOrderEntity>.from(
+      mapList.map((x) => VoucherOrderEntity.fromMap(x)),
+    );
   }
 
   factory VoucherOrderEntity.fromMap(Map<String, dynamic> map) {
     return VoucherOrderEntity(
-      voucherOrderId: map['voucherOrderId'] as int,
+      voucherOrderId: map['voucherOrderId'] != null ? map['voucherOrderId'] as int : null,
       voucherId: map['voucherId'] as int,
       voucherName: map['voucherName'] as String,
       type: map['type'] as bool,
-      orderId: map['orderId'] as String,
+      orderId: map['orderId'] != null ? map['orderId'] as String : null,
     );
   }
-
-  String toJson() => json.encode(toMap());
 
   factory VoucherOrderEntity.fromJson(String source) =>
       VoucherOrderEntity.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -64,27 +59,7 @@ class VoucherOrderEntity extends Equatable {
   }
 
   @override
-  bool operator ==(covariant VoucherOrderEntity other) {
-    if (identical(this, other)) return true;
-
-    return other.voucherOrderId == voucherOrderId &&
-        other.voucherId == voucherId &&
-        other.voucherName == voucherName &&
-        other.type == type &&
-        other.orderId == orderId;
-  }
-
-  @override
-  int get hashCode {
-    return voucherOrderId.hashCode ^
-        voucherId.hashCode ^
-        voucherName.hashCode ^
-        type.hashCode ^
-        orderId.hashCode;
-  }
-
-  @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       voucherOrderId,
       voucherId,
@@ -93,4 +68,19 @@ class VoucherOrderEntity extends Equatable {
       orderId,
     ];
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'voucherOrderId': voucherOrderId,
+      'voucherId': voucherId,
+      'voucherName': voucherName,
+      'type': type,
+      'orderId': orderId,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  @override
+  bool get stringify => true;
 }

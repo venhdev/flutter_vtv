@@ -1,5 +1,6 @@
 import '../../../../core/constants/typedef.dart';
 import '../dto/cart_resp.dart';
+import '../dto/create_order_param.dart';
 import '../dto/order_resp.dart';
 
 abstract class CartRepository {
@@ -11,4 +12,5 @@ abstract class CartRepository {
 
   // Order
   FRespData<OrderResp> createOrderByCartIds(List<String> cartIds);
+  FRespData<OrderResp> createUpdateWithCart(CreateOrderParam param);
 }
