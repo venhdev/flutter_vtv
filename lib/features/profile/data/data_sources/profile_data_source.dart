@@ -22,7 +22,7 @@ abstract class ProfileDataSource {
 
   //! address
   Future<DataResponse<List<AddressEntity>>> getAllAddress();
-  Future<SuccessResponse> addAddress(AddAddressParam addAddressParam);
+  Future<DataResponse<AddressEntity>> addAddress(AddAddressParam addAddressParam);
 }
 
 class ProfileDataSourceImpl extends ProfileDataSource {
@@ -108,16 +108,21 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   }
 
   @override
-  Future<SuccessResponse> addAddress(AddAddressParam addAddressParam) async {
+  Future<DataResponse<AddressEntity>> addAddress(AddAddressParam addAddressParam) async {
     final response = await _client.post(
       baseUri(path: kAPIAddressAddURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(addAddressParam.toJson()),
     );
 
-    return handleResponseNoData(
+    // return handleResponseNoData(
+    //   response,
+    //   kAPIAddressAddURL,
+    // );
+    return handleResponseWithData<AddressEntity>(
       response,
       kAPIAddressAddURL,
+      (data) => AddressEntity.fromMap(data['addressDTO']),
     );
   }
 

@@ -15,5 +15,5 @@ abstract class ProfileRepository {
 
   //! address
   FRespData<List<AddressEntity>> getAllAddress();
-  FRespEither addAddress(AddAddressParam addAddressParam);
+  FRespData<AddressEntity> addAddress(AddAddressParam addAddressParam);
 }

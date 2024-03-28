@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/components/custom_buttons.dart';
-import '../../domain/dto/cart_by_shop_dto.dart';
+import '../../domain/entities/cart_by_shop_entity.dart';
 import 'cart_item.dart';
 
 class CartsByShop extends StatelessWidget {
@@ -11,9 +11,8 @@ class CartsByShop extends StatelessWidget {
     required this.onUpdateCartCallback,
   });
 
-  final CartByShopDTO cartByShop;
-  final Function(String cartId, int quantity, int cartIndex)
-      onUpdateCartCallback;
+  final CartByShopEntity cartByShop;
+  final Function(String cartId, int quantity, int cartIndex) onUpdateCartCallback;
 
   @override
   Widget build(BuildContext context) {

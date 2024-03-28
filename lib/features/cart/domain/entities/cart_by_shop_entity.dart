@@ -2,24 +2,24 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-import '../entities/cart_entity.dart';
+import 'cart_entity.dart';
 
 // Carts of a shop
-class CartByShopDTO extends Equatable {
+class CartByShopEntity extends Equatable {
   final int shopId;
   final String shopName;
   final String avatar;
   final List<CartEntity> carts;
 
-  const CartByShopDTO({
+  const CartByShopEntity({
     required this.shopId,
     required this.shopName,
     required this.avatar,
     required this.carts,
   });
 
-  factory CartByShopDTO.fromMap(Map<String, dynamic> data) {
-    return CartByShopDTO(
+  factory CartByShopEntity.fromMap(Map<String, dynamic> data) {
+    return CartByShopEntity(
       shopId: data['shopId'] as int,
       shopName: data['shopName'] as String,
       avatar: data['avatar'] as String,
@@ -36,23 +36,23 @@ class CartByShopDTO extends Equatable {
 
   /// `dart:convert`
   ///
-  /// Parses the string and returns the resulting Json object as [CartByShopDTO].
-  factory CartByShopDTO.fromJson(String data) {
-    return CartByShopDTO.fromMap(json.decode(data) as Map<String, dynamic>);
+  /// Parses the string and returns the resulting Json object as [CartByShopEntity].
+  factory CartByShopEntity.fromJson(String data) {
+    return CartByShopEntity.fromMap(json.decode(data) as Map<String, dynamic>);
   }
 
   /// `dart:convert`
   ///
-  /// Converts [CartByShopDTO] to a JSON string.
+  /// Converts [CartByShopEntity] to a JSON string.
   // String toJson() => json.encode(toMap());
 
-  CartByShopDTO copyWith({
+  CartByShopEntity copyWith({
     int? shopId,
     String? shopName,
     String? avatar,
     List<CartEntity>? carts,
   }) {
-    return CartByShopDTO(
+    return CartByShopEntity(
       shopId: shopId ?? this.shopId,
       shopName: shopName ?? this.shopName,
       avatar: avatar ?? this.avatar,

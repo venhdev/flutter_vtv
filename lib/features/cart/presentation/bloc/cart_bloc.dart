@@ -22,7 +22,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UnSelectCart>(_onUnSelectCart);
   }
 
-  final CartRepository _cartRepository; 
+  final CartRepository _cartRepository;
   final SecureStorageHelper _secureStorage;
 
   void _onInitialCart(InitialCart event, Emitter<CartState> emit) async {
@@ -48,7 +48,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
-      (ok) => emit(CartLoaded(ok.data, message: ok.message)),
+      (ok) => emit(CartLoaded(ok.data, message: ok.message, selectedCartIds: event.selectedCartIds)),
     );
   }
 
@@ -61,7 +61,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       (error) => emit(CartError(message: error.message)),
       (ok) {
         // emit(CartSuccess(message: ok.message));
-        add(FetchCart());
+        add(const FetchCart());
       },
     );
   }
@@ -119,7 +119,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                       if (c.cartId == event.cartId) {
                         if (c.quantity == 1 && event.quantity == -1) {
                           // fetch cart
-                          add(FetchCart());
+                          add(const FetchCart());
                         } else {
                           return c.copyWith(quantity: c.quantity + event.quantity);
                         }
@@ -132,7 +132,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               return cartsByShop;
             },
           ).toList(),
-
         );
         emit(prevState.copyWith(cart: newCartState));
       },
@@ -142,13 +141,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   void _onRemoveCart(DeleteCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
+    final prevState = state as CartLoaded;
+
     final resp = await _cartRepository.deleteCart(event.cartId);
+
+    //remove cartId in selectedCartIds
+
+
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
       (ok) {
         emit(CartSuccess(message: ok.message));
-        add(FetchCart());
+        add(FetchCart(selectedCartIds: prevState.selectedCartIds..remove(event.cartId)));
       },
     );
   }
@@ -162,7 +167,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       (error) => emit(CartError(message: error.message)),
       (ok) {
         emit(CartSuccess(message: ok.message));
-        add(FetchCart());
+        add(const FetchCart());
       },
     );
   }

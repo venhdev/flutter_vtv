@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../service_locator.dart';
-import '../../../domain/repository/category_repository.dart';
+import '../../../domain/repository/product_repository.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({
@@ -30,7 +30,7 @@ class CategoryList extends StatelessWidget {
           ],
         ),
         FutureBuilder(
-          future: sl<CategoryRepository>().getAllParentCategories(),
+          future: sl<ProductRepository>().getAllParentCategories(),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Center(

@@ -1,5 +1,6 @@
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/core/network/response_handler.dart';
+import 'package:flutter_vtv/features/cart/domain/dto/create_order_param.dart';
 import 'package:flutter_vtv/features/cart/domain/dto/order_resp.dart';
 import 'package:flutter_vtv/features/cart/domain/repository/cart_repository.dart';
 import 'package:flutter_vtv/features/cart/domain/dto/cart_resp.dart';
@@ -23,8 +24,7 @@ class CartRepositoryImpl extends CartRepository {
   @override
   FRespEither addToCart(int productVariantId, int quantity) {
     return handleSuccessResponseFromDataSource(
-      noDataCallback: () =>
-          _cartDataSource.addToCart(productVariantId, quantity),
+      noDataCallback: () => _cartDataSource.addToCart(productVariantId, quantity),
     );
   }
 
@@ -50,7 +50,12 @@ class CartRepositoryImpl extends CartRepository {
   }
 
   @override
-  FRespData<OrderResp> createOrderByCartIds(List<String> cartIds) async{
-    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createOrderByCartIds(cartIds));
+  FRespData<OrderResp> createOrderByCartIds(List<String> cartIds) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createByCartIds(cartIds));
+  }
+
+  @override
+  FRespData<OrderResp> createUpdateWithCart(CreateOrderParam param) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createUpdateWithCart(param));
   }
 }

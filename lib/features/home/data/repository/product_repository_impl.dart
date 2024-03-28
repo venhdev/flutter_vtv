@@ -1,24 +1,25 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.dart';
+import 'package:flutter_vtv/features/home/domain/entities/category_entity.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
 import '../../domain/dto/product_resp.dart';
 import '../../domain/repository/product_repository.dart';
+import '../data_sources/category_data_source.dart';
 
 class ProductRepositoryImpl extends ProductRepository {
-  ProductRepositoryImpl(this._productDataSource);
+  ProductRepositoryImpl(this._productDataSource, this._categoryDataSource);
 
   final ProductDataSource _productDataSource;
+  final CategoryDataSource _categoryDataSource;
 
   @override
-  FRespData<ProductResp> getSuggestionProductsRandomly(
-      int page, int size) async {
+  FRespData<ProductResp> getSuggestionProductsRandomly(int page, int size) async {
     try {
-      final result =
-          await _productDataSource.getSuggestionProductsRandomly(page, size);
+      final result = await _productDataSource.getSuggestionProductsRandomly(page, size);
       return Right(result);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));
@@ -49,11 +50,16 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<ProductResp> getProductFilter(
-      int page, int size, String sortType) async {
+  FRespData<ProductResp> getProductFilter(int page, int size, String sortType) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () =>
-          _productDataSource.getProductFilter(page, size, sortType),
+      dataCallback: () => _productDataSource.getProductFilter(page, size, sortType),
+    );
+  }
+
+  @override
+  FRespData<List<CategoryEntity>> getAllParentCategories() async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _categoryDataSource.getAllParentCategories(),
     );
   }
 }

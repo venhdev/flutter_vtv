@@ -1,5 +1,6 @@
 import '../../../../core/constants/typedef.dart';
 import '../dto/product_resp.dart';
+import '../entities/category_entity.dart';
 
 abstract class ProductRepository {
   FRespData<ProductResp> getSuggestionProductsRandomly(int page, int size);
@@ -13,4 +14,7 @@ abstract class ProductRepository {
     int maxPrice,
     String filter,
   );
+
+  // Category
+  FRespData<List<CategoryEntity>> getAllParentCategories();
 }

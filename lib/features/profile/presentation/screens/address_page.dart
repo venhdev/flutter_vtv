@@ -55,7 +55,16 @@ class _AddressPageState extends State<AddressPage> {
             ),
             TextButton(
               onPressed: () async {
-                GoRouter.of(context).goNamed(AddAddressPage.routeName);
+                // GoRouter.of(context).goNamed(AddAddressPage.routeName);
+                final resultAddress = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AddAddressPage(),
+                  ),
+                );
+
+                if (resultAddress != null) {
+                  setState(() {});
+                }
               },
               style: TextButton.styleFrom(
                 backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
@@ -78,49 +87,49 @@ class _AddressPageState extends State<AddressPage> {
       itemCount: listAddress.length,
       itemBuilder: (context, index) {
         final address = listAddress[index];
-        return Row(
-          children: [
-            // Checkbox(
-            //   value: address.status == "ACTIVE",
-            //   onChanged: (value) async {
-            //     final respEither = await sl<ProfileRepository>().updateAddressStatus(address.addressId!);
-            //     respEither.fold(
-            //       (error) => Fluttertoast.showToast(msg: error.message!),
-            //       (ok) {
-            //         Fluttertoast.showToast(msg: ok.message!);
-            //         setState(() {});
-            //       },
-            //     );
-            //   },
-            // ),
-            Radio(
-              value: address.status == "ACTIVE",
-              groupValue: true,
-              onChanged: (value) async {
-                final respEither =
-                    await sl<ProfileRepository>().updateAddressStatus(address.addressId);
-                respEither.fold(
-                  (error) => Fluttertoast.showToast(msg: error.message!),
-                  (ok) {
-                    Fluttertoast.showToast(msg: ok.message!);
-                    setState(() {});
-                  },
-                );
-              },
-            ),
-            Expanded(
-              child: AddressSummary(
-                onTap: () {
-                  // TODO edit address
+        return Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Row(
+            children: [
+              // Checkbox(
+              //   value: address.status == "ACTIVE",
+              //   onChanged: (value) async {
+              //     final respEither = await sl<ProfileRepository>().updateAddressStatus(address.addressId!);
+              //     respEither.fold(
+              //       (error) => Fluttertoast.showToast(msg: error.message!),
+              //       (ok) {
+              //         Fluttertoast.showToast(msg: ok.message!);
+              //         setState(() {});
+              //       },
+              //     );
+              //   },
+              // ),
+              Radio(
+                value: address.status == "ACTIVE",
+                groupValue: true,
+                onChanged: (value) async {
+                  final respEither = await sl<ProfileRepository>().updateAddressStatus(address.addressId);
+                  respEither.fold(
+                    (error) => Fluttertoast.showToast(msg: error.message!),
+                    (ok) {
+                      Fluttertoast.showToast(msg: ok.message!);
+                      // setState(() {});
+                      Navigator.of(context).pop(true);
+                    },
+                  );
                 },
-                address:
-                    '${address.fullAddress}, ${address.wardFullName}, ${address.districtFullName}, ${address.provinceFullName}',
-                receiver: address.fullName,
-                phone: address.phone,
-                icon: Icons.edit,
               ),
-            ),
-          ],
+              Expanded(
+                child: AddressSummary(
+                  address: address,
+                  suffixIcon: Icons.edit,
+                  onTap: () {
+                    // TODO edit address
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

@@ -692,22 +692,22 @@ class MockConnectivity extends _i1.Mock implements _i16.Connectivity {
   }
 
   @override
-  _i8.Stream<_i17.ConnectivityResult> get onConnectivityChanged =>
+  _i8.Stream<List<_i17.ConnectivityResult>> get onConnectivityChanged =>
       (super.noSuchMethod(
         Invocation.getter(#onConnectivityChanged),
-        returnValue: _i8.Stream<_i17.ConnectivityResult>.empty(),
-      ) as _i8.Stream<_i17.ConnectivityResult>);
+        returnValue: _i8.Stream<List<_i17.ConnectivityResult>>.empty(),
+      ) as _i8.Stream<List<_i17.ConnectivityResult>>);
 
   @override
-  _i8.Future<_i17.ConnectivityResult> checkConnectivity() =>
+  _i8.Future<List<_i17.ConnectivityResult>> checkConnectivity() =>
       (super.noSuchMethod(
         Invocation.method(
           #checkConnectivity,
           [],
         ),
-        returnValue: _i8.Future<_i17.ConnectivityResult>.value(
-            _i17.ConnectivityResult.bluetooth),
-      ) as _i8.Future<_i17.ConnectivityResult>);
+        returnValue: _i8.Future<List<_i17.ConnectivityResult>>.value(
+            <_i17.ConnectivityResult>[]),
+      ) as _i8.Future<List<_i17.ConnectivityResult>>);
 }
 
 /// A class which mocks [FirebaseCloudMessagingManager].

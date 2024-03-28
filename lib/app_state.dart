@@ -18,18 +18,17 @@ class AppState extends ChangeNotifier {
   /// - Subscribes to the connectivity stream. (If lost connection will show a snackbar)
   Future<void> init() async {
     _isFirstRun = _prefHelper.isFirstRun;
-    hasConnection =
-        await _connectivity.checkConnectivity() != ConnectivityResult.none;
+    // hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
+    hasConnection = await _connectivity.checkConnectivity().then((connection) => connection.isNotEmpty);
     subscribeConnection();
   }
 
-  Stream<ConnectivityResult> get connectionStream =>
-      _connectivity.onConnectivityChanged;
+  Stream<List<ConnectivityResult>> get connectionStream => _connectivity.onConnectivityChanged;
 
   // subscribe to the connectivity stream
   void subscribeConnection() {
-    _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      hasConnection = result != ConnectivityResult.none;
+    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> connection) {
+      hasConnection = connection.isNotEmpty;
       notifyListeners();
     });
   }

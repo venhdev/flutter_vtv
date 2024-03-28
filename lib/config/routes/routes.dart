@@ -32,28 +32,28 @@ final _routes = <RouteBase>[
           return const CartPage();
         },
         routes: [
-          GoRoute(
-            path: AddressPage.routeName, // 'home/cart/address'
-            name: AddressPage.routeName,
-            builder: (context, state) {
-              return const AddressPage();
-            },
-            routes: [
-              GoRoute(
-                path: AddAddressPage.routeName, // 'home/cart/address/add'
-                name: AddAddressPage.routeName,
-                builder: (context, state) {
-                  return const AddAddressPage();
-                },
-              ),
-            ],
-          ),
+          // GoRoute(
+          //   path: AddressPage.routeName, // 'home/cart/address'
+          //   name: AddressPage.routeName,
+          //   builder: (context, state) {
+          //     return const AddressPage();
+          //   },
+          //   routes: [
+          //     GoRoute(
+          //       path: AddAddressPage.routeName, // 'home/cart/address/add'
+          //       name: AddAddressPage.routeName,
+          //       builder: (context, state) {
+          //         return const AddAddressPage();
+          //       },
+          //     ),
+          //   ],
+          // ),
           GoRoute(
             path: CheckoutPage.routeName, // 'home/cart/checkout'
             name: CheckoutPage.routeName,
             builder: (context, state) {
-              final List<String> cartIds = state.extra as List<String>;
-              return CheckoutPage(cartIds: cartIds);
+              final order = state.extra as OrderEntity;
+              return CheckoutPage(order: order);
             },
           ),
         ],

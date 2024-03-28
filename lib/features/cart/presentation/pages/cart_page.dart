@@ -1,16 +1,22 @@
+import 'dart:developer';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/presentation/components/custom_widgets.dart';
+import 'package:flutter_vtv/features/cart/domain/dto/create_order_param.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
+import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/screens/address_page.dart';
 import '../../domain/repository/cart_repository.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
+import 'checkout_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -23,72 +29,29 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  AddressEntity? _defaultAddress;
+
+  void fetchDefaultAddress() {
+    sl<ProfileRepository>().getAllAddress().then((respEither) {
+      setState(() {
+        _defaultAddress = respEither.fold(
+          (_) => null,
+          (ok) => ok.data.firstWhere((element) => element.status == 'ACTIVE'),
+        );
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDefaultAddress();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          if (state is CartLoaded) {
-            if (state.selectedCartIds.isEmpty) {
-              return const SizedBox();
-            }
-            return Container(
-              height: 50,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 5.0,
-                  ),
-                ],
-              ),
-              child: FutureBuilder(
-                future: sl<CartRepository>().createOrderByCartIds(state.selectedCartIds),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final respEither = snapshot.data!;
-                    return respEither.fold(
-                      (error) {
-                        return MessageScreen.error(error.message.toString());
-                      },
-                      (ok) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Tổng cộng: '),
-                          ),
-                          Text(
-                            formatCurrency(ok.data.order.totalPrice),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                GoRouter.of(context).go('/home/cart/checkout');
-                              },
-                              child: const Text('Thanh toán'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              ),
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      ),
+      bottomSheet: _buildBottomSummaryCheckout(),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           if (state is CartLoaded) {
@@ -106,7 +69,10 @@ class _CartPageState extends State<CartPage> {
               body: RefreshIndicator(
                 displacement: 18,
                 onRefresh: () async {
-                  context.read<CartBloc>().add(FetchCart());
+                  setState(() {
+                    context.read<CartBloc>().add(const FetchCart());
+                    fetchDefaultAddress();
+                  });
                 },
                 child: state.cart.cartByShopDTOs.isNotEmpty
                     ? ListView.builder(
@@ -171,7 +137,89 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  PreferredSize _buildAddress(BuildContext context) {
+  Widget _buildBottomSummaryCheckout() {
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        log('is CartLoaded: ${state is CartLoaded}');
+        if (state is CartLoaded) {
+          if (state.selectedCartIds.isEmpty) {
+            return const SizedBox();
+          }
+          return Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 5.0,
+                ),
+              ],
+            ),
+            child: _defaultAddress != null
+                ? FutureBuilder(
+                    // future: sl<CartRepository>().createOrderByCartIds(state.selectedCartIds),
+                    future: sl<CartRepository>().createUpdateWithCart(CreateOrderParam(
+                      addressId: _defaultAddress!.addressId,
+                      systemVoucherCode: 'VTV2Code',
+                      paymentMethod: 'COD',
+                      shippingMethod: 'VTV Express',
+                      note: 'note test',
+                      cartIds: state.selectedCartIds,
+                    )),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final respEither = snapshot.data!;
+                        return respEither.fold(
+                          (error) {
+                            return MessageScreen.error(error.message.toString());
+                          },
+                          (ok) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Tổng cộng: '),
+                              ),
+                              Text(
+                                formatCurrency(ok.data.order.totalPrice),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                                  ),
+                                  onPressed: () {
+                                    GoRouter.of(context).go(CheckoutPage.path, extra: ok.data.order);
+                                  },
+                                  child: const Text('Thanh toán'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  PreferredSize? _buildAddress(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(120),
       child: Padding(
@@ -185,23 +233,48 @@ class _CartPageState extends State<CartPage> {
                 return respEither.fold(
                   (error) => MessageScreen.error(error.toString()),
                   (ok) {
-                    final defaultAddress =
-                        ok.data.firstWhere((element) => element.status == 'ACTIVE');
+                    if (ok.data.isEmpty) {
+                      return SizedBox(
+                        height: 120,
+                        child: Center(
+                          child: Text.rich(
+                            textAlign: TextAlign.center,
+                            TextSpan(
+                              text: 'Chưa có địa chỉ giao hàng\n',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              children: [
+                                TextSpan(
+                                  text: 'Thêm địa chỉ',
+                                  style: const TextStyle(color: Colors.blue),
+                                  recognizer: TapGestureRecognizer()..onTap = () => context.go(AddressPage.path),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    final defaultAddress = ok.data.firstWhere((element) => element.status == 'ACTIVE');
                     return AddressSummary(
-                      onTap: () {
+                      address: defaultAddress,
+                      onTap: () async {
                         // GoRouter.of(context).go(AddressPage.path);
-                        Navigator.of(context).push(
+                        final isChangeSuccess = await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const AddressPage(),
                           ),
                         );
+
+                        if (isChangeSuccess) {
+                          setState(() {
+                            fetchDefaultAddress();
+                          });
+                        }
                       },
-                      address:
-                          '${defaultAddress.fullAddress}, ${defaultAddress.wardFullName}, ${defaultAddress.districtFullName}, ${defaultAddress.provinceFullName}',
-                      receiver: defaultAddress.fullName,
-                      phone: defaultAddress.phone,
-                      margin: const EdgeInsets.all(8),
+                      prefixIcon: Icons.location_on,
                       padding: const EdgeInsets.all(8),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     );
                   },
                 );

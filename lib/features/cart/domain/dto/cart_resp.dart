@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-import 'cart_by_shop_dto.dart';
+import '../entities/cart_by_shop_entity.dart';
 
 class CartResp extends Equatable {
   // final String username;
   final int count;
-  final List<CartByShopDTO> cartByShopDTOs;
+  final List<CartByShopEntity> cartByShopDTOs;
 
   const CartResp({
     // required this.username,
@@ -20,7 +20,7 @@ class CartResp extends Equatable {
         count: data['count'] as int,
         cartByShopDTOs: (data['listCartByShopDTOs'] as List<dynamic>)
             .map(
-              (e) => CartByShopDTO.fromMap(e as Map<String, dynamic>),
+              (e) => CartByShopEntity.fromMap(e as Map<String, dynamic>),
             )
             .toList(),
       );
@@ -46,7 +46,7 @@ class CartResp extends Equatable {
   CartResp copyWith({
     String? username,
     int? count,
-    List<CartByShopDTO>? cartByShopDTOs,
+    List<CartByShopEntity>? cartByShopDTOs,
   }) {
     return CartResp(
       // username: username ?? this.username,

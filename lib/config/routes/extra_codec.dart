@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../../features/auth/data/models/user_info_model.dart';
 import '../../features/auth/domain/entities/user_info_entity.dart';
+import '../../features/cart/domain/entities/order_entity.dart';
 import '../../features/home/domain/entities/product_entity.dart';
 
 // <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
@@ -39,6 +40,9 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'ProductEntity') {
       return ProductEntity.fromJson(inputAsList[1] as String);
     }
+    if (inputAsList[0] == 'OrderEntity') {
+      return OrderEntity.fromJson(inputAsList[1] as String);
+    }
     throw FormatException('Unable to parse input: $input');
   }
 }
@@ -51,13 +55,7 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       return null;
     }
     switch (input) {
-      case String _ ||
-            Uri _ ||
-            DateTime _ ||
-            bool _ ||
-            double _ ||
-            num _ ||
-            int _:
+      case String _ || Uri _ || DateTime _ || bool _ || double _ || num _ || int _:
         return input;
       case UserInfoEntity _:
         return <Object?>[
@@ -67,6 +65,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case ProductEntity _:
         return <Object?>[
           'ProductEntity',
+          (input).toJson(),
+        ];
+      case OrderEntity _:
+        return <Object?>[
+          'OrderEntity',
           (input).toJson(),
         ];
       default:

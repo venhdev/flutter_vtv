@@ -4,6 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../service_locator.dart';
 import '../../../profile/data/data_sources/profile_data_source.dart';
 import '../../../profile/domain/dto/add_address_param.dart';
+import '../../../profile/domain/entities/address_dto.dart';
+import '../../../profile/domain/repository/profile_repository.dart';
 
 class AddAddressPage extends StatefulWidget {
   const AddAddressPage({super.key});
@@ -27,6 +29,19 @@ class _AddAddressPageState extends State<AddAddressPage> {
   String? _wardName;
   String? _wardCode;
 
+  bool isSaving = false; // for loading indicator when tapping 'Lưu địa chỉ'
+
+  void _reset() {
+    setState(() {
+      _provinceName = null;
+      _districtName = null;
+      _wardName = null;
+      _fullAddressController.clear();
+      _phoneNumberController.clear();
+      _receiverNameController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +50,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
-            Navigator.of(context).pop('address');
+            Navigator.of(context).pop(null);
           },
           icon: const Icon(Icons.arrow_back),
         ),
@@ -44,9 +59,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
           TextButton(
             onPressed: () {
               setState(() {
-                _provinceName = null;
-                _districtName = null;
-                _wardName = null;
+                _reset();
               });
             },
             child: const Text('Thiết lập lại'),
@@ -137,47 +150,44 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 ),
               ),
             ],
+            // save button
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  isSaving = true;
+                });
+                final respEither = await sl<ProfileRepository>().addAddress(
+                  AddAddressParam(
+                    provinceName: _provinceName,
+                    districtName: _districtName,
+                    wardName: _wardName,
+                    fullAddress: _fullAddressController.text,
+                    fullName: _receiverNameController.text,
+                    phone: _phoneNumberController.text,
+                    wardCode: _wardCode,
+                  ),
+                );
 
-            // btn 'Thiết lập lại' & 'Lưu địa chỉ'
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _provinceName = null;
-                      _districtName = null;
-                      _wardName = null;
-                    });
+                respEither.fold(
+                  (error) {
+                    Fluttertoast.showToast(msg: error.message!);
                   },
-                  child: const Text('Thiết lập lại'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Navigator.of(context).pop('address');
-                    try {
-                      sl<ProfileDataSource>()
-                          .addAddress(
-                            AddAddressParam(
-                              provinceName: _provinceName,
-                              districtName: _districtName,
-                              wardName: _wardName,
-                              fullAddress: _fullAddressController.text,
-                              fullName: _receiverNameController.text,
-                              phone: _phoneNumberController.text,
-                              wardCode: _wardCode,
-                            ),
-                          )
-                          .then((resp) => Fluttertoast.showToast(msg: resp.message!));
-                    } catch (e) {
-                      Fluttertoast.showToast(msg: e.toString());
-                    }
+                  (ok) {
+                    Fluttertoast.showToast(msg: ok.message!);
+                    // pop this page
+                    Navigator.of(context).pop<AddressEntity>(ok.data);
+                  },
+                );
 
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Lưu địa chỉ'),
-                ),
-              ],
+                setState(() {
+                  isSaving = false;
+                });
+              },
+              child: !isSaving
+                  ? const Text('Lưu địa chỉ')
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    ),
             ),
           ],
         ),
