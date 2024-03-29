@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/core/helpers/helpers.dart';
 
 import '../../../cart/domain/entities/voucher_entity.dart';
 
@@ -50,7 +51,7 @@ class VoucherItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    voucher.type != 'Giảm theo tiền' ? "Giảm ${voucher.discount}%" : "Giảm ${voucher.discount}đ",
+                    formatVoucherType(type: voucher.type, discount: voucher.discount),
                     style: const TextStyle(fontSize: 16.0, color: Colors.red, fontWeight: FontWeight.bold),
                   ),
                   Text(

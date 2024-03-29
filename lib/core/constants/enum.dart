@@ -16,3 +16,12 @@ class SortTypes {
   static const String priceDesc = 'price-desc';
   static const String random = 'random';
 }
+
+enum VoucherTypes {
+  PERCENTAGE_SHOP,
+  PERCENTAGE_SYSTEM,
+  MONEY_SHOP,
+  MONEY_SYSTEM,
+  FIXED_SHOP,
+  SHIPPING,
+}

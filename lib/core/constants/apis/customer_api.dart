@@ -35,6 +35,8 @@ const String kAPIOrderAddWithCartURL = '/customer/order/add/with-cart'; // POST 
 
 //! voucher-controller
 const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST --place order
+const String kAPIVoucherListOnShopURL = '/voucher/list-on-shop'; // GET --{shopId}
+const String kAPIVoucherListOnSystemURL = '/voucher/list-on-system'; // GET
 
 //! favorite-product-controller
 const String kAPIFavoriteProductAddURL = '/customer/favorite-product/add'; // POST --:{productId}

@@ -1,6 +1,10 @@
 import 'dart:developer';
+import 'dart:math' show Random;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+
+import '../../service_locator.dart';
+import 'local_notification_manager.dart';
 
 // foreground message handler
 void _foregroundMessageHandler(RemoteMessage message) {
@@ -8,7 +12,7 @@ void _foregroundMessageHandler(RemoteMessage message) {
     log('Got a message whilst in the foreground!');
 
     if (message.notification != null) {
-      log('Message contained a notification: ${message.notification}');
+      handleShowPushNotification(message);
     }
   } catch (e) {
     log('_foregroundMessageHandler Exception: type: ${e.runtimeType.toString()} -- ${e.toString()}');
@@ -23,6 +27,7 @@ void _foregroundMessageHandler(RemoteMessage message) {
 @pragma('vm:entry-point')
 Future<void> _backgroundMessageHandler(RemoteMessage message) async {
   log('Got a message whilst in the background!');
+  handleShowPushNotification(message);
 }
 
 class FirebaseCloudMessagingManager {
@@ -50,8 +55,7 @@ class FirebaseCloudMessagingManager {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       log('[FCM] User granted permission');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
       log('[FCM] User granted provisional permission');
     } else {
       log('[FCM] User declined or has not accepted permission');
@@ -64,10 +68,18 @@ class FirebaseCloudMessagingManager {
 
     // foreground message handler
     FirebaseMessaging.onMessage.listen(_foregroundMessageHandler);
-
     // background message handler
     FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
 
     log('[Firebase Messaging] init completed');
   }
+}
+
+void handleShowPushNotification(RemoteMessage message) {
+  sl<LocalNotificationManager>().showNotification(
+    id: Random().nextInt(1000),
+    title: message.notification?.title ?? 'No title',
+    body: message.notification?.body ?? 'No body',
+    payload: message.data.toString(),
+  );
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../features/auth/presentation/bloc/auth_cubit.dart';
+import '../constants/enum.dart';
 
 DateTime getToday() {
   DateTime now = DateTime.now();
@@ -31,3 +32,37 @@ String formatCurrency(int value, {bool showUnit = true, String? unit = 'đ'}) {
   return '${f.format(value)}$unit';
   // return value.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
 }
+
+String formatPaymentMethod(String method) {
+  switch (method) {
+    case 'COD': // Cash on delivery
+      return 'Thanh toán khi nhận hàng';
+    case 'momo':
+      return 'MoMo';
+    case 'zalopay':
+      return 'ZaloPay';
+    case 'visa':
+      return 'Visa';
+    case 'mastercard':
+      return 'MasterCard';
+    default:
+      return method;
+  }
+}
+
+String formatVoucherType({required String type, required int discount}) {
+    if (type == VoucherTypes.PERCENTAGE_SYSTEM.name) {
+      return 'Giảm $discount%';
+    } else if (type == VoucherTypes.PERCENTAGE_SHOP.name) {
+      return 'Giảm $discount%';
+    } else if (type == VoucherTypes.MONEY_SHOP.name) {
+      return 'Giảm ${formatCurrency(discount)}';
+    } else if (type == VoucherTypes.MONEY_SYSTEM.name) {
+      return 'Giảm ${formatCurrency(discount)}';
+    } else if (type == VoucherTypes.FIXED_SHOP.name) {
+      return 'Giảm ${formatCurrency(discount)}';
+    } else if (type == VoucherTypes.SHIPPING.name) {
+      return 'Miễn phí vận chuyển đến ${formatCurrency(discount)}';
+    }
+    return '';
+  }
