@@ -32,22 +32,6 @@ final _routes = <RouteBase>[
           return const CartPage();
         },
         routes: [
-          // GoRoute(
-          //   path: AddressPage.routeName, // 'home/cart/address'
-          //   name: AddressPage.routeName,
-          //   builder: (context, state) {
-          //     return const AddressPage();
-          //   },
-          //   routes: [
-          //     GoRoute(
-          //       path: AddAddressPage.routeName, // 'home/cart/address/add'
-          //       name: AddAddressPage.routeName,
-          //       builder: (context, state) {
-          //         return const AddAddressPage();
-          //       },
-          //     ),
-          //   ],
-          // ),
           GoRoute(
             path: CheckoutPage.routeName, // 'home/cart/checkout'
             name: CheckoutPage.routeName,
@@ -62,10 +46,10 @@ final _routes = <RouteBase>[
   ),
   // User Route
   GoRoute(
-    path: '/${UserHomePage.routeName}', // '/user'
-    name: UserHomePage.routeName, // 'user'
+    path: '/${UserPage.routeName}', // '/user'
+    name: UserPage.routeName, // 'user'
     builder: (BuildContext context, GoRouterState state) {
-      return const UserHomePage(); // contain login page
+      return const UserPage(); // contain login page
     },
     routes: [
       GoRoute(
@@ -93,6 +77,12 @@ final _routes = <RouteBase>[
         },
       ),
       GoRoute(
+        path: VoucherPage.routeName, // '/user/voucher'
+        name: VoucherPage.routeName, // voucher
+        builder: (context, state) => const VoucherPage(),
+      ),
+      //! Setting
+      GoRoute(
         path: SettingsPage.routeName, // '/user/settings'
         name: SettingsPage.routeName, // settings
         builder: (context, state) => const SettingsPage(),
@@ -101,6 +91,22 @@ final _routes = <RouteBase>[
             path: ChangePasswordPage.routeName, // '/user/settings/change-password'
             name: ChangePasswordPage.routeName, // change-password
             builder: (context, state) => const ChangePasswordPage(),
+          ),
+          GoRoute(
+            path: AddressPage.routeName, // 'user/settings/address'
+            name: AddressPage.routeName,
+            builder: (context, state) {
+              return const AddressPage();
+            },
+            routes: [
+              GoRoute(
+                path: AddAddressPage.routeName, // 'user/settings/address/add-address'
+                name: AddAddressPage.routeName,
+                builder: (context, state) {
+                  return const AddAddressPage();
+                },
+              ),
+            ],
           ),
         ],
       ),

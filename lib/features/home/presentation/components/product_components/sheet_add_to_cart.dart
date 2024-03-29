@@ -98,7 +98,7 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
               child: Wrap(
                 spacing: 4,
                 runSpacing: 4,
-                children: widget.product.productVariant
+                children: widget.product.productVariants
                     .map(
                       (variant) => ChoiceChip(
                         labelPadding: EdgeInsets.zero,

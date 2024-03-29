@@ -20,8 +20,11 @@ import 'features/auth/domain/usecase/logout.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/cart/data/data_sources/cart_data_source.dart';
 import 'features/cart/data/data_sources/order_data_source.dart';
+import 'features/cart/data/data_sources/voucher_data_source.dart';
 import 'features/cart/data/repository/cart_repository_impl.dart';
+import 'features/cart/data/repository/order_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
+import 'features/cart/domain/repository/order_repository.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
 import 'features/home/data/repository/product_repository_impl.dart';
@@ -58,19 +61,23 @@ Future<void> initializeLocator() async {
 
   //! Data source
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
-  sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
-  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl()));
-  sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
-  sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl()));
+
+  sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
+  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
+
+  sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<VoucherDataSource>(VoucherDataSourceImpl(sl(), sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
+  sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
-  sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl(), sl()));
-  sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
+  sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
+  sl.registerSingleton<OrderRepository>(OrderRepositoryImpl(sl(), sl()));
 
   //! UseCase
   sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(

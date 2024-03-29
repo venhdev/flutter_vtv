@@ -1,18 +1,15 @@
-import 'dart:developer';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/presentation/components/custom_widgets.dart';
-import 'package:flutter_vtv/features/cart/domain/dto/create_order_param.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
 import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
-import '../../../profile/presentation/screens/address_page.dart';
-import '../../domain/repository/cart_repository.dart';
+import '../../../profile/presentation/pages/address_page.dart';
+import '../../domain/repository/order_repository.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
@@ -140,7 +137,6 @@ class _CartPageState extends State<CartPage> {
   Widget _buildBottomSummaryCheckout() {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
-        log('is CartLoaded: ${state is CartLoaded}');
         if (state is CartLoaded) {
           if (state.selectedCartIds.isEmpty) {
             return const SizedBox();
@@ -159,15 +155,17 @@ class _CartPageState extends State<CartPage> {
             ),
             child: _defaultAddress != null
                 ? FutureBuilder(
-                    // future: sl<CartRepository>().createOrderByCartIds(state.selectedCartIds),
-                    future: sl<CartRepository>().createUpdateWithCart(CreateOrderParam(
-                      addressId: _defaultAddress!.addressId,
-                      systemVoucherCode: 'VTV2Code',
-                      paymentMethod: 'COD',
-                      shippingMethod: 'VTV Express',
-                      note: 'note test',
-                      cartIds: state.selectedCartIds,
-                    )),
+                    future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
+                    // future: sl<OrderRepository>().createUpdateWithCart(
+                    //   CreateOrderParam(
+                    //     addressId: _defaultAddress!.addressId,
+                    //     systemVoucherCode: 'VTV2Code',
+                    //     paymentMethod: 'COD',
+                    //     shippingMethod: 'VTV Express',
+                    //     note: 'note test',
+                    //     cartIds: state.selectedCartIds,
+                    //   ),
+                    // ),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final respEither = snapshot.data!;

@@ -2,15 +2,15 @@ import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:http/http.dart' as http show Client;
 
 import '../../../../core/constants/api.dart';
+import '../../../../core/helpers/secure_storage_helper.dart';
 import '../../../../core/network/response_handler.dart';
 import '../../domain/dto/product_resp.dart';
+import '../../domain/entities/favorite_product_entity.dart';
 
 abstract class ProductDataSource {
-  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(
-      int page, int size);
+  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(int page, int size);
 
-  Future<DataResponse<ProductResp>> getProductFilter(
-      int page, int size, String sortType);
+  Future<DataResponse<ProductResp>> getProductFilter(int page, int size, String sortType);
 
   Future<DataResponse<ProductResp>> getProductFilterByPriceRange({
     required int page,
@@ -19,15 +19,21 @@ abstract class ProductDataSource {
     required int maxPrice,
     required String filter,
   });
+
+  //! Favorite Product
+  Future<DataResponse<List<FavoriteProductEntity>>> getAllFavoriteProduct(); //api/customer/favorite-product/list
+  Future<SuccessResponse> addFavoriteProduct(int productId);
+  Future<SuccessResponse> removeFavoriteProduct(int favoriteProductId);
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
-  final http.Client _client;
+  ProductDataSourceImpl(this._client, this._secureStorageHelper);
 
-  ProductDataSourceImpl(this._client);
+  final http.Client _client;
+  final SecureStorageHelper _secureStorageHelper;
+
   @override
-  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(
-      int page, int size) async {
+  Future<DataResponse<ProductResp>> getSuggestionProductsRandomly(int page, int size) async {
     // send request
     final response = await _client.get(
       baseUri(
@@ -97,8 +103,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductResp>> getProductFilter(
-      int page, int size, String sortType) async {
+  Future<DataResponse<ProductResp>> getProductFilter(int page, int size, String sortType) async {
     final response = await _client.get(
       baseUri(
         path: '$kAPIProductFilterURL/$sortType',
@@ -115,5 +120,39 @@ class ProductDataSourceImpl implements ProductDataSource {
       kAPIProductFilterURL,
       (jsonMap) => ProductResp.fromMap(jsonMap),
     );
+  }
+
+  @override
+  Future<SuccessResponse> addFavoriteProduct(int productId) async {
+    final response = await _client.post(
+      baseUri(path: '$kAPIFavoriteProductAddURL/$productId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseNoData(response, kAPIFavoriteProductAddURL);
+  }
+
+  @override
+  Future<DataResponse<List<FavoriteProductEntity>>> getAllFavoriteProduct() async {
+    final response = await _client.get(
+      baseUri(path: kAPIFavoriteProductListURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<List<FavoriteProductEntity>>(
+      response,
+      kAPIFavoriteProductListURL,
+      (jsonMap) => FavoriteProductEntity.fromList(jsonMap['favoriteProductDTOs'] as List<dynamic>),
+    );
+  }
+
+  @override
+  Future<SuccessResponse> removeFavoriteProduct(int favoriteProductId) async {
+    final response = await _client.delete(
+      baseUri(path: '$kAPIFavoriteProductDeleteURL/$favoriteProductId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseNoData(response, kAPIFavoriteProductDeleteURL);
   }
 }

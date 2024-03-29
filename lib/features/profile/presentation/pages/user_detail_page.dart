@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/converter.dart';
-import '../../domain/entities/user_info_entity.dart';
-import '../bloc/auth_cubit.dart';
-import '../components/text_field_custom.dart';
+import '../../../auth/domain/entities/user_info_entity.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
+import '../../../auth/presentation/components/text_field_custom.dart';
 
 class UserDetailPage extends StatefulWidget {
   const UserDetailPage({super.key, required this.userInfo});

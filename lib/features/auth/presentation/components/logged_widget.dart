@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../profile/presentation/pages/voucher_page.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 
@@ -15,8 +16,7 @@ class LoggedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context,
-          showSettingButton: true, showSearchBar: false, title: 'User'),
+      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
       body: Column(
         children: [
           InkWell(
@@ -30,8 +30,7 @@ class LoggedWidget extends StatelessWidget {
                 const SizedBox(width: 12),
                 const CircleAvatar(
                   radius: 30,
-                  backgroundImage:
-                      AssetImage('assets/images/placeholders/a1.png'),
+                  backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
                 ),
 
                 const SizedBox(width: 12),
@@ -49,6 +48,14 @@ class LoggedWidget extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          // voucher
+          ElevatedButton(
+            onPressed: () {
+              // debugPrint('text');
+              context.go(VoucherPage.path);
+            },
+            child: const Text('Voucher List'),
           ),
         ],
       ),

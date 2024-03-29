@@ -11,7 +11,7 @@ class AddAddressPage extends StatefulWidget {
   const AddAddressPage({super.key});
 
   static const routeName = 'add-address';
-  static const path = '/home/cart/address/add-address';
+  static const path = '/user/settings/address/add-address';
 
   @override
   State<AddAddressPage> createState() => _AddAddressPageState();
