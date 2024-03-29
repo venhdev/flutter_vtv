@@ -54,3 +54,20 @@ int convertDateTimeToInt(DateTime date, {String pattern = 'Hm'}) {
 DateTime convertIntToDateTime(int time) {
   return DateFormat('Hm').parse(time.toString().padLeft(4, '0'));
 }
+
+String convertPaymentMethodToName(String method) {
+  switch (method) {
+    case 'COD': // Cash on delivery
+      return 'Thanh toán khi nhận hàng';
+    case 'momo':
+      return 'MoMo';
+    case 'zalopay':
+      return 'ZaloPay';
+    case 'visa':
+      return 'Visa';
+    case 'mastercard':
+      return 'MasterCard';
+    default:
+      return method;
+  }
+}

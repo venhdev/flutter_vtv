@@ -5,9 +5,9 @@ import 'package:equatable/equatable.dart';
 
 class VoucherOrderEntity extends Equatable {
   final int? voucherOrderId;
-  final int voucherId;
-  final String voucherName;
-  final bool type;
+  final int? voucherId;
+  final String? voucherName;
+  final bool? type; // true: shop, false: system
   final String? orderId;
 
   const VoucherOrderEntity({
@@ -17,6 +17,16 @@ class VoucherOrderEntity extends Equatable {
     required this.type,
     required this.orderId,
   });
+
+  factory VoucherOrderEntity.empty({String? withName}) {
+    return VoucherOrderEntity(
+      voucherOrderId: null,
+      voucherId: null,
+      voucherName: withName,
+      type: null,
+      orderId: null,
+    );
+  }
 
   VoucherOrderEntity copyWith({
     int? voucherOrderId,

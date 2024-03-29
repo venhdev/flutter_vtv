@@ -20,8 +20,7 @@ const String kAPILocationProvinceGetAllURL = '/location/province/get-all'; // GE
 const String kAPILocationDistrictGetAllByProvinceCodeURL =
     '/location/district/get-all-by-province-code'; // GET /{provinceCode}
 // ward
-const String kAPILocationWardGetAllByDistrictCodeURL =
-    '/location/ward/get-all-by-district-code'; // GET /{districtCode}
+const String kAPILocationWardGetAllByDistrictCodeURL = '/location/ward/get-all-by-district-code'; // GET /{districtCode}
 const String kAPILocationWardFullAddressURL = '/location/ward/full-address'; // GET /{wardCode}
 
 //! address-controller
@@ -32,3 +31,16 @@ const String kAPIAddressUpdateStatusURL = '/customer/address/update/status'; // 
 //! order-controller
 const String kAPIOrderCreateByCartIdsURL = '/customer/order/create/by-cartIds'; // POST
 const String kAPIOrderCreateUpdateWithCartURL = '/customer/order/create-update/with-cart'; // POST
+const String kAPIOrderAddWithCartURL = '/customer/order/add/with-cart'; // POST --place order
+
+//! voucher-controller
+const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST --place order
+
+//! favorite-product-controller
+const String kAPIFavoriteProductAddURL = '/customer/favorite-product/add'; // POST --:{productId}
+const String kAPIFavoriteProductListURL = '/customer/favorite-product/list'; // GET
+const String kAPIFavoriteProductDeleteURL = '/customer/favorite-product/delete'; // DELETE --:{favoriteProductId}
+
+
+
+// const String kAPI_URL = ''; // method --description

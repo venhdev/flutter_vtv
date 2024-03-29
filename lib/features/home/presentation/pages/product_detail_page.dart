@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
+import '../../../../service_locator.dart';
 import '../../domain/entities/product_entity.dart';
+import '../../domain/repository/product_repository.dart';
 import '../components/product_components/sheet_add_to_cart.dart';
 
 //! this page should use to easily pop back to the previous screen
@@ -28,12 +31,14 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   bool _showBottomSheet = true;
+  bool _isFavorite = false;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    checkIsFavorite();
   }
 
   @override
@@ -53,6 +58,41 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         _showBottomSheet = true;
       });
     }
+  }
+
+  void handleTapFavoriteButton() async {
+    if (!_isFavorite) {
+      final respEither = await sl<ProductRepository>().addFavoriteProduct(widget.product.productId);
+
+      respEither.fold(
+        (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
+        (ok) {
+          Fluttertoast.showToast(msg: ok.message ?? 'Đã thêm vào yêu thích');
+          setState(() {
+            _isFavorite = true;
+          });
+        },
+      );
+    } else {
+      final respEither = await sl<ProductRepository>().removeFavoriteProduct(widget.product.productId);
+
+      respEither.fold(
+        (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
+        (ok) {
+          Fluttertoast.showToast(msg: ok.message ?? 'Đã xóa khỏi yêu thích');
+          setState(() {
+            _isFavorite = false;
+          });
+        },
+      );
+    }
+  }
+
+  void checkIsFavorite() async {
+    final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
+    setState(() {
+      _isFavorite = isFavorite != null;
+    });
   }
 
   @override
@@ -180,8 +220,25 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Colors.white.withOpacity(0.6),
                     ),
                   ),
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {},
+                  icon: _isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+                  // icon: FutureBuilder(
+                  //     future: sl<ProductRepository>().isFavoriteProduct(widget.product.productId),
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.hasData) {
+                  //         final isFavorite = snapshot.data;
+
+                  //         if (isFavorite != null) {
+                  //           return isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border);
+                  //         } else {
+                  //           return const Icon(Icons.favorite_border);
+                  //         }
+                  //       }
+                  //       // return const Icon(Icons.favorite_border);
+                  //       return const Center(
+                  //         child: CircularProgressIndicator(),
+                  //       );
+                  //     }),
+                  onPressed: handleTapFavoriteButton,
                 ),
               ),
             ],

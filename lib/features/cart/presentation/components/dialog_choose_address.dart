@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/features/cart/presentation/pages/add_address_page.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../service_locator.dart';
 import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
-import '../../domain/entities/order_entity.dart';
 import 'address_summary.dart';
 
 class DialogChooseAddress extends StatefulWidget {
   const DialogChooseAddress({
     super.key,
-    required this.order,
     required this.onAddressChanged,
   });
 
-  final OrderEntity order;
   final void Function(AddressEntity) onAddressChanged;
 
   @override

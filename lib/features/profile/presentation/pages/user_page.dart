@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../bloc/auth_cubit.dart';
-import '../components/logged_widget.dart';
-import '../components/not_logged_widget.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
+import '../../../auth/presentation/components/logged_widget.dart';
+import '../../../auth/presentation/components/not_logged_widget.dart';
 
-class UserHomePage extends StatelessWidget {
-  const UserHomePage({super.key});
+class UserPage extends StatelessWidget {
+  const UserPage({super.key});
 
   static const String routeName = 'user';
 

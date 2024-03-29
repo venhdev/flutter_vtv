@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
@@ -13,7 +12,7 @@ class AddressPage extends StatefulWidget {
   const AddressPage({super.key});
 
   static const routeName = 'address';
-  static const path = '/home/cart/address';
+  static const path = '/user/settings/address';
 
   @override
   State<AddressPage> createState() => _AddressPageState();

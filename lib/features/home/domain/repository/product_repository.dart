@@ -17,4 +17,9 @@ abstract class ProductRepository {
 
   // Category
   FRespData<List<CategoryEntity>> getAllParentCategories();
+
+  // Favorite Product
+  FRespEither addFavoriteProduct(int productId);
+  FRespEither removeFavoriteProduct(int favoriteProductId);
+  Future<int?> isFavoriteProduct(int productId);
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_vtv/features/cart/domain/dto/create_order_param.dart';
+import 'package:flutter_vtv/features/cart/domain/dto/place_order_param.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/constants/api.dart';
@@ -11,7 +11,9 @@ import '../../domain/dto/order_resp.dart';
 
 abstract class OrderDataSource {
   Future<DataResponse<OrderResp>> createByCartIds(List<String> cartIds);
-  Future<DataResponse<OrderResp>> createUpdateWithCart(CreateOrderParam param);
+  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderParam param);
+
+  Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params);
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
@@ -36,7 +38,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<DataResponse<OrderResp>> createUpdateWithCart(CreateOrderParam param) async {
+  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderParam param) async {
     final response = await _client.post(
       baseUri(path: kAPIOrderCreateUpdateWithCartURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -46,6 +48,21 @@ class OrderDataSourceImpl extends OrderDataSource {
     return handleResponseWithData<OrderResp>(
       response,
       kAPIOrderCreateUpdateWithCartURL,
+      (data) => OrderResp.fromMap(data),
+    );
+  }
+  
+  @override
+  Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params) async {
+    final response = await _client.post(
+      baseUri(path: kAPIOrderAddWithCartURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: params.toJson(),
+    );
+
+    return handleResponseWithData<OrderResp>(
+      response,
+      kAPIOrderAddWithCartURL,
       (data) => OrderResp.fromMap(data),
     );
   }

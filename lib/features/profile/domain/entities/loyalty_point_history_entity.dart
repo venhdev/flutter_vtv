@@ -4,14 +4,15 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class LoyaltyPointHistoryEntity extends Equatable {
-  final int loyaltyPointHistoryId;
+  final int? loyaltyPointHistoryId;
   final int point;
-  final String type;
-  final String status;
+  final String? type;
+  final String? status;
   final int loyaltyPointId;
-  final DateTime createAt;
+  final DateTime? createAt;
+
   const LoyaltyPointHistoryEntity({
-    required this.loyaltyPointHistoryId,
+    this.loyaltyPointHistoryId,
     required this.point,
     required this.type,
     required this.status,
@@ -44,30 +45,31 @@ class LoyaltyPointHistoryEntity extends Equatable {
       'type': type,
       'status': status,
       'loyaltyPointId': loyaltyPointId,
-      'createAt': createAt.millisecondsSinceEpoch,
+      'createAt': createAt?.toIso8601String(),
     };
   }
 
   factory LoyaltyPointHistoryEntity.fromMap(Map<String, dynamic> map) {
     return LoyaltyPointHistoryEntity(
-      loyaltyPointHistoryId: map['loyaltyPointHistoryId'] as int,
+      loyaltyPointHistoryId: map['loyaltyPointHistoryId'] as int?,
       point: map['point'] as int,
-      type: map['type'] as String,
-      status: map['status'] as String,
+      type: map['type'] as String?,
+      status: map['status'] as String?,
       loyaltyPointId: map['loyaltyPointId'] as int,
-      createAt: DateTime.fromMillisecondsSinceEpoch(map['createAt'] as int),
+      createAt: map['createAt'] != null ? DateTime.parse(map['createAt'] as String) : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory LoyaltyPointHistoryEntity.fromJson(String source) => LoyaltyPointHistoryEntity.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory LoyaltyPointHistoryEntity.fromJson(String source) =>
+      LoyaltyPointHistoryEntity.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       loyaltyPointHistoryId,
       point,

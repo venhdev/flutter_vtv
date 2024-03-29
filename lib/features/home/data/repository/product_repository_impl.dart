@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.dart';
@@ -60,6 +62,40 @@ class ProductRepositoryImpl extends ProductRepository {
   FRespData<List<CategoryEntity>> getAllParentCategories() async {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => _categoryDataSource.getAllParentCategories(),
+    );
+  }
+
+  @override
+  FRespEither addFavoriteProduct(int productId) async {
+    return await handleSuccessResponseFromDataSource(
+      noDataCallback: () async => _productDataSource.addFavoriteProduct(productId),
+    );
+  }
+
+  @override
+  Future<int?> isFavoriteProduct(int productId) async {
+    try {
+      final favoritesResp = await _productDataSource.getAllFavoriteProduct();
+      log('favoritesResp: $favoritesResp');
+      // check if the product is in the list of favorites
+      // return favoritesResp.data.any((element) => element.productId == productId);
+
+      // if there is a product in the list of favorites, return the favoriteProductId
+      return favoritesResp.data
+          .where(
+            (element) => element.productId == productId,
+          )
+          .first
+          .favoriteProductId;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  FRespEither removeFavoriteProduct(int favoriteProductId) async {
+    return await handleSuccessResponseFromDataSource(
+      noDataCallback: () async => _productDataSource.removeFavoriteProduct(favoriteProductId),
     );
   }
 }

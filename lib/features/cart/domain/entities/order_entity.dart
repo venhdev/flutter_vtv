@@ -10,7 +10,7 @@ import 'voucher_order_entity.dart';
 
 class OrderEntity extends Equatable {
   final String? orderId;
-  final String note;
+  final String? note;
   final String paymentMethod;
   final String shippingMethod;
   final int count;
@@ -25,7 +25,7 @@ class OrderEntity extends Equatable {
   final LoyaltyPointHistoryEntity? loyaltyPointHistory;
   final AddressEntity address;
   final ShopEntity shop;
-  final List<VoucherOrderEntity> voucherOrders;
+  final List<VoucherOrderEntity>? voucherOrders;
   final List<OrderItemEntity> orderItems;
   
   const OrderEntity({
@@ -44,7 +44,7 @@ class OrderEntity extends Equatable {
     this.loyaltyPointHistory,
     required this.address,
     required this.shop,
-    required this.voucherOrders,
+    this.voucherOrders,
     required this.orderItems,
   });
 
@@ -105,7 +105,7 @@ class OrderEntity extends Equatable {
       'loyaltyPointHistoryDTO': loyaltyPointHistory?.toMap(),
       'addressDTO': address.toMap(),
       'shopDTO': shop.toMap(),
-      'voucherOrderDTOs': voucherOrders.map((x) => x.toMap()).toList(),
+      'voucherOrderDTOs': voucherOrders?.map((x) => x.toMap()).toList(),
       'orderItemDTOs': orderItems.map((x) => x.toMap()).toList(),
     };
   }
@@ -113,7 +113,7 @@ class OrderEntity extends Equatable {
   factory OrderEntity.fromMap(Map<String, dynamic> map) {
     return OrderEntity(
       orderId: map['orderId'] != null ? map['orderId'] as String : null,
-      note: map['note'] as String,
+      note: map['note'] as String?,
       paymentMethod: map['paymentMethod'] as String,
       shippingMethod: map['shippingMethod'] as String,
       count: map['count'] as int,
@@ -129,11 +129,11 @@ class OrderEntity extends Equatable {
           : null,
       address: AddressEntity.fromMap(map['addressDTO'] as Map<String, dynamic>),
       shop: ShopEntity.fromMap(map['shopDTO'] as Map<String, dynamic>),
-      voucherOrders: List<VoucherOrderEntity>.from(
+      voucherOrders: map['voucherOrderDTOs']!=null? List<VoucherOrderEntity>.from(
         (map['voucherOrderDTOs'] as List<dynamic>).map<VoucherOrderEntity>(
           (x) => VoucherOrderEntity.fromMap(x as Map<String, dynamic>),
         ),
-      ),
+      ) : null,
       orderItems: List<OrderItemEntity>.from(
         (map['orderItemDTOs'] as List<dynamic>).map<OrderItemEntity>(
           (x) => OrderItemEntity.fromMap(x as Map<String, dynamic>),
