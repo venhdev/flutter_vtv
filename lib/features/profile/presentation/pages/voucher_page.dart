@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/typedef.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
+import '../../../cart/domain/entities/voucher_entity.dart';
 import '../../../cart/domain/repository/order_repository.dart';
 import '../components/voucher_item.dart';
 
 class VoucherPage extends StatelessWidget {
-  const VoucherPage({super.key, this.returnValue = false});
+  const VoucherPage({
+    super.key,
+    this.returnValue = false,
+    this.future,
+  });
 
   static const String routeName = 'voucher';
   static const String path = '/user/voucher';
 
   final bool returnValue;
+  final FRespData<List<VoucherEntity>>? future;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.transparent),
       body: FutureBuilder(
-          future: sl<OrderRepository>().voucherListAll(),
+          future: future != null ? future! : sl<OrderRepository>().voucherListAll(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final respEither = snapshot.data!;

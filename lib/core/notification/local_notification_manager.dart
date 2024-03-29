@@ -12,8 +12,7 @@ class LocalNotificationManager {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   Future<void> init() async {
-    InitializationSettings initializationSettings =
-        const InitializationSettings(
+    InitializationSettings initializationSettings = const InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       // iOS: DarwinInitializationSettings(),
     );
@@ -23,8 +22,7 @@ class LocalNotificationManager {
   }
 
   /// Default Notification Details >> single notification
-  static const NotificationDetails defaultNotificationDetails =
-      NotificationDetails(
+  static const NotificationDetails defaultNotificationDetails = NotificationDetails(
     // androidPlatformChannelSpecifics
     android: AndroidNotificationDetails(
       kDefaultNotificationChannelId,
@@ -40,7 +38,7 @@ class LocalNotificationManager {
     required int id,
     required String title,
     required String body,
-    required String? payload,
+    String? payload,
   }) async {
     await _flutterLocalNotificationsPlugin
         .show(
@@ -50,8 +48,9 @@ class LocalNotificationManager {
           defaultNotificationDetails,
           payload: payload,
         )
-        .onError((error, stackTrace) =>
-            Fluttertoast.showToast(msg: error.toString()));
+        .onError(
+          (error, stackTrace) => Fluttertoast.showToast(msg: error.toString()),
+        );
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
 import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
+import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,8 +22,10 @@ class DevPage extends StatefulWidget {
 
 class _DevPageState extends State<DevPage> {
   String accessToken = '';
+  String? fcmToken = '';
   String? newAccessToken;
 
+  TextEditingController domainTextController = TextEditingController(text: devDOMAIN);
   Future<void> setDomain(String newDomain) async {
     if (newDomain == devDOMAIN) {
       Fluttertoast.showToast(msg: 'Domain is the same');
@@ -33,8 +36,6 @@ class _DevPageState extends State<DevPage> {
       setState(() {});
     }
   }
-
-  TextEditingController domainTextController = TextEditingController(text: devDOMAIN);
 
   @override
   void initState() {
@@ -48,6 +49,8 @@ class _DevPageState extends State<DevPage> {
         });
       }
     });
+
+    fcmToken = sl<FirebaseCloudMessagingManager>().currentFCMToken;
   }
 
   @override
@@ -60,22 +63,100 @@ class _DevPageState extends State<DevPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Dev Page'),
+          title: const Text('Dev Page - Tap to copy'),
           leading: IconButton(
             onPressed: () {
               context.go('/home');
             },
             icon: const Icon(Icons.arrow_back),
           )),
-      body: Center(
-        child: _buildContent(),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildDomain(),
+            const Divider(),
+            _buildToken(),
+            const Divider(),
+            _buildFCM(),
+            const Divider(),
+          ],
+        ),
       ),
     );
   }
 
-  Column _buildContent() {
+  Column _buildFCM() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // current FCM token
+              GestureDetector(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: fcmToken ?? 'null'));
+                  Fluttertoast.showToast(msg: 'Copied to clipboard FCM token');
+                },
+                child: Text('FCM token: $fcmToken'),
+              ),
+            ],
+          );
+  }
+
+  Widget _buildToken() {
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: accessToken));
+            Fluttertoast.showToast(msg: 'Copied to clipboard access token');
+          },
+          child: Text('accessToken: $accessToken'),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final accessToken = await sl<SecureStorageHelper>().accessToken;
+            if (mounted && accessToken != null) {
+              setState(() {
+                Fluttertoast.showToast(msg: 'get current access token success');
+                this.accessToken = accessToken;
+              });
+            }
+          },
+          child: const Text('Get current access token'),
+        ),
+
+        // call usecase to get new access token
+        if (newAccessToken != null)
+          GestureDetector(
+            child: Text('newAccessToken: $newAccessToken'),
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: newAccessToken ?? ''));
+              Fluttertoast.showToast(msg: 'Copied to clipboard new access token');
+            },
+          ),
+        ElevatedButton(
+          onPressed: () async {
+            // final result = await sl<CheckTokenUC>().call(accessToken);
+            await sl<AuthCubit>().onStarted();
+            // Fluttertoast.showToast(msg: 'result: $result');
+            final currentToken = getCurrentToken();
+            if (mounted && currentToken != null) {
+              setState(() {
+                newAccessToken = currentToken;
+              });
+            }
+            if (newAccessToken == currentToken) {
+              Fluttertoast.showToast(msg: 'SAME TOKEN');
+            }
+          },
+          child: const Text('Check and get new access token'),
+        ),
+      ],
+    );
+  }
+
+  Column _buildDomain() {
+    return Column(
       children: <Widget>[
         Text('current Domain: $devDOMAIN'),
         TextField(
@@ -95,52 +176,6 @@ class _DevPageState extends State<DevPage> {
           onSubmitted: (value) async {
             await setDomain(value);
           },
-        ),
-
-        // other test
-        const SizedBox(height: 20),
-        GestureDetector(
-          onTap: () {
-            Clipboard.setData(ClipboardData(text: accessToken));
-            Fluttertoast.showToast(msg: 'Copied to clipboard');
-          },
-          child: Text('accessToken: $accessToken'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final accessToken = await sl<SecureStorageHelper>().accessToken;
-            if (mounted && accessToken != null) {
-              setState(() {
-                Fluttertoast.showToast(msg: 'get current access token success');
-                this.accessToken = accessToken;
-              });
-            }
-          },
-          child: const Text('Get current access token'),
-        ),
-
-        // call usecase to get new access token
-        GestureDetector(
-          child: Text('newAccessToken: $newAccessToken'),
-          onTap: () {
-            Clipboard.setData(ClipboardData(text: newAccessToken ?? ''));
-            Fluttertoast.showToast(msg: 'Copied to clipboard');
-          },
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () async {
-            // final result = await sl<CheckTokenUC>().call(accessToken);
-            await sl<AuthCubit>().onStarted();
-            // Fluttertoast.showToast(msg: 'result: $result');
-            final currentToken = getCurrentToken();
-            if (mounted && currentToken != null) {
-              setState(() {
-                newAccessToken = currentToken;
-              });
-            }
-          },
-          child: const Text('Check and get new access token'),
         ),
       ],
     );

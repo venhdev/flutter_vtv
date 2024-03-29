@@ -23,8 +23,10 @@ import 'features/cart/data/data_sources/order_data_source.dart';
 import 'features/cart/data/data_sources/voucher_data_source.dart';
 import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/data/repository/order_repository_impl.dart';
+import 'features/cart/data/repository/voucher_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
 import 'features/cart/domain/repository/order_repository.dart';
+import 'features/cart/domain/repository/voucher_repository.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
 import 'features/home/data/repository/product_repository_impl.dart';
@@ -55,8 +57,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<SharedPreferencesHelper>(SharedPreferencesHelper(sharedPreferences));
   sl.registerSingleton<SecureStorageHelper>(SecureStorageHelper(secureStorage));
 
-  sl.registerSingleton<LocalNotificationManager>(
-      LocalNotificationManager(flutterLocalNotificationsPlugin));
+  sl.registerSingleton<LocalNotificationManager>(LocalNotificationManager(flutterLocalNotificationsPlugin));
   sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source
@@ -69,19 +70,21 @@ Future<void> initializeLocator() async {
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl()));
-  sl.registerSingleton<VoucherDataSource>(VoucherDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<VoucherDataSource>(VoucherDataSourceImpl(sl()));
 
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
+
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
+
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
   sl.registerSingleton<OrderRepository>(OrderRepositoryImpl(sl(), sl()));
+  sl.registerSingleton<VoucherRepository>(VoucherRepositoryImpl(sl()));
 
   //! UseCase
-  sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(
-      () => LoginWithUsernameAndPasswordUC(sl()));
+  sl.registerLazySingleton<LoginWithUsernameAndPasswordUC>(() => LoginWithUsernameAndPasswordUC(sl()));
   sl.registerLazySingleton<LogoutUC>(() => LogoutUC(sl()));
   sl.registerLazySingleton<CheckTokenUC>(() => CheckTokenUC(sl()));
 

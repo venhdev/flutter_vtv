@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/helpers/converter.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -10,6 +9,7 @@ import '../../domain/dto/place_order_param.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/voucher_entity.dart';
 import '../../domain/repository/order_repository.dart';
+import '../../domain/repository/voucher_repository.dart';
 import '../components/address_summary.dart';
 import '../components/dialog_choose_address.dart';
 import '../components/order_item.dart';
@@ -126,7 +126,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const SizedBox(height: 8),
 
               //! order summary
-              _buildOrderSummary(), // shop info, list of items
+              _buildShopInfoAndItems(), // shop info, list of items
               const SizedBox(height: 8),
 
               //! shipping method
@@ -138,7 +138,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const SizedBox(height: 8),
 
               //! voucher
-              _buildVoucher(),
+              _buildSystemVoucher(),
               const SizedBox(height: 8),
 
               //! total price
@@ -207,6 +207,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   TextField _buildNote() {
     return TextField(
+      style: const TextStyle(fontSize: 14),
       decoration: const InputDecoration(
         hintText: 'Ghi chú',
         enabledBorder: OutlineInputBorder(
@@ -279,7 +280,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(_order.paymentMethod),
-              Text(convertPaymentMethodToName(_order.paymentMethod)),
+              Text(formatPaymentMethod(_order.paymentMethod)),
             ],
           )
         ],
@@ -323,7 +324,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildOrderSummary() {
+  Widget _buildShopInfoAndItems() {
     return Wrapper(
       child: Column(
         children: [
@@ -355,31 +356,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                 ),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
-                        builder: (context) {
-                          return const VoucherPage(returnValue: true);
-                        },
-                      ));
-
-                      if (voucher != null) {
-                        reloadOrder(
-                          _placeOrderParam.copyWith(shopVoucherCode: voucher.code),
-                        );
-                      }
-                    },
-                    child: Text(
-                      _placeOrderParam.shopVoucherCode ?? noVoucherMsg,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        color: _placeOrderParam.shopVoucherCode == null ? Colors.grey : Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  child: _buildShopVoucher(),
                 ),
               ],
             ),
@@ -402,13 +379,48 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildVoucher() {
+  GestureDetector _buildShopVoucher() {
+    return GestureDetector(
+      onTap: () async {
+        final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
+          builder: (context) {
+            return VoucherPage(
+              returnValue: true,
+              future: sl<VoucherRepository>().listOnShop(_order.shop.shopId.toString()),
+            );
+          },
+        ));
+
+        if (voucher != null) {
+          reloadOrder(
+            _placeOrderParam.copyWith(shopVoucherCode: voucher.code),
+          );
+        }
+      },
+      child: Text(
+        _placeOrderParam.shopVoucherCode ?? noVoucherMsg,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.end,
+        style: TextStyle(
+          color: _placeOrderParam.shopVoucherCode == null ? Colors.grey : Colors.green,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSystemVoucher() {
     return InkWell(
       onTap: () async {
         // show dialog to choose voucher
         final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
           builder: (context) {
-            return const VoucherPage(returnValue: true);
+            // return const VoucherPage(returnValue: true);
+            return VoucherPage(
+              returnValue: true,
+              future: sl<VoucherRepository>().listOnSystem(),
+            );
           },
         ));
 

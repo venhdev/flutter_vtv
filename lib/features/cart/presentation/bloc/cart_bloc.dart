@@ -68,7 +68,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onUpdateCart(UpdateCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());
-    log('event ${event.toString()}');
 
     final prevState = state as CartLoaded;
 
@@ -77,38 +76,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     resp.fold(
       (error) => emit(CartError(message: error.message)),
       (ok) {
-        // log('prevState.quantity ${prevState.cart.cartByShopDTOs[event.shopIndex].carts[event.cartIndex].quantity}');
-        // log('event.quantity ${event.quantity}');
-
-        // emit(CartSuccess(message: ok.message));
-        // add(FetchCart());
-        //? no re-render, so update cart in local state
-        // final newCartState = prevState.cart.copyWith(
-        //   cartByShopDTOs: prevState.cart.cartByShopDTOs.map(
-        //     (cartsByShop) {
-        //       if (cartsByShop.shopId == prevState.cart.cartByShopDTOs[event.shopIndex].shopId) {
-        //         return cartsByShop.copyWith(
-        //           carts: (cartsByShop.carts[event.cartIndex].quantity == 1 && event.quantity == -1)
-        //               ? (cartsByShop.carts..removeAt(event.cartIndex))
-        //               : cartsByShop.carts.map(
-        //                   (c) {
-        //                     if (c.cartId == event.cartId) {
-        //                       // if (c.quantity == 1 && event.quantity == -1) {
-        //                       //   // fetch cart
-        //                       //   add(FetchCart());
-        //                       // } else {
-        //                       // }
-        //                       return c.copyWith(quantity: c.quantity + event.quantity);
-        //                     }
-        //                     return c;
-        //                   },
-        //                 ).toList(),
-        //         );
-        //       }
-        //       return cartsByShop;
-        //     },
-        //   ).toList(),
-        // );
         final newCartState = prevState.cart.copyWith(
           cartByShopDTOs: prevState.cart.cartByShopDTOs.map(
             (cartsByShop) {
@@ -117,9 +84,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                   carts: cartsByShop.carts.map(
                     (c) {
                       if (c.cartId == event.cartId) {
+                        // only one item in cart, remove it -> fetch cart
                         if (c.quantity == 1 && event.quantity == -1) {
-                          // fetch cart
-                          add(const FetchCart());
+                          add(const FetchCart()); // fetch cart
                         } else {
                           return c.copyWith(quantity: c.quantity + event.quantity);
                         }
@@ -145,15 +112,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     final resp = await _cartRepository.deleteCart(event.cartId);
 
-    //remove cartId in selectedCartIds
-
-
+    //UnSelectCart cartId in selectedCartIds if it exists
+    if (prevState.selectedCartIds.contains(event.cartId)) {
+      add(UnSelectCart(event.cartId));
+    }
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
       (ok) {
         emit(CartSuccess(message: ok.message));
-        add(FetchCart(selectedCartIds: prevState.selectedCartIds..remove(event.cartId)));
+        add(FetchCart(selectedCartIds: prevState.selectedCartIds));
       },
     );
   }
