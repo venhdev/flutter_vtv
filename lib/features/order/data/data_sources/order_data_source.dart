@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter_vtv/features/cart/domain/dto/place_order_param.dart';
+import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../core/constants/api.dart';
 import '../../../../core/helpers/secure_storage_helper.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/order_resp.dart';
+import '../../../cart/domain/dto/order_resp.dart';
 
 abstract class OrderDataSource {
   Future<DataResponse<OrderResp>> createByCartIds(List<String> cartIds);

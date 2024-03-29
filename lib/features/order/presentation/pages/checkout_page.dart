@@ -4,15 +4,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../service_locator.dart';
 import '../../../profile/domain/entities/address_dto.dart';
-import '../../../profile/presentation/pages/voucher_page.dart';
+import 'voucher_page.dart';
 import '../../domain/dto/place_order_param.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/voucher_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
-import '../components/address_summary.dart';
-import '../components/dialog_choose_address.dart';
-import '../components/order_item.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/components/address_summary.dart';
+import '../../../cart/presentation/components/dialog_choose_address.dart';
+import '../../../cart/presentation/components/order_item.dart';
 
 const String noVoucherMsg = 'Chọn hoặc nhập mã';
 
@@ -115,7 +116,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       appBar: AppBar(
         title: const Text('Thanh toán'),
       ),
-      bottomSheet: _buildPlaceOrderButton(),
+      bottomSheet: _buildPlaceOrderBtn(),
       body: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 64),
         child: SingleChildScrollView(
@@ -138,7 +139,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const SizedBox(height: 8),
 
               //! voucher
-              _buildSystemVoucher(),
+              _buildSystemVoucherBtn(),
               const SizedBox(height: 8),
 
               //! total price
@@ -151,56 +152,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceOrderButton() {
-    return Container(
-      color: Colors.white,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const Text(
-            'Tổng thanh toán: ',
-          ),
-          Text(
-            formatCurrency(_order.paymentTotal),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
-            onPressed: () async {
-              final respEither = await sl<OrderRepository>().placeOrder(
-                _placeOrderParam,
-                // PlaceOrderParam(
-                //   addressId: _address.addressId,
-                //   systemVoucherCode: _systemVoucherCode,
-                //   shopVoucherCode: _shopVoucherCode,
-                //   paymentMethod: _paymentMethod,
-                //   shippingMethod: _shippingMethod,
-                //   note: _note,
-                //   cartIds: _cartIds,
-                // ),
-              );
-
-              respEither.fold(
-                (error) {
-                  Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
-                },
-                (ok) {
-                  Fluttertoast.showToast(msg: ok.message ?? 'Đặt hàng thành công');
-                  Navigator.of(context).pop(true);
-                },
-              );
-            },
-            child: const Text('Đặt hàng'),
-          ),
-        ],
       ),
     );
   }
@@ -356,7 +307,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                 ),
                 Expanded(
-                  child: _buildShopVoucher(),
+                  child: _buildShopVoucherBtn(),
                 ),
               ],
             ),
@@ -379,7 +330,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  GestureDetector _buildShopVoucher() {
+  GestureDetector _buildShopVoucherBtn() {
     return GestureDetector(
       onTap: () async {
         final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
@@ -410,7 +361,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildSystemVoucher() {
+  Widget _buildSystemVoucherBtn() {
     return InkWell(
       onTap: () async {
         // show dialog to choose voucher
@@ -450,6 +401,45 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceOrderBtn() {
+    return Container(
+      color: Colors.white,
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Text(
+            'Tổng thanh toán: ',
+          ),
+          Text(
+            formatCurrency(_order.paymentTotal),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            onPressed: () async {
+              final respEither = await sl<OrderRepository>().placeOrder(_placeOrderParam);
+
+              respEither.fold(
+                (error) {
+                  Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
+                },
+                (ok) {
+                  Fluttertoast.showToast(msg: ok.message ?? 'Đặt hàng thành công');
+                  sl<CartBloc>().add(const FetchCart());
+                },
+              );
+            },
+            child: const Text('Đặt hàng'),
+          ),
+        ],
       ),
     );
   }

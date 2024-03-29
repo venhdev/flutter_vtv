@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
-import '../../../cart/presentation/pages/add_address_page.dart';
+import 'add_address_page.dart';
 import '../../domain/entities/address_dto.dart';
 import '../../domain/repository/profile_repository.dart';
 

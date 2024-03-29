@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/entities/loyalty_point_history_entity.dart';
 import 'order_item_entity.dart';
-import 'shop_entity.dart';
+import '../../../shop/domain/entities/shop_entity.dart';
 import 'voucher_order_entity.dart';
 
 class OrderEntity extends Equatable {

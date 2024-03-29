@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-import '../entities/order_entity.dart';
-import '../entities/shipping_entity.dart';
+import '../../../order/domain/entities/order_entity.dart';
+import '../../../order/domain/entities/shipping_entity.dart';
 
 class OrderResp extends Equatable {
   final String status;

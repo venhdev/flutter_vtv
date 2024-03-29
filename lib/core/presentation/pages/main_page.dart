@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/features/cart/presentation/pages/add_address_page.dart';
+import 'package:flutter_vtv/features/profile/presentation/pages/add_address_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_state.dart';
 import '../../../features/profile/presentation/pages/settings_page.dart';
-import '../../../features/cart/presentation/pages/checkout_page.dart';
+import '../../../features/order/presentation/pages/checkout_page.dart';
 import '../../../features/profile/presentation/pages/address_page.dart';
 import '../../../features/cart/presentation/pages/cart_page.dart';
 import '../../../features/home/presentation/pages/product_detail_page.dart';

@@ -6,14 +6,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
+import '../../../order/domain/repository/order_repository.dart';
+import '../../../order/presentation/pages/checkout_page.dart';
 import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/address_page.dart';
-import '../../domain/repository/order_repository.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
-import 'checkout_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -156,16 +156,6 @@ class _CartPageState extends State<CartPage> {
             child: _defaultAddress != null
                 ? FutureBuilder(
                     future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
-                    // future: sl<OrderRepository>().createUpdateWithCart(
-                    //   CreateOrderParam(
-                    //     addressId: _defaultAddress!.addressId,
-                    //     systemVoucherCode: 'VTV2Code',
-                    //     paymentMethod: 'COD',
-                    //     shippingMethod: 'VTV Express',
-                    //     note: 'note test',
-                    //     cartIds: state.selectedCartIds,
-                    //   ),
-                    // ),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final respEither = snapshot.data!;
