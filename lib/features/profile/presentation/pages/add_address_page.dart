@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../service_locator.dart';
-import '../../../profile/data/data_sources/profile_data_source.dart';
-import '../../../profile/domain/dto/add_address_param.dart';
-import '../../../profile/domain/entities/address_dto.dart';
-import '../../../profile/domain/repository/profile_repository.dart';
+import '../../data/data_sources/profile_data_source.dart';
+import '../../domain/dto/add_address_param.dart';
+import '../../domain/entities/address_dto.dart';
+import '../../domain/repository/profile_repository.dart';
 
 class AddAddressPage extends StatefulWidget {
   const AddAddressPage({super.key});

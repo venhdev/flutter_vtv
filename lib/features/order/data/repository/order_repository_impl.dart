@@ -1,8 +1,8 @@
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/core/network/response_handler.dart';
 import 'package:flutter_vtv/features/cart/domain/dto/order_resp.dart';
-import 'package:flutter_vtv/features/cart/domain/dto/place_order_param.dart';
-import 'package:flutter_vtv/features/cart/domain/entities/voucher_entity.dart';
+import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
+import 'package:flutter_vtv/features/order/domain/entities/voucher_entity.dart';
 
 import '../../domain/repository/order_repository.dart';
 import '../data_sources/order_data_source.dart';

@@ -1,7 +1,7 @@
-import 'package:flutter_vtv/features/cart/domain/dto/place_order_param.dart';
+import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
 
 import '../../../../core/constants/typedef.dart';
-import '../dto/order_resp.dart';
+import '../../../cart/domain/dto/order_resp.dart';
 import '../entities/voucher_entity.dart';
 
 abstract class OrderRepository {

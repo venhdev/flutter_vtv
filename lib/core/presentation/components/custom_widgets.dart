@@ -33,9 +33,9 @@ class MessageScreen extends StatelessWidget {
             onLongPress: () => log(message), // for testing
           ),
           if (enableBack) ...[
-            TextButton(
+            ElevatedButton(
               onPressed: () => context.go('/home'),
-              child: const Text('Go back'),
+              child: const Text('Trang chủ'),
             ),
           ]
         ],

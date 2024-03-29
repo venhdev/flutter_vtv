@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/typedef.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
-import '../../../cart/domain/entities/voucher_entity.dart';
-import '../../../cart/domain/repository/order_repository.dart';
+import '../../domain/entities/voucher_entity.dart';
+import '../../domain/repository/order_repository.dart';
 import '../components/voucher_item.dart';
 
 class VoucherPage extends StatelessWidget {
@@ -34,6 +34,8 @@ class VoucherPage extends StatelessWidget {
                   return MessageScreen.error(error.message);
                 },
                 (ok) {
+                  if (ok.data.isEmpty) return const MessageScreen(message: 'Không có voucher nào!');
+
                   return ListView.builder(
                     itemCount: ok.data.length,
                     itemBuilder: (context, index) {

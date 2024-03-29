@@ -3,7 +3,7 @@ import 'package:flutter_vtv/core/notification/local_notification_manager.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../service_locator.dart';
-import '../../../profile/presentation/pages/voucher_page.dart';
+import '../../../order/presentation/pages/voucher_page.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 
