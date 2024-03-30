@@ -71,7 +71,7 @@ class CartsByShop extends StatelessWidget {
         ),
         IconTextButton(
           icon: Icons.storefront_sharp,
-          text: cartByShop.shopName,
+          label: cartByShop.shopName,
           onPressed: () {
             // navigate to shop detail
           },

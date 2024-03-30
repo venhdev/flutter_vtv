@@ -5,9 +5,11 @@ import '../../../cart/domain/dto/order_resp.dart';
 import '../entities/voucher_entity.dart';
 
 abstract class OrderRepository {
+  //! Create Temp Order
   FRespData<OrderResp> createOrderByCartIds(List<String> cartIds);
   /// Use to change order status (in checkout page)
   FRespData<OrderResp> createUpdateWithCart(PlaceOrderParam param);
+  FRespData<OrderResp> createByProductVariant(int productVariantId, int quantity);
 
   // Place order
   FRespData<OrderResp> placeOrder(PlaceOrderParam params);

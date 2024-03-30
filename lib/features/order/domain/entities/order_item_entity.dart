@@ -7,7 +7,7 @@ import '../../../home/domain/entities/product_variant_entity.dart';
 class OrderItemEntity extends Equatable {
   final String? orderItemId;
   final String? orderId;
-  final String cartId;
+  final String? cartId;
   final int quantity;
   final int price;
   final int totalPrice;
@@ -59,7 +59,7 @@ class OrderItemEntity extends Equatable {
     return OrderItemEntity(
       orderItemId: map['orderItemId'] != null ? map['orderItemId'] as String : null,
       orderId: map['orderId'] != null ? map['orderId'] as String : null,
-      cartId: map['cartId'] as String,
+      cartId: map['cartId'] as String?,
       quantity: map['quantity'] as int,
       price: map['price'] as int,
       totalPrice: map['totalPrice'] as int,

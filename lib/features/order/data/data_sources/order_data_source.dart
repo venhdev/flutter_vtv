@@ -10,15 +10,17 @@ import '../../../../core/network/response_handler.dart';
 import '../../../cart/domain/dto/order_resp.dart';
 
 abstract class OrderDataSource {
+  // Create order
   Future<DataResponse<OrderResp>> createByCartIds(List<String> cartIds);
   Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderParam param);
+  Future<DataResponse<OrderResp>> createByProductVariant(int productVariantId, int quantity);
 
+  // Place order
   Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params);
 
   // Manage orders
   Future<DataResponse<OrdersResp>> getListOrders();
   Future<DataResponse<OrdersResp>> getListOrdersByStatus(String status);
-
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
@@ -85,7 +87,7 @@ class OrderDataSourceImpl extends OrderDataSource {
       (data) => OrdersResp.fromMap(data),
     );
   }
-  
+
   @override
   Future<DataResponse<OrdersResp>> getListOrdersByStatus(String status) async {
     final response = await _client.get(
@@ -95,8 +97,27 @@ class OrderDataSourceImpl extends OrderDataSource {
 
     return handleResponseWithData<OrdersResp>(
       response,
-      kAPIOrderListByStatusURL,
+      '$kAPIOrderListByStatusURL/$status',
       (data) => OrdersResp.fromMap(data),
+    );
+  }
+
+  @override
+  Future<DataResponse<OrderResp>> createByProductVariant(int productVariantId, int quantity) async {
+    final body = {
+      productVariantId.toString(): quantity.toString(),
+    };
+
+    final response = await _client.post(
+      baseUri(path: kAPIOrderCreateByProductVariantURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: jsonEncode(body),
+    );
+
+    return handleResponseWithData<OrderResp>(
+      response,
+      kAPIOrderCreateByProductVariantURL,
+      (data) => OrderResp.fromMap(data),
     );
   }
 }

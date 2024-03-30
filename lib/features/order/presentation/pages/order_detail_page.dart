@@ -86,7 +86,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
       paymentMethod: widget.order.paymentMethod,
       shippingMethod: widget.order.shippingMethod,
       note: '',
-      cartIds: widget.order.orderItems.map((e) => e.cartId).toList(),
+      cartIds: widget.order.orderItems.map((e) => e.cartId!).toList(),
     );
   }
 

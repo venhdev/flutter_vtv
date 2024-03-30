@@ -32,6 +32,8 @@ class CheckoutPage extends StatefulWidget {
 
   final OrderEntity order;
 
+  // TODO: check if this [OrderEntity] create with cart (in cart with cartId) or with product variant (buy now --not in cart)
+
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
 }
@@ -421,7 +423,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             onPressed: () async {
               final respEither = await sl<OrderRepository>().placeOrder(_placeOrderParam);
 
-             respEither.fold(
+              respEither.fold(
                 (error) {
                   Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
                 },
@@ -431,7 +433,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   context.go(OrderDetailPage.path, extra: ok.data.order);
                 },
               );
-
             },
             child: const Text('Đặt hàng'),
           ),

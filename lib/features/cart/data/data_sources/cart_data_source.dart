@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_vtv/core/constants/api.dart';
 import 'package:flutter_vtv/core/network/response_handler.dart';
@@ -25,7 +24,6 @@ class CartDataSourceImpl extends CartDataSource {
 
   @override
   Future<DataResponse<CartResp>> getCarts() async {
-    log('accessToken: ${await _secureStorageHelper.accessToken}');
     final response = await _client.get(
       baseUri(path: kAPICartGetListURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),

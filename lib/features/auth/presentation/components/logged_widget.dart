@@ -3,6 +3,7 @@ import 'package:flutter_vtv/core/notification/local_notification_manager.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/presentation/components/custom_buttons.dart';
 import '../../../../service_locator.dart';
 import '../../../order/presentation/pages/voucher_page.dart';
 import '../../domain/entities/auth_entity.dart';
@@ -54,7 +55,7 @@ class LoggedView extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () {
@@ -62,11 +63,7 @@ class LoggedView extends StatelessWidget {
             },
             child: const Text('Đơn hàng của tôi'),
           ),
-          
-          
-          
-          
-          
+
           // voucher
           //! DEV
           const Divider(height: 32, thickness: 1, color: Colors.red),

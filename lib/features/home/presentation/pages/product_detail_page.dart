@@ -1,13 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../core/helpers/helpers.dart';
+import '../../../../core/presentation/components/custom_buttons.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../../../service_locator.dart';
 import '../../domain/entities/product_entity.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product_components/sheet_add_to_cart.dart';
+import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
 
 //! this page should use to easily pop back to the previous screen
 /*
@@ -98,7 +103,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
+      // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
+      bottomSheet: _buildBottomActionBar(context),
       body: GestureDetector(
         onTap: () {
           if (!_showBottomSheet) {
@@ -127,6 +133,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
             // description of the product
             _buildProductDescription(),
+
+            const SizedBox(height: 56),
           ],
         ),
       ),
@@ -249,36 +257,78 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   /// Bottom action bar with buttons:
+  /// - Chat
   /// - Add to cart
   /// - Buy now
   Widget _buildBottomActionBar(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isDismissible: true,
-                showDragHandle: true,
-                isScrollControlled: true,
-                builder: (context) {
-                  return BottomSheetAddToCart(product: widget.product);
-                },
-              );
-            },
-            child: const Text('Thêm vào giỏ hàng'),
+    return Container(
+      color: Colors.white,
+      height: 48,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 2,
+            child: IconTextButton(
+              onPressed: () {
+                // TODO: open chat
+              },
+              icon: Icons.chat_outlined,
+              backgroundColor: Colors.grey[200],
+              label: 'Chat',
+              fontSize: 12,
+              iconSize: 18,
+              borderRadius: BorderRadius.zero,
+              reverseDirection: true,
+            ),
           ),
-        ),
-        Expanded(
-          child: TextButton(
-            onPressed: () {
-              // buy now
-            },
-            child: const Text('Mua ngay'),
+          Expanded(
+            flex: 3,
+            child: IconTextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isDismissible: true,
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return SheetAddToCartOrBuyNow(product: widget.product);
+                  },
+                );
+              },
+              backgroundColor: Theme.of(context).buttonTheme.colorScheme?.tertiaryContainer,
+              icon: Icons.shopping_cart_outlined,
+              label: 'Thêm vào giỏ hàng',
+              fontSize: 12,
+              iconSize: 18,
+              borderRadius: BorderRadius.zero,
+              reverseDirection: true,
+            ),
           ),
-        ),
-      ],
+          Expanded(
+            flex: 5,
+            child: IconTextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isDismissible: true,
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return SheetAddToCartOrBuyNow(product: widget.product, isBuyNow: true);
+                  },
+                );
+              },
+              backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+              icon: Icons.attach_money_outlined,
+              label: 'Mua ngay',
+              fontSize: 14,
+              iconSize: 20,
+              borderRadius: BorderRadius.zero,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

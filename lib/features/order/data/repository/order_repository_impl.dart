@@ -43,4 +43,9 @@ class OrderRepositoryImpl extends OrderRepository {
   FRespData<OrdersResp> getListOrdersByStatus(String status) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getListOrdersByStatus(status));
   }
+  
+  @override
+  FRespData<OrderResp> createByProductVariant(int productVariantId, int quantity) async{
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createByProductVariant(productVariantId, quantity));
+  }
 }
