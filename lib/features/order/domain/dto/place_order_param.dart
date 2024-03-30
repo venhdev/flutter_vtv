@@ -10,7 +10,7 @@ class PlaceOrderParam extends Equatable {
   final String paymentMethod;
   final String shippingMethod;
   final String note;
-  final List<String> cartIds;
+  final List<String?> cartIds;
 
   const PlaceOrderParam({
     required this.addressId,

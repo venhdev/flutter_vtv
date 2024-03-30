@@ -32,7 +32,7 @@ class BtnFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconTextButton(
       icon: Icons.filter_alt_outlined,
-      text: 'Lọc',
+      label: 'Lọc',
       backgroundColor: isFiltering ? Colors.blue[300] : null,
       onPressed: () async => await handleBottomSheetFilter(),
     );

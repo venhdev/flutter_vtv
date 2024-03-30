@@ -31,9 +31,12 @@ const String kAPIAddressUpdateStatusURL = '/customer/address/update/status'; // 
 //! order-controller
 const String kAPIOrderCreateByCartIdsURL = '/customer/order/create/by-cartIds'; // POST
 const String kAPIOrderCreateUpdateWithCartURL = '/customer/order/create-update/with-cart'; // POST
-const String kAPIOrderAddWithCartURL = '/customer/order/add/with-cart'; // POST --place order
+const String kAPIOrderCreateByProductVariantURL = '/customer/order/create/by-product-variant'; // POST
+
 const String kAPIOrderListURL = '/customer/order/list'; // GET
 const String kAPIOrderListByStatusURL = '/customer/order/list/status'; // GET /{status} --OrderStatus
+
+const String kAPIOrderAddWithCartURL = '/customer/order/add/with-cart'; // POST --place order
 
 //! voucher-controller
 const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST /place order
