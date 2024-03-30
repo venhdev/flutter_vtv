@@ -11,6 +11,7 @@ part 'cart_state.dart';
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc(this._cartRepository, this._secureStorage) : super(CartInitial()) {
     on<InitialCart>(_onInitialCart);
+    on<EmptyCart>(_onEmptyCart);
     on<FetchCart>(_onFetchCart);
     on<AddToCart>(_onAddToCart);
     on<UpdateCart>(_onUpdateCart);
@@ -38,6 +39,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       (ok) => emit(CartLoaded(ok.data)),
     );
   }
+
+  void _onEmptyCart(EmptyCart event, Emitter<CartState> emit) async => emit(CartInitial());
 
   void _onFetchCart(FetchCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());

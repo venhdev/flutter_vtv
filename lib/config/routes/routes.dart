@@ -53,20 +53,22 @@ final _routes = <RouteBase>[
     },
     routes: [
       GoRoute(
-        path: LoginPage.routeName, // '/user/login'
-        name: LoginPage.routeName, // login
-        builder: (context, state) => const LoginPage(),
-      ),
+          path: LoginPage.routeName, // '/user/login'
+          name: LoginPage.routeName, // login
+          builder: (context, state) => const LoginPage(),
+          routes: [
+            GoRoute(
+              path: ForgotPasswordPage.routeName, // '/user/login/forgot-password'
+              name: ForgotPasswordPage.routeName, // forgot-password
+              builder: (context, state) => const ForgotPasswordPage(),
+            ),
+          ]),
       GoRoute(
         path: RegisterPage.routeName, // '/user/register'
         name: RegisterPage.routeName, // register
         builder: (context, state) => const RegisterPage(),
       ),
-      GoRoute(
-        path: ForgotPasswordPage.routeName, // '/user/forgot-password'
-        name: ForgotPasswordPage.routeName, // forgot-password
-        builder: (context, state) => const ForgotPasswordPage(),
-      ),
+
       GoRoute(
         // get extra from state
         path: UserDetailPage.routeName, // '/user/detail'
@@ -80,6 +82,21 @@ final _routes = <RouteBase>[
         path: VoucherPage.routeName, // '/user/voucher'
         name: VoucherPage.routeName, // voucher
         builder: (context, state) => const VoucherPage(),
+      ),
+      GoRoute(
+        path: PurchasePage.routeName, // '/user/purchase'
+        name: PurchasePage.routeName, // purchase
+        builder: (context, state) => const PurchasePage(),
+        routes: [
+          GoRoute(
+            path: OrderDetailPage.routeName, // '/user/purchase/order-detail'
+            name: OrderDetailPage.routeName, // order-detail
+            builder: (context, state) {
+              final OrderEntity order = state.extra as OrderEntity;
+              return OrderDetailPage(order: order);
+            },
+          ),
+        ],
       ),
       //! Setting
       GoRoute(

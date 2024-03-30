@@ -14,6 +14,11 @@ abstract class OrderDataSource {
   Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderParam param);
 
   Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params);
+
+  // Manage orders
+  Future<DataResponse<OrdersResp>> getListOrders();
+  Future<DataResponse<OrdersResp>> getListOrdersByStatus(String status);
+
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
@@ -51,7 +56,7 @@ class OrderDataSourceImpl extends OrderDataSource {
       (data) => OrderResp.fromMap(data),
     );
   }
-  
+
   @override
   Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params) async {
     final response = await _client.post(
@@ -64,6 +69,34 @@ class OrderDataSourceImpl extends OrderDataSource {
       response,
       kAPIOrderAddWithCartURL,
       (data) => OrderResp.fromMap(data),
+    );
+  }
+
+  @override
+  Future<DataResponse<OrdersResp>> getListOrders() async {
+    final response = await _client.get(
+      baseUri(path: kAPIOrderListURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrdersResp>(
+      response,
+      kAPIOrderListURL,
+      (data) => OrdersResp.fromMap(data),
+    );
+  }
+  
+  @override
+  Future<DataResponse<OrdersResp>> getListOrdersByStatus(String status) async {
+    final response = await _client.get(
+      baseUri(path: '$kAPIOrderListByStatusURL/$status'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrdersResp>(
+      response,
+      kAPIOrderListByStatusURL,
+      (data) => OrdersResp.fromMap(data),
     );
   }
 }

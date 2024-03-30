@@ -34,7 +34,13 @@ class VoucherPage extends StatelessWidget {
                   return MessageScreen.error(error.message);
                 },
                 (ok) {
-                  if (ok.data.isEmpty) return const MessageScreen(message: 'Không có voucher nào!');
+                  if (ok.data.isEmpty) {
+                    return MessageScreen(
+                      message: 'Không tìm thấy voucher nào!',
+                      text: 'Quay lại',
+                      onPressed: () => Navigator.of(context).pop(),
+                    );
+                  }
 
                   return ListView.builder(
                     itemCount: ok.data.length,

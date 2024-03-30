@@ -14,4 +14,11 @@ abstract class OrderRepository {
 
   //! Voucher
   FRespData<List<VoucherEntity>> voucherListAll();
+
+  //! Purchase - Manage orders
+  /// Get all orders
+  FRespData<OrdersResp> getListOrders();
+  /// Get orders by status
+  /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
+  FRespData<OrdersResp> getListOrdersByStatus(String status);
 }

@@ -9,15 +9,24 @@ class MessageScreen extends StatelessWidget {
     required this.message,
     this.enableBack = true,
     this.textStyle,
+    this.icon,
+    this.text,
+    this.onPressed,
   });
-  factory MessageScreen.error([String? message]) => MessageScreen(
-        message: message ?? 'Unknown error',
+  factory MessageScreen.error([String? message, Icon? icon, void Function()? onPressed]) => MessageScreen(
+        message: message ?? 'Lỗi không xác định',
         enableBack: false,
+        icon: icon ?? const Icon(Icons.error),
+        textStyle: const TextStyle(color: Colors.red),
+        onPressed: onPressed,
       );
 
   final String message;
   final bool enableBack;
   final TextStyle? textStyle;
+  final Icon? icon;
+  final String? text;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +34,7 @@ class MessageScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          if (icon != null) icon!,
           GestureDetector(
             child: Text(
               message,
@@ -34,8 +44,11 @@ class MessageScreen extends StatelessWidget {
           ),
           if (enableBack) ...[
             ElevatedButton(
-              onPressed: () => context.go('/home'),
-              child: const Text('Trang chủ'),
+              onPressed: () {
+                // GoRouter.of(context).go('/home');
+                onPressed != null ? onPressed!() : GoRouter.of(context).go('/home');
+              },
+              child: Text(text ?? 'Trang chủ'),
             ),
           ]
         ],

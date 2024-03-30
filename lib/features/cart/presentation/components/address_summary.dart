@@ -13,6 +13,8 @@ class AddressSummary extends StatelessWidget {
     this.padding = const EdgeInsets.all(12),
     this.maxLines,
     this.overflow,
+    this.color,
+    this.border ,
   });
 
   final AddressEntity address;
@@ -26,6 +28,10 @@ class AddressSummary extends StatelessWidget {
   final int? maxLines;
   final TextOverflow? overflow;
 
+  /// Override color of container (overlayColor will be ignored)
+  final Color? color;
+  final BoxBorder? border;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -33,12 +39,10 @@ class AddressSummary extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
       child: Container(
-        width: double.infinity,
         decoration: BoxDecoration(
+          color: color,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey.withOpacity(0.4),
-          ),
+          border: border ?? Border.all(color: Colors.grey.shade500),
           boxShadow: [
             BoxShadow(
               color: Colors.white.withOpacity(0.5),

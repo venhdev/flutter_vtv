@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../service_locator.dart';
 import '../../../profile/domain/entities/address_dto.dart';
+import '../components/shop_info.dart';
+import 'order_detail_page.dart';
 import 'voucher_page.dart';
 import '../../domain/dto/place_order_param.dart';
 import '../../domain/entities/order_entity.dart';
@@ -15,7 +19,7 @@ import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../../cart/presentation/components/order_item.dart';
 
-const String noVoucherMsg = 'Chọn hoặc nhập mã';
+const String _noVoucherMsg = 'Chọn hoặc nhập mã';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({
@@ -156,7 +160,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  TextField _buildNote() {
+  Widget _buildNote() {
     return TextField(
       style: const TextStyle(fontSize: 14),
       decoration: const InputDecoration(
@@ -177,7 +181,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Wrapper _buildTotalPrice() {
+  Widget _buildTotalPrice() {
     return Wrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -205,7 +209,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Row _totalSummaryPriceItem(String title, int price) {
+  Widget _totalSummaryPriceItem(String title, int price) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -215,7 +219,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Wrapper _buildPaymentMethod() {
+  Widget _buildPaymentMethod() {
     return Wrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -280,18 +284,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(_order.shop.avatar),
-                ),
-                const SizedBox(width: 4),
-                Text(_order.shop.name),
-              ],
-            ),
-          ),
+          ShopInfo(shop: _order.shop),
 
           //! Shop voucher
           Wrapper(
@@ -312,7 +305,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ],
             ),
           ),
-          const Divider(thickness: 0.4, height: 8),
+          // const Divider(thickness: 0.4, height: 8),
+          const SizedBox(height: 8),
 
           //! list of items
           ListView.separated(
@@ -330,7 +324,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  GestureDetector _buildShopVoucherBtn() {
+  Widget _buildShopVoucherBtn() {
     return GestureDetector(
       onTap: () async {
         final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
@@ -349,7 +343,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         }
       },
       child: Text(
-        _placeOrderParam.shopVoucherCode ?? noVoucherMsg,
+        _placeOrderParam.shopVoucherCode ?? _noVoucherMsg,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.end,
@@ -393,7 +387,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ),
             ),
             Text(
-              _placeOrderParam.systemVoucherCode ?? noVoucherMsg,
+              _placeOrderParam.systemVoucherCode ?? _noVoucherMsg,
               style: TextStyle(
                 color: _placeOrderParam.systemVoucherCode == null ? Colors.grey : Colors.green,
                 fontWeight: FontWeight.bold,
@@ -427,15 +421,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
             onPressed: () async {
               final respEither = await sl<OrderRepository>().placeOrder(_placeOrderParam);
 
-              respEither.fold(
+             respEither.fold(
                 (error) {
                   Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
                 },
                 (ok) {
                   Fluttertoast.showToast(msg: ok.message ?? 'Đặt hàng thành công');
-                  sl<CartBloc>().add(const FetchCart());
+                  context.read<CartBloc>().add(const FetchCart());
+                  context.go(OrderDetailPage.path, extra: ok.data.order);
                 },
               );
+
             },
             child: const Text('Đặt hàng'),
           ),
@@ -450,19 +446,29 @@ class Wrapper extends StatelessWidget {
     super.key,
     required this.child,
     this.backgroundColor = Colors.white,
+    this.padding = const EdgeInsets.all(8),
   });
 
   final Widget child;
   final Color? backgroundColor;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: padding,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        // border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
         color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 2), // changes position of shadow
+          ),
+        ],
       ),
       child: child,
     );

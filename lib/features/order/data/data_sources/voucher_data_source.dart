@@ -37,7 +37,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   @override
   Future<DataResponse<List<VoucherEntity>>> listOnShop(String shopId) async {
     final response = await _client.get(
-      baseUri(path: kAPIVoucherListOnShopURL),
+      baseUri(path: '$kAPIVoucherListOnShopURL/$shopId'),
       headers: baseHttpHeaders(),
     );
 

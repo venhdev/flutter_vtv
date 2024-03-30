@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/constants/enum.dart';
 import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/entities/loyalty_point_history_entity.dart';
 import 'order_item_entity.dart';
@@ -19,7 +20,8 @@ class OrderEntity extends Equatable {
   final int discountSystem;
   final int shippingFee;
   final int paymentTotal;
-  final String status;
+  // final String status;
+  final OrderStatus status;
   final DateTime orderDate;
 
   final LoyaltyPointHistoryEntity? loyaltyPointHistory;
@@ -27,7 +29,7 @@ class OrderEntity extends Equatable {
   final ShopEntity shop;
   final List<VoucherOrderEntity>? voucherOrders;
   final List<OrderItemEntity> orderItems;
-  
+
   const OrderEntity({
     this.orderId,
     required this.note,
@@ -59,7 +61,7 @@ class OrderEntity extends Equatable {
     int? discountSystem,
     int? shippingFee,
     int? paymentTotal,
-    String? status,
+    OrderStatus? status,
     DateTime? orderDate,
     LoyaltyPointHistoryEntity? loyaltyPointHistory,
     AddressEntity? address,
@@ -100,7 +102,7 @@ class OrderEntity extends Equatable {
       'discountSystem': discountSystem,
       'shippingFee': shippingFee,
       'paymentTotal': paymentTotal,
-      'status': status,
+      'status': status.name,
       'orderDate': orderDate.millisecondsSinceEpoch,
       'loyaltyPointHistoryDTO': loyaltyPointHistory?.toMap(),
       'addressDTO': address.toMap(),
@@ -122,18 +124,21 @@ class OrderEntity extends Equatable {
       discountSystem: map['discountSystem'] as int,
       shippingFee: map['shippingFee'] as int,
       paymentTotal: map['paymentTotal'] as int,
-      status: map['status'] as String,
+      // status: map['status'] as String,
+      status: OrderStatus.values.firstWhere((e) => e.name == map['status'] as String),
       orderDate: DateTime.parse(map['orderDate'] as String),
       loyaltyPointHistory: map['loyaltyPointHistoryDTO'] != null
           ? LoyaltyPointHistoryEntity.fromMap(map['loyaltyPointHistoryDTO'] as Map<String, dynamic>)
           : null,
       address: AddressEntity.fromMap(map['addressDTO'] as Map<String, dynamic>),
       shop: ShopEntity.fromMap(map['shopDTO'] as Map<String, dynamic>),
-      voucherOrders: map['voucherOrderDTOs']!=null? List<VoucherOrderEntity>.from(
-        (map['voucherOrderDTOs'] as List<dynamic>).map<VoucherOrderEntity>(
-          (x) => VoucherOrderEntity.fromMap(x as Map<String, dynamic>),
-        ),
-      ) : null,
+      voucherOrders: map['voucherOrderDTOs'] != null
+          ? List<VoucherOrderEntity>.from(
+              (map['voucherOrderDTOs'] as List<dynamic>).map<VoucherOrderEntity>(
+                (x) => VoucherOrderEntity.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
       orderItems: List<OrderItemEntity>.from(
         (map['orderItemDTOs'] as List<dynamic>).map<OrderItemEntity>(
           (x) => OrderItemEntity.fromMap(x as Map<String, dynamic>),
