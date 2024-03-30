@@ -33,4 +33,14 @@ class OrderRepositoryImpl extends OrderRepository {
   FRespData<List<VoucherEntity>> voucherListAll() async {
     return handleDataResponseFromDataSource(dataCallback: () => _voucherDataSource.listAll());
   }
+
+  @override
+  FRespData<OrdersResp> getListOrders() async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getListOrders());
+  }
+
+  @override
+  FRespData<OrdersResp> getListOrdersByStatus(String status) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getListOrdersByStatus(status));
+  }
 }

@@ -25,3 +25,14 @@ enum VoucherTypes {
   FIXED_SHOP,
   SHIPPING,
 }
+
+enum OrderStatus {
+  WAITING,
+  PENDING,
+  SHIPPING,
+  COMPLETED,
+  CANCELLED,
+  PROCESSING,
+  CANCELED,
+  DELIVERED,
+}

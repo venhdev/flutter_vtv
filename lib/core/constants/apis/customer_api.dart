@@ -32,16 +32,18 @@ const String kAPIAddressUpdateStatusURL = '/customer/address/update/status'; // 
 const String kAPIOrderCreateByCartIdsURL = '/customer/order/create/by-cartIds'; // POST
 const String kAPIOrderCreateUpdateWithCartURL = '/customer/order/create-update/with-cart'; // POST
 const String kAPIOrderAddWithCartURL = '/customer/order/add/with-cart'; // POST --place order
+const String kAPIOrderListURL = '/customer/order/list'; // GET
+const String kAPIOrderListByStatusURL = '/customer/order/list/status'; // GET /{status} --OrderStatus
 
 //! voucher-controller
-const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST --place order
-const String kAPIVoucherListOnShopURL = '/voucher/list-on-shop'; // GET --{shopId}
+const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST /place order
+const String kAPIVoucherListOnShopURL = '/voucher/list-on-shop'; // GET /{shopId}
 const String kAPIVoucherListOnSystemURL = '/voucher/list-on-system'; // GET
 
 //! favorite-product-controller
-const String kAPIFavoriteProductAddURL = '/customer/favorite-product/add'; // POST --:{productId}
+const String kAPIFavoriteProductAddURL = '/customer/favorite-product/add'; // POST /{productId}
 const String kAPIFavoriteProductListURL = '/customer/favorite-product/list'; // GET
-const String kAPIFavoriteProductDeleteURL = '/customer/favorite-product/delete'; // DELETE --:{favoriteProductId}
+const String kAPIFavoriteProductDeleteURL = '/customer/favorite-product/delete'; // DELETE /{favoriteProductId}
 
 
 

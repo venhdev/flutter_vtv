@@ -92,29 +92,7 @@ class _CartPageState extends State<CartPage> {
                           );
                         },
                       )
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // icon empty cart
-                            const Icon(
-                              Icons.remove_shopping_cart_rounded,
-                              size: 50,
-                            ),
-                            const Text('Giỏ hàng trống'),
-                            // button continue shopping
-                            GestureDetector(
-                              onTap: () {
-                                GoRouter.of(context).go('/home');
-                              },
-                              child: const Text(
-                                'Tiếp tục mua sắm',
-                                style: TextStyle(decoration: TextDecoration.underline),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                    : _buildEmptyCart(context),
               ),
             );
           } else if (state is CartLoading) {
@@ -130,6 +108,32 @@ class _CartPageState extends State<CartPage> {
             child: CircularProgressIndicator(),
           );
         },
+      ),
+    );
+  }
+
+  Center _buildEmptyCart(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // icon empty cart
+          const Icon(
+            Icons.remove_shopping_cart_rounded,
+            size: 50,
+          ),
+          const Text('Giỏ hàng trống'),
+          // button continue shopping
+          GestureDetector(
+            onTap: () {
+              GoRouter.of(context).go('/home');
+            },
+            child: const Text(
+              'Tiếp tục mua sắm',
+              style: TextStyle(decoration: TextDecoration.underline),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -247,13 +251,13 @@ class _CartPageState extends State<CartPage> {
                       address: defaultAddress,
                       onTap: () async {
                         // GoRouter.of(context).go(AddressPage.path);
-                        final isChangeSuccess = await Navigator.of(context).push(
+                        final isChangeSuccess = await Navigator.of(context).push<bool>(
                           MaterialPageRoute(
                             builder: (context) => const AddressPage(),
                           ),
                         );
 
-                        if (isChangeSuccess) {
+                        if (isChangeSuccess ?? false) {
                           setState(() {
                             fetchDefaultAddress();
                           });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/notification/local_notification_manager.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../service_locator.dart';
@@ -7,8 +8,8 @@ import '../../../order/presentation/pages/voucher_page.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 
-class LoggedWidget extends StatelessWidget {
-  const LoggedWidget({
+class LoggedView extends StatelessWidget {
+  const LoggedView({
     super.key,
     required this.auth,
   });
@@ -20,7 +21,7 @@ class LoggedWidget extends StatelessWidget {
     return Scaffold(
       appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // user avatar + fullName + username
           InkWell(
@@ -53,8 +54,20 @@ class LoggedWidget extends StatelessWidget {
               ],
             ),
           ),
+          
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: () {
+              context.go(PurchasePage.path);
+            },
+            child: const Text('Đơn hàng của tôi'),
+          ),
+          
+          
+          
+          
+          
           // voucher
-
           //! DEV
           const Divider(height: 32, thickness: 1, color: Colors.red),
           const Text('DEV'),

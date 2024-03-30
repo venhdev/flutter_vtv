@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_state.dart';
+import '../../../features/order/presentation/pages/order_detail_page.dart';
 import '../../../features/profile/presentation/pages/settings_page.dart';
 import '../../../features/order/presentation/pages/checkout_page.dart';
 import '../../../features/profile/presentation/pages/address_page.dart';
@@ -105,6 +106,7 @@ class MainPage extends StatelessWidget {
       case AddAddressPage.path:
       case CheckoutPage.path:
       case SettingsPage.path:
+      case OrderDetailPage.path:
         return false;
       default:
         return true;

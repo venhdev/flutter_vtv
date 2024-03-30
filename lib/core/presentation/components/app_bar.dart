@@ -20,8 +20,7 @@ AppBar buildAppBar(
   bool automaticallyImplyLeading = false,
 }) {
   // title & search bar can't be shown at the same time
-  assert(title == null || showSearchBar == false,
-      'title & search bar can\'t be shown at the same time');
+  assert(title == null || showSearchBar == false, 'title & search bar can\'t be shown at the same time');
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     leading: leading,
@@ -69,6 +68,7 @@ class CartBadge extends StatelessWidget {
         } else {
           return Row(
             children: [
+              // icon cart
               BlocBuilder<CartBloc, CartState>(
                 builder: (context, state) {
                   if (state is CartLoaded) {
@@ -86,7 +86,13 @@ class CartBadge extends StatelessWidget {
                         icon: const Icon(Icons.shopping_cart_outlined),
                       ),
                     );
+                  } else if (state is CartInitial || state is CartLoading) {
+                    return const IconButton.outlined(
+                      onPressed: null,
+                      icon: Icon(Icons.shopping_cart_outlined),
+                    );
                   }
+                  // NOTE: there may be some other states/errors that need to be handled
                   return const Center(
                     child: CircularProgressIndicator(),
                   );

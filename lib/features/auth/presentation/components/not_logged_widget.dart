@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 
-class NotLoggedWidget extends StatelessWidget {
-  const NotLoggedWidget({
+class NotLoggedView extends StatelessWidget {
+  const NotLoggedView({
     super.key,
   });
 
