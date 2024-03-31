@@ -20,4 +20,7 @@ abstract class BaseHttpResponse extends Equatable {
         message,
         status,
       ];
+
+  @override
+  bool get stringify => true;
 }

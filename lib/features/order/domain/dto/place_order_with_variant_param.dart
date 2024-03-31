@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-class PlaceOrderWithCartParam extends Equatable {
+class PlaceOrderWithVariantParam extends Equatable {
   final int addressId;
   final String? systemVoucherCode;
   final String? shopVoucherCode;
@@ -10,9 +10,9 @@ class PlaceOrderWithCartParam extends Equatable {
   final String paymentMethod;
   final String shippingMethod;
   final String note;
-  final List<String?> cartIds;
+  final Map<String, int> variantIds; // key: variantId, value: quantity
 
-  const PlaceOrderWithCartParam({
+  const PlaceOrderWithVariantParam({
     required this.addressId,
     this.systemVoucherCode,
     this.shopVoucherCode,
@@ -20,10 +20,24 @@ class PlaceOrderWithCartParam extends Equatable {
     required this.paymentMethod,
     required this.shippingMethod,
     required this.note,
-    required this.cartIds,
+    required this.variantIds,
   });
 
-  PlaceOrderWithCartParam copyWith({
+  @override
+  List<Object?> get props {
+    return [
+      addressId,
+      systemVoucherCode,
+      shopVoucherCode,
+      useLoyaltyPoint,
+      paymentMethod,
+      shippingMethod,
+      note,
+      variantIds,
+    ];
+  }
+
+  PlaceOrderWithVariantParam copyWith({
     int? addressId,
     String? systemVoucherCode,
     String? shopVoucherCode,
@@ -31,9 +45,9 @@ class PlaceOrderWithCartParam extends Equatable {
     String? paymentMethod,
     String? shippingMethod,
     String? note,
-    List<String>? cartIds,
+    Map<String, int>? variantIds,
   }) {
-    return PlaceOrderWithCartParam(
+    return PlaceOrderWithVariantParam(
       addressId: addressId ?? this.addressId,
       systemVoucherCode: systemVoucherCode ?? this.systemVoucherCode,
       shopVoucherCode: shopVoucherCode ?? this.shopVoucherCode,
@@ -41,7 +55,7 @@ class PlaceOrderWithCartParam extends Equatable {
       paymentMethod: paymentMethod ?? this.paymentMethod,
       shippingMethod: shippingMethod ?? this.shippingMethod,
       note: note ?? this.note,
-      cartIds: cartIds ?? this.cartIds,
+      variantIds: variantIds ?? this.variantIds,
     );
   }
 
@@ -54,42 +68,30 @@ class PlaceOrderWithCartParam extends Equatable {
       'paymentMethod': paymentMethod,
       'shippingMethod': shippingMethod,
       'note': note,
-      'cartIds': cartIds,
+      'productVariantIdsAndQuantities': variantIds,
     };
   }
 
-  factory PlaceOrderWithCartParam.fromMap(Map<String, dynamic> map) {
-    return PlaceOrderWithCartParam(
+  factory PlaceOrderWithVariantParam.fromMap(Map<String, dynamic> map) {
+    return PlaceOrderWithVariantParam(
       addressId: map['addressId'] as int,
       systemVoucherCode: map['systemVoucherCode'] != null ? map['systemVoucherCode'] as String : null,
       shopVoucherCode: map['shopVoucherCode'] != null ? map['shopVoucherCode'] as String : null,
-      useLoyaltyPoint: map['useLoyaltyPoint'] != null ? map['useLoyaltyPoint'] as bool? : null,
+      useLoyaltyPoint: map['useLoyaltyPoint'] != null ? map['useLoyaltyPoint'] as bool : null,
       paymentMethod: map['paymentMethod'] as String,
       shippingMethod: map['shippingMethod'] as String,
       note: map['note'] as String,
-      cartIds: List<String>.from((map['cartIds'] as List<dynamic>)),
+      variantIds: Map<String, int>.from(
+        (map['variantIds'] as Map<String, int>),
+      ),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory PlaceOrderWithCartParam.fromJson(String source) =>
-      PlaceOrderWithCartParam.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory PlaceOrderWithVariantParam.fromJson(String source) =>
+      PlaceOrderWithVariantParam.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;
-
-  @override
-  List<Object?> get props {
-    return [
-      addressId,
-      systemVoucherCode,
-      shopVoucherCode,
-      useLoyaltyPoint,
-      paymentMethod,
-      shippingMethod,
-      note,
-      cartIds,
-    ];
-  }
 }

@@ -213,15 +213,12 @@ class TestPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // ---------------------------
-              Container(
-                // color: Colors.blue,
-                child: IconTextButton(
-                  onPressed: () {},
-                  icon: Icons.chat,
-                  label: 'Chat',
-                  borderRadius: BorderRadius.zero,
-                  backgroundColor: Colors.blue,
-                ),
+              IconTextButton(
+                onPressed: () {},
+                icon: Icons.chat,
+                label: 'Chat',
+                borderRadius: BorderRadius.zero,
+                backgroundColor: Colors.blue,
               ),
 
               Container(

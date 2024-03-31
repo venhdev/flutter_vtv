@@ -50,6 +50,14 @@ class OrderEntity extends Equatable {
     required this.orderItems,
   });
 
+  Map<String, int> get getVariantIdsAndQuantityMap {
+    final mapTemp = <String, int>{};
+    for (final orderItem in orderItems) {
+      mapTemp[orderItem.productVariant.productVariantId.toString()] = orderItem.quantity;
+    }
+    return mapTemp;
+  }
+
   OrderEntity copyWith({
     String? orderId,
     String? note,

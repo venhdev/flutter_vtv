@@ -8,15 +8,20 @@ import '../../../../core/helpers/secure_storage_helper.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
 import '../../../cart/domain/dto/order_resp.dart';
+import '../../domain/dto/place_order_with_variant_param.dart';
 
 abstract class OrderDataSource {
-  // Create order
+  // Create Temp Order
+  // * With Cart
   Future<DataResponse<OrderResp>> createByCartIds(List<String> cartIds);
-  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderParam param);
+  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderWithCartParam params);
+  // * With Product Variant
   Future<DataResponse<OrderResp>> createByProductVariant(int productVariantId, int quantity);
+  Future<DataResponse<OrderResp>> createUpdateWithVariant(PlaceOrderWithVariantParam params);
 
   // Place order
-  Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params);
+  Future<DataResponse<OrderResp>> placeOrderWithCart(PlaceOrderWithCartParam params);
+  Future<DataResponse<OrderResp>> placeOrderWithVariant(PlaceOrderWithVariantParam params);
 
   // Manage orders
   Future<DataResponse<OrdersResp>> getListOrders();
@@ -45,7 +50,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderParam param) async {
+  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderWithCartParam param) async {
     final response = await _client.post(
       baseUri(path: kAPIOrderCreateUpdateWithCartURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -60,7 +65,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<DataResponse<OrderResp>> placeOrder(PlaceOrderParam params) async {
+  Future<DataResponse<OrderResp>> placeOrderWithCart(PlaceOrderWithCartParam params) async {
     final response = await _client.post(
       baseUri(path: kAPIOrderAddWithCartURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -117,6 +122,36 @@ class OrderDataSourceImpl extends OrderDataSource {
     return handleResponseWithData<OrderResp>(
       response,
       kAPIOrderCreateByProductVariantURL,
+      (data) => OrderResp.fromMap(data),
+    );
+  }
+
+  @override
+  Future<DataResponse<OrderResp>> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
+    final response = await _client.post(
+      baseUri(path: kAPIOrderCreateUpdateWithProductVariantURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: params.toJson(),
+    );
+
+    return handleResponseWithData<OrderResp>(
+      response,
+      kAPIOrderCreateUpdateWithProductVariantURL,
+      (data) => OrderResp.fromMap(data),
+    );
+  }
+
+  @override
+  Future<DataResponse<OrderResp>> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
+    final response = await _client.post(
+      baseUri(path: kAPIOrderAddWithProductVariantURL),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: params.toJson(),
+    );
+
+    return handleResponseWithData<OrderResp>(
+      response,
+      kAPIOrderAddWithProductVariantURL,
       (data) => OrderResp.fromMap(data),
     );
   }
