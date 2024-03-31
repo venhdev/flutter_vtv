@@ -1,18 +1,17 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
 import '../entities/product_entity.dart';
 
-class ProductResp {
+class ProductPageResp {
   final int count;
   final int page;
   final int size;
   final int totalPage;
   List<ProductEntity> products;
 
-  ProductResp({
+  ProductPageResp({
     required this.count,
     required this.page,
     required this.size,
@@ -20,14 +19,14 @@ class ProductResp {
     required this.products,
   });
 
-  ProductResp copyWith({
+  ProductPageResp copyWith({
     int? count,
     int? page,
     int? size,
     int? totalPage,
     List<ProductEntity>? products,
   }) {
-    return ProductResp(
+    return ProductPageResp(
       count: count ?? this.count,
       page: page ?? this.page,
       size: size ?? this.size,
@@ -36,8 +35,8 @@ class ProductResp {
     );
   }
 
-  factory ProductResp.fromMap(Map<String, dynamic> map) {
-    return ProductResp(
+  factory ProductPageResp.fromMap(Map<String, dynamic> map) {
+    return ProductPageResp(
       count: map['count'] as int,
       page: map['page'] as int,
       size: map['size'] as int,
@@ -46,11 +45,11 @@ class ProductResp {
     );
   }
 
-  factory ProductResp.fromJson(String source) =>
-      ProductResp.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ProductPageResp.fromJson(String source) =>
+      ProductPageResp.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  bool operator ==(covariant ProductResp other) {
+  bool operator ==(covariant ProductPageResp other) {
     if (identical(this, other)) return true;
 
     return other.count == count &&

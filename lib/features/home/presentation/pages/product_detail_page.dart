@@ -37,20 +37,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int? _favoriteProductId;
   final ScrollController _scrollController = ScrollController();
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_scrollListener);
-    checkIsFavorite();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
   void _scrollListener() {
     if (_scrollController.position.userScrollDirection == ScrollDirection.reverse && _showBottomSheet) {
       setState(() {
@@ -103,6 +89,32 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         (ok) => ok.data?.favoriteProductId,
       );
     });
+  }
+
+  void cacheRecentView() async {
+    final respEither = await sl<ProductRepository>().cacheRecentViewedProductId(
+      widget.product.productId.toString(),
+    );
+
+    respEither.fold(
+      (error) => log('Error: ${error.message}'),
+      (ok) => log('Cache success with productId: ${widget.product.productId}'),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+    checkIsFavorite();
+    cacheRecentView();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override

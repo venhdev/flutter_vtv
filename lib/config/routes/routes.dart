@@ -1,7 +1,7 @@
 part of 'app_routes.dart';
 
 final _routes = <RouteBase>[
-  // Home Route --root -> need '/'
+  //! Home Route --root -> need '/'
   GoRoute(
     path: '/${HomePage.routeName}', // '/home'
     name: HomePage.routeName, // 'home'
@@ -47,7 +47,7 @@ final _routes = <RouteBase>[
       ),
     ],
   ),
-  // User Route
+  //! User Route
   GoRoute(
     path: '/${UserPage.routeName}', // '/user'
     name: UserPage.routeName, // 'user'
