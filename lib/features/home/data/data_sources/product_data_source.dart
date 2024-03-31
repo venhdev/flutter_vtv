@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http show Client;
 import '../../../../core/constants/api.dart';
 import '../../../../core/helpers/secure_storage_helper.dart';
 import '../../../../core/network/response_handler.dart';
+import '../../domain/dto/favorite_product_resp.dart';
 import '../../domain/dto/product_resp.dart';
 import '../../domain/entities/favorite_product_entity.dart';
 
@@ -21,9 +22,11 @@ abstract class ProductDataSource {
   });
 
   //! Favorite Product
-  Future<DataResponse<List<FavoriteProductEntity>>> getAllFavoriteProduct(); //api/customer/favorite-product/list
-  Future<SuccessResponse> addFavoriteProduct(int productId);
-  Future<SuccessResponse> removeFavoriteProduct(int favoriteProductId);
+  Future<DataResponse<List<FavoriteProductEntity>>> favoriteProductList();
+  Future<DataResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId);
+  Future<DataResponse<FavoriteProductEntity>> favoriteProductAdd(int productId);
+  Future<SuccessResponse> favoriteProductDelete(int favoriteProductId);
+  Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId);
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
@@ -97,7 +100,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
     return handleResponseWithData<ProductResp>(
       response,
-      kAPIProductFilterPriceRangeURL,
+      '$kAPIProductFilterPriceRangeURL/$filter',
       (jsonMap) => ProductResp.fromMap(jsonMap),
     );
   }
@@ -117,23 +120,28 @@ class ProductDataSourceImpl implements ProductDataSource {
 
     return handleResponseWithData<ProductResp>(
       response,
-      kAPIProductFilterURL,
+      '$kAPIProductFilterURL/$sortType',
       (jsonMap) => ProductResp.fromMap(jsonMap),
     );
   }
 
   @override
-  Future<SuccessResponse> addFavoriteProduct(int productId) async {
+  Future<DataResponse<FavoriteProductEntity>> favoriteProductAdd(int productId) async {
     final response = await _client.post(
       baseUri(path: '$kAPIFavoriteProductAddURL/$productId'),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
-    return handleResponseNoData(response, kAPIFavoriteProductAddURL);
+    return handleResponseWithData<FavoriteProductEntity>(
+      response,
+      '$kAPIFavoriteProductAddURL/$productId',
+      (jsonMap) => FavoriteProductEntity.fromMap(jsonMap['favoriteProductDTO']),
+    );
+
   }
 
   @override
-  Future<DataResponse<List<FavoriteProductEntity>>> getAllFavoriteProduct() async {
+  Future<DataResponse<List<FavoriteProductEntity>>> favoriteProductList() async {
     final response = await _client.get(
       baseUri(path: kAPIFavoriteProductListURL),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -147,12 +155,40 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<SuccessResponse> removeFavoriteProduct(int favoriteProductId) async {
+  Future<SuccessResponse> favoriteProductDelete(int favoriteProductId) async {
     final response = await _client.delete(
       baseUri(path: '$kAPIFavoriteProductDeleteURL/$favoriteProductId'),
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
-    return handleResponseNoData(response, kAPIFavoriteProductDeleteURL);
+    return handleResponseNoData(response, '$kAPIFavoriteProductDeleteURL/$favoriteProductId');
+  }
+
+  @override
+  Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId) async {
+    final response = await _client.get(
+      baseUri(path: '$kAPIFavoriteProductCheckExistURL/$productId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<FavoriteProductEntity?>(
+      response,
+      '$kAPIFavoriteProductCheckExistURL/$productId',
+      (jsonMap) => FavoriteProductEntity.fromMapNull(jsonMap['favoriteProductDTO']),
+    );
+  }
+
+  @override
+  Future<DataResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId) async {
+    final response = await _client.get(
+      baseUri(path: '$kAPIFavoriteProductDetailURL/$favoriteProductId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<FavoriteProductResp>(
+      response,
+       '$kAPIFavoriteProductDetailURL/$favoriteProductId',
+      (jsonMap) => FavoriteProductResp.fromMap(jsonMap),
+    );
   }
 }

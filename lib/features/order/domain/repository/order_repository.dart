@@ -2,17 +2,21 @@ import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
 
 import '../../../../core/constants/typedef.dart';
 import '../../../cart/domain/dto/order_resp.dart';
+import '../dto/place_order_with_variant_param.dart';
 import '../entities/voucher_entity.dart';
 
 abstract class OrderRepository {
   //! Create Temp Order
+  //* With Cart
   FRespData<OrderResp> createOrderByCartIds(List<String> cartIds);
-  /// Use to change order status (in checkout page)
-  FRespData<OrderResp> createUpdateWithCart(PlaceOrderParam param);
+  FRespData<OrderResp> createUpdateWithCart(PlaceOrderWithCartParam params); // Use to change order status (in checkout page)
+  //* With Product Variant
   FRespData<OrderResp> createByProductVariant(int productVariantId, int quantity);
+  FRespData<OrderResp> createUpdateWithVariant(PlaceOrderWithVariantParam params);
 
-  // Place order
-  FRespData<OrderResp> placeOrder(PlaceOrderParam params);
+  //! Place Order
+  FRespData<OrderResp> placeOrderWithCart(PlaceOrderWithCartParam params);
+  FRespData<OrderResp> placeOrderWithVariant(PlaceOrderWithVariantParam params);
 
   //! Voucher
   FRespData<List<VoucherEntity>> voucherListAll();

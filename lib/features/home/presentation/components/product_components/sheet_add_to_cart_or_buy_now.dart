@@ -40,6 +40,45 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
     return '${formatCurrency(widget.product.cheapestPrice)} - ${formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
+  void handleTapAddToCartOrBuyNow() async {
+    // check if variant is selected
+    if (_variant != null) {
+      // ? create temp order and navigate to checkout page || else just add to cart
+      if (widget.isBuyNow) {
+        final respEither = await sl<OrderRepository>().createByProductVariant(_variant!.productVariantId, _quantity);
+
+        respEither.fold(
+          (error) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(error.message!),
+                ),
+              );
+          },
+          (ok) {
+            // context.go('${CheckoutPage.path}?isCreateWithCart=false', extra: ok.data.order);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CheckoutPage(
+                  isCreateWithCart: false,
+                  order: ok.data.order,
+                ),
+              ),
+            );
+
+            
+          },
+        );
+      } else {
+        context.read<CartBloc>().add(AddToCart(_variant!.productVariantId, _quantity));
+        context.pop();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -196,34 +235,7 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
               ),
-              onPressed: () async {
-                if (_variant != null) {
-                  if (widget.isBuyNow) {
-                    // go to checkout page
-                    final respEither =
-                        await sl<OrderRepository>().createByProductVariant(_variant!.productVariantId, _quantity);
-
-                    respEither.fold(
-                      (error) {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(error.message!),
-                            ),
-                          );
-                      },
-                      (ok) {
-                        // go to checkout page
-                        context.go(CheckoutPage.path, extra: ok.data.order);
-                      },
-                    );
-                  } else {
-                    context.read<CartBloc>().add(AddToCart(_variant!.productVariantId, _quantity));
-                  }
-                  Navigator.pop(context);
-                }
-              },
+              onPressed: handleTapAddToCartOrBuyNow,
               child: Text(widget.isBuyNow ? 'Mua ngay' : 'Thêm vào giỏ'),
             ),
           ),

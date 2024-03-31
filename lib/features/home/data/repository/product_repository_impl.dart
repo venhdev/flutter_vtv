@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.dart';
+import 'package:flutter_vtv/features/home/domain/dto/favorite_product_resp.dart';
 import 'package:flutter_vtv/features/home/domain/entities/category_entity.dart';
+import 'package:flutter_vtv/features/home/domain/entities/favorite_product_entity.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/base_response.dart';
@@ -66,16 +68,16 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespEither addFavoriteProduct(int productId) async {
-    return await handleSuccessResponseFromDataSource(
-      noDataCallback: () async => _productDataSource.addFavoriteProduct(productId),
+  FRespData<FavoriteProductEntity> favoriteProductAdd(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductAdd(productId),
     );
   }
 
   @override
   Future<int?> isFavoriteProduct(int productId) async {
     try {
-      final favoritesResp = await _productDataSource.getAllFavoriteProduct();
+      final favoritesResp = await _productDataSource.favoriteProductList();
       log('favoritesResp: $favoritesResp');
       // check if the product is in the list of favorites
       // return favoritesResp.data.any((element) => element.productId == productId);
@@ -93,9 +95,30 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespEither removeFavoriteProduct(int favoriteProductId) async {
+  FRespEither favoriteProductDelete(int favoriteProductId) async {
     return await handleSuccessResponseFromDataSource(
-      noDataCallback: () async => _productDataSource.removeFavoriteProduct(favoriteProductId),
+      noDataCallback: () async => _productDataSource.favoriteProductDelete(favoriteProductId),
+    );
+  }
+
+  @override
+  FRespData<FavoriteProductEntity?> favoriteProductCheckExist(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductCheckExist(productId),
+    );
+  }
+
+  @override
+  FRespData<FavoriteProductResp> favoriteProductDetail(int favoriteProductId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductDetail(favoriteProductId),
+    );
+  }
+
+  @override
+  FRespData<List<FavoriteProductEntity>> favoriteProductList() async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductList(),
     );
   }
 }

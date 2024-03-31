@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
-import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../../profile/domain/entities/address_dto.dart';
-import '../../domain/dto/place_order_param.dart';
 import '../../domain/entities/order_entity.dart';
-import '../../domain/repository/order_repository.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
 
 // const String _noVoucherMsg = 'Không áp dụng';
 
 class OrderDetailPage extends StatefulWidget {
-  const OrderDetailPage({
-    super.key,
-    required this.order,
-  });
+  const OrderDetailPage({super.key, required this.order});
 
   static const String routeName = 'order-detail';
   static const String path = '/user/purchase/order-detail';
@@ -31,65 +22,6 @@ class OrderDetailPage extends StatefulWidget {
 }
 
 class _OrderDetailPage extends State<OrderDetailPage> {
-  late AddressEntity _address; // just ID
-  late OrderEntity _order;
-  // Properties sent to the server
-  late PlaceOrderParam _placeOrderParam;
-
-  Future<T?> showDialogToChangeAddress<T>(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return DialogChooseAddress(
-          onAddressChanged: (address) {
-            reloadOrder(_placeOrderParam.copyWith(addressId: address.addressId), newAddress: address);
-            // setState(() {
-            //   _address = address;
-            //   _placeOrderParam = _placeOrderParam.copyWith(addressId: address.addressId);
-            // });
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> reloadOrder(PlaceOrderParam newOrderParam, {AddressEntity? newAddress}) async {
-    final respEither = await sl<OrderRepository>().createUpdateWithCart(newOrderParam);
-
-    respEither.fold(
-      (error) {
-        Fluttertoast.showToast(msg: 'Lỗi: ${error.message}');
-      },
-      (ok) {
-        setState(() {
-          _placeOrderParam = newOrderParam;
-          if (newAddress != null) {
-            _address = newAddress;
-          }
-          _order = ok.data.order;
-        });
-      },
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _address = widget.order.address;
-    _order = widget.order;
-
-    _placeOrderParam = PlaceOrderParam(
-      addressId: widget.order.address.addressId,
-      systemVoucherCode: null,
-      shopVoucherCode: null,
-      useLoyaltyPoint: false,
-      paymentMethod: widget.order.paymentMethod,
-      shippingMethod: widget.order.shippingMethod,
-      note: '',
-      cartIds: widget.order.orderItems.map((e) => e.cartId!).toList(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,6 +33,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
         child: SingleChildScrollView(
           child: IgnorePointer(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 //! order status
                 _buildOrderStatus(),
@@ -127,7 +60,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
                 const SizedBox(height: 8),
 
                 //! note
-                if (_placeOrderParam.note.isNotEmpty) _buildNote(),
+                _buildNote(),
               ],
             ),
           ),
@@ -148,32 +81,32 @@ class _OrderDetailPage extends State<OrderDetailPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          OrderStatusBadge(status: _order.status),
+          OrderStatusBadge(status: widget.order.status),
         ],
       ),
     );
   }
 
   Widget _buildNote() {
-    return Text('Lời nhắn: ${_placeOrderParam.note}');
-    // return TextField(
-    //   style: const TextStyle(fontSize: 14),
-    //   decoration: const InputDecoration(
-    //     hintText: 'Ghi chú',
-    //     enabledBorder: OutlineInputBorder(
-    //       borderSide: BorderSide(color: Colors.grey),
-    //       borderRadius: BorderRadius.all(Radius.circular(8)),
-    //     ),
-    //     border: OutlineInputBorder(
-    //       borderRadius: BorderRadius.all(Radius.circular(8)),
-    //     ),
-    //   ),
-    //   onChanged: (value) {
-    //     setState(() {
-    //       _placeOrderParam = _placeOrderParam.copyWith(note: value);
-    //     });
-    //   },
-    // );
+    return Wrapper(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Ghi chú',
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          widget.order.note ?? '(không có)',
+          style: TextStyle(
+            color: widget.order.note == null ? Colors.grey : Colors.black,
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _buildTotalPrice() {
@@ -188,19 +121,17 @@ class _OrderDetailPage extends State<OrderDetailPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          _totalSummaryPriceItem('Tổng tiền hàng:', _order.totalPrice),
-          _totalSummaryPriceItem('Phí vận chuyển:', _order.shippingFee),
+          _totalSummaryPriceItem('Tổng tiền hàng:', widget.order.totalPrice),
+          _totalSummaryPriceItem('Phí vận chuyển:', widget.order.shippingFee),
 
-          if (_placeOrderParam.systemVoucherCode != null)
-            _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
-          if (_placeOrderParam.shopVoucherCode != null)
-            _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
+          _totalSummaryPriceItem('Giảm giá hệ thống:', widget.order.discountSystem),
+          _totalSummaryPriceItem('Giảm giá cửa hàng:', widget.order.discountShop),
 
           // total price
           const Divider(thickness: 0.2, height: 4),
           _totalSummaryPriceItem(
             'Tổng thanh toán:',
-            _order.paymentTotal,
+            widget.order.paymentTotal,
             color: Colors.red,
           ),
         ],
@@ -236,8 +167,8 @@ class _OrderDetailPage extends State<OrderDetailPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          // Text(_order.paymentMethod),
-          Text(formatPaymentMethod(_order.paymentMethod)),
+          // Text(widget.order.paymentMethod),
+          Text(formatPaymentMethod(widget.order.paymentMethod)),
         ],
       ),
     );
@@ -245,7 +176,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
 
   Widget _buildDeliveryAddress() {
     return AddressSummary(
-      address: _address,
+      address: widget.order.address,
       color: Colors.white,
       suffixIcon: null,
       border: null,
@@ -265,7 +196,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
             ),
           ),
           // method name
-          Text(_order.shippingMethod),
+          Text(widget.order.shippingMethod),
         ],
       ),
     );
@@ -276,16 +207,16 @@ class _OrderDetailPage extends State<OrderDetailPage> {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          ShopInfo(shop: _order.shop),
+          ShopInfo(shop: widget.order.shop),
 
           //! list of items
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: _order.orderItems.length,
+            itemCount: widget.order.orderItems.length,
             separatorBuilder: (context, index) => const Divider(thickness: 0.4, height: 8),
             itemBuilder: (context, index) {
-              final item = _order.orderItems[index];
+              final item = widget.order.orderItems[index];
               return OrderItem(item);
             },
           ),
@@ -293,37 +224,6 @@ class _OrderDetailPage extends State<OrderDetailPage> {
       ),
     );
   }
-
-  // Widget _buildShopVoucherBtn() {
-  //   return GestureDetector(
-  //     onTap: () async {
-  //       final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
-  //         builder: (context) {
-  //           return VoucherPage(
-  //             returnValue: true,
-  //             future: sl<VoucherRepository>().listOnShop(_order.shop.shopId.toString()),
-  //           );
-  //         },
-  //       ));
-
-  //       if (voucher != null) {
-  //         reloadOrder(
-  //           _placeOrderParam.copyWith(shopVoucherCode: voucher.code),
-  //         );
-  //       }
-  //     },
-  //     child: Text(
-  //       _placeOrderParam.shopVoucherCode ?? _noVoucherMsg,
-  //       maxLines: 1,
-  //       overflow: TextOverflow.ellipsis,
-  //       textAlign: TextAlign.end,
-  //       style: TextStyle(
-  //         color: _placeOrderParam.shopVoucherCode == null ? Colors.grey : Colors.green,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 class Wrapper extends StatelessWidget {

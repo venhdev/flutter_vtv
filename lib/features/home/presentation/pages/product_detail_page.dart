@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -36,7 +34,7 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   bool _showBottomSheet = true;
-  bool _isFavorite = false;
+  int? _favoriteProductId;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -66,27 +64,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void handleTapFavoriteButton() async {
-    if (!_isFavorite) {
-      final respEither = await sl<ProductRepository>().addFavoriteProduct(widget.product.productId);
+    // add to favorite
+    if (_favoriteProductId == null) {
+      final respEither = await sl<ProductRepository>().favoriteProductAdd(widget.product.productId);
 
       respEither.fold(
         (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
         (ok) {
           Fluttertoast.showToast(msg: ok.message ?? 'Đã thêm vào yêu thích');
           setState(() {
-            _isFavorite = true;
+            _favoriteProductId = ok.data.favoriteProductId;
           });
         },
       );
     } else {
-      final respEither = await sl<ProductRepository>().removeFavoriteProduct(widget.product.productId);
+      final respEither = await sl<ProductRepository>().favoriteProductDelete(_favoriteProductId!);
 
       respEither.fold(
         (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
         (ok) {
           Fluttertoast.showToast(msg: ok.message ?? 'Đã xóa khỏi yêu thích');
           setState(() {
-            _isFavorite = false;
+            _favoriteProductId = null;
           });
         },
       );
@@ -94,9 +93,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void checkIsFavorite() async {
-    final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
+    // final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
+    final checkEither = await sl<ProductRepository>().favoriteProductCheckExist(widget.product.productId);
+    log('checkEither: $checkEither');
+
     setState(() {
-      _isFavorite = isFavorite != null;
+      _favoriteProductId = checkEither.fold(
+        (error) => null,
+        (ok) => ok.data?.favoriteProductId,
+      );
     });
   }
 
@@ -228,24 +233,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Colors.white.withOpacity(0.6),
                     ),
                   ),
-                  icon: _isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
-                  // icon: FutureBuilder(
-                  //     future: sl<ProductRepository>().isFavoriteProduct(widget.product.productId),
-                  //     builder: (context, snapshot) {
-                  //       if (snapshot.hasData) {
-                  //         final isFavorite = snapshot.data;
-
-                  //         if (isFavorite != null) {
-                  //           return isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border);
-                  //         } else {
-                  //           return const Icon(Icons.favorite_border);
-                  //         }
-                  //       }
-                  //       // return const Icon(Icons.favorite_border);
-                  //       return const Center(
-                  //         child: CircularProgressIndicator(),
-                  //       );
-                  //     }),
+                  icon: _favoriteProductId != null ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
                   onPressed: handleTapFavoriteButton,
                 ),
               ),
@@ -256,10 +244,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  /// Bottom action bar with buttons:
-  /// - Chat
-  /// - Add to cart
-  /// - Buy now
+  // Bottom action bar with buttons:
+  // - Chat
+  // - Add to cart
+  // - Buy now
   Widget _buildBottomActionBar(BuildContext context) {
     return Container(
       color: Colors.white,

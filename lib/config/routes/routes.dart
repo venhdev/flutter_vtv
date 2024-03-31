@@ -18,7 +18,7 @@ final _routes = <RouteBase>[
         },
       ),
       GoRoute(
-        path: SearchPage.routeName, // 'home/search'
+        path: SearchPage.routeName, // '/home/search'
         name: SearchPage.routeName, // search
         builder: (context, state) {
           final String keywords = state.extra as String;
@@ -26,18 +26,21 @@ final _routes = <RouteBase>[
         },
       ),
       GoRoute(
-        path: CartPage.routeName, // 'home/cart'
+        path: CartPage.routeName, // '/home/cart'
         name: CartPage.routeName,
         builder: (context, state) {
           return const CartPage();
         },
         routes: [
           GoRoute(
-            path: CheckoutPage.routeName, // 'home/cart/checkout'
+            path: CheckoutPage.routeName, // '/home/cart/checkout'
             name: CheckoutPage.routeName,
             builder: (context, state) {
               final order = state.extra as OrderEntity;
-              return CheckoutPage(order: order);
+              final String? type = state.uri.queryParameters['isCreateWithCart'];
+              //! Default if isCreateWithCart null then isCreateWithCart is true
+              final bool isCreateWithCart = type == null ? true : type == 'true';
+              return CheckoutPage(order: order, isCreateWithCart: isCreateWithCart);
             },
           ),
         ],

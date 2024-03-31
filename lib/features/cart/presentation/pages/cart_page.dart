@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,6 +62,16 @@ class _CartPageState extends State<CartPage> {
                     floating: true,
                     backgroundColor: Colors.transparent,
                     bottom: _buildAddress(context),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          // GoRouter.of(context).go(AddressPage.path);
+                          // show current go router path
+                          log(GoRouterState.of(context).uri.toString());
+                        },
+                        icon: const Icon(Icons.location_history),
+                      ),
+                    ],
                   ),
                 ];
               },
@@ -146,7 +158,7 @@ class _CartPageState extends State<CartPage> {
             return const SizedBox();
           }
           return Container(
-            height: 50,
+            height: 52,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -165,14 +177,14 @@ class _CartPageState extends State<CartPage> {
                         final respEither = snapshot.data!;
                         return respEither.fold(
                           (error) {
-                            return MessageScreen.error(error.message.toString());
+                            return SingleChildScrollView(child: MessageScreen.error(error.message));
                           },
                           (ok) => Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: Text('Tổng cộng: '),
+                                child: Text('Tổng cộng:'),
                               ),
                               Text(
                                 formatCurrency(ok.data.order.totalPrice),
