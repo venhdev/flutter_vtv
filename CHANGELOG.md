@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [v0.0.5-pre] - 31/03/2024
+
+- Notification
+- Place order (cart, buy now)
+- Order status
+- Recent viewed products
+
 ## [v0.0.4-pre] - 29/03/2024
 
 ### Added
