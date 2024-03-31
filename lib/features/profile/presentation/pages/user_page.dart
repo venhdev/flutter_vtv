@@ -26,7 +26,7 @@ class UserPage extends StatelessWidget {
             );
         }
         if (state.status == AuthStatus.unauthenticated) {
-          context.read<CartBloc>().add(const FetchCart());
+          context.read<CartBloc>().add(EmptyCart());
           if (state.code == 200 && state.redirectTo != null) {
             context.go(state.redirectTo!);
           }
@@ -39,9 +39,9 @@ class UserPage extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.status == AuthStatus.unauthenticated) {
-          return const NotLoggedWidget();
+          return const NotLoggedView();
         } else if (state.status == AuthStatus.authenticated) {
-          return LoggedWidget(auth: state.auth!);
+          return LoggedView(auth: state.auth!);
         } else {
           return const Center(
             child: CircularProgressIndicator(),

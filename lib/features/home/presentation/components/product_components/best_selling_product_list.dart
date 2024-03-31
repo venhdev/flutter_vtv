@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/typedef.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
-import '../../../domain/dto/product_resp.dart';
+import '../../../domain/dto/product_page_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';
 
@@ -13,7 +13,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
     required this.future,
   });
 
-  final FRespData<ProductResp> Function() future;
+  final FRespData<ProductPageResp> Function() future;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        FutureBuilder<RespData<ProductResp>>(
+        FutureBuilder<RespData<ProductPageResp>>(
           future: future(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
@@ -38,8 +38,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
             } else {
               return snapshot.data!.fold(
                 (err) => Center(
-                  child: Text('Error: $err',
-                      style: const TextStyle(color: Colors.red)),
+                  child: Text('Error: $err', style: const TextStyle(color: Colors.red)),
                 ),
                 (ok) => SizedBox(
                   height: 120,
@@ -53,11 +52,6 @@ class BestSellingProductListBuilder extends StatelessWidget {
                         image: product.image,
                         height: 90,
                         onTap: () {
-                          // Navigator.of(context).push(
-                          //   MaterialPageRoute(
-                          //     builder: (context) => ProductDetailPage(product: product),
-                          //   ),
-                          // );
                           context.go(ProductDetailPage.path, extra: product);
                         },
                       );

@@ -68,12 +68,12 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             controller: scrollController,
             children: [
-              // Category
+              //# Category
               const CategoryList(),
-              // Best selling
+              //# Best selling
               BestSellingProductListBuilder(
-                  future: () => sl<ProductRepository>()
-                      .getProductFilter(1, 10, SortTypes.bestSelling)),
+                future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
+              ),
               // Product
               _buildProductActionBar(context),
               isShowing
@@ -83,8 +83,7 @@ class _HomePageState extends State<HomePage> {
                       dataCallback: (page) async {
                         if (currentFilter.isFiltering) {
                           if (currentFilter.filterPriceRange) {
-                            return sl<ProductRepository>()
-                                .getProductFilterByPriceRange(
+                            return sl<ProductRepository>().getProductFilterByPriceRange(
                               page,
                               _productPerPage,
                               currentFilter.minPrice,
@@ -92,13 +91,11 @@ class _HomePageState extends State<HomePage> {
                               currentFilter.sortType,
                             );
                           } else {
-                            return sl<ProductRepository>().getProductFilter(
-                                page, _productPerPage, currentFilter.sortType);
+                            return sl<ProductRepository>()
+                                .getProductFilter(page, _productPerPage, currentFilter.sortType);
                           }
                         }
-                        return sl<ProductRepository>()
-                            .getSuggestionProductsRandomly(
-                                page, _productPerPage);
+                        return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
                       },
                     )
                   : const SizedBox.shrink(),

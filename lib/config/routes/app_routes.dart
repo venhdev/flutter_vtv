@@ -10,19 +10,21 @@ import '../../features/auth/presentation/pages/change_password_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/profile/presentation/pages/settings_page.dart';
-import '../../features/profile/presentation/pages/user_detail_page.dart';
-import '../../features/profile/presentation/pages/user_page.dart';
-import '../../features/cart/domain/entities/order_entity.dart';
-import '../../features/cart/presentation/pages/add_address_page.dart';
-import '../../features/cart/presentation/pages/checkout_page.dart';
-import '../../features/profile/presentation/pages/address_page.dart';
+import '../../features/order/presentation/pages/order_detail_page.dart';
+import '../../features/order/presentation/pages/purchase_page.dart';
+import '../../features/profile/presentation/pages/add_address_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/domain/entities/product_entity.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/product_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
-import '../../features/profile/presentation/pages/voucher_page.dart';
+import '../../features/order/domain/entities/order_entity.dart';
+import '../../features/order/presentation/pages/checkout_page.dart';
+import '../../features/profile/presentation/pages/address_page.dart';
+import '../../features/profile/presentation/pages/settings_page.dart';
+import '../../features/profile/presentation/pages/user_detail_page.dart';
+import '../../features/profile/presentation/pages/user_page.dart';
+import '../../features/order/presentation/pages/voucher_page.dart';
 import 'extra_codec.dart';
 
 part 'routes.dart';
@@ -51,7 +53,7 @@ class AppRoutes {
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return MainPage(child: child);
         },
-        routes: _routes, // config in routes.dart
+        routes: _routes, //! config in routes.dart
       ),
       // Other Route not in Shell (not in bottom navigation bar)
       GoRoute(

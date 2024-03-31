@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/features/cart/presentation/pages/add_address_page.dart';
+import 'package:flutter_vtv/features/profile/presentation/pages/add_address_page.dart';
 
 import '../../../../service_locator.dart';
 import '../../../profile/domain/entities/address_dto.dart';

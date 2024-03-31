@@ -6,6 +6,16 @@ class SuccessResponse extends BaseHttpResponse {
     super.message,
     super.status,
   });
+
+  @override
+  List<Object?> get props => [
+        code,
+        message,
+        status,
+      ];
+
+  @override
+  bool get stringify => true;
 }
 
 class DataResponse<T> extends SuccessResponse {
@@ -25,4 +35,7 @@ class DataResponse<T> extends SuccessResponse {
         status,
         data,
       ];
+
+  @override
+  bool get stringify => true;
 }

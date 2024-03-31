@@ -1,21 +1,25 @@
 part of 'cart_bloc.dart';
 
 sealed class CartEvent extends Equatable {
-  const CartEvent();
+  const CartEvent({this.message});
+
+  final String? message;
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [message];
 }
 
 final class InitialCart extends CartEvent {}
 
+final class EmptyCart extends CartEvent {}
+
 final class FetchCart extends CartEvent {
   final List<String> selectedCartIds;
 
-  const FetchCart({this.selectedCartIds = const []});
+  const FetchCart({this.selectedCartIds = const [], super.message});
 
   @override
-  List<Object> get props => [selectedCartIds];
+  List<Object?> get props => [selectedCartIds, message];
 }
 
 final class AddToCart extends CartEvent {

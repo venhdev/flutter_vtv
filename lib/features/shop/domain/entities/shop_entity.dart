@@ -19,6 +19,7 @@ class ShopEntity extends Equatable {
   final String status;
   final int customerId;
   final String wardCode;
+  
   const ShopEntity({
     required this.shopId,
     required this.name,

@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/features/cart/presentation/pages/add_address_page.dart';
+import 'package:flutter_vtv/features/profile/presentation/pages/add_address_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_state.dart';
+import '../../../features/order/presentation/pages/order_detail_page.dart';
 import '../../../features/profile/presentation/pages/settings_page.dart';
-import '../../../features/cart/presentation/pages/checkout_page.dart';
+import '../../../features/order/presentation/pages/checkout_page.dart';
 import '../../../features/profile/presentation/pages/address_page.dart';
 import '../../../features/cart/presentation/pages/cart_page.dart';
 import '../../../features/home/presentation/pages/product_detail_page.dart';
@@ -98,13 +101,15 @@ class MainPage extends StatelessWidget {
 
   bool _shouldShowBottomNavigationBar(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
+    log('_shouldShowBottomNavigationBar at $location');
     switch (location) {
       case CartPage.path:
       case ProductDetailPage.path:
       case AddressPage.path:
       case AddAddressPage.path:
-      case CheckoutPage.path:
+      case CheckoutPage.path || '${CheckoutPage.path}?isCreateWithCart=false':
       case SettingsPage.path:
+      case OrderDetailPage.path:
         return false;
       default:
         return true;

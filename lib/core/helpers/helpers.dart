@@ -51,18 +51,42 @@ String formatPaymentMethod(String method) {
 }
 
 String formatVoucherType({required String type, required int discount}) {
-    if (type == VoucherTypes.PERCENTAGE_SYSTEM.name) {
-      return 'Giảm $discount%';
-    } else if (type == VoucherTypes.PERCENTAGE_SHOP.name) {
-      return 'Giảm $discount%';
-    } else if (type == VoucherTypes.MONEY_SHOP.name) {
-      return 'Giảm ${formatCurrency(discount)}';
-    } else if (type == VoucherTypes.MONEY_SYSTEM.name) {
-      return 'Giảm ${formatCurrency(discount)}';
-    } else if (type == VoucherTypes.FIXED_SHOP.name) {
-      return 'Giảm ${formatCurrency(discount)}';
-    } else if (type == VoucherTypes.SHIPPING.name) {
-      return 'Miễn phí vận chuyển đến ${formatCurrency(discount)}';
-    }
-    return '';
+  if (type == VoucherTypes.PERCENTAGE_SYSTEM.name) {
+    return 'Giảm $discount%';
+  } else if (type == VoucherTypes.PERCENTAGE_SHOP.name) {
+    return 'Giảm $discount%';
+  } else if (type == VoucherTypes.MONEY_SHOP.name) {
+    return 'Giảm ${formatCurrency(discount)}';
+  } else if (type == VoucherTypes.MONEY_SYSTEM.name) {
+    return 'Giảm ${formatCurrency(discount)}';
+  } else if (type == VoucherTypes.FIXED_SHOP.name) {
+    return 'Giảm ${formatCurrency(discount)}';
+  } else if (type == VoucherTypes.SHIPPING.name) {
+    return 'Miễn phí vận chuyển đến ${formatCurrency(discount)}';
   }
+  return '';
+}
+
+String formatOrderStatus(OrderStatus status) {
+  switch (status) {
+    case OrderStatus.WAITING:
+      return 'Draft'; // when create order (not place order yet)
+    case OrderStatus.PENDING:
+      return 'Chờ xác nhận';
+    case OrderStatus.SHIPPING:
+      return 'Đang giao';
+    case OrderStatus.COMPLETED:
+      return 'Hoàn thành';
+    case OrderStatus.DELIVERED:
+      return 'Đã giao';
+    case OrderStatus.CANCELLED:
+      return 'Đã hủy';
+    // Vendor Only
+    case OrderStatus.PROCESSING:
+      return 'Đang xử lý';
+
+    //! Unknown status
+    default:
+      return status.name;
+  }
+}

@@ -1,31 +1,39 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../service_locator.dart';
 import '../../../profile/domain/entities/address_dto.dart';
-import '../../../profile/presentation/pages/voucher_page.dart';
+import '../../domain/dto/place_order_with_variant_param.dart';
+import '../components/shop_info.dart';
+import 'order_detail_page.dart';
+import 'voucher_page.dart';
 import '../../domain/dto/place_order_param.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/entities/voucher_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
-import '../components/address_summary.dart';
-import '../components/dialog_choose_address.dart';
-import '../components/order_item.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/components/address_summary.dart';
+import '../../../cart/presentation/components/dialog_choose_address.dart';
+import '../../../cart/presentation/components/order_item.dart';
 
-const String noVoucherMsg = 'Chọn hoặc nhập mã';
+const String _noVoucherMsg = 'Chọn hoặc nhập mã';
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({
-    super.key,
-    required this.order,
-  });
+  const CheckoutPage({super.key, required this.order, this.isCreateWithCart = true});
 
   static const String routeName = 'checkout';
   static const String path = '/home/cart/checkout';
 
   final OrderEntity order;
+
+  // ?: check if this [OrderEntity] create with cart (in cart with cartId) or with product variant (buy now --not in cart)
+  final bool isCreateWithCart;
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
@@ -35,7 +43,27 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late AddressEntity _address; // just ID
   late OrderEntity _order;
   // Properties sent to the server
-  late PlaceOrderParam _placeOrderParam;
+  late PlaceOrderWithCartParam _placeOrderWithCartParam;
+  late PlaceOrderWithVariantParam _placeOrderWithVariantParam;
+
+  handlePlaceOrder() async {
+    final respEither = widget.isCreateWithCart
+        ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
+        : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
+
+    respEither.fold(
+      (error) {
+        Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
+      },
+      (ok) {
+        // FetchCart to BLoC to update cart
+        context.read<CartBloc>().add(const FetchCart());
+
+        // navigate to order detail page
+        context.go(OrderDetailPage.path, extra: ok.data.order);
+      },
+    );
+  }
 
   Future<T?> showDialogToChangeAddress<T>(BuildContext context) {
     return showDialog(
@@ -43,18 +71,19 @@ class _CheckoutPageState extends State<CheckoutPage> {
       builder: (context) {
         return DialogChooseAddress(
           onAddressChanged: (address) {
-            reloadOrder(_placeOrderParam.copyWith(addressId: address.addressId), newAddress: address);
-            // setState(() {
-            //   _address = address;
-            //   _placeOrderParam = _placeOrderParam.copyWith(addressId: address.addressId);
-            // });
+            if (widget.isCreateWithCart) {
+              updateOrderWithCart(_placeOrderWithCartParam.copyWith(addressId: address.addressId), newAddress: address);
+            } else {
+              updateOrderWithVariant(_placeOrderWithVariantParam.copyWith(addressId: address.addressId),
+                  newAddress: address);
+            }
           },
         );
       },
     );
   }
 
-  Future<void> reloadOrder(PlaceOrderParam newOrderParam, {AddressEntity? newAddress}) async {
+  Future<void> updateOrderWithCart(PlaceOrderWithCartParam newOrderParam, {AddressEntity? newAddress}) async {
     final respEither = await sl<OrderRepository>().createUpdateWithCart(newOrderParam);
 
     respEither.fold(
@@ -63,7 +92,26 @@ class _CheckoutPageState extends State<CheckoutPage> {
       },
       (ok) {
         setState(() {
-          _placeOrderParam = newOrderParam;
+          _placeOrderWithCartParam = newOrderParam;
+          if (newAddress != null) {
+            _address = newAddress;
+          }
+          _order = ok.data.order;
+        });
+      },
+    );
+  }
+
+  Future<void> updateOrderWithVariant(PlaceOrderWithVariantParam newOrderParam, {AddressEntity? newAddress}) async {
+    final respEither = await sl<OrderRepository>().createUpdateWithVariant(newOrderParam);
+
+    respEither.fold(
+      (error) {
+        Fluttertoast.showToast(msg: 'Lỗi: ${error.message}');
+      },
+      (ok) {
+        setState(() {
+          _placeOrderWithVariantParam = newOrderParam;
           if (newAddress != null) {
             _address = newAddress;
           }
@@ -79,34 +127,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _address = widget.order.address;
     _order = widget.order;
 
-    _placeOrderParam = PlaceOrderParam(
-      addressId: widget.order.address.addressId,
-      systemVoucherCode: null,
-      shopVoucherCode: null,
-      useLoyaltyPoint: false,
-      paymentMethod: widget.order.paymentMethod,
-      shippingMethod: widget.order.shippingMethod,
-      note: '',
-      cartIds: widget.order.orderItems.map((e) => e.cartId).toList(),
-    );
+    log('widget.isCreateWithCart: ${widget.isCreateWithCart}');
 
-    // _systemVoucherCode = widget.order.voucherOrders
-    //     .firstWhere(
-    //       (voucher) => !voucher.type!,
-    //       orElse: () => VoucherOrderEntity.empty(),
-    //     )
-    //     .voucherName;
-
-    // _shopVoucherCode = widget.order.voucherOrders
-    //     .firstWhere(
-    //       (voucher) => voucher.type!,
-    //       orElse: () => VoucherOrderEntity.empty(),
-    //     )
-    //     .voucherName;
-
-    // _paymentMethod = widget.order.paymentMethod;
-    // _shippingMethod = widget.order.shippingMethod;
-    // _cartIds = widget.order.orderItems.map((e) => e.cartId).toList();
+    if (widget.isCreateWithCart) {
+      log('here');
+      _placeOrderWithCartParam = PlaceOrderWithCartParam(
+        addressId: widget.order.address.addressId,
+        systemVoucherCode: null,
+        shopVoucherCode: null,
+        useLoyaltyPoint: false,
+        paymentMethod: widget.order.paymentMethod,
+        shippingMethod: widget.order.shippingMethod,
+        note: '',
+        cartIds: widget.order.orderItems.map((e) => e.cartId).toList(),
+      );
+    } else {
+      log('here2');
+      _placeOrderWithVariantParam = PlaceOrderWithVariantParam(
+        addressId: widget.order.address.addressId,
+        systemVoucherCode: null,
+        shopVoucherCode: null,
+        useLoyaltyPoint: false,
+        paymentMethod: widget.order.paymentMethod,
+        shippingMethod: widget.order.shippingMethod,
+        note: '',
+        variantIds: widget.order.getVariantIdsAndQuantityMap,
+      );
+      log('_placeOrderWithVariantParam: ${_placeOrderWithVariantParam.toString()}');
+    }
   }
 
   @override
@@ -114,8 +162,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thanh toán'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.pop();
+            // if (widget.isCreateWithCart) {
+            //   // pop to cart page
+            //   context.pop();
+            // } else {
+            //   // TODO: pop to product detail page
+            //   context.pop();
+            // }
+          },
+        )
       ),
-      bottomSheet: _buildPlaceOrderButton(),
+      bottomSheet: _buildPlaceOrderBtn(),
       body: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 64),
         child: SingleChildScrollView(
@@ -138,7 +199,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const SizedBox(height: 8),
 
               //! voucher
-              _buildSystemVoucher(),
+              _buildSystemVoucherBtn(),
               const SizedBox(height: 8),
 
               //! total price
@@ -155,57 +216,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildPlaceOrderButton() {
-    return Container(
-      color: Colors.white,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const Text(
-            'Tổng thanh toán: ',
-          ),
-          Text(
-            formatCurrency(_order.paymentTotal),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
-            onPressed: () async {
-              final respEither = await sl<OrderRepository>().placeOrder(
-                _placeOrderParam,
-                // PlaceOrderParam(
-                //   addressId: _address.addressId,
-                //   systemVoucherCode: _systemVoucherCode,
-                //   shopVoucherCode: _shopVoucherCode,
-                //   paymentMethod: _paymentMethod,
-                //   shippingMethod: _shippingMethod,
-                //   note: _note,
-                //   cartIds: _cartIds,
-                // ),
-              );
-
-              respEither.fold(
-                (error) {
-                  Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
-                },
-                (ok) {
-                  Fluttertoast.showToast(msg: ok.message ?? 'Đặt hàng thành công');
-                  Navigator.of(context).pop(true);
-                },
-              );
-            },
-            child: const Text('Đặt hàng'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  TextField _buildNote() {
+  Widget _buildNote() {
     return TextField(
       style: const TextStyle(fontSize: 14),
       decoration: const InputDecoration(
@@ -220,13 +231,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ),
       onChanged: (value) {
         setState(() {
-          _placeOrderParam = _placeOrderParam.copyWith(note: value);
+          if (widget.isCreateWithCart) {
+            _placeOrderWithCartParam = _placeOrderWithCartParam.copyWith(note: value);
+          } else {
+            _placeOrderWithVariantParam = _placeOrderWithVariantParam.copyWith(note: value);
+          }
         });
       },
     );
   }
 
-  Wrapper _buildTotalPrice() {
+  Widget _buildTotalPrice() {
     return Wrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -241,10 +256,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
           _totalSummaryPriceItem('Tổng tiền hàng:', _order.totalPrice),
           _totalSummaryPriceItem('Phí vận chuyển:', _order.shippingFee),
 
-          if (_placeOrderParam.systemVoucherCode != null)
-            _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
-          if (_placeOrderParam.shopVoucherCode != null)
-            _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
+          if (widget.isCreateWithCart) ...[
+            if (_placeOrderWithCartParam.systemVoucherCode != null)
+              _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
+            if (_placeOrderWithCartParam.shopVoucherCode != null)
+              _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
+          ] else ...[
+            if (_placeOrderWithVariantParam.systemVoucherCode != null)
+              _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
+            if (_placeOrderWithVariantParam.shopVoucherCode != null)
+              _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
+          ],
 
           // total price
           const Divider(thickness: 0.2, height: 4),
@@ -254,7 +276,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Row _totalSummaryPriceItem(String title, int price) {
+  Widget _totalSummaryPriceItem(String title, int price) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -264,7 +286,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Wrapper _buildPaymentMethod() {
+  Widget _buildPaymentMethod() {
     return Wrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -329,18 +351,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(_order.shop.avatar),
-                ),
-                const SizedBox(width: 4),
-                Text(_order.shop.name),
-              ],
-            ),
-          ),
+          ShopInfo(shop: _order.shop),
 
           //! Shop voucher
           Wrapper(
@@ -356,12 +367,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                 ),
                 Expanded(
-                  child: _buildShopVoucher(),
+                  child: _buildShopVoucherBtn(),
                 ),
               ],
             ),
           ),
-          const Divider(thickness: 0.4, height: 8),
+          // const Divider(thickness: 0.4, height: 8),
+          const SizedBox(height: 8),
 
           //! list of items
           ListView.separated(
@@ -379,7 +391,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  GestureDetector _buildShopVoucher() {
+  Widget _buildShopVoucherBtn() {
     return GestureDetector(
       onTap: () async {
         final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
@@ -392,25 +404,39 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ));
 
         if (voucher != null) {
-          reloadOrder(
-            _placeOrderParam.copyWith(shopVoucherCode: voucher.code),
-          );
+          if (widget.isCreateWithCart) {
+            updateOrderWithCart(
+              _placeOrderWithCartParam.copyWith(shopVoucherCode: voucher.code),
+            );
+          } else {
+            updateOrderWithVariant(
+              _placeOrderWithVariantParam.copyWith(shopVoucherCode: voucher.code),
+            );
+          }
         }
       },
       child: Text(
-        _placeOrderParam.shopVoucherCode ?? noVoucherMsg,
+        widget.isCreateWithCart
+            ? _placeOrderWithCartParam.shopVoucherCode ?? _noVoucherMsg
+            : _placeOrderWithVariantParam.shopVoucherCode ?? _noVoucherMsg,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.end,
         style: TextStyle(
-          color: _placeOrderParam.shopVoucherCode == null ? Colors.grey : Colors.green,
+          color: widget.isCreateWithCart
+              ? _placeOrderWithCartParam.shopVoucherCode == null
+                  ? Colors.grey
+                  : Colors.green
+              : _placeOrderWithVariantParam.shopVoucherCode == null
+                  ? Colors.grey
+                  : Colors.green,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _buildSystemVoucher() {
+  Widget _buildSystemVoucherBtn() {
     return InkWell(
       onTap: () async {
         // show dialog to choose voucher
@@ -425,9 +451,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ));
 
         if (voucher != null) {
-          reloadOrder(
-            _placeOrderParam.copyWith(systemVoucherCode: voucher.code),
-          );
+          if (widget.isCreateWithCart) {
+            updateOrderWithCart(
+              _placeOrderWithCartParam.copyWith(systemVoucherCode: voucher.code),
+            );
+          } else {
+            updateOrderWithVariant(
+              _placeOrderWithVariantParam.copyWith(systemVoucherCode: voucher.code),
+            );
+          }
         }
       },
       overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
@@ -442,14 +474,49 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ),
             ),
             Text(
-              _placeOrderParam.systemVoucherCode ?? noVoucherMsg,
+              widget.isCreateWithCart
+                  ? _placeOrderWithCartParam.systemVoucherCode ?? _noVoucherMsg
+                  : _placeOrderWithVariantParam.systemVoucherCode ?? _noVoucherMsg,
               style: TextStyle(
-                color: _placeOrderParam.systemVoucherCode == null ? Colors.grey : Colors.green,
+                color: widget.isCreateWithCart
+                    ? _placeOrderWithCartParam.systemVoucherCode == null
+                        ? Colors.grey
+                        : Colors.green
+                    : _placeOrderWithVariantParam.systemVoucherCode == null
+                        ? Colors.grey
+                        : Colors.green,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceOrderBtn() {
+    return Container(
+      color: Colors.white,
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Text(
+            'Tổng thanh toán: ',
+          ),
+          Text(
+            formatCurrency(_order.paymentTotal),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            onPressed: handlePlaceOrder,
+            child: const Text('Đặt hàng'),
+          ),
+        ],
       ),
     );
   }
@@ -460,19 +527,29 @@ class Wrapper extends StatelessWidget {
     super.key,
     required this.child,
     this.backgroundColor = Colors.white,
+    this.padding = const EdgeInsets.all(8),
   });
 
   final Widget child;
   final Color? backgroundColor;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: padding,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        // border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
         color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 2), // changes position of shadow
+          ),
+        ],
       ),
       child: child,
     );
