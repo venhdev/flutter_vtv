@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/features/home/domain/dto/product_resp.dart';
+import 'package:flutter_vtv/features/home/domain/dto/product_page_resp.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
@@ -142,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  FRespData<ProductResp> searchMethod() {
+  FRespData<ProductPageResp> searchMethod() {
     return currentFilter.isFiltering
         ? currentFilter.filterPriceRange
             ? sl<SearchProductRepository>().getSearchProductPriceRangeSort(

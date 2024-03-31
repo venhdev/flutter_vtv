@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/helpers/helpers.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../core/presentation/pages/photo_view.dart';
+import '../../../../../service_locator.dart';
 import '../../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../../order/domain/repository/order_repository.dart';
+import '../../../../order/presentation/pages/checkout_page.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../../domain/entities/product_variant_entity.dart';
 
-class BottomSheetAddToCart extends StatefulWidget {
-  const BottomSheetAddToCart({
+class SheetAddToCartOrBuyNow extends StatefulWidget {
+  const SheetAddToCartOrBuyNow({
     super.key,
     required this.product,
+    this.isBuyNow = false,
   });
 
   final ProductEntity product;
+  final bool isBuyNow;
 
   @override
-  State<BottomSheetAddToCart> createState() => _BottomSheetAddToCartState();
+  State<SheetAddToCartOrBuyNow> createState() => _SheetAddToCartOrBuyNowState();
 }
 
-class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
+class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
   ProductVariantEntity? _variant;
   int _quantity = 0;
 
@@ -34,6 +40,45 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
     return '${formatCurrency(widget.product.cheapestPrice)} - ${formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
+  void handleTapAddToCartOrBuyNow() async {
+    // check if variant is selected
+    if (_variant != null) {
+      // ? create temp order and navigate to checkout page || else just add to cart
+      if (widget.isBuyNow) {
+        final respEither = await sl<OrderRepository>().createByProductVariant(_variant!.productVariantId, _quantity);
+
+        respEither.fold(
+          (error) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(error.message!),
+                ),
+              );
+          },
+          (ok) {
+            // context.go('${CheckoutPage.path}?isCreateWithCart=false', extra: ok.data.order);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CheckoutPage(
+                  isCreateWithCart: false,
+                  order: ok.data.order,
+                ),
+              ),
+            );
+
+            
+          },
+        );
+      } else {
+        context.read<CartBloc>().add(AddToCart(_variant!.productVariantId, _quantity));
+        context.pop();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -41,6 +86,7 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Image, price, quantity
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -50,17 +96,13 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => PhotoViewPage(
-                        imageUrl: _variant?.image.isNotEmpty ?? false
-                            ? _variant!.image
-                            : widget.product.image,
+                        imageUrl: _variant?.image.isNotEmpty ?? false ? _variant!.image : widget.product.image,
                       ),
                     ),
                   );
                 },
                 child: ImageCacheable(
-                  (_variant?.image.isNotEmpty ?? false)
-                      ? _variant!.image
-                      : widget.product.image,
+                  (_variant?.image.isNotEmpty ?? false) ? _variant!.image : widget.product.image,
                   width: 100,
                   height: 100,
                 ),
@@ -91,7 +133,9 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
             ],
           ),
           const Divider(color: Colors.grey),
-          const Text('Phân loại'),
+
+          // variant
+          const Text('Phân loại', style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.3,
             child: SingleChildScrollView(
@@ -115,9 +159,7 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ImageCacheable(
-                              variant.image.isNotEmpty
-                                  ? variant.image
-                                  : widget.product.image,
+                              variant.image.isNotEmpty ? variant.image : widget.product.image,
                               height: 38,
                               width: 38,
                               fit: BoxFit.cover,
@@ -125,8 +167,7 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
                             const SizedBox(width: 4),
                             Text(
                               variant.sku,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.normal),
+                              style: const TextStyle(fontWeight: FontWeight.normal),
                             ),
                           ],
                         ),
@@ -139,9 +180,9 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
           const Divider(color: Colors.grey),
 
           // attribute
-          // Text(_variant!.attributes.toString()),
+          // TODO: Attribute selector => variant
 
-          // quantity
+          // quantity selector
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -177,21 +218,26 @@ class _BottomSheetAddToCartState extends State<BottomSheetAddToCart> {
           ),
 
           // Add to cart button
-          ElevatedButton(
-            // change backgroundColor
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  _variant != null ? Colors.orange[300] : Colors.grey[300],
-            ),
-            onPressed: () {
-              if (_variant != null) {
-                context
-                    .read<CartBloc>()
-                    .add(AddToCart(_variant!.productVariantId, _quantity));
-                Navigator.pop(context);
+          BlocListener<CartBloc, CartState>(
+            listener: (context, state) {
+              if (state.message != null) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(state.message!),
+                    ),
+                  );
               }
             },
-            child: const Text('Thêm vào giỏ'),
+            child: ElevatedButton(
+              // change backgroundColor
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
+              ),
+              onPressed: handleTapAddToCartOrBuyNow,
+              child: Text(widget.isBuyNow ? 'Mua ngay' : 'Thêm vào giỏ'),
+            ),
           ),
         ],
       ),

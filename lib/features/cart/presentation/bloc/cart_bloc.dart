@@ -1,11 +1,9 @@
-import 'dart:developer';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
 
-import '../../domain/repository/cart_repository.dart';
 import '../../domain/dto/cart_resp.dart';
+import '../../domain/repository/cart_repository.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
@@ -13,6 +11,7 @@ part 'cart_state.dart';
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc(this._cartRepository, this._secureStorage) : super(CartInitial()) {
     on<InitialCart>(_onInitialCart);
+    on<EmptyCart>(_onEmptyCart);
     on<FetchCart>(_onFetchCart);
     on<AddToCart>(_onAddToCart);
     on<UpdateCart>(_onUpdateCart);
@@ -41,6 +40,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
+  void _onEmptyCart(EmptyCart event, Emitter<CartState> emit) async => emit(CartInitial());
+
   void _onFetchCart(FetchCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
@@ -48,7 +49,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
-      (ok) => emit(CartLoaded(ok.data, message: ok.message, selectedCartIds: event.selectedCartIds)),
+      (ok) => emit(CartLoaded(ok.data, message: event.message ?? ok.message, selectedCartIds: event.selectedCartIds)),
     );
   }
 
@@ -60,8 +61,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     resp.fold(
       (error) => emit(CartError(message: error.message)),
       (ok) {
-        // emit(CartSuccess(message: ok.message));
-        add(const FetchCart());
+        add(FetchCart(message: ok.message));
       },
     );
   }

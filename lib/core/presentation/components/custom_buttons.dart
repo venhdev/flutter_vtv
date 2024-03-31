@@ -1,64 +1,97 @@
 import 'package:flutter/material.dart';
 
 // IconTextButton
-
 class IconTextButton extends StatelessWidget {
   const IconTextButton({
     super.key,
     required this.onPressed,
-    required this.icon,
-    required this.text,
-    this.width,
+    this.icon,
+    required this.label,
+    this.reversePosition = false,
+    this.reverseDirection = false,
     this.backgroundColor,
-    this.reverse = false,
+    this.borderRadius,
+    this.fontSize,
+    this.iconSize,
+    this.padding,
   });
-  final IconData icon;
-  final String text;
-  final double? width;
-  final Color? backgroundColor;
+  // Required parameters
+  final IconData? icon; // Icon now is optional
+  final String label;
   final void Function()? onPressed;
-  final bool reverse;
+
+  // Optional parameters
+  // Decorations
+  final Color? backgroundColor;
+
+  /// If true, the icon will be placed after the text
+  final bool reversePosition;
+
+  /// If true, the icon and text will be placed vertically
+  final bool reverseDirection;
+  final BorderRadiusGeometry? borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final double? fontSize;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      customBorder: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
+    return IconButton(
+      onPressed: onPressed,
+      padding: padding ?? const EdgeInsets.all(0),
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius ?? BorderRadius.circular(8),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (reverse) ...[
-              Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(icon),
-            ] else ...[
-              Icon(icon),
-              const SizedBox(width: 4),
-              Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ]
-          ],
-        ),
+        backgroundColor: backgroundColor,
       ),
+      icon: !reverseDirection
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min, // make the button as small as possible
+              children: [
+                if (!reversePosition) ...[
+                  Icon(icon, size: iconSize),
+                  const SizedBox(width: 4),
+                  Text(label,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ] else ...[
+                  Text(label,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  const SizedBox(width: 4),
+                  Icon(icon, size: iconSize),
+                ]
+              ],
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min, // make the button as small as possible
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (!reversePosition) ...[
+                  if (icon != null) Icon(icon, size: iconSize),
+                  const SizedBox(width: 4),
+                  Text(label,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ] else ...[
+                  Text(label,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      )),
+                  const SizedBox(width: 4),
+                  if (icon != null) Icon(icon, size: iconSize),
+                ]
+              ],
+            ),
     );
   }
 }

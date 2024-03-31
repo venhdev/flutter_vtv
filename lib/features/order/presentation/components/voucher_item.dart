@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
 
-import '../../../cart/domain/entities/voucher_entity.dart';
+import '../../domain/entities/voucher_entity.dart';
 
 class VoucherItem extends StatelessWidget {
   const VoucherItem({

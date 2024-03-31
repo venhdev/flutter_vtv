@@ -24,11 +24,9 @@ class AuthRepositoryImpl implements AuthRepository {
   final SecureStorageHelper _secureStorageHelper;
 
   @override
-  FRespData<AuthEntity> loginWithUsernameAndPassword(
-      String username, String password) async {
+  FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
     try {
-      final result = await _authDataSource.loginWithUsernameAndPassword(
-          username, password);
+      final result = await _authDataSource.loginWithUsernameAndPassword(username, password);
       return Right(DataResponse(result.data.toEntity()));
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
@@ -69,8 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FRespEither logout(String refreshToken) async {
     try {
-      final resOK =
-          await _authDataSource.logoutAndRevokeRefreshToken(refreshToken);
+      final resOK = await _authDataSource.logoutAndRevokeRefreshToken(refreshToken);
       return Right(resOK);
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
@@ -97,8 +94,7 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<String> getNewAccessToken() async {
     try {
       final localAuth = await _secureStorageHelper.readAuth();
-      final newAccessToken =
-          await _authDataSource.getNewAccessToken(localAuth.refreshToken);
+      final newAccessToken = await _authDataSource.getNewAccessToken(localAuth.refreshToken);
       return Right(newAccessToken);
     } on CacheException catch (e) {
       return Left(UnexpectedError(message: e.message));
@@ -184,8 +180,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FRespEither sendOTPForResetPassword(String username) async {
     try {
-      final resOK =
-          await _authDataSource.sendOTPForResetPasswordViaUsername(username);
+      final resOK = await _authDataSource.sendOTPForResetPasswordViaUsername(username);
       return Right(resOK);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));
@@ -197,8 +192,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FRespEither resetPasswordViaOTP(
-      String username, String otpCode, String newPassword) async {
+  FRespEither resetPasswordViaOTP(String username, String otpCode, String newPassword) async {
     try {
       final resOK = await _authDataSource.resetPassword(
         username: username,

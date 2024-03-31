@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-class PlaceOrderParam extends Equatable {
+class PlaceOrderWithCartParam extends Equatable {
   final int addressId;
   final String? systemVoucherCode;
   final String? shopVoucherCode;
@@ -10,9 +10,9 @@ class PlaceOrderParam extends Equatable {
   final String paymentMethod;
   final String shippingMethod;
   final String note;
-  final List<String> cartIds;
+  final List<String?> cartIds;
 
-  const PlaceOrderParam({
+  const PlaceOrderWithCartParam({
     required this.addressId,
     this.systemVoucherCode,
     this.shopVoucherCode,
@@ -23,7 +23,7 @@ class PlaceOrderParam extends Equatable {
     required this.cartIds,
   });
 
-  PlaceOrderParam copyWith({
+  PlaceOrderWithCartParam copyWith({
     int? addressId,
     String? systemVoucherCode,
     String? shopVoucherCode,
@@ -33,7 +33,7 @@ class PlaceOrderParam extends Equatable {
     String? note,
     List<String>? cartIds,
   }) {
-    return PlaceOrderParam(
+    return PlaceOrderWithCartParam(
       addressId: addressId ?? this.addressId,
       systemVoucherCode: systemVoucherCode ?? this.systemVoucherCode,
       shopVoucherCode: shopVoucherCode ?? this.shopVoucherCode,
@@ -58,8 +58,8 @@ class PlaceOrderParam extends Equatable {
     };
   }
 
-  factory PlaceOrderParam.fromMap(Map<String, dynamic> map) {
-    return PlaceOrderParam(
+  factory PlaceOrderWithCartParam.fromMap(Map<String, dynamic> map) {
+    return PlaceOrderWithCartParam(
       addressId: map['addressId'] as int,
       systemVoucherCode: map['systemVoucherCode'] != null ? map['systemVoucherCode'] as String : null,
       shopVoucherCode: map['shopVoucherCode'] != null ? map['shopVoucherCode'] as String : null,
@@ -73,8 +73,8 @@ class PlaceOrderParam extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory PlaceOrderParam.fromJson(String source) =>
-      PlaceOrderParam.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory PlaceOrderWithCartParam.fromJson(String source) =>
+      PlaceOrderWithCartParam.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;

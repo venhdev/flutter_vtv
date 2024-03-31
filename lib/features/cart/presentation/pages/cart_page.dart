@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,14 +8,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
+import '../../../order/domain/repository/order_repository.dart';
+import '../../../order/presentation/pages/checkout_page.dart';
 import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/address_page.dart';
-import '../../domain/repository/order_repository.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
-import 'checkout_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -60,6 +62,16 @@ class _CartPageState extends State<CartPage> {
                     floating: true,
                     backgroundColor: Colors.transparent,
                     bottom: _buildAddress(context),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          // GoRouter.of(context).go(AddressPage.path);
+                          // show current go router path
+                          log(GoRouterState.of(context).uri.toString());
+                        },
+                        icon: const Icon(Icons.location_history),
+                      ),
+                    ],
                   ),
                 ];
               },
@@ -92,29 +104,7 @@ class _CartPageState extends State<CartPage> {
                           );
                         },
                       )
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // icon empty cart
-                            const Icon(
-                              Icons.remove_shopping_cart_rounded,
-                              size: 50,
-                            ),
-                            const Text('Giỏ hàng trống'),
-                            // button continue shopping
-                            GestureDetector(
-                              onTap: () {
-                                GoRouter.of(context).go('/home');
-                              },
-                              child: const Text(
-                                'Tiếp tục mua sắm',
-                                style: TextStyle(decoration: TextDecoration.underline),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
+                    : _buildEmptyCart(context),
               ),
             );
           } else if (state is CartLoading) {
@@ -134,6 +124,32 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  Center _buildEmptyCart(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // icon empty cart
+          const Icon(
+            Icons.remove_shopping_cart_rounded,
+            size: 50,
+          ),
+          const Text('Giỏ hàng trống'),
+          // button continue shopping
+          GestureDetector(
+            onTap: () {
+              GoRouter.of(context).go('/home');
+            },
+            child: const Text(
+              'Tiếp tục mua sắm',
+              style: TextStyle(decoration: TextDecoration.underline),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildBottomSummaryCheckout() {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
@@ -142,7 +158,7 @@ class _CartPageState extends State<CartPage> {
             return const SizedBox();
           }
           return Container(
-            height: 50,
+            height: 52,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -156,29 +172,19 @@ class _CartPageState extends State<CartPage> {
             child: _defaultAddress != null
                 ? FutureBuilder(
                     future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
-                    // future: sl<OrderRepository>().createUpdateWithCart(
-                    //   CreateOrderParam(
-                    //     addressId: _defaultAddress!.addressId,
-                    //     systemVoucherCode: 'VTV2Code',
-                    //     paymentMethod: 'COD',
-                    //     shippingMethod: 'VTV Express',
-                    //     note: 'note test',
-                    //     cartIds: state.selectedCartIds,
-                    //   ),
-                    // ),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final respEither = snapshot.data!;
                         return respEither.fold(
                           (error) {
-                            return MessageScreen.error(error.message.toString());
+                            return SingleChildScrollView(child: MessageScreen.error(error.message));
                           },
                           (ok) => Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Padding(
                                 padding: EdgeInsets.all(8.0),
-                                child: Text('Tổng cộng: '),
+                                child: Text('Tổng cộng:'),
                               ),
                               Text(
                                 formatCurrency(ok.data.order.totalPrice),
@@ -257,13 +263,13 @@ class _CartPageState extends State<CartPage> {
                       address: defaultAddress,
                       onTap: () async {
                         // GoRouter.of(context).go(AddressPage.path);
-                        final isChangeSuccess = await Navigator.of(context).push(
+                        final isChangeSuccess = await Navigator.of(context).push<bool>(
                           MaterialPageRoute(
                             builder: (context) => const AddressPage(),
                           ),
                         );
 
-                        if (isChangeSuccess) {
+                        if (isChangeSuccess ?? false) {
                           setState(() {
                             fetchDefaultAddress();
                           });

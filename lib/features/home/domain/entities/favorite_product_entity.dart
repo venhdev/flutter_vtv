@@ -14,7 +14,7 @@ class FavoriteProductEntity extends Equatable {
     required this.createAt,
   });
 
- static List<FavoriteProductEntity> fromList(List<dynamic> jsonList) {
+  static List<FavoriteProductEntity> fromList(List<dynamic> jsonList) {
     return jsonList.map((json) => FavoriteProductEntity.fromMap(json as Map<String, dynamic>)).toList();
   }
 
@@ -42,6 +42,16 @@ class FavoriteProductEntity extends Equatable {
   }
 
   factory FavoriteProductEntity.fromMap(Map<String, dynamic> map) {
+    return FavoriteProductEntity(
+      favoriteProductId: map['favoriteProductId'] as int,
+      productId: map['productId'] as int,
+      createAt: DateTime.parse(map['createAt'] as String),
+    );
+  }
+
+  static FavoriteProductEntity? fromMapNull(Map<String, dynamic>? map) {
+    if (map == null) return null;
+
     return FavoriteProductEntity(
       favoriteProductId: map['favoriteProductId'] as int,
       productId: map['productId'] as int,

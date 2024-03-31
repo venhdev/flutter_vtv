@@ -1,9 +1,9 @@
 import '../../../../core/constants/typedef.dart';
-import '../dto/product_resp.dart';
+import '../dto/product_page_resp.dart';
 
 abstract class SearchProductRepository {
   /// Search keyword + sort + price range
-  FRespData<ProductResp> getSearchProductPriceRangeSort(
+  FRespData<ProductPageResp> getSearchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -13,7 +13,7 @@ abstract class SearchProductRepository {
   );
 
   /// Search keyword + sort (no price range)
-  FRespData<ProductResp> searchProductSort(
+  FRespData<ProductPageResp> searchProductSort(
     int page,
     int size,
     String keyword,

@@ -1,25 +1,33 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/features/home/data/data_sources/product_data_source.dart';
-import 'package:flutter_vtv/features/home/domain/entities/category_entity.dart';
 
+import '../../../../core/constants/typedef.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/network/base_response.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_resp.dart';
+import '../../domain/dto/favorite_product_resp.dart';
+import '../../domain/dto/product_detail_resp.dart';
+import '../../domain/dto/product_page_resp.dart';
+import '../../domain/entities/category_entity.dart';
+import '../../domain/entities/favorite_product_entity.dart';
 import '../../domain/repository/product_repository.dart';
 import '../data_sources/category_data_source.dart';
+import '../data_sources/local_product_data_source.dart';
+import '../data_sources/product_data_source.dart';
 
 class ProductRepositoryImpl extends ProductRepository {
-  ProductRepositoryImpl(this._productDataSource, this._categoryDataSource);
+  ProductRepositoryImpl(
+    this._productDataSource,
+    this._categoryDataSource,
+    this._localProductDataSource,
+  );
 
   final ProductDataSource _productDataSource;
   final CategoryDataSource _categoryDataSource;
+  final LocalProductDataSource _localProductDataSource;
 
   @override
-  FRespData<ProductResp> getSuggestionProductsRandomly(int page, int size) async {
+  FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size) async {
     try {
       final result = await _productDataSource.getSuggestionProductsRandomly(page, size);
       return Right(result);
@@ -33,7 +41,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<ProductResp> getProductFilterByPriceRange(
+  FRespData<ProductPageResp> getProductFilterByPriceRange(
     int page,
     int size,
     int minPrice,
@@ -52,7 +60,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<ProductResp> getProductFilter(int page, int size, String sortType) async {
+  FRespData<ProductPageResp> getProductFilter(int page, int size, String sortType) async {
     return handleDataResponseFromDataSource(
       dataCallback: () => _productDataSource.getProductFilter(page, size, sortType),
     );
@@ -66,36 +74,68 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespEither addFavoriteProduct(int productId) async {
-    return await handleSuccessResponseFromDataSource(
-      noDataCallback: () async => _productDataSource.addFavoriteProduct(productId),
+  FRespData<FavoriteProductEntity> favoriteProductAdd(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductAdd(productId),
     );
   }
 
   @override
-  Future<int?> isFavoriteProduct(int productId) async {
-    try {
-      final favoritesResp = await _productDataSource.getAllFavoriteProduct();
-      log('favoritesResp: $favoritesResp');
-      // check if the product is in the list of favorites
-      // return favoritesResp.data.any((element) => element.productId == productId);
+  FRespEither favoriteProductDelete(int favoriteProductId) async {
+    return await handleSuccessResponseFromDataSource(
+      noDataCallback: () async => _productDataSource.favoriteProductDelete(favoriteProductId),
+    );
+  }
 
-      // if there is a product in the list of favorites, return the favoriteProductId
-      return favoritesResp.data
-          .where(
-            (element) => element.productId == productId,
-          )
-          .first
-          .favoriteProductId;
+  @override
+  FRespData<FavoriteProductEntity?> favoriteProductCheckExist(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductCheckExist(productId),
+    );
+  }
+
+  @override
+  FRespData<FavoriteProductResp> favoriteProductDetail(int favoriteProductId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductDetail(favoriteProductId),
+    );
+  }
+
+  @override
+  FRespData<List<FavoriteProductEntity>> favoriteProductList() async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.favoriteProductList(),
+    );
+  }
+
+  @override
+  FResult<List<ProductDetailResp>> getRecentViewedProducts() async {
+    try {
+      final recentProductIds = await _localProductDataSource.getRecentProductIds();
+      if (recentProductIds.isEmpty) {
+        return const Right([]);
+      }
+
+      final products = await Future.wait(
+        recentProductIds.map((productId) async {
+          final product = await _productDataSource.getProductDetailById(productId);
+          return product.data;
+        }),
+      );
+
+      return Right(products);
     } catch (e) {
-      return null;
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  FRespEither removeFavoriteProduct(int favoriteProductId) async {
-    return await handleSuccessResponseFromDataSource(
-      noDataCallback: () async => _productDataSource.removeFavoriteProduct(favoriteProductId),
-    );
+  FResult<void> cacheRecentViewedProductId(String productId) async {
+    try {
+      await _localProductDataSource.cacheProductId(productId);
+      return const Right(null);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
   }
 }

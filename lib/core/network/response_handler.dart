@@ -46,6 +46,7 @@ DataResponse<T> handleResponseWithData<T>(
       result,
       code: response.statusCode,
       message: decodedBodyMap['message'],
+      status: decodedBodyMap['status'] ?? 'unknown status',
     );
   } else {
     throwResponseException(

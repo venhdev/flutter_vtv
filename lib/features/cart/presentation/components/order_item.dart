@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/core/helpers/helpers.dart';
 
-import '../../domain/entities/order_item_entity.dart';
+import '../../../order/domain/entities/order_item_entity.dart';
 
 class OrderItem extends StatelessWidget {
   const OrderItem(

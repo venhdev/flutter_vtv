@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../../features/auth/presentation/bloc/auth_cubit.dart';
 import '../../../service_locator.dart';
 import '../../constants/api.dart';
+import '../components/custom_buttons.dart';
 
 class DevPage extends StatefulWidget {
   const DevPage({super.key});
@@ -80,6 +81,16 @@ class _DevPageState extends State<DevPage> {
             const Divider(),
             _buildFCM(),
             const Divider(),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TestPage(),
+                  ),
+                );
+              },
+              child: const Text('Button'),
+            ),
           ],
         ),
       ),
@@ -88,17 +99,17 @@ class _DevPageState extends State<DevPage> {
 
   Column _buildFCM() {
     return Column(
-            children: [
-              // current FCM token
-              GestureDetector(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: fcmToken ?? 'null'));
-                  Fluttertoast.showToast(msg: 'Copied to clipboard FCM token');
-                },
-                child: Text('FCM token: $fcmToken'),
-              ),
-            ],
-          );
+      children: [
+        // current FCM token
+        GestureDetector(
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: fcmToken ?? 'null'));
+            Fluttertoast.showToast(msg: 'Copied to clipboard FCM token');
+          },
+          child: Text('FCM token: $fcmToken'),
+        ),
+      ],
+    );
   }
 
   Widget _buildToken() {
@@ -183,5 +194,46 @@ class _DevPageState extends State<DevPage> {
 
   String? getCurrentToken() {
     return context.read<AuthCubit>().state.auth?.accessToken;
+  }
+}
+
+class TestPage extends StatelessWidget {
+  const TestPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          color: Colors.green,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ---------------------------
+              IconTextButton(
+                onPressed: () {},
+                icon: Icons.chat,
+                label: 'Chat',
+                borderRadius: BorderRadius.zero,
+                backgroundColor: Colors.blue,
+              ),
+
+              Container(
+                color: Colors.red,
+                child: TextButton(
+                  onPressed: () {
+                    context.go('/dev');
+                  },
+                  child: const Text('Go to dev page'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
