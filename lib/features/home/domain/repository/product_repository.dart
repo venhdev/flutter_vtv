@@ -1,15 +1,17 @@
 import '../../../../core/constants/typedef.dart';
 import '../dto/favorite_product_resp.dart';
-import '../dto/product_resp.dart';
+import '../dto/product_detail_resp.dart';
+import '../dto/product_page_resp.dart';
 import '../entities/category_entity.dart';
 import '../entities/favorite_product_entity.dart';
 
 abstract class ProductRepository {
-  FRespData<ProductResp> getSuggestionProductsRandomly(int page, int size);
+  //* product-suggestion-controller
+  FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size);
 
-  FRespData<ProductResp> getProductFilter(int page, int size, String sortType);
-
-  FRespData<ProductResp> getProductFilterByPriceRange(
+  //* product-filter-controller
+  FRespData<ProductPageResp> getProductFilter(int page, int size, String sortType);
+  FRespData<ProductPageResp> getProductFilterByPriceRange(
     int page,
     int size,
     int minPrice,
@@ -17,15 +19,17 @@ abstract class ProductRepository {
     String filter,
   );
 
-  // Category
+  //* Category
   FRespData<List<CategoryEntity>> getAllParentCategories();
 
-  //! Favorite Product
-  FRespData<FavoriteProductEntity> favoriteProductAdd(int productId);
-  FRespEither favoriteProductDelete(int favoriteProductId);
-  Future<int?> isFavoriteProduct(int productId);
-  FRespData<FavoriteProductEntity?> favoriteProductCheckExist(int productId);
-
+  //* favorite-product-controller
   FRespData<List<FavoriteProductEntity>> favoriteProductList();
   FRespData<FavoriteProductResp> favoriteProductDetail(int favoriteProductId);
+  FRespData<FavoriteProductEntity?> favoriteProductCheckExist(int productId);
+  FRespData<FavoriteProductEntity> favoriteProductAdd(int productId);
+  FRespEither favoriteProductDelete(int favoriteProductId);
+
+  //* Local
+  FResult<void> cacheRecentViewedProductId(String productId);
+  FResult<List<ProductDetailResp>> getRecentViewedProducts();
 }

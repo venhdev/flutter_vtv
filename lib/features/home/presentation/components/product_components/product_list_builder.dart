@@ -1,9 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_resp.dart';
+import '../../../domain/dto/product_detail_resp.dart';
+import '../../../domain/dto/product_page_resp.dart';
+import '../../pages/product_detail_page.dart';
+import 'best_selling_product_list.dart';
 import 'page_number.dart';
 import 'product_item.dart';
+
+class ProductDetailListBuilder extends StatelessWidget {
+  const ProductDetailListBuilder({
+    super.key,
+    this.crossAxisCount = 2,
+    required this.productDetails,
+  }) : assert(crossAxisCount > 0);
+
+  final List<ProductDetailResp> productDetails;
+  final int crossAxisCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        if (productDetails.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: GridView.count(
+            reverse: true,
+            scrollDirection: Axis.horizontal,
+            crossAxisCount: crossAxisCount,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: productDetails
+                .map(
+                  (p) => BestSellingProductItem(
+                    title: p.product.name,
+                    image: p.product.image,
+                    onTap: () {
+                      context.go(ProductDetailPage.path, extra: p.product);
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
+    );
+  }
+}
 
 class ProductListBuilder extends StatelessWidget {
   /// A builder that builds a list of products from a future
@@ -18,10 +65,9 @@ class ProductListBuilder extends StatelessWidget {
     this.onPageChanged,
     this.keywords,
   })  : assert(crossAxisCount > 0),
-        assert(showPageNumber == false ||
-            (currentPage != null && onPageChanged != null));
+        assert(showPageNumber == false || (currentPage != null && onPageChanged != null));
 
-  final Future<RespData<ProductResp>> future;
+  final Future<RespData<ProductPageResp>> future;
   final String? keywords; // for search page
   final int crossAxisCount;
 
@@ -32,7 +78,7 @@ class ProductListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<RespData<ProductResp>>(
+    return FutureBuilder<RespData<ProductPageResp>>(
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
@@ -43,8 +89,7 @@ class ProductListBuilder extends StatelessWidget {
         if (snapshot.hasData) {
           return snapshot.data!.fold(
             (errorResp) => Center(
-              child: Text('Error: ${errorResp.message}',
-                  style: const TextStyle(color: Colors.red)),
+              child: Text('Error: ${errorResp.message}', style: const TextStyle(color: Colors.red)),
             ),
             (dataResp) => Builder(builder: (context) {
               if (dataResp.data.products.isEmpty) {

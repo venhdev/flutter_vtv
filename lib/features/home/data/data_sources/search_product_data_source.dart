@@ -2,13 +2,13 @@ import 'package:http/http.dart' as http show Client;
 import '../../../../core/network/base_response.dart';
 import '../../../../core/constants/api.dart';
 import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_resp.dart';
+import '../../domain/dto/product_page_resp.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductResp>> searchProductSort(
+  Future<DataResponse<ProductPageResp>> searchProductSort(
       int page, int size, String keyword, String sort);
 
-  Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
+  Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -24,7 +24,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductResp>> searchProductSort(
+  Future<DataResponse<ProductPageResp>> searchProductSort(
       int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
@@ -43,7 +43,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     return handleResponseWithData(
       response,
       kAPISearchProductSortURL,
-      (jsonMap) => ProductResp.fromMap(jsonMap),
+      (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8
@@ -68,7 +68,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductResp>> searchProductPriceRangeSort(
+  Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -95,7 +95,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     return handleResponseWithData(
       response,
       kAPIGetSearchProductPriceRangeSortURL,
-      (jsonMap) => ProductResp.fromMap(jsonMap),
+      (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8

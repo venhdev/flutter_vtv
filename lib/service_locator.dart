@@ -21,6 +21,7 @@ import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/cart/data/data_sources/cart_data_source.dart';
 import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
+import 'features/home/data/data_sources/local_product_data_source.dart';
 import 'features/order/domain/repository/voucher_repository.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
@@ -72,11 +73,13 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl()));
   sl.registerSingleton<VoucherDataSource>(VoucherDataSourceImpl(sl()));
 
+  sl.registerSingleton<LocalProductDataSource>(LocalProductDataSourceImpl(sl()));
+
   //! Repository
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
 
-  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl()));
+  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl(), sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
 
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));

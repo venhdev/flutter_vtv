@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_resp.dart';
+import '../../../domain/dto/product_page_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import 'product_item.dart';
 
@@ -16,7 +16,7 @@ class LazyProductListBuilder extends StatefulWidget {
     this.crossAxisCount = 2,
   }) : assert(crossAxisCount > 0);
 
-  final Future<RespData<ProductResp>> Function(int page) dataCallback;
+  final Future<RespData<ProductPageResp>> Function(int page) dataCallback;
   final int crossAxisCount;
   final ScrollController scrollController;
 
