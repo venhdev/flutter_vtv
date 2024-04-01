@@ -3,10 +3,15 @@
 enum Role {
   CUSTOMER,
   ADMIN,
+  VENDOR,
 }
 
 enum Status {
   ACTIVE,
+  INACTIVE,
+  DELETED,
+  CANCEL,
+  LOCKED,
 }
 
 class SortTypes {
@@ -27,12 +32,12 @@ enum VoucherTypes {
 }
 
 enum OrderStatus {
-  WAITING,
-  PENDING,
-  SHIPPING,
-  COMPLETED,
+  WAITING, // chờ xác nhận từ shop (khi hủy)
+  PENDING, // chờ xác nhận từ shop (khi mới đặt)
+  SHIPPING, // đang giao
+  COMPLETED, // hoàn thành
   CANCELLED,
   PROCESSING,
-  CANCELED,
-  DELIVERED,
+  CANCELED, // đơn đã hủy
+  DELIVERED, // đã giao ??? đang được giaoC
 }

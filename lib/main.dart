@@ -43,12 +43,8 @@ void main() async {
   FlutterNativeSplash.remove();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(
-        create: (context) => ThemeProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => appState,
-      ),
+      ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ChangeNotifierProvider(create: (context) => appState),
       BlocProvider(create: (context) => authCubit),
       BlocProvider(create: (context) => sl<CartBloc>()..add(InitialCart())),
     ],

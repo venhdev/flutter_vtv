@@ -23,8 +23,8 @@ abstract class OrderRepository {
 
   //! Purchase - Manage orders
   /// Get all orders
-  FRespData<OrdersResp> getListOrders();
+  FRespData<MultiOrderResp> getListOrders();
   /// Get orders by status
   /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
-  FRespData<OrdersResp> getListOrdersByStatus(String status);
+  FRespData<MultiOrderResp> getListOrdersByStatus(String status);
 }

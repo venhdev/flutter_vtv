@@ -13,23 +13,28 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: () {
-          context.go(ProductDetailPage.path, extra: product);
-        },
+    return InkWell(
+      onTap: () {
+        context.go(ProductDetailPage.path, extra: product);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+        ),
         child: Column(
           children: [
+            //# Image
             SizedBox(
-              height: 120,
+              height: 130,
               width: double.infinity,
               child: ImageCacheable(
                 product.image,
                 fit: BoxFit.cover,
               ),
             ),
+            //# Name
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 '${product.name} ${product.name}${product.name}',
                 overflow: TextOverflow.ellipsis,
@@ -39,12 +44,38 @@ class ProductItem extends StatelessWidget {
                 ),
               ),
             ),
-            // Text(
-            //   product.cheapestPrice != product.mostExpensivePrice
-            //       ? '${formatCurrency(product.cheapestPrice)} - ${formatCurrency(product.mostExpensivePrice)}'
-            //       : formatCurrency(product.cheapestPrice),
-            // ),
-            Text(formatCurrency(product.cheapestPrice)),
+            //# Price & Rating & Sold
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    formatCurrency(product.cheapestPrice),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // rating
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          Text(product.rating, style: const TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      // sold
+                      Text('Đã bán ${product.sold}', style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

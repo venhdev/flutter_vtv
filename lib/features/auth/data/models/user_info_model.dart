@@ -76,31 +76,30 @@ class UserInfoModel extends UserInfoEntity {
   }
 
   factory UserInfoModel.fromMap(Map<String, dynamic> map) {
-    Status? status;
-    List<Role> roles = [];
+    // List<Role> roles = [];
 
-    if (map['status'] != null) {
-      switch (map['status'] as String) {
-        case 'ACTIVE':
-          status = Status.ACTIVE;
-          break;
-        default:
-          status = Status.ACTIVE;
-      }
-    }
+    // if (map['status'] != null) {
+    //   switch (map['status'] as String) {
+    //     case 'ACTIVE':
+    //       status = Status.ACTIVE;
+    //       break;
+    //     default:
+    //       status = Status.ACTIVE;
+    //   }
+    // }
 
-    if (map['roles'] != null) {
-      for (var element in (map['roles'] as List<dynamic>)) {
-        switch (element as String) {
-          case 'ADMIN':
-            roles.add(Role.ADMIN);
-            break;
-          case 'CUSTOMER':
-            roles.add(Role.CUSTOMER);
-            break;
-        }
-      }
-    }
+    // if (map['roles'] != null) {
+    //   for (var element in (map['roles'] as List<dynamic>)) {
+    //     switch (element as String) {
+    //       case 'ADMIN':
+    //         roles.add(Role.ADMIN);
+    //         break;
+    //       case 'CUSTOMER':
+    //         roles.add(Role.CUSTOMER);
+    //         break;
+    //     }
+    //   }
+    // }
 
     return UserInfoModel(
       customerId: map['customerId'] as int?,
@@ -108,16 +107,18 @@ class UserInfoModel extends UserInfoEntity {
       fullName: map['fullName'] as String?,
       gender: map['gender'] as bool?,
       email: map['email'] as String?,
-      birthday: map['birthday'] != null
-          ? DateTime.parse(map['birthday'] as String)
-          : null,
-      status: status,
-      roles: roles,
+      birthday: map['birthday'] != null ? DateTime.parse(map['birthday'] as String) : null,
+      status: Status.values.firstWhere((status) => status.name == map['status'] as String),
+      // roles: roles,
+      roles: (map['roles'] as List<dynamic>?)
+          ?.map(
+            (role) => Role.values.firstWhere((r) => r.name == role),
+          )
+          .toList(),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory UserInfoModel.fromJson(String source) =>
-      UserInfoModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserInfoModel.fromJson(String source) => UserInfoModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

@@ -39,7 +39,6 @@ class CartDataSourceImpl extends CartDataSource {
   @override
   Future<SuccessResponse> addToCart(int productVariantId, int quantity) async {
     final body = {
-      'username': await _secureStorageHelper.username,
       'productVariantId': productVariantId.toString(),
       'quantity': quantity.toString(),
     };

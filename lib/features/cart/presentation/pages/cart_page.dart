@@ -62,16 +62,6 @@ class _CartPageState extends State<CartPage> {
                     floating: true,
                     backgroundColor: Colors.transparent,
                     bottom: _buildAddress(context),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          // GoRouter.of(context).go(AddressPage.path);
-                          // show current go router path
-                          log(GoRouterState.of(context).uri.toString());
-                        },
-                        icon: const Icon(Icons.location_history),
-                      ),
-                    ],
                   ),
                 ];
               },

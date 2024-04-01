@@ -75,12 +75,25 @@ class _DevPageState extends State<DevPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            FutureBuilder(
+              future: sl<SecureStorageHelper>().roles,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final roles = snapshot.data!;
+                  return Text('${roles.length} Roles: $roles');
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
             _buildDomain(),
             const Divider(),
             _buildToken(),
             const Divider(),
             _buildFCM(),
             const Divider(),
+            //--------------------------------
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(

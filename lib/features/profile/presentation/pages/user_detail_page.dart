@@ -10,7 +10,7 @@ class UserDetailPage extends StatefulWidget {
   const UserDetailPage({super.key, required this.userInfo});
 
   static const String routeName = 'user-detail';
-  static const String path = '/user/detail';
+  static const String path = '/user/user-detail';
 
   final UserInfoEntity userInfo;
 
