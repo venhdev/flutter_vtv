@@ -10,7 +10,7 @@ import '../../../features/home/presentation/pages/search_page.dart';
 
 AppBar buildAppBar(
   BuildContext context, {
-  String? title,
+  Widget? title,
   bool showSettingButton = false,
   bool showSearchBar = true,
   TextEditingController? searchController,
@@ -18,11 +18,13 @@ AppBar buildAppBar(
   Function(String)? onSubmittedCallback,
   bool clearOnSubmit = false,
   bool automaticallyImplyLeading = false,
+  Color? backgroundColor,
 }) {
   // title & search bar can't be shown at the same time
   assert(title == null || showSearchBar == false, 'title & search bar can\'t be shown at the same time');
   return AppBar(
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    title: title,
+    backgroundColor: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
     leading: leading,
     automaticallyImplyLeading: automaticallyImplyLeading,
     actions: [
@@ -50,6 +52,8 @@ AppBar buildAppBar(
           onPressed: () => context.go('/user/settings'),
           icon: const Icon(Icons.settings_outlined),
         ),
+
+      const SizedBox(width: 8),
     ],
   );
 }
@@ -73,7 +77,7 @@ class CartBadge extends StatelessWidget {
                 builder: (context, state) {
                   if (state is CartLoaded) {
                     if (state.cart.count == 0) {
-                      return IconButton.outlined(
+                      return IconButton(
                         onPressed: () => context.go(CartPage.path),
                         icon: const Icon(Icons.shopping_cart_outlined),
                       );
@@ -81,15 +85,16 @@ class CartBadge extends StatelessWidget {
                     return Badge(
                       label: Text(state.cart.count.toString()),
                       backgroundColor: Colors.orange,
-                      child: IconButton.outlined(
+                      offset: const Offset(0, 0),
+                      child: IconButton(
                         onPressed: () => context.go(CartPage.path),
-                        icon: const Icon(Icons.shopping_cart_outlined),
+                        icon: const Icon(Icons.shopping_cart),
                       ),
                     );
                   } else if (state is CartInitial || state is CartLoading) {
-                    return const IconButton.outlined(
+                    return const IconButton(
                       onPressed: null,
-                      icon: Icon(Icons.shopping_cart_outlined),
+                      icon: Icon(Icons.shopping_cart),
                     );
                   }
                   // NOTE: there may be some other states/errors that need to be handled
@@ -98,15 +103,16 @@ class CartBadge extends StatelessWidget {
                   );
                 },
               ),
+              // TODO chat
               // icon chat
-              const IconButton.outlined(
-                onPressed: null,
-                // onPressed: () {
-                //   // log(context.read<CartBloc>().state.toString());
-                //   // context.read<CartBloc>().add(InitialCart());
-                // },
-                icon: Icon(Icons.chat_outlined),
-              ),
+              // const IconButton.outlined(
+              //   onPressed: null,
+              //   // onPressed: () {
+              //   //   // log(context.read<CartBloc>().state.toString());
+              //   //   // context.read<CartBloc>().add(InitialCart());
+              //   // },
+              //   icon: Icon(Icons.chat_outlined),
+              // ),
             ],
           );
         }

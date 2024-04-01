@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/core/notification/local_notification_manager.dart';
+import 'package:flutter_vtv/features/home/domain/dto/product_detail_resp.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +10,7 @@ import '../../../../service_locator.dart';
 import '../../../home/domain/repository/product_repository.dart';
 import '../../../home/presentation/components/product_components/product_list_builder.dart';
 import '../../../order/presentation/pages/voucher_page.dart';
+import '../../../profile/presentation/pages/user_detail_page.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 
@@ -19,46 +22,18 @@ class LoggedView extends StatelessWidget {
 
   final AuthEntity auth;
 
+  // appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return _buildHeaderSliver(context);
+      },
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // user avatar + fullName + username
-            InkWell(
-              onTap: () {
-                context.go('/user/user-detail', extra: auth.userInfo);
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                // avatar
-                children: [
-                  const SizedBox(width: 12),
-                  const CircleAvatar(
-                    radius: 30,
-                    backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  // username
-                  SizedBox(
-                    height: 60,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '${auth.userInfo.fullName!} (${auth.userInfo.username!})',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () {
@@ -68,33 +43,7 @@ class LoggedView extends StatelessWidget {
             ),
 
             //# Recent Product Viewed
-            FutureBuilder(
-              future: sl<ProductRepository>().getRecentViewedProducts(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final resultEither = snapshot.data!;
-                  return resultEither.fold(
-                    (error) {
-                      return MessageScreen.error(error.toString());
-                    },
-                    (data) {
-                      return SizedBox(
-                        height: 100,
-                        child: ProductDetailListBuilder(
-                          productDetails: data,
-                          crossAxisCount: 1,
-                        ),
-                      );
-                    },
-                  );
-                } else if (snapshot.hasError) {
-                  return MessageScreen.error(snapshot.error.toString());
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            ),
+            _buildRecentProduct(),
 
             // voucher
             //! DEV
@@ -122,5 +71,89 @@ class LoggedView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  FutureBuilder<Result<List<ProductDetailResp>>> _buildRecentProduct() {
+    return FutureBuilder(
+            future: sl<ProductRepository>().getRecentViewedProducts(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final resultEither = snapshot.data!;
+                return resultEither.fold(
+                  (error) {
+                    return MessageScreen.error(error.toString());
+                  },
+                  (data) {
+                    return SizedBox(
+                      height: 100,
+                      child: ProductDetailListBuilder(
+                        productDetails: data,
+                        crossAxisCount: 1,
+                      ),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return MessageScreen.error(snapshot.error.toString());
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+  }
+
+  List<Widget> _buildHeaderSliver(BuildContext context) {
+    return [
+      SliverAppBar(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+        actions: [
+          const CartBadge(),
+          IconButton(
+            onPressed: () => context.go('/user/settings'),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
+      ),
+      SliverToBoxAdapter(
+        child: IconButton(
+          // no border
+          style: IconButton.styleFrom(
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+          ),
+          padding: EdgeInsets.zero,
+          onPressed: () => context.go(UserDetailPage.path, extra: auth.userInfo),
+          icon: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              // avatar
+              children: [
+                const SizedBox(width: 12),
+                const CircleAvatar(
+                  radius: 30,
+                  backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
+                ),
+
+                const SizedBox(width: 12),
+
+                // username
+                SizedBox(
+                  height: 60,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '${auth.userInfo.fullName!} (${auth.userInfo.username!})',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 }

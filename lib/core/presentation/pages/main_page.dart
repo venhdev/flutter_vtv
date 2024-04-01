@@ -76,23 +76,25 @@ class MainPage extends StatelessWidget {
                 )
               : null,
           bottomNavigationBar: _shouldShowBottomNavigationBar(context)
-              ? BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.shopping_cart),
-                      tooltip: 'Trang chủ',
-                      label: 'Trang chủ', // index => 0
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person),
-                      tooltip: 'Tài khoản',
-                      label: 'Tài khoản', // index => 1
-                      backgroundColor: Colors.blue,
-                    ),
-                  ],
-                  currentIndex: _calculateSelectedIndex(context),
-                  onTap: (int idx) => _onItemTapped(idx, context),
-                )
+              ? appState.isBottomNavigationVisible
+                  ? BottomNavigationBar(
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.shopping_cart),
+                          tooltip: 'Trang chủ',
+                          label: 'Trang chủ', // index => 0
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.person),
+                          tooltip: 'Tài khoản',
+                          label: 'Tài khoản', // index => 1
+                          backgroundColor: Colors.blue,
+                        ),
+                      ],
+                      currentIndex: _calculateSelectedIndex(context),
+                      onTap: (int idx) => _onItemTapped(idx, context),
+                    )
+                  : null
               : null,
         );
       },

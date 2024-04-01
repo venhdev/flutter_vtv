@@ -23,6 +23,17 @@ class AppState extends ChangeNotifier {
     subscribeConnection();
   }
 
+  //.---------------------Bottom Navigation Visibility-----------------------
+  bool _isBottomNavigationVisible = true;
+
+  bool get isBottomNavigationVisible => _isBottomNavigationVisible;
+
+  void setBottomNavigationVisibility(bool isVisible) {
+    _isBottomNavigationVisible = isVisible;
+    notifyListeners();
+  }
+
+  //.---------------------Connectivity-----------------------
   Stream<List<ConnectivityResult>> get connectionStream => _connectivity.onConnectivityChanged;
 
   // subscribe to the connectivity stream
@@ -32,7 +43,9 @@ class AppState extends ChangeNotifier {
       notifyListeners();
     });
   }
+  //.---------------------Connectivity-----------------------
 
+  //.---------------------First run-----------------------
   bool get isFirstRun => _isFirstRun;
 
   /// Sets the app as started. (Not the first run)
@@ -41,4 +54,5 @@ class AppState extends ChangeNotifier {
     await _prefHelper.setStarted(false);
     notifyListeners();
   }
+  //.---------------------First run-----------------------
 }

@@ -36,12 +36,12 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrdersResp> getListOrders() async {
+  FRespData<MultiOrderResp> getListOrders() async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getListOrders());
   }
 
   @override
-  FRespData<OrdersResp> getListOrdersByStatus(String status) async {
+  FRespData<MultiOrderResp> getListOrdersByStatus(String status) async {
     return handleDataResponseFromDataSource(
       dataCallback: () => _orderDataSource.getListOrdersByStatus(status),
     );

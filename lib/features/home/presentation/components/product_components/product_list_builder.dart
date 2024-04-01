@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../../app_state.dart';
 import '../../../../../core/constants/typedef.dart';
 import '../../../domain/dto/product_detail_resp.dart';
 import '../../../domain/dto/product_page_resp.dart';
@@ -39,8 +43,17 @@ class ProductDetailListBuilder extends StatelessWidget {
                   (p) => BestSellingProductItem(
                     title: p.product.name,
                     image: p.product.image,
-                    onTap: () {
-                      context.go(ProductDetailPage.path, extra: p.product);
+                    onTap: () async {
+                      // context.go(ProductDetailPage.path, extra: p.product);
+                      Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ProductDetailPage(product: p.product);
+                          },
+                        ),
+                      ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
                     },
                   ),
                 )

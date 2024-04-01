@@ -15,6 +15,16 @@ class SecureStorageHelper {
 
   Future<bool> get isLogin => _storage.containsKey(key: _keyAuth);
 
+  // get roles
+  Future<List<String>> get roles async {
+    try {
+      final auth = await readAuth();
+      return auth.userInfo.roles!.map((e) => e.toString()).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
   /// get access token from local storage.
   /// - return null if not found (not login yet)
   Future<String?> get accessToken async {
@@ -50,8 +60,7 @@ class SecureStorageHelper {
     try {
       await _storage.write(key: _keyAuth, value: jsonData);
     } catch (e) {
-      throw CacheException(
-          message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
+      throw CacheException(message: 'Có lỗi xảy ra khi lưu thông tin người dùng!');
     }
   }
 
@@ -62,8 +71,7 @@ class SecureStorageHelper {
       final newAuth = auth.copyWith(userInfo: newInfo);
       await cacheAuth(AuthModel.fromEntity(newAuth).toJson());
     } catch (e) {
-      throw CacheException(
-          message: 'Có lỗi xảy ra khi cập nhật thông tin người dùng!');
+      throw CacheException(message: 'Có lỗi xảy ra khi cập nhật thông tin người dùng!');
     }
   }
 

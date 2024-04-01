@@ -91,8 +91,11 @@ class _HomePageState extends State<HomePage> {
                               currentFilter.sortType,
                             );
                           } else {
-                            return sl<ProductRepository>()
-                                .getProductFilter(page, _productPerPage, currentFilter.sortType);
+                            return sl<ProductRepository>().getProductFilter(
+                              page,
+                              _productPerPage,
+                              currentFilter.sortType,
+                            );
                           }
                         }
                         return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);

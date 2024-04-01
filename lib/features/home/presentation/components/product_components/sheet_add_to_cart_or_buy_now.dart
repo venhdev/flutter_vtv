@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../core/constants/enum.dart';
 import '../../../../../core/helpers/helpers.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../core/presentation/pages/photo_view.dart';
@@ -68,8 +70,6 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
                 ),
               ),
             );
-
-            
           },
         );
       } else {
@@ -87,96 +87,12 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Image, price, quantity
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PhotoViewPage(
-                        imageUrl: _variant?.image.isNotEmpty ?? false ? _variant!.image : widget.product.image,
-                      ),
-                    ),
-                  );
-                },
-                child: ImageCacheable(
-                  (_variant?.image.isNotEmpty ?? false) ? _variant!.image : widget.product.image,
-                  width: 100,
-                  height: 100,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      style: DefaultTextStyle.of(context).style,
-                      children: [
-                        const TextSpan(text: 'Giá: '),
-                        TextSpan(
-                          text: priceString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text('Còn lại: ${_variant?.quantity ?? 0}'),
-                ],
-              )
-            ],
-          ),
+          _buildSummaryInfo(context),
           const Divider(color: Colors.grey),
 
           // variant
           const Text('Phân loại', style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: SingleChildScrollView(
-              child: Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: widget.product.productVariants
-                    .map(
-                      (variant) => ChoiceChip(
-                        labelPadding: EdgeInsets.zero,
-                        padding: const EdgeInsets.all(4),
-                        showCheckmark: false,
-                        selected: _variant == variant,
-                        onSelected: (selected) {
-                          setState(() {
-                            _variant = selected ? variant : null;
-                            _quantity = 1;
-                          });
-                        },
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ImageCacheable(
-                              variant.image.isNotEmpty ? variant.image : widget.product.image,
-                              height: 38,
-                              width: 38,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              variant.sku,
-                              style: const TextStyle(fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-          ),
+          _buildSelectableVariants(context),
           const Divider(color: Colors.grey),
 
           // attribute
@@ -221,13 +137,7 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
           BlocListener<CartBloc, CartState>(
             listener: (context, state) {
               if (state.message != null) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(state.message!),
-                    ),
-                  );
+                Fluttertoast.showToast(msg: state.message!);
               }
             },
             child: ElevatedButton(
@@ -241,6 +151,106 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
           ),
         ],
       ),
+    );
+  }
+
+  SizedBox _buildSelectableVariants(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.3,
+      child: SingleChildScrollView(
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: widget.product.productVariants
+              .map(
+                (variant) => Badge(
+                  isLabelVisible: variant.quantity == 0 || variant.status != Status.ACTIVE.name,
+                  label: Text(variant.status),
+                  backgroundColor: Colors.red.shade700,
+                  offset: const Offset(-24, -8),
+                  child: ChoiceChip(
+                    labelPadding: EdgeInsets.zero,
+                    padding: const EdgeInsets.all(4),
+                    showCheckmark: false,
+                    selected: _variant == variant,
+                    onSelected: (variant.quantity == 0 || variant.status != Status.ACTIVE.name)
+                        ? null
+                        : (selected) {
+                            setState(() {
+                              _variant = selected ? variant : null;
+                              _quantity = 1;
+                            });
+                          },
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ImageCacheable(
+                          variant.image.isNotEmpty ? variant.image : widget.product.image,
+                          height: 38,
+                          width: 38,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          variant.sku,
+                          style: const TextStyle(fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  Row _buildSummaryInfo(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PhotoViewPage(
+                  imageUrl: _variant?.image.isNotEmpty ?? false ? _variant!.image : widget.product.image,
+                ),
+              ),
+            );
+          },
+          child: ImageCacheable(
+            (_variant?.image.isNotEmpty ?? false) ? _variant!.image : widget.product.image,
+            width: 100,
+            height: 100,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
+                children: [
+                  const TextSpan(text: 'Giá: '),
+                  TextSpan(
+                    text: priceString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_variant?.quantity != null) Text('Còn lại: ${_variant?.quantity}'),
+          ],
+        )
+      ],
     );
   }
 }

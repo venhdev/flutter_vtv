@@ -7,7 +7,7 @@ import '../../../order/domain/entities/order_entity.dart';
 import '../../../order/domain/entities/shipping_entity.dart';
 
 //! OrderResp with one OrderEntity
-//! OrdersResp with List<OrderEntity>
+//! MultiOrderResp with List<OrderEntity>
 class OrderResp extends Equatable {
   final String status;
   final String message;
@@ -69,14 +69,14 @@ class OrderResp extends Equatable {
   bool get stringify => true;
 }
 
-class OrdersResp extends Equatable {
+class MultiOrderResp extends Equatable {
   final String status;
   final String message;
   final int code;
   final List<OrderEntity> orders;
   // final ShippingEntity shipping;
 
-  const OrdersResp({
+  const MultiOrderResp({
     required this.status,
     required this.message,
     required this.code,
@@ -84,13 +84,13 @@ class OrdersResp extends Equatable {
     // required this.shipping,
   });
 
-  OrdersResp copyWith({
+  MultiOrderResp copyWith({
     String? status,
     String? message,
     int? code,
     List<OrderEntity>? orders,
   }) {
-    return OrdersResp(
+    return MultiOrderResp(
       status: status ?? this.status,
       message: message ?? this.message,
       code: code ?? this.code,
@@ -99,8 +99,8 @@ class OrdersResp extends Equatable {
     );
   }
 
-  factory OrdersResp.fromMap(Map<String, dynamic> map) {
-    return OrdersResp(
+  factory MultiOrderResp.fromMap(Map<String, dynamic> map) {
+    return MultiOrderResp(
       status: map['status'] as String,
       message: map['message'] as String,
       code: map['code'] as int,
@@ -112,7 +112,7 @@ class OrdersResp extends Equatable {
     );
   }
 
-  factory OrdersResp.fromJson(String source) => OrdersResp.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MultiOrderResp.fromJson(String source) => MultiOrderResp.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   List<Object> get props {

@@ -37,9 +37,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
     _currentPage = 1;
     _loadData(_currentPage);
     widget.scrollController.addListener(() {
-      if (widget.scrollController.position.pixels ==
-              widget.scrollController.position.maxScrollExtent &&
-          !_isLoading) {
+      if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent && !_isLoading) {
         _loadData(_currentPage);
       }
     });
@@ -104,9 +102,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
                 ? const CircularProgressIndicator()
                 : _message == null
                     ? Container()
-                    : Text(
-                        '$_message',
-                      ),
+                    : Text('$_message'),
           );
         } else {
           return ProductItem(product: _products[index]);

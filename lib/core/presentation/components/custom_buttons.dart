@@ -39,7 +39,7 @@ class IconTextButton extends StatelessWidget {
     return IconButton(
       onPressed: onPressed,
       padding: padding ?? const EdgeInsets.all(0),
-      style: TextButton.styleFrom(
+      style: IconButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius ?? BorderRadius.circular(8),
         ),
