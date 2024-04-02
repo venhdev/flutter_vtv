@@ -13,8 +13,13 @@ final _routes = <RouteBase>[
         path: ProductDetailPage.routeName, // 'home/product-detail'
         name: ProductDetailPage.routeName, // product-detail
         builder: (context, state) {
-          final ProductEntity product = state.extra as ProductEntity;
-          return ProductDetailPage(product: product);
+          // final ProductDetailResp productDetail = state.extra as ProductDetailResp;
+          final passData = state.extra;
+          if (passData is ProductDetailResp) {
+            return ProductDetailPage(productDetail: passData);
+          } else {
+            return ProductDetailPage(productId: passData as int);
+          }
         },
       ),
       GoRoute(

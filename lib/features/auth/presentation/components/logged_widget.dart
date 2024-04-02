@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../app_state.dart';
+import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/components/custom_buttons.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
@@ -16,7 +17,7 @@ import '../../../home/presentation/pages/favorite_product_page.dart';
 import '../../../order/presentation/pages/voucher_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
 import '../../domain/entities/auth_entity.dart';
-import '../../../../core/presentation/components/app_bar.dart';
+import 'catalog_item.dart';
 
 class LoggedView extends StatelessWidget {
   const LoggedView({
@@ -48,7 +49,7 @@ class LoggedView extends StatelessWidget {
             _buildRecentProduct(),
 
             //! DEV
-            _buildDEV(context),
+            // _buildDEV(context),
           ],
         ),
       ),
@@ -168,7 +169,7 @@ class LoggedView extends StatelessWidget {
           padding: EdgeInsets.zero,
           onPressed: () => context.go(UserDetailPage.path, extra: auth.userInfo),
           icon: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.only(bottom: 4.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               // avatar
@@ -198,57 +199,5 @@ class LoggedView extends StatelessWidget {
         ),
       ),
     ];
-  }
-}
-
-class CatalogItem extends StatelessWidget {
-  const CatalogItem({
-    super.key,
-    required this.catalogName,
-    required this.catalogDescription,
-    this.icon,
-    this.backgroundColor,
-    this.onPressed,
-  });
-
-  final String catalogName;
-  final String catalogDescription;
-  final Icon? icon;
-  final Color? backgroundColor;
-
-  final Function()? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        backgroundColor: Colors.grey[200],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(
-                catalogName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              icon ?? const SizedBox(),
-            ],
-          ),
-          // underline
-          Text(
-            catalogDescription,
-            style: const TextStyle(
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -2,13 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/custom_buttons.dart';
+import '../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../../../service_locator.dart';
-import '../../domain/entities/product_entity.dart';
+import '../../../auth/presentation/components/rating.dart';
+import '../../domain/dto/product_detail_resp.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
 
@@ -21,9 +24,15 @@ import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
   );
 */
 class ProductDetailPage extends StatefulWidget {
-  const ProductDetailPage({super.key, required this.product});
+  const ProductDetailPage({
+    super.key,
+    this.productId,
+    this.productDetail,
+  })  : assert(productId != null || productDetail != null, 'productId or productDetail must not be null'),
+        assert(productId == null || productDetail == null, 'cannot pass both productId and productDetail');
 
-  final ProductEntity product;
+  final int? productId;
+  final ProductDetailResp? productDetail;
 
   static const String routeName = 'product-detail';
   static const String path = '/home/product-detail';
@@ -33,9 +42,27 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
+  final ScrollController _scrollController = ScrollController();
   bool _showBottomSheet = true;
   int? _favoriteProductId;
-  final ScrollController _scrollController = ScrollController();
+  bool _isShowMoreDescription = false;
+
+  bool isInitializing = true;
+  late ProductDetailResp _productDetail;
+
+  void fetchProductDetail(int id) async {
+    final respEither = await sl<ProductRepository>().getProductDetailById(id);
+
+    respEither.fold(
+      (error) => log('Error: ${error.message}'),
+      (ok) {
+        setState(() {
+          _productDetail = ok.data;
+          isInitializing = false;
+        });
+      },
+    );
+  }
 
   void _scrollListener() {
     if (_scrollController.position.userScrollDirection == ScrollDirection.reverse && _showBottomSheet) {
@@ -52,7 +79,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   void handleTapFavoriteButton() async {
     // add to favorite
     if (_favoriteProductId == null) {
-      final respEither = await sl<ProductRepository>().favoriteProductAdd(widget.product.productId);
+      final respEither = await sl<ProductRepository>().favoriteProductAdd(_productDetail.product.productId);
 
       respEither.fold(
         (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
@@ -80,8 +107,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   void checkIsFavorite() async {
     // final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
-    final checkEither = await sl<ProductRepository>().favoriteProductCheckExist(widget.product.productId);
-    log('checkEither: $checkEither');
+    final checkEither = await sl<ProductRepository>().favoriteProductCheckExist(
+      widget.productId ?? widget.productDetail!.product.productId,
+    );
 
     setState(() {
       _favoriteProductId = checkEither.fold(
@@ -93,12 +121,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   void cacheRecentView() async {
     final respEither = await sl<ProductRepository>().cacheRecentViewedProductId(
-      widget.product.productId.toString(),
+      // _productDetail.product.productId.toString(),
+      widget.productId ?? widget.productDetail!.product.productId,
     );
 
     respEither.fold(
       (error) => log('Error: ${error.message}'),
-      (ok) => log('Cache success with productId: ${widget.product.productId}'),
+      (ok) => log(
+        'Cache success with productId: ${widget.productId ?? widget.productDetail!.product.productId}',
+      ),
     );
   }
 
@@ -106,6 +137,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    if (widget.productId != null) {
+      fetchProductDetail(widget.productId!);
+    } else {
+      _productDetail = widget.productDetail!;
+      isInitializing = false;
+    }
     checkIsFavorite();
     cacheRecentView();
   }
@@ -122,78 +159,211 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Scaffold(
       // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
       bottomSheet: _buildBottomActionBar(context),
-      body: GestureDetector(
-        onTap: () {
-          if (!_showBottomSheet) {
-            setState(() {
-              _showBottomSheet = true;
-            });
-          }
+      // onTap: () {
+      //     if (!_showBottomSheet) {
+      //       setState(() {
+      //         _showBottomSheet = true;
+      //       });
+      //     }
+      //   },
+      body: isInitializing
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : _buildBody(context),
+    );
+  }
+
+  CustomScrollView _buildBody(BuildContext context) {
+    return CustomScrollView(
+      // controller: _scrollController,
+      slivers: <Widget>[
+        _buildSliverAppBar(context),
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              //# price of the product
+              _buildProductPrice(),
+              const SizedBox(height: 8),
+
+              //# name of the product
+              _buildProductName(),
+              _buildMoreInfo(),
+              const SizedBox(height: 8),
+
+              _buildShopInfo(),
+              const SizedBox(height: 8),
+
+              //# description of the product
+              _buildProductDescription(),
+
+              const SizedBox(height: 56),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShopInfo() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(_productDetail.shopAvatar),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _productDetail.shopName,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  SliverAppBar _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: MediaQuery.of(context).size.height * 0.4,
+      floating: false,
+      pinned: true,
+      snap: false,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
         },
-        child: ListView(
-          controller: _scrollController,
-          children: <Widget>[
-            // image of the product
-            _buildProductImage(context),
-
-            const SizedBox(height: 16),
-
-            // name of the product
-            _buildProductName(),
-
-            const SizedBox(height: 8),
-
-            // price of the product
-            _buildProductPrice(),
-
-            const SizedBox(height: 16),
-
-            // description of the product
-            _buildProductDescription(),
-
-            const SizedBox(height: 56),
-          ],
+        icon: const Icon(Icons.arrow_back),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+            Colors.white24,
+          ),
+        ),
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PhotoViewPage(imageUrl: _productDetail.product.image),
+              ),
+            );
+          },
+          //# image of the product
+          child: ImageCacheable(
+            _productDetail.product.image,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
   }
 
-  Padding _buildProductDescription() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        widget.product.description,
-        style: const TextStyle(
-          fontSize: 16,
-        ),
+  IntrinsicHeight _buildMoreInfo() {
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Rating(rating: _productDetail.product.rating),
+              const VerticalDivider(
+                color: Colors.grey,
+                width: 20,
+                thickness: 1,
+                indent: 12,
+                endIndent: 12,
+              ),
+              Text('${_productDetail.product.sold} đã bán'),
+            ],
+          ),
+
+          // Add to favorite button
+          IconButton(
+            icon: _favoriteProductId != null
+                ? const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  )
+                : const Icon(
+                    Icons.favorite_border,
+                    color: Colors.red,
+                  ),
+            onPressed: handleTapFavoriteButton,
+          ),
+        ],
       ),
     );
   }
 
-  Padding _buildProductPrice() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        widget.product.cheapestPrice != widget.product.mostExpensivePrice
-            ? '${formatCurrency(widget.product.cheapestPrice)} - ${formatCurrency(widget.product.mostExpensivePrice)}'
-            : formatCurrency(widget.product.cheapestPrice),
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
+  Widget _buildProductDescription() {
+    return Column(
+      children: [
+        Text(
+          _productDetail.product.description,
+          maxLines: _isShowMoreDescription ? null : 4,
+          overflow: _isShowMoreDescription ? null : TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
         ),
+        if (_productDetail.product.description.length > 50)
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _isShowMoreDescription = !_isShowMoreDescription;
+              });
+            },
+            child: Text(
+              _isShowMoreDescription ? 'Thu gọn' : 'Xem thêm',
+              style: const TextStyle(
+                color: Colors.blue,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildProductPrice() {
+    return Text(
+      _productDetail.product.cheapestPrice != _productDetail.product.mostExpensivePrice
+          ? '${formatCurrency(_productDetail.product.cheapestPrice)} - ${formatCurrency(_productDetail.product.mostExpensivePrice)}'
+          : formatCurrency(_productDetail.product.cheapestPrice),
+      style: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+        color: Colors.red,
       ),
     );
   }
 
-  Padding _buildProductName() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        widget.product.name,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
+  Widget _buildProductName() {
+    return Text(
+      _productDetail.product.name,
+      maxLines: 4,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -206,7 +376,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PhotoViewPage(imageUrl: widget.product.image),
+              builder: (context) => PhotoViewPage(imageUrl: _productDetail.product.image),
             ),
           );
         },
@@ -216,7 +386,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             fit: StackFit.expand,
             children: [
               Image.network(
-                widget.product.image,
+                _productDetail.product.image,
                 fit: BoxFit.fitWidth,
               ),
               // back button
@@ -292,7 +462,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   showDragHandle: true,
                   isScrollControlled: true,
                   builder: (context) {
-                    return SheetAddToCartOrBuyNow(product: widget.product);
+                    return SheetAddToCartOrBuyNow(product: _productDetail.product);
                   },
                 );
               },
@@ -315,7 +485,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   showDragHandle: true,
                   isScrollControlled: true,
                   builder: (context) {
-                    return SheetAddToCartOrBuyNow(product: widget.product, isBuyNow: true);
+                    return SheetAddToCartOrBuyNow(product: _productDetail.product, isBuyNow: true);
                   },
                 );
               },

@@ -32,7 +32,7 @@ abstract class ProductDataSource {
   Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId);
 
   //# product-controller
-  Future<DataResponse<ProductDetailResp>> getProductDetailById(String productId);
+  Future<DataResponse<ProductDetailResp>> getProductDetailById(int productId);
 
   //# product-page-controller
   Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
@@ -179,7 +179,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDetailResp>> getProductDetailById(String productId) async {
+  Future<DataResponse<ProductDetailResp>> getProductDetailById(int productId) async {
     final response = await _client.get(
       baseUri(path: '$kAPIProductDetailURL/$productId'),
       headers: baseHttpHeaders(),

@@ -28,9 +28,9 @@ class FavoriteProductPage extends StatelessWidget {
                   mainAxisSpacing: 8,
                   children: ok.data.map((f) {
                     return ProductItem(
-                      productId: f.productId.toString(),
+                      productId: f.productId,
                       onPressed: () async {
-                        final productResp = await sl<ProductRepository>().getProductDetailById(f.productId.toString());
+                        final productResp = await sl<ProductRepository>().getProductDetailById(f.productId);
                         productResp.fold(
                           (error) => MessageScreen.error(error.message),
                           (ok) {
@@ -38,7 +38,7 @@ class FavoriteProductPage extends StatelessWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return ProductDetailPage(product: productDetail.product);
+                                  return ProductDetailPage(productDetail: productDetail);
                                 },
                               ),
                             );

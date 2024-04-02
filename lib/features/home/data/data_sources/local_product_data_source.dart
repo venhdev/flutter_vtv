@@ -4,7 +4,7 @@ String _keyRecentProduct = 'RECENT_PRODUCT';
 int _maxRecentProduct = 10;
 
 abstract class LocalProductDataSource {
-  Future<void> cacheProductId(String productId);
+  Future<void> cacheProductId(int productId);
   Future<List<String>> getRecentProductIds();
 }
 
@@ -14,12 +14,13 @@ class LocalProductDataSourceImpl extends LocalProductDataSource {
   final SharedPreferencesHelper _pref;
 
   @override
-  Future<void> cacheProductId(String productId) async {
+  Future<void> cacheProductId(int productId) async {
+    final id = productId.toString();
     List<String> recentProductIds = await getRecentProductIds();
-    if (recentProductIds.contains(productId)) {
-      recentProductIds.remove(productId);
+    if (recentProductIds.contains(id)) {
+      recentProductIds.remove(id);
     }
-    recentProductIds.insert(0, productId);
+    recentProductIds.insert(0, id);
     if (recentProductIds.length > _maxRecentProduct) {
       recentProductIds.removeLast();
     }

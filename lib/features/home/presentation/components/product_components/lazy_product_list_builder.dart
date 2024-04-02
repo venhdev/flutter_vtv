@@ -32,12 +32,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
   final List<ProductEntity> _products = [];
   String? _message;
 
-  @override
-  void dispose() {
-    log('[LazyProductListBuilder] dispose');
-    widget.scrollController.dispose();
-    super.dispose();
-  }
+  //! cannot dispose scrollController because it is passed from parent
 
   @override
   void initState() {
@@ -60,7 +55,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         });
       }
 
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 200));
 
       List<ProductEntity> data;
       final dataEither = await widget.dataCallback(page);
@@ -72,6 +67,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         (dataResp) {
           final newProducts = dataResp.data.products;
           if (newProducts.isEmpty) {
+            log('[LazyProductListBuilder] No more products');
             _message = 'Không còn sản phẩm nào';
           } else {
             _currentPage++; // After loading data, increase the current page by 1
@@ -101,7 +97,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
-      itemCount: _products.length + 1,
+      itemCount: _products.length,
       itemBuilder: (context, index) {
         if (_products.isEmpty) {
           return const Center(child: CircularProgressIndicator());
@@ -117,7 +113,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
           return ProductItem(
             product: _products[index],
             onPressed: () {
-              context.go(ProductDetailPage.path, extra: _products[index]);
+              context.go(ProductDetailPage.path, extra: _products[index].productId);
             },
           );
         }

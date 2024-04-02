@@ -1,15 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-import '../../../../../app_state.dart';
 import '../../../../../core/constants/typedef.dart';
 import '../../../domain/dto/product_detail_resp.dart';
 import '../../../domain/dto/product_page_resp.dart';
 import '../../pages/product_detail_page.dart';
-import 'best_selling_product_list.dart';
 import 'page_number.dart';
 import 'product_item.dart';
 
@@ -47,7 +42,7 @@ class ProductDetailListBuilder extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return ProductDetailPage(product: p.product);
+                            return ProductDetailPage(productDetail: p);
                           },
                         ),
                       );

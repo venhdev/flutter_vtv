@@ -7,7 +7,7 @@ import '../entities/favorite_product_entity.dart';
 
 abstract class ProductRepository {
   //# other
-  FRespData<ProductDetailResp> getProductDetailById(String productId);
+  FRespData<ProductDetailResp> getProductDetailById(int productId);
 
   //# product-suggestion-controller
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size);
@@ -33,7 +33,7 @@ abstract class ProductRepository {
   FRespEither favoriteProductDelete(int favoriteProductId);
 
   //# Local
-  FResult<void> cacheRecentViewedProductId(String productId);
+  FResult<void> cacheRecentViewedProductId(int productId);
   FResult<List<ProductDetailResp>> getRecentViewedProducts();
 
   //# product-page-controller
