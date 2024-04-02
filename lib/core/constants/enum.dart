@@ -36,8 +36,7 @@ enum OrderStatus {
   PENDING, // chờ xác nhận từ shop (khi mới đặt)
   SHIPPING, // đang giao
   COMPLETED, // hoàn thành
-  CANCELLED,
   PROCESSING,
-  CANCELED, // đơn đã hủy
+  CANCEL, // đơn đã hủy
   DELIVERED, // đã giao ??? đang được giaoC
 }

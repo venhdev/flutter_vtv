@@ -11,22 +11,6 @@ class OrderStatusBadge extends StatelessWidget {
 
   final OrderStatus status;
 
-  Color _color() {
-    switch (status) {
-      case OrderStatus.PENDING:
-        return Colors.grey.shade400;
-      case OrderStatus.SHIPPING:
-        return Colors.blue;
-      case OrderStatus.COMPLETED:
-        return Colors.green;
-      case OrderStatus.DELIVERED:
-        return Colors.green;
-
-      default:
-        return Colors.grey;
-    }
-  }
-
 // WAITING,
 //   PENDING,
 //   SHIPPING,
@@ -38,11 +22,11 @@ class OrderStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card.filled(
-      color: _color(),
+      color: getOrderStatusBackgroundColor(status),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
       child: Padding(
         padding: const EdgeInsets.all(2.0),
-        child: Text(formatOrderStatus(status)),
+        child: Text(formatOrderStatusName(status), style: const TextStyle(fontWeight: FontWeight.w600)),
       ),
     );
   }

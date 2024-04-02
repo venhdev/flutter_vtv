@@ -40,12 +40,9 @@ class ProductDetailListBuilder extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             children: productDetails
                 .map(
-                  (p) => BestSellingProductItem(
-                    title: p.product.name,
-                    image: p.product.image,
-                    onTap: () async {
-                      // context.go(ProductDetailPage.path, extra: p.product);
-                      Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
+                  (p) => ProductItem(
+                    onPressed: () async {
+                      // Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
 
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -53,9 +50,28 @@ class ProductDetailListBuilder extends StatelessWidget {
                             return ProductDetailPage(product: p.product);
                           },
                         ),
-                      ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
+                      );
+                      // .then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
                     },
+                    product: p.product,
+                    margin: const EdgeInsets.only(right: 6.0),
                   ),
+                  // (p) => BestSellingProductItem(
+                  //   title: p.product.name,
+                  //   image: p.product.image,
+                  //   onTap: () async {
+                  //     // context.go(ProductDetailPage.path, extra: p.product);
+                  //     Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
+
+                  //     Navigator.of(context).push(
+                  //       MaterialPageRoute(
+                  //         builder: (context) {
+                  //           return ProductDetailPage(product: p.product);
+                  //         },
+                  //       ),
+                  //     ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
+                  //   },
+                  // ),
                 )
                 .toList(),
           ),
@@ -121,7 +137,12 @@ class ProductListBuilder extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     children: dataResp.data.products
                         .map(
-                          (product) => ProductItem(product: product),
+                          (product) => ProductItem(
+                            product: product,
+                            onPressed: () {
+                              context.go(ProductDetailPage.path, extra: product);
+                            },
+                          ),
                         )
                         .toList(),
                   ),

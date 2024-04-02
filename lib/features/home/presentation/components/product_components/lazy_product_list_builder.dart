@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/typedef.dart';
 import '../../../domain/dto/product_page_resp.dart';
 import '../../../domain/entities/product_entity.dart';
+import '../../pages/product_detail_page.dart';
 import 'product_item.dart';
 
 class LazyProductListBuilder extends StatefulWidget {
@@ -29,6 +31,13 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
   bool _isLoading = false;
   final List<ProductEntity> _products = [];
   String? _message;
+
+  @override
+  void dispose() {
+    log('[LazyProductListBuilder] dispose');
+    widget.scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -105,7 +114,12 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
                     : Text('$_message'),
           );
         } else {
-          return ProductItem(product: _products[index]);
+          return ProductItem(
+            product: _products[index],
+            onPressed: () {
+              context.go(ProductDetailPage.path, extra: _products[index]);
+            },
+          );
         }
       },
     );

@@ -11,10 +11,10 @@ import '../../domain/entities/favorite_product_entity.dart';
 
 //! Remote data source
 abstract class ProductDataSource {
-  //* product-suggestion-controller
+  //# product-suggestion-controller
   Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size);
 
-  //* product-filter-controller
+  //# product-filter-controller
   Future<DataResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType);
   Future<DataResponse<ProductPageResp>> getProductFilterByPriceRange({
     required int page,
@@ -24,15 +24,18 @@ abstract class ProductDataSource {
     required String filter,
   });
 
-  //* favorite-product-controller
+  //# favorite-product-controller
   Future<DataResponse<List<FavoriteProductEntity>>> favoriteProductList();
   Future<DataResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId);
   Future<DataResponse<FavoriteProductEntity>> favoriteProductAdd(int productId);
   Future<SuccessResponse> favoriteProductDelete(int favoriteProductId);
   Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId);
 
-  //*product-controller
+  //# product-controller
   Future<DataResponse<ProductDetailResp>> getProductDetailById(String productId);
+
+  //# product-page-controller
+  Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
@@ -174,9 +177,9 @@ class ProductDataSourceImpl implements ProductDataSource {
       (jsonMap) => FavoriteProductResp.fromMap(jsonMap),
     );
   }
-  
+
   @override
-  Future<DataResponse<ProductDetailResp>> getProductDetailById(String productId) async{
+  Future<DataResponse<ProductDetailResp>> getProductDetailById(String productId) async {
     final response = await _client.get(
       baseUri(path: '$kAPIProductDetailURL/$productId'),
       headers: baseHttpHeaders(),
@@ -186,6 +189,26 @@ class ProductDataSourceImpl implements ProductDataSource {
       response,
       '$kAPIProductDetailURL/$productId',
       (jsonMap) => ProductDetailResp.fromMap(jsonMap),
+    );
+  }
+  
+  @override
+  Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId)async {
+    final response = await _client.get(
+      baseUri(
+        path: '$kAPIProductPageCategoryURL/$categoryId',
+        queryParameters: {
+          'page': page.toString(),
+          'size': size.toString(),
+        },
+      ),
+      headers: baseHttpHeaders(),
+    );
+
+    return handleResponseWithData<ProductPageResp>(
+      response,
+      '$kAPIProductPageCategoryURL/$categoryId',
+      (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
 }

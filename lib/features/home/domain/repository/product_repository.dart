@@ -6,10 +6,13 @@ import '../entities/category_entity.dart';
 import '../entities/favorite_product_entity.dart';
 
 abstract class ProductRepository {
-  //* product-suggestion-controller
+  //# other
+  FRespData<ProductDetailResp> getProductDetailById(String productId);
+
+  //# product-suggestion-controller
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size);
 
-  //* product-filter-controller
+  //# product-filter-controller
   FRespData<ProductPageResp> getProductFilter(int page, int size, String sortType);
   FRespData<ProductPageResp> getProductFilterByPriceRange(
     int page,
@@ -19,17 +22,20 @@ abstract class ProductRepository {
     String filter,
   );
 
-  //* Category
+  //# Category
   FRespData<List<CategoryEntity>> getAllParentCategories();
 
-  //* favorite-product-controller
+  //# favorite-product-controller
   FRespData<List<FavoriteProductEntity>> favoriteProductList();
   FRespData<FavoriteProductResp> favoriteProductDetail(int favoriteProductId);
   FRespData<FavoriteProductEntity?> favoriteProductCheckExist(int productId);
   FRespData<FavoriteProductEntity> favoriteProductAdd(int productId);
   FRespEither favoriteProductDelete(int favoriteProductId);
 
-  //* Local
+  //# Local
   FResult<void> cacheRecentViewedProductId(String productId);
   FResult<List<ProductDetailResp>> getRecentViewedProducts();
+
+  //# product-page-controller
+  FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId);
 }

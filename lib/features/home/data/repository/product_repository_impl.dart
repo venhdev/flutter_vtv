@@ -138,4 +138,18 @@ class ProductRepositoryImpl extends ProductRepository {
       return Left(UnexpectedFailure(message: e.toString()));
     }
   }
+
+  @override
+  FRespData<ProductDetailResp> getProductDetailById(String productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getProductDetailById(productId),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getProductPageByCategory(page, size, categoryId),
+    );
+  }
 }

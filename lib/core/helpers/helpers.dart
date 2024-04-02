@@ -67,8 +67,10 @@ String formatVoucherType({required String type, required int discount}) {
   return '';
 }
 
-String formatOrderStatus(OrderStatus status) {
+String formatOrderStatusName(OrderStatus? status) {
   switch (status) {
+    case null:
+      return 'Tất cả';
     case OrderStatus.WAITING:
       return 'Draft'; // when create order (not place order yet)
     case OrderStatus.PENDING:
@@ -79,7 +81,7 @@ String formatOrderStatus(OrderStatus status) {
       return 'Hoàn thành';
     case OrderStatus.DELIVERED:
       return 'Đã giao';
-    case OrderStatus.CANCELLED:
+    case OrderStatus.CANCEL:
       return 'Đã hủy';
     // Vendor Only
     case OrderStatus.PROCESSING:
@@ -88,5 +90,22 @@ String formatOrderStatus(OrderStatus status) {
     //! Unknown status
     default:
       return status.name;
+  }
+}
+
+Color? getOrderStatusBackgroundColor(OrderStatus? status) {
+  switch (status) {
+    case OrderStatus.WAITING:
+      return Colors.grey;
+    case OrderStatus.PENDING:
+      return Colors.grey;
+    case OrderStatus.SHIPPING:
+      return Colors.blue;
+    case OrderStatus.COMPLETED:
+      return Colors.green;
+    case OrderStatus.CANCEL:
+      return Colors.red.shade400;
+    default:
+      return Colors.orange;
   }
 }
