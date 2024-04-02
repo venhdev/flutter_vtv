@@ -118,7 +118,7 @@ class ProductRepositoryImpl extends ProductRepository {
 
       final products = await Future.wait(
         recentProductIds.map((productId) async {
-          final product = await _productDataSource.getProductDetailById(productId);
+          final product = await _productDataSource.getProductDetailById(int.parse(productId));
           return product.data;
         }),
       );
@@ -130,7 +130,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FResult<void> cacheRecentViewedProductId(String productId) async {
+  FResult<void> cacheRecentViewedProductId(int productId) async {
     try {
       await _localProductDataSource.cacheProductId(productId);
       return const Right(null);
@@ -140,7 +140,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<ProductDetailResp> getProductDetailById(String productId) async {
+  FRespData<ProductDetailResp> getProductDetailById(int productId) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => _productDataSource.getProductDetailById(productId),
     );

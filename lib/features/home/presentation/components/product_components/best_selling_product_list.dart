@@ -51,7 +51,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
                       final ProductEntity product = ok.data.products[index];
                       return ProductItem(
                         onPressed: () {
-                          context.go(ProductDetailPage.path, extra: product);
+                          context.go(ProductDetailPage.path, extra: product.productId);
                         },
                         product: product,
                         height: 140,

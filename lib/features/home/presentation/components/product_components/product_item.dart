@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/helpers/helpers.dart';
@@ -27,7 +25,7 @@ class ProductItem extends StatefulWidget {
   });
 
   final ProductEntity? product;
-  final String? productId;
+  final int? productId;
   final void Function() onPressed;
 
   final double? fontSizeName;
@@ -47,7 +45,7 @@ class _ProductItemState extends State<ProductItem> {
   bool _isLoading = true;
   late ProductEntity _product;
 
-  void fetchProductById(String id) async {
+  void fetchProductById(int id) async {
     final respEither = await sl<ProductRepository>().getProductDetailById(id);
     final product = respEither.fold<ProductEntity?>(
       (error) => null,
@@ -79,7 +77,7 @@ class _ProductItemState extends State<ProductItem> {
         if (!_isLoading) {
           widget.onPressed();
         } else {
-          context.go(ProductDetailPage.path, extra: widget.product);
+          context.go(ProductDetailPage.path, extra: _product.productId);
         }
       },
       child: Container(

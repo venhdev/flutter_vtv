@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../../app_state.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../service_locator.dart';
 import '../../../domain/repository/product_repository.dart';
@@ -54,7 +56,9 @@ class CategoryList extends StatelessWidget {
                           (category) => CategoryItem(
                             title: category.name,
                             image: category.image,
-                            onTap: () {
+                            onTap: () async {
+                              Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
+
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) {
@@ -69,7 +73,7 @@ class CategoryList extends StatelessWidget {
                                               dataCallback: (page) {
                                                 return sl<ProductRepository>().getProductPageByCategory(
                                                   page,
-                                                  12,
+                                                  8,
                                                   category.categoryId,
                                                 );
                                               },
@@ -81,7 +85,10 @@ class CategoryList extends StatelessWidget {
                                     );
                                   },
                                 ),
-                              );
+                              ).then((_) => Provider.of<AppState>(
+                                    context,
+                                    listen: false,
+                                  ).setBottomNavigationVisibility(true));
                             },
                           ),
                         )

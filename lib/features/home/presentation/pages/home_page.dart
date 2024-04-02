@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ScrollController scrollController = ScrollController();
-  final _productPerPage = 4; // page size
+  final _productPerPage = 8; //! page size
 
   // filter & sort
   FilterParams currentFilter = FilterParams(
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
               ),
               //# Product list with filter
               _buildProductActionBar(context),
-              _buildProductList(),
+              _buildLazyProducts(),
             ],
           ),
         ),
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildProductList() {
+  Widget _buildLazyProducts() {
     if (isShowing) {
       return LazyProductListBuilder(
         crossAxisCount: crossAxisCount,
