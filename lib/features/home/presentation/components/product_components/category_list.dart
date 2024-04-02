@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../service_locator.dart';
 import '../../../domain/repository/product_repository.dart';
+import 'lazy_product_list_builder.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({
@@ -40,8 +41,7 @@ class CategoryList extends StatelessWidget {
             if (snapshot.hasData) {
               return snapshot.data!.fold(
                 (l) => Center(
-                  child: Text('Error: $l',
-                      style: const TextStyle(color: Colors.red)),
+                  child: Text('Error: $l', style: const TextStyle(color: Colors.red)),
                 ),
                 (r) => SizedBox(
                   height: 100,
@@ -54,6 +54,35 @@ class CategoryList extends StatelessWidget {
                           (category) => CategoryItem(
                             title: category.name,
                             image: category.image,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return Scaffold(
+                                      appBar: AppBar(
+                                        title: Text(category.name),
+                                      ),
+                                      body: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            LazyProductListBuilder(
+                                              dataCallback: (page) {
+                                                return sl<ProductRepository>().getProductPageByCategory(
+                                                  page,
+                                                  12,
+                                                  category.categoryId,
+                                                );
+                                              },
+                                              scrollController: ScrollController(),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         )
                         .toList(),
@@ -91,41 +120,48 @@ class CategoryItem extends StatelessWidget {
     required this.title,
     required this.image,
     this.height = 70,
+    this.onTap,
   });
 
   final String title;
   final String image;
   final double height;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      // more border radius
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(6.0),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            child: ImageCacheable(
-              image,
-              height: height,
-              fit: BoxFit.fitHeight,
+      child: InkWell(
+        onTap: () {
+          onTap?.call();
+        },
+        borderRadius: BorderRadius.circular(6.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
               borderRadius: BorderRadius.circular(6.0),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Text(
-              title,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
+              child: ImageCacheable(
+                image,
+                height: height,
+                fit: BoxFit.fitHeight,
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

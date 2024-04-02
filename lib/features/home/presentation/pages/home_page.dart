@@ -74,39 +74,45 @@ class _HomePageState extends State<HomePage> {
               BestSellingProductListBuilder(
                 future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
               ),
-              // Product
+              //# Product list with filter
               _buildProductActionBar(context),
-              isShowing
-                  ? LazyProductListBuilder(
-                      crossAxisCount: crossAxisCount,
-                      scrollController: scrollController,
-                      dataCallback: (page) async {
-                        if (currentFilter.isFiltering) {
-                          if (currentFilter.filterPriceRange) {
-                            return sl<ProductRepository>().getProductFilterByPriceRange(
-                              page,
-                              _productPerPage,
-                              currentFilter.minPrice,
-                              currentFilter.maxPrice,
-                              currentFilter.sortType,
-                            );
-                          } else {
-                            return sl<ProductRepository>().getProductFilter(
-                              page,
-                              _productPerPage,
-                              currentFilter.sortType,
-                            );
-                          }
-                        }
-                        return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
-                      },
-                    )
-                  : const SizedBox.shrink(),
+              _buildProductList(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildProductList() {
+    if (isShowing) {
+      return LazyProductListBuilder(
+        crossAxisCount: crossAxisCount,
+        scrollController: scrollController,
+        dataCallback: (page) async {
+          if (currentFilter.isFiltering) {
+            if (currentFilter.filterPriceRange) {
+              return sl<ProductRepository>().getProductFilterByPriceRange(
+                page,
+                _productPerPage,
+                currentFilter.minPrice,
+                currentFilter.maxPrice,
+                currentFilter.sortType,
+              );
+            } else {
+              return sl<ProductRepository>().getProductFilter(
+                page,
+                _productPerPage,
+                currentFilter.sortType,
+              );
+            }
+          }
+          return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
+        },
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   Row _buildProductActionBar(BuildContext context) {

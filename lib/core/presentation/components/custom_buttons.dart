@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class IconTextButton extends StatelessWidget {
   const IconTextButton({
     super.key,
-    required this.onPressed,
+    this.onPressed,
     this.icon,
     required this.label,
     this.reversePosition = false,
@@ -14,6 +14,7 @@ class IconTextButton extends StatelessWidget {
     this.fontSize,
     this.iconSize,
     this.padding,
+    this.iconColor,
   });
   // Required parameters
   final IconData? icon; // Icon now is optional
@@ -33,6 +34,7 @@ class IconTextButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final double? fontSize;
   final double? iconSize;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class IconTextButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min, // make the button as small as possible
               children: [
                 if (!reversePosition) ...[
-                  Icon(icon, size: iconSize),
+                  Icon(icon, size: iconSize, color: iconColor),
                   const SizedBox(width: 4),
                   Text(label,
                       style: TextStyle(
@@ -65,7 +67,7 @@ class IconTextButton extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   const SizedBox(width: 4),
-                  Icon(icon, size: iconSize),
+                  Icon(icon, size: iconSize, color: iconColor),
                 ]
               ],
             )
@@ -74,7 +76,7 @@ class IconTextButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (!reversePosition) ...[
-                  if (icon != null) Icon(icon, size: iconSize),
+                  if (icon != null) Icon(icon, size: iconSize, color: iconColor),
                   const SizedBox(width: 4),
                   Text(label,
                       style: TextStyle(
@@ -88,7 +90,7 @@ class IconTextButton extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   const SizedBox(width: 4),
-                  if (icon != null) Icon(icon, size: iconSize),
+                  if (icon != null) Icon(icon, size: iconSize, color: iconColor),
                 ]
               ],
             ),
