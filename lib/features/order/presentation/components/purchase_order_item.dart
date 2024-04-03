@@ -26,6 +26,7 @@ class PurchaseOrderItem extends StatelessWidget {
         margin: const EdgeInsets.all(8),
         child: Column(
           children: [
+            //# shop info + order status
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -34,6 +35,8 @@ class PurchaseOrderItem extends StatelessWidget {
                 OrderStatusBadge(status: order.status),
               ],
             ),
+
+            //# show the first order item
             OrderItem(order.orderItems.first),
             if (order.orderItems.length > 1)
               Padding(
@@ -44,7 +47,7 @@ class PurchaseOrderItem extends StatelessWidget {
                   textAlign: TextAlign.start,
                 ),
               ),
-            // Sum order items + totalPayment
+            //# Sum order items + totalPayment
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(8),

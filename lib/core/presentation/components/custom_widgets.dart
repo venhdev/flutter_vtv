@@ -63,25 +63,34 @@ class DividerWithText extends StatelessWidget {
     required this.text,
     this.color,
     this.fontSize,
+    this.centerText = false,
+    this.trailing,
+    this.leading,
   });
 
   final Color? color;
   final String text;
   final double? fontSize;
+  final bool centerText;
+
+  final Widget? trailing;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Divider(color: color)),
+        if (leading != null) leading!,
+        if (centerText) Expanded(child: Divider(color: color)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Text(
             text,
             style: TextStyle(fontSize: fontSize),
           ),
         ),
         Expanded(child: Divider(color: color)),
+        if (trailing != null) trailing!,
       ],
     );
   }

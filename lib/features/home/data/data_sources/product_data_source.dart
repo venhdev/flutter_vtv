@@ -13,6 +13,8 @@ import '../../domain/entities/favorite_product_entity.dart';
 abstract class ProductDataSource {
   //# product-suggestion-controller
   Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size);
+  Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
+      int page, int size, int productId, bool inShop);
 
   //# product-filter-controller
   Future<DataResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType);
@@ -48,7 +50,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size) async {
     final response = await _client.get(
       baseUri(
-        path: kAPISuggestionProductURL,
+        path: kAPISuggestionProductPageRandomlyURL,
         queryParameters: {
           'page': page.toString(),
           'size': size.toString(),
@@ -59,7 +61,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      kAPISuggestionProductURL,
+      kAPISuggestionProductPageRandomlyURL,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
@@ -191,16 +193,16 @@ class ProductDataSourceImpl implements ProductDataSource {
       (jsonMap) => ProductDetailResp.fromMap(jsonMap),
     );
   }
-  
+
   @override
-  Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId)async {
+  Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId) async {
     final response = await _client.get(
       baseUri(
         path: '$kAPIProductPageCategoryURL/$categoryId',
         queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-        },
+          'page': page,
+          'size': size,
+        }.map((key, value) => MapEntry(key, value.toString())),
       ),
       headers: baseHttpHeaders(),
     );
@@ -208,6 +210,28 @@ class ProductDataSourceImpl implements ProductDataSource {
     return handleResponseWithData<ProductPageResp>(
       response,
       '$kAPIProductPageCategoryURL/$categoryId',
+      (jsonMap) => ProductPageResp.fromMap(jsonMap),
+    );
+  }
+
+  @override
+  Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
+      int page, int size, int productId, bool inShop) async {
+    final response = await _client.get(
+      baseUri(
+        path: '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
+        queryParameters: {
+          'page': page,
+          'size': size,
+          'inShop': inShop,
+        }.map((key, value) => MapEntry(key, value.toString())),
+      ),
+      headers: baseHttpHeaders(),
+    );
+
+    return handleResponseWithData<ProductPageResp>(
+      response,
+      '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }

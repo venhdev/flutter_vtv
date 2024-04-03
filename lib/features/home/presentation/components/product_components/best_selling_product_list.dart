@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/constants/typedef.dart';
-import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../domain/dto/product_page_resp.dart';
 import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';

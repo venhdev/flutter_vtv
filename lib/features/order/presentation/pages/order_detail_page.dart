@@ -3,19 +3,19 @@ import 'package:flutter_vtv/core/helpers/helpers.dart';
 
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../domain/entities/order_entity.dart';
+import '../../domain/dto/order_detail_entity.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
 
 // const String _noVoucherMsg = 'Không áp dụng';
 
 class OrderDetailPage extends StatefulWidget {
-  const OrderDetailPage({super.key, required this.order});
+  const OrderDetailPage({super.key, required this.orderDetail});
 
   static const String routeName = 'order-detail';
   static const String path = '/user/purchase/order-detail';
 
-  final OrderEntity order;
+  final OrderDetailEntity orderDetail;
 
   @override
   State<OrderDetailPage> createState() => _OrderDetailPage();
@@ -81,7 +81,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          OrderStatusBadge(status: widget.order.status),
+          OrderStatusBadge(status: widget.orderDetail.order.status),
         ],
       ),
     );
@@ -100,9 +100,9 @@ class _OrderDetailPage extends State<OrderDetailPage> {
           ),
         ),
         Text(
-          widget.order.note ?? '(không có)',
+          widget.orderDetail.order.note ?? '(không có)',
           style: TextStyle(
-            color: widget.order.note == null ? Colors.grey : Colors.black,
+            color: widget.orderDetail.order.note == null ? Colors.grey : Colors.black,
           ),
         ),
       ],
@@ -121,17 +121,17 @@ class _OrderDetailPage extends State<OrderDetailPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          _totalSummaryPriceItem('Tổng tiền hàng:', widget.order.totalPrice),
-          _totalSummaryPriceItem('Phí vận chuyển:', widget.order.shippingFee),
+          _totalSummaryPriceItem('Tổng tiền hàng:', widget.orderDetail.order.totalPrice),
+          _totalSummaryPriceItem('Phí vận chuyển:', widget.orderDetail.order.shippingFee),
 
-          _totalSummaryPriceItem('Giảm giá hệ thống:', widget.order.discountSystem),
-          _totalSummaryPriceItem('Giảm giá cửa hàng:', widget.order.discountShop),
+          _totalSummaryPriceItem('Giảm giá hệ thống:', widget.orderDetail.order.discountSystem),
+          _totalSummaryPriceItem('Giảm giá cửa hàng:', widget.orderDetail.order.discountShop),
 
           // total price
           const Divider(thickness: 0.2, height: 4),
           _totalSummaryPriceItem(
             'Tổng thanh toán:',
-            widget.order.paymentTotal,
+            widget.orderDetail.order.paymentTotal,
             color: Colors.red,
           ),
         ],
@@ -168,7 +168,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
             ),
           ),
           // Text(widget.order.paymentMethod),
-          Text(formatPaymentMethod(widget.order.paymentMethod)),
+          Text(formatPaymentMethod(widget.orderDetail.order.paymentMethod)),
         ],
       ),
     );
@@ -176,7 +176,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
 
   Widget _buildDeliveryAddress() {
     return AddressSummary(
-      address: widget.order.address,
+      address: widget.orderDetail.order.address,
       color: Colors.white,
       suffixIcon: null,
       border: null,
@@ -196,7 +196,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
             ),
           ),
           // method name
-          Text(widget.order.shippingMethod),
+          Text(widget.orderDetail.order.shippingMethod),
         ],
       ),
     );
@@ -207,16 +207,16 @@ class _OrderDetailPage extends State<OrderDetailPage> {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          ShopInfo(shop: widget.order.shop),
+          ShopInfo(shop: widget.orderDetail.order.shop),
 
           //! list of items
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.order.orderItems.length,
+            itemCount: widget.orderDetail.order.orderItems.length,
             separatorBuilder: (context, index) => const Divider(thickness: 0.4, height: 8),
             itemBuilder: (context, index) {
-              final item = widget.order.orderItems[index];
+              final item = widget.orderDetail.order.orderItems[index];
               return OrderItem(item);
             },
           ),

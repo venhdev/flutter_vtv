@@ -10,23 +10,29 @@ import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';
 import 'product_item.dart';
 
+const bool _showIndicator = false;
+
 class LazyProductListBuilder extends StatefulWidget {
   const LazyProductListBuilder({
     super.key,
     required this.dataCallback,
-    required this.scrollController,
+    this.scrollController,
     this.crossAxisCount = 2,
+    this.emptyMessage = 'Không có sản phẩm nào',
   }) : assert(crossAxisCount > 0);
 
   final Future<RespData<ProductPageResp>> Function(int page) dataCallback;
   final int crossAxisCount;
-  final ScrollController scrollController;
+  final ScrollController? scrollController; //! null -> use internal scrollController
+
+  final String emptyMessage;
 
   @override
   State<LazyProductListBuilder> createState() => _LazyProductListBuilderState();
 }
 
 class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
+  late ScrollController _scrollController;
   late int _currentPage;
   bool _isLoading = false;
   final List<ProductEntity> _products = [];
@@ -38,10 +44,15 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
   void initState() {
     log('[LazyProductListBuilder] initState');
     super.initState();
+    if (widget.scrollController != null) {
+      _scrollController = widget.scrollController!;
+    } else {
+      _scrollController = ScrollController();
+    }
     _currentPage = 1;
     _loadData(_currentPage);
-    widget.scrollController.addListener(() {
-      if (widget.scrollController.position.pixels == widget.scrollController.position.maxScrollExtent && !_isLoading) {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
         _loadData(_currentPage);
       }
     });
@@ -55,7 +66,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         });
       }
 
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 500));
 
       List<ProductEntity> data;
       final dataEither = await widget.dataCallback(page);
@@ -78,6 +89,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
 
       if (mounted) {
         setState(() {
+          log('[LazyProductListBuilder] Load ${data.length} products at page $page');
           _products.addAll(data);
           _isLoading = false;
         });
@@ -88,18 +100,29 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
   @override
   Widget build(BuildContext context) {
     log('[LazyProductListBuilder] build with ${_products.length} products');
+    if (_products.isEmpty && !_isLoading) {
+      return Center(
+        child: Text(
+          widget.emptyMessage,
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+      );
+    }
+    //? If parent passes the scrollController
+    //: 1: Disable the physics of the GridView & shrinkWrap it
+    //: 2: Use the parent's scrollController
     return GridView.builder(
-      // controller: _scrollController,
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
+      controller: widget.scrollController != null ? null : _scrollController,
+      physics: widget.scrollController != null ? const NeverScrollableScrollPhysics() : null,
+      shrinkWrap: widget.scrollController != null ? true : false,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: widget.crossAxisCount,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
-      itemCount: _products.length,
+      itemCount: _showIndicator ? _products.length + 1 : _products.length,
       itemBuilder: (context, index) {
-        if (_products.isEmpty) {
+        if (_products.isEmpty && _isLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (index == _products.length) {
           return Center(

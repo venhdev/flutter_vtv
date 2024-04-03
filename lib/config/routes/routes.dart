@@ -3,8 +3,8 @@ part of 'app_routes.dart';
 final _routes = <RouteBase>[
   //! Home Route --root -> need '/'
   GoRoute(
-    path: '/${HomePage.routeName}', // '/home'
-    name: HomePage.routeName, // 'home'
+    path: HomePage.routeRoot, // '/home'
+    name: HomePage.routeName, // '/home'
     builder: (BuildContext context, GoRouterState state) {
       return const HomePage();
     },
@@ -52,9 +52,17 @@ final _routes = <RouteBase>[
       ),
     ],
   ),
+  //! Notification Route
+  GoRoute(
+    path: NotificationPage.routeRoot, // '/notification'
+    name: NotificationPage.routeName, // 'notification'
+    builder: (BuildContext context, GoRouterState state) {
+      return const NotificationPage();
+    },
+  ),
   //! User Route
   GoRoute(
-    path: '/${UserPage.routeName}', // '/user'
+    path: UserPage.routeRoot, // '/user'
     name: UserPage.routeName, // 'user'
     builder: (BuildContext context, GoRouterState state) {
       return const UserPage(); // contain login page
@@ -100,8 +108,8 @@ final _routes = <RouteBase>[
             path: OrderDetailPage.routeName, // '/user/purchase/order-detail'
             name: OrderDetailPage.routeName, // order-detail
             builder: (context, state) {
-              final OrderEntity order = state.extra as OrderEntity;
-              return OrderDetailPage(order: order);
+              final OrderDetailEntity order = state.extra as OrderDetailEntity;
+              return OrderDetailPage(orderDetail: order);
             },
           ),
         ],

@@ -66,21 +66,14 @@ class CategoryList extends StatelessWidget {
                                       appBar: AppBar(
                                         title: Text(category.name),
                                       ),
-                                      body: SingleChildScrollView(
-                                        child: Column(
-                                          children: [
-                                            LazyProductListBuilder(
-                                              dataCallback: (page) {
-                                                return sl<ProductRepository>().getProductPageByCategory(
-                                                  page,
-                                                  8,
-                                                  category.categoryId,
-                                                );
-                                              },
-                                              scrollController: ScrollController(),
-                                            )
-                                          ],
-                                        ),
+                                      body: LazyProductListBuilder(
+                                        dataCallback: (page) {
+                                          return sl<ProductRepository>().getProductPageByCategory(
+                                            page,
+                                            8,
+                                            category.categoryId,
+                                          );
+                                        },
                                       ),
                                     );
                                   },

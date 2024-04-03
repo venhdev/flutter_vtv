@@ -72,10 +72,15 @@ class SettingsPage extends StatelessWidget {
 
   Widget _buildLogout(BuildContext context) {
     return _buildButton(context, title: 'Đăng xuất', onPressed: () {
-      showMyDialogToConfirm(
+      showDialogToConfirm(
         context: context,
         title: 'Đăng xuất',
         content: 'Bạn có chắc chắn muốn đăng xuất?',
+        // confirmTextColor: Colors.red,
+        confirmBackgroundColor: Colors.red.shade100,
+        confirmTextColor: Colors.red.shade900,
+        confirmText: 'Đăng xuất',
+        dismissText: 'Thoát',
         onConfirm: () async {
           final refreshToken = context.read<AuthCubit>().state.auth!.refreshToken;
           await context.read<AuthCubit>().logout(refreshToken).then((_) {
