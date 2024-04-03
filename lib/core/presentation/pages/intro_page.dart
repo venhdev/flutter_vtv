@@ -10,66 +10,63 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            SvgPicture.asset(
-              alignment: Alignment.topCenter,
-              fit: BoxFit.fitWidth,
-              'assets/images/intro_background.svg',
-              semanticsLabel: 'Decorative background',
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 200,
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: Column(
-                  children: [
-                    const Text(
-                      'Khám phá ứng dụng',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SvgPicture.asset(
+            alignment: Alignment.topCenter,
+            fit: BoxFit.fitWidth,
+            'assets/images/intro_background.svg',
+            semanticsLabel: 'Decorative background',
+          ),
+          // const SizedBox(height: 16),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Text(
+                    'Khám phá ứng dụng',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const Text(
-                      'VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
+                  ),
+                  const Text(
+                    'VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
                     ),
-                    const SizedBox(height: 16),
-                    _buildStartButton(context)
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildStartButton(context)
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  GestureDetector _buildStartButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () async => await Provider.of<AppState>(context, listen: false).started(),
-      child: Container(
-        width: 328,
-        height: 48,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: const Color(0xffffc600),
-        ),
+  Widget _buildStartButton(BuildContext context) {
+    return IconButton(
+      onPressed: () async => await Provider.of<AppState>(context, listen: false).started(),
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(horizontal: 16)),
+        shape:
+            MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+        backgroundColor: MaterialStateProperty.all<Color>(const Color(0xffffc600)),
+      ),
+      icon: Container(
+        height: 52,
         alignment: Alignment.center,
         child: const Text(
           'Bắt đầu',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.w500,
           ),
         ),

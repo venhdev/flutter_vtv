@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_vtv/features/home/domain/dto/review_resp.dart';
 
 import '../../../../core/constants/typedef.dart';
 import '../../../../core/error/exceptions.dart';
@@ -14,17 +15,20 @@ import '../../domain/repository/product_repository.dart';
 import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
 import '../data_sources/product_data_source.dart';
+import '../data_sources/review_data_source.dart';
 
 class ProductRepositoryImpl extends ProductRepository {
   ProductRepositoryImpl(
     this._productDataSource,
     this._categoryDataSource,
     this._localProductDataSource,
+    this._reviewDataSource,
   );
 
   final ProductDataSource _productDataSource;
   final CategoryDataSource _categoryDataSource;
   final LocalProductDataSource _localProductDataSource;
+  final ReviewDataSource _reviewDataSource;
 
   @override
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size) async {
@@ -150,6 +154,30 @@ class ProductRepositoryImpl extends ProductRepository {
   FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => _productDataSource.getProductPageByCategory(page, size, categoryId),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> getSuggestionProductsRandomlyByAlikeProduct(
+    int page,
+    int size,
+    int productId,
+    bool inShop,
+  ) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getSuggestionProductsRandomlyByAlikeProduct(
+        page,
+        size,
+        productId,
+        inShop,
+      ),
+    );
+  }
+
+  @override
+  FRespData<ReviewResp> getReviewProduct(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _reviewDataSource.getReviewProduct(productId),
     );
   }
 }

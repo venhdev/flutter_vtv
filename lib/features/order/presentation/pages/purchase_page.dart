@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/enum.dart';
@@ -7,12 +5,12 @@ import '../../../../core/constants/typedef.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
-import '../../../cart/domain/dto/order_resp.dart';
+import '../../domain/entities/multi_order_entity.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/purchase_order_item.dart';
 
-const int _totalTab = 5;
+const int _totalTab = 6;
 
 OrderStatus? _statusFromIndex(int index) {
   switch (index) {
@@ -23,8 +21,10 @@ OrderStatus? _statusFromIndex(int index) {
     case 2:
       return OrderStatus.SHIPPING;
     case 3:
-      return OrderStatus.COMPLETED;
+      return OrderStatus.DELIVERED;
     case 4:
+      return OrderStatus.COMPLETED;
+    case 5:
       return OrderStatus.CANCEL;
     default:
       throw Exception('Invalid index');
@@ -83,7 +83,7 @@ Widget _buildTabBarViewWithData({required int index, required List<OrderEntity> 
   );
 }
 
-FRespData<MultiOrderResp> _callFuture(OrderStatus? status) {
+FRespData<MultiOrderEntity> _callFuture(OrderStatus? status) {
   switch (status) {
     case OrderStatus.WAITING:
       return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.WAITING.name);
@@ -111,7 +111,7 @@ class PurchasePage extends StatefulWidget {
 }
 
 class _PurchasePageState extends State<PurchasePage> {
-  Future<List<RespData<MultiOrderResp>>> _futureDataOrders() async {
+  Future<List<RespData<MultiOrderEntity>>> _futureDataOrders() async {
     return Future.wait(
       List.generate(_totalTab, (index) async {
         return await _callFuture(_statusFromIndex(index));
@@ -123,7 +123,7 @@ class _PurchasePageState extends State<PurchasePage> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: _totalTab,
-      child: FutureBuilder<List<RespData<MultiOrderResp>>>(
+      child: FutureBuilder<List<RespData<MultiOrderEntity>>>(
           future: _futureDataOrders(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {

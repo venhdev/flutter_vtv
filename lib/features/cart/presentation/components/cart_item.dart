@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_vtv/core/presentation/components/custom_dialogs.dart';
@@ -66,7 +63,7 @@ class CartItem extends StatelessWidget {
                 icon: const Icon(Icons.remove),
                 onPressed: () async {
                   if (cart.quantity == 1) {
-                    final bool? isConfirm = await showMyDialogToConfirm(
+                    final bool? isConfirm = await showDialogToConfirm(
                       context: context,
                       title: 'Xóa khỏi giỏ hàng',
                       content: 'Hành động này không thể hoàn tác',

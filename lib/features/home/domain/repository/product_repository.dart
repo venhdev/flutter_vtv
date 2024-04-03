@@ -2,6 +2,7 @@ import '../../../../core/constants/typedef.dart';
 import '../dto/favorite_product_resp.dart';
 import '../dto/product_detail_resp.dart';
 import '../dto/product_page_resp.dart';
+import '../dto/review_resp.dart';
 import '../entities/category_entity.dart';
 import '../entities/favorite_product_entity.dart';
 
@@ -11,6 +12,12 @@ abstract class ProductRepository {
 
   //# product-suggestion-controller
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size);
+  FRespData<ProductPageResp> getSuggestionProductsRandomlyByAlikeProduct(
+    int page,
+    int size,
+    int productId,
+    bool inShop,
+  );
 
   //# product-filter-controller
   FRespData<ProductPageResp> getProductFilter(int page, int size, String sortType);
@@ -38,4 +45,7 @@ abstract class ProductRepository {
 
   //# product-page-controller
   FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId);
+
+  //# review-controller
+  FRespData<ReviewResp> getReviewProduct(int productId);
 }

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../bloc/auth_cubit.dart';
 import '../components/text_field_custom.dart';
+import 'forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -85,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => context.go('/user/forgot-password'),
+                      onPressed: () => context.go(ForgotPasswordPage.path),
                       child: const Text(
                         'Quên mật khẩu?',
                         style: TextStyle(

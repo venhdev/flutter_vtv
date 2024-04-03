@@ -33,7 +33,7 @@ SuccessResponse handleResponseNoData(Response response, String url) {
 DataResponse<T> handleResponseWithData<T>(
   Response response,
   String url,
-  T Function(Map<String, dynamic> jsonMap) fromMap,
+  T Function(Map<String, dynamic> dataMap) fromMap,
 ) {
   log('call API: $url');
   // decode response using utf8

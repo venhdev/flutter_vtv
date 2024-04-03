@@ -43,6 +43,8 @@ const String kAPIOrderAddWithCartURL = '/customer/order/add/with-cart'; // POST 
 // order list - manage orders
 const String kAPIOrderListURL = '/customer/order/list'; // GET
 const String kAPIOrderListByStatusURL = '/customer/order/list/status'; // GET /{status} --OrderStatus
+//PATCH /api/customer/order/complete/{orderId}
+const String kAPIOrderCompleteURL = '/customer/order/complete'; // PATCH /{orderId}
 
 //! voucher-controller
 const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST /place order
@@ -56,6 +58,5 @@ const String kAPIFavoriteProductDeleteURL = '/customer/favorite-product/delete';
 const String kAPIFavoriteProductCheckExistURL = '/customer/favorite-product/check-exist'; // GET /{productId}
 const String kAPIFavoriteProductDetailURL = '/customer/favorite-product/detail'; // GET /{favoriteProductId}
 
-
-
-// const String kAPI_URL = ''; // method --description
+//! notification-controller
+const String kAPINotificationGetPageURL = '/customer/notification/get-page'; // GET

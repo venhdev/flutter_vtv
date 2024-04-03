@@ -1,18 +1,19 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../../../core/helpers/converter.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/custom_buttons.dart';
+import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../../../service_locator.dart';
 import '../../../auth/presentation/components/rating.dart';
 import '../../domain/dto/product_detail_resp.dart';
 import '../../domain/repository/product_repository.dart';
+import '../components/product_components/lazy_product_list_builder.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
 
 //! this page should use to easily pop back to the previous screen
@@ -43,7 +44,7 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   final ScrollController _scrollController = ScrollController();
-  bool _showBottomSheet = true;
+  // bool _showBottomSheet = true;
   int? _favoriteProductId;
   bool _isShowMoreDescription = false;
 
@@ -64,17 +65,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  void _scrollListener() {
-    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse && _showBottomSheet) {
-      setState(() {
-        _showBottomSheet = false;
-      });
-    } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward && !_showBottomSheet) {
-      setState(() {
-        _showBottomSheet = true;
-      });
-    }
-  }
+  // void _scrollListener() {
+  //   if (_scrollController.position.userScrollDirection == ScrollDirection.reverse && _showBottomSheet) {
+  //     setState(() {
+  //       _showBottomSheet = false;
+  //     });
+  //   } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward && !_showBottomSheet) {
+  //     setState(() {
+  //       _showBottomSheet = true;
+  //     });
+  //   }
+  // }
 
   void handleTapFavoriteButton() async {
     // add to favorite
@@ -136,7 +137,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_scrollListener);
+    // _scrollController.addListener(_scrollListener);
     if (widget.productId != null) {
       fetchProductDetail(widget.productId!);
     } else {
@@ -149,7 +150,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_scrollListener);
+    // _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
@@ -170,7 +171,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : _buildBody(context),
+          : RefreshIndicator(
+              onRefresh: () async {
+                fetchProductDetail(widget.productId!);
+              },
+              child: _buildBody(context),
+            ),
     );
   }
 
@@ -178,24 +184,32 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return CustomScrollView(
       // controller: _scrollController,
       slivers: <Widget>[
+        //# image
         _buildSliverAppBar(context),
         SliverList(
           delegate: SliverChildListDelegate(
             [
-              //# price of the product
+              //# price
               _buildProductPrice(),
               const SizedBox(height: 8),
 
-              //# name of the product
+              //# name
               _buildProductName(),
-              _buildMoreInfo(),
+              _buildMoreInfo(), // rating, sold, favorite
               const SizedBox(height: 8),
 
+              //# shop info
               _buildShopInfo(),
               const SizedBox(height: 8),
 
-              //# description of the product
+              //# description
               _buildProductDescription(),
+
+              //# review
+              _buildProductReview(),
+
+              //# suggestion products (if any alike current product)
+              _buildSuggestionProducts(),
 
               const SizedBox(height: 56),
             ],
@@ -242,6 +256,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
+      backgroundColor: Colors.transparent,
       expandedHeight: MediaQuery.of(context).size.height * 0.4,
       floating: false,
       pinned: true,
@@ -267,7 +282,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
             );
           },
-          //# image of the product
           child: ImageCacheable(
             _productDetail.product.image,
             fit: BoxFit.cover,
@@ -284,7 +298,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         children: [
           Row(
             children: [
-              Rating(rating: _productDetail.product.rating),
+              Rating(rating: double.parse(_productDetail.product.rating)),
               const VerticalDivider(
                 color: Colors.grey,
                 width: 20,
@@ -317,6 +331,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildProductDescription() {
     return Column(
       children: [
+        DividerWithText(
+          text: 'Mô tả sản phẩm',
+          color: Colors.grey[300],
+          centerText: true,
+        ),
         Text(
           _productDetail.product.description,
           maxLines: _isShowMoreDescription ? null : 4,
@@ -368,6 +387,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
+  // ignore: unused_element
   Align _buildProductImage(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
@@ -499,6 +519,136 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSuggestionProducts() {
+    return Column(
+      children: [
+        DividerWithText(
+          text: 'Sản phẩm tương tự',
+          color: Colors.grey[300],
+          centerText: true,
+        ),
+        LazyProductListBuilder(
+          scrollController: _scrollController,
+          emptyMessage: 'Không tìm thấy sản phẩm tương tự',
+          dataCallback: (page) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
+            page,
+            5,
+            _productDetail.product.productId,
+            false,
+          ),
+        ),
+      ],
+    );
+    // return FutureBuilder(
+    //   future: sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
+    //     1,
+    //     5,
+    //     _productDetail.product.productId,
+    //     false,
+    //   ),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       final resultEither = snapshot.data!;
+    //       return resultEither.fold(
+    //         (error) => MessageScreen.error(error.message),
+    //         (ok) => ListView.builder(
+    //           shrinkWrap: true,
+    //           itemCount: ok.data.products.length,
+    //           itemBuilder: (context, index) {
+    //             return ProductItem(
+    //               product: ok.data.products[index],
+    //               onPressed: () {},
+    //             );
+    //           },
+    //         ),
+    //       );
+    //     } else if (snapshot.hasError) {
+    //       return MessageScreen.error(snapshot.error.toString());
+    //     }
+    //     return MessageScreen(message: snapshot.hasData.toString());
+    //   },
+    // );
+  }
+
+  Widget _buildProductReview() {
+    return FutureBuilder(
+      future: sl<ProductRepository>().getReviewProduct(_productDetail.product.productId),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final resultEither = snapshot.data!;
+          return resultEither.fold(
+            (error) => MessageScreen.error(error.message),
+            (ok) => ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: ok.data.reviews.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DividerWithText(
+                      text: 'Đánh giá sản phẩm',
+                      color: Colors.grey[300],
+                      centerText: true,
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: [
+                          Rating(
+                            rating: double.parse(_productDetail.product.rating),
+                            showRatingBar: true,
+                            showRatingText: false,
+                          ),
+                          Text(
+                            '(${ok.data.count} đánh giá)',
+                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(color: Colors.grey[200], indent: 32, endIndent: 32, height: 8),
+                    //# user info + rating
+                    ListTile(
+                      leading: const CircleAvatar(
+                        // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
+                        backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
+                      ),
+                      title: Text(ok.data.reviews[index].username),
+                      subtitle: Rating(rating: double.parse(_productDetail.product.rating)),
+                    ),
+
+                    //# review content
+                    Text(ok.data.reviews[index].content),
+
+                    //# review image
+
+                    //# date
+                    Text(
+                      convertDateTimeToString(
+                        ok.data.reviews[index].createdAt,
+                        pattern: 'dd-MM-yyyy HH:mm',
+                      ),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return MessageScreen.error(snapshot.error.toString());
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

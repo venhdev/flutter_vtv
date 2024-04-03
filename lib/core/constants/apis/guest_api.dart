@@ -1,10 +1,11 @@
 part of '../api.dart';
 
-//# category-controller
-const String kAPIAllCategoryURL = '/category/all-parent'; // GET
-
+//! Product APIs (Guest)
 //# product-suggestion-controller
-const String kAPISuggestionProductURL = '/product-suggestion/get-page/randomly'; // GET
+const String kAPISuggestionProductPageRandomlyURL = '/product-suggestion/get-page/randomly'; // GET
+// GET /api/product-suggestion/get-page/randomly/product/{productId}
+const String kAPISuggestionProductPageRandomlyByAlikeProductURL =
+    '/product-suggestion/get-page/randomly/product'; // GET /{productId}
 
 //# search-product-controller
 const String kAPISearchProductSortURL = '/search/product/sort'; // GET --only keyword
@@ -19,3 +20,10 @@ const String kAPIProductDetailURL = '/product/detail'; // GET /{productId}
 
 //# product-page-controller
 const String kAPIProductPageCategoryURL = '/product/page/category'; // GET /{categoryId}
+
+//! Other APIs (Guest)
+//# category-controller
+const String kAPIAllCategoryURL = '/category/all-parent'; // GET
+
+//# review-controller
+const String kAPIReviewProductURL = '/review/product'; // GET /{productId}

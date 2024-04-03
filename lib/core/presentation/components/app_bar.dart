@@ -19,14 +19,18 @@ AppBar buildAppBar(
   bool clearOnSubmit = false,
   bool automaticallyImplyLeading = false,
   Color? backgroundColor,
+  PreferredSizeWidget? bottom,
+  double? scrolledUnderElevation,
 }) {
   // title & search bar can't be shown at the same time
   assert(title == null || showSearchBar == false, 'title & search bar can\'t be shown at the same time');
   return AppBar(
+    scrolledUnderElevation: scrolledUnderElevation,
     title: title,
     backgroundColor: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
     leading: leading,
     automaticallyImplyLeading: automaticallyImplyLeading,
+    bottom: bottom,
     actions: [
       // search bar
       if (showSearchBar)

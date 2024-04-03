@@ -10,6 +10,7 @@ import '../../../auth/presentation/components/not_logged_widget.dart';
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
 
+  static const String routeRoot = '/user';
   static const String routeName = 'user';
 
   @override
