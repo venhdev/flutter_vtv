@@ -28,4 +28,6 @@ abstract class OrderRepository {
   /// Get orders by status
   /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
   FRespData<MultiOrderEntity> getListOrdersByStatus(String status);
+  /// Get order detail by orderId
+  FRespData<OrderDetailEntity> getOrderDetail(String orderId);
 }

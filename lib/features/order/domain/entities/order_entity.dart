@@ -10,7 +10,7 @@ import '../../../shop/domain/entities/shop_entity.dart';
 import 'voucher_order_entity.dart';
 
 class OrderEntity extends Equatable {
-  final String? orderId;
+  final String? orderId; // --uuid
   final String? note;
   final String paymentMethod;
   final String shippingMethod;

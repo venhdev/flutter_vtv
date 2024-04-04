@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/helpers.dart';
+import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/order_item.dart';
 import '../../domain/entities/order_entity.dart';
+import '../../domain/repository/order_repository.dart';
 import '../pages/order_detail_page.dart';
 import 'order_status_badge.dart';
 import 'shop_info.dart';
@@ -19,8 +22,12 @@ class PurchaseOrderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        context.go(OrderDetailPage.path, extra: order);
+      onTap: () async {
+        final respEither = await sl<OrderRepository>().getOrderDetail(order.orderId!);
+        respEither.fold(
+          (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
+          (ok) => context.go(OrderDetailPage.path, extra: ok.data),
+        );
       },
       child: Container(
         margin: const EdgeInsets.all(8),
