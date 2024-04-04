@@ -11,6 +11,7 @@ import '../entities/shipping_entity.dart';
 class OrderDetailEntity extends Equatable {
   final OrderEntity order;
   final ShippingEntity shipping;
+  //> transport not implemented
 
   const OrderDetailEntity({
     required this.order,
@@ -18,9 +19,6 @@ class OrderDetailEntity extends Equatable {
   });
 
   OrderDetailEntity copyWith({
-    String? status,
-    String? message,
-    int? code,
     OrderEntity? order,
     ShippingEntity? shipping,
   }) {
@@ -33,23 +31,25 @@ class OrderDetailEntity extends Equatable {
   factory OrderDetailEntity.fromMap(Map<String, dynamic> map) {
     return OrderDetailEntity(
       order: OrderEntity.fromMap(map['orderDTO'] as Map<String, dynamic>),
-      // order: OrderEntity.fromMap(
-      //  ^!isList ? map['orderDTO'] as Map<String, dynamic> : map['orderDTOs'] as Map<String, dynamic>,
-      // ),
       shipping: ShippingEntity.fromMap(map['shippingDTO'] as Map<String, dynamic>),
     );
   }
 
-  factory OrderDetailEntity.fromJson(String source) => OrderDetailEntity.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory OrderDetailEntity.fromJson(String source) =>
+      OrderDetailEntity.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  List<Object> get props {
-    return [
-      order,
-      shipping,
-    ];
-  }
+  List<Object> get props => [order, shipping];
 
   @override
   bool get stringify => true;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'orderDTO': order.toMap(),
+      'shippingDTO': shipping.toMap(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
 }

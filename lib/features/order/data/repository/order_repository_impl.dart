@@ -64,4 +64,9 @@ class OrderRepositoryImpl extends OrderRepository {
   FRespData<OrderDetailEntity> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeOrderWithVariant(params));
   }
+  
+  @override
+  FRespData<OrderDetailEntity> getOrderDetail(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getOrderDetail(orderId));
+  }
 }

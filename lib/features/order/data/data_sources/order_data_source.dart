@@ -27,6 +27,7 @@ abstract class OrderDataSource {
   //# Manage orders
   Future<DataResponse<MultiOrderEntity>> getListOrders();
   Future<DataResponse<MultiOrderEntity>> getListOrdersByStatus(String status);
+  Future<DataResponse<OrderDetailEntity>> getOrderDetail(String orderId);
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
@@ -153,6 +154,20 @@ class OrderDataSourceImpl extends OrderDataSource {
     return handleResponseWithData<OrderDetailEntity>(
       response,
       kAPIOrderAddWithProductVariantURL,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+
+  @override
+  Future<DataResponse<OrderDetailEntity>> getOrderDetail(String orderId) async {
+    final response = await _client.get(
+      baseUri(path: '$kAPIOrderDetailURL/$orderId'),
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      '$kAPIOrderDetailURL/$orderId',
       (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
