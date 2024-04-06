@@ -10,7 +10,7 @@ class ReviewEntity extends Equatable {
   final String reviewId;
   final String content;
   final int rating;
-  final String image;
+  final String? image;
   final Status status;
   final String username;
   final String orderItemId;
@@ -93,7 +93,7 @@ class ReviewEntity extends Equatable {
       reviewId: map['reviewId'] as String,
       content: map['content'] as String,
       rating: map['rating'] as int,
-      image: map['image'] as String,
+      image: map['image'] as String?,
       status: Status.values.firstWhere((e) => e.name == map['status'] as String),
       username: map['username'] as String,
       orderItemId: map['orderItemId'] as String,

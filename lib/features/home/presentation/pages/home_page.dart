@@ -76,6 +76,7 @@ class _HomePageState extends State<HomePage> {
                 future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
               ),
               //# Product list with filter
+              // TODO off filter by price --> ERROR
               _buildProductActionBar(context),
               _buildLazyProducts(),
             ],
