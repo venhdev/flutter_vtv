@@ -581,65 +581,82 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           final resultEither = snapshot.data!;
           return resultEither.fold(
             (error) => MessageScreen.error(error.message),
-            (ok) => ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: ok.data.reviews.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DividerWithText(
-                      text: 'Đánh giá sản phẩm',
-                      color: Colors.grey[300],
-                      centerText: true,
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Column(
+            (ok) => Column(
+              children: [
+                DividerWithText(
+                  text: 'Đánh giá sản phẩm',
+                  color: Colors.grey[300],
+                  centerText: true,
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Rating(
+                        rating: double.parse(_productDetail.product.rating),
+                        showRatingBar: true,
+                        showRatingText: false,
+                      ),
+                      Text(
+                        '(${ok.data.count} đánh giá)',
+                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(color: Colors.grey[200], indent: 32, endIndent: 32, height: 8),
+                Container(
+                  height: 350,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: ok.data.reviews.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Rating(
-                            rating: double.parse(_productDetail.product.rating),
-                            showRatingBar: true,
-                            showRatingText: false,
+                          //# user info + rating
+                          ListTile(
+                            leading: const CircleAvatar(
+                              // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
+                              backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
+                            ),
+                            title: Text(ok.data.reviews[index].username),
+                            subtitle: Rating(rating: double.parse(ok.data.reviews[index].rating.toString())),
                           ),
+                  
+                          //# review content
+                          Text(ok.data.reviews[index].content),
+                  
+                          //# review image
+                          if (ok.data.reviews[index].image != null)
+                            SizedBox(
+                              height: 100,
+                              child: ImageCacheable(
+                                ok.data.reviews[index].image!,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                  
+                          //# date
                           Text(
-                            '(${ok.data.count} đánh giá)',
-                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                            convertDateTimeToString(
+                              ok.data.reviews[index].createdAt,
+                              pattern: 'dd-MM-yyyy HH:mm',
+                            ),
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                    Divider(color: Colors.grey[200], indent: 32, endIndent: 32, height: 8),
-                    //# user info + rating
-                    ListTile(
-                      leading: const CircleAvatar(
-                        // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
-                        backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
-                      ),
-                      title: Text(ok.data.reviews[index].username),
-                      subtitle: Rating(rating: double.parse(_productDetail.product.rating)),
-                    ),
-
-                    //# review content
-                    Text(ok.data.reviews[index].content),
-
-                    //# review image
-
-                    //# date
-                    Text(
-                      convertDateTimeToString(
-                        ok.data.reviews[index].createdAt,
-                        pattern: 'dd-MM-yyyy HH:mm',
-                      ),
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                );
-              },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           );
         } else if (snapshot.hasError) {

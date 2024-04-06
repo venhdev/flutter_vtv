@@ -86,19 +86,32 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Image, price, quantity
+          //# Image, price, quantity
           _buildSummaryInfo(context),
           const Divider(color: Colors.grey),
 
-          // variant
+          //# variant
           const Text('Phân loại', style: TextStyle(fontWeight: FontWeight.bold)),
           _buildSelectableVariants(context),
           const Divider(color: Colors.grey),
 
-          // attribute
+          //# attribute
           // TODO: Attribute selector => variant
+          const Text('Thuộc tính', style: TextStyle(fontWeight: FontWeight.bold)),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _variant?.attributes.length ?? 0,
+            itemBuilder: (context, index) {
+              final attribute = _variant!.attributes[index];
+              return ListTile(
+                title: Text(attribute.name),
+                subtitle: Text(attribute.value),
+              );
+            },
+          ),
 
-          // quantity selector
+          //# quantity selector
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

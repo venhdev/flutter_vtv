@@ -85,6 +85,7 @@ class LoggedView extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Column _buildDEV(BuildContext context) {
     return Column(
       children: [

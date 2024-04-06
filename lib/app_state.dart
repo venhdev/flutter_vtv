@@ -19,7 +19,9 @@ class AppState extends ChangeNotifier {
   Future<void> init() async {
     _isFirstRun = _prefHelper.isFirstRun;
     // hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
-    hasConnection = await _connectivity.checkConnectivity().then((connection) => connection.isNotEmpty);
+    hasConnection = await _connectivity.checkConnectivity().then((connection) {
+      return connection[0] != ConnectivityResult.none;
+    });
     subscribeConnection();
   }
 
@@ -39,7 +41,7 @@ class AppState extends ChangeNotifier {
   // subscribe to the connectivity stream
   void subscribeConnection() {
     _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> connection) {
-      hasConnection = connection.isNotEmpty;
+      hasConnection = connection[0] != ConnectivityResult.none;
       notifyListeners();
     });
   }
