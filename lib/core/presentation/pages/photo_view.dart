@@ -23,11 +23,14 @@ class PhotoViewPage extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 16,
-            left: 16,
+            top: 24,
+            right: 12,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.close),
               color: Colors.white,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.white24),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },

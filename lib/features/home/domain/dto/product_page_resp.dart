@@ -2,21 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/base/base_lazy_load_entity.dart';
 import '../entities/product_entity.dart';
 
-class ProductPageResp {
-  final int count;
-  final int page;
-  final int size;
-  final int totalPage;
-  List<ProductEntity> products;
-
-  ProductPageResp({
-    required this.count,
-    required this.page,
-    required this.size,
-    required this.totalPage,
-    required this.products,
+class ProductPageResp extends IBasePageResp<ProductEntity> {
+  const ProductPageResp({
+    required super.count,
+    required super.page,
+    required super.size,
+    required super.totalPage,
+    required super.listItem,
   });
 
   ProductPageResp copyWith({
@@ -24,14 +19,14 @@ class ProductPageResp {
     int? page,
     int? size,
     int? totalPage,
-    List<ProductEntity>? products,
+    List<ProductEntity>? listItem,
   }) {
     return ProductPageResp(
       count: count ?? this.count,
       page: page ?? this.page,
       size: size ?? this.size,
       totalPage: totalPage ?? this.totalPage,
-      products: products ?? this.products,
+      listItem: listItem ?? this.listItem,
     );
   }
 
@@ -41,7 +36,7 @@ class ProductPageResp {
       page: map['page'] as int,
       size: map['size'] as int,
       totalPage: map['totalPage'] as int,
-      products: ProductEntity.fromList(map['productDTOs'] as List<dynamic>),
+      listItem: ProductEntity.fromList(map['productDTOs'] as List<dynamic>),
     );
   }
 
@@ -56,20 +51,16 @@ class ProductPageResp {
         other.page == page &&
         other.size == size &&
         other.totalPage == totalPage &&
-        listEquals(other.products, products);
+        listEquals(other.listItem, listItem);
   }
 
   @override
   int get hashCode {
-    return count.hashCode ^
-        page.hashCode ^
-        size.hashCode ^
-        totalPage.hashCode ^
-        products.hashCode;
+    return count.hashCode ^ page.hashCode ^ size.hashCode ^ totalPage.hashCode ^ listItem.hashCode;
   }
 
   @override
   String toString() {
-    return 'ProductDTO(count: $count, page: $page, size: $size, totalPage: $totalPage, products: $products)';
+    return 'ProductDTO(count: $count, page: $page, size: $size, totalPage: $totalPage, listItem: $listItem)';
   }
 }

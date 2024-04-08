@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_vtv/core/presentation/components/custom_dialogs.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/image_cacheable.dart';
+import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../domain/entities/cart_entity.dart';
 import '../bloc/cart_bloc.dart';
 
@@ -105,6 +107,7 @@ class CartItem extends StatelessWidget {
   Row _buildCheckBoxAndImage(BuildContext context) {
     return Row(
       children: [
+        // checkbox
         Checkbox(
           value: context.read<CartBloc>().state.selectedCartIds.contains(cart.cartId),
           onChanged: (value) {
@@ -115,17 +118,18 @@ class CartItem extends StatelessWidget {
             }
           },
         ),
+        // image of product cart item
         GestureDetector(
-          onTap: () {
-            //TODO navigate to product detail
-
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) {
-            //       return ProductDetailPage(cart.productVariant.productId);
-            //     },
-            //   ),
-            // );
+          onTap: () async {
+            //_TODO navigate to product detail
+            // Provider.of<AppState>(context, listen: false).hideBottomNav();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return ProductDetailPage(productId: cart.productId);
+                },
+              ),
+            );
           },
           child: ImageCacheable(
             cart.productVariant.image.isNotEmpty ? cart.productVariant.image : cart.productVariant.productImage,

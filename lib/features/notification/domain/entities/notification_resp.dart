@@ -1,33 +1,28 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
-
+import '../../../../core/base/base_lazy_load_entity.dart';
 import 'notification_entity.dart';
 
-class NotificationResp extends Equatable {
+class NotificationResp extends IBasePageResp<NotificationEntity> {
   final String status;
   final String message;
   final int code;
-  final int count;
-  final int page;
-  final int size;
-  final int totalPage;
-  final List<NotificationEntity> notifications;
+  // final List<NotificationEntity> notifications;
 
   const NotificationResp({
     required this.status,
     required this.message,
     required this.code,
-    required this.count,
-    required this.page,
-    required this.size,
-    required this.totalPage,
-    required this.notifications,
+    required super.count,
+    required super.page,
+    required super.size,
+    required super.totalPage,
+    required super.listItem,
   });
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       status,
       message,
@@ -36,7 +31,7 @@ class NotificationResp extends Equatable {
       page,
       size,
       totalPage,
-      notifications,
+      // notifications,
     ];
   }
 
@@ -48,7 +43,7 @@ class NotificationResp extends Equatable {
     int? page,
     int? size,
     int? totalPage,
-    List<NotificationEntity>? notifications,
+    List<NotificationEntity>? listItem,
   }) {
     return NotificationResp(
       status: status ?? this.status,
@@ -58,7 +53,8 @@ class NotificationResp extends Equatable {
       page: page ?? this.page,
       size: size ?? this.size,
       totalPage: totalPage ?? this.totalPage,
-      notifications: notifications ?? this.notifications,
+      listItem: listItem ?? this.listItem,
+      // notifications: notifications ?? this.notifications,
     );
   }
 
@@ -71,7 +67,7 @@ class NotificationResp extends Equatable {
       'page': page,
       'size': size,
       'totalPage': totalPage,
-      'notificationDTOs': notifications.map((x) => x.toMap()).toList(),
+      'notificationDTOs': listItem.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -84,7 +80,7 @@ class NotificationResp extends Equatable {
       page: map['page'] as int,
       size: map['size'] as int,
       totalPage: map['totalPage'] as int,
-      notifications: List<NotificationEntity>.from(
+      listItem: List<NotificationEntity>.from(
         (map['notificationDTOs'] as List<dynamic>).map<NotificationEntity>(
           (x) => NotificationEntity.fromMap(x as Map<String, dynamic>),
         ),

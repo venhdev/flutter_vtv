@@ -8,6 +8,8 @@ environment:
   sdk: ">=3.2.3 <4.0.0"
 
 dependencies:
+  vtv_common:
+    path: ../vtv_common
   flutter:
     sdk: flutter
   # ui

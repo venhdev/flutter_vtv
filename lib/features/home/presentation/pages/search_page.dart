@@ -6,7 +6,7 @@ import 'package:flutter_vtv/features/home/domain/dto/product_page_resp.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/search_product_repository.dart';
-import '../components/product_components/product_list_builder.dart';
+import '../components/product_components/product_page_builder.dart';
 import '../components/search_components/btn_filter.dart';
 
 class SearchPage extends StatefulWidget {
@@ -125,7 +125,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           const SizedBox(height: 8),
-          ProductListBuilder(
+          ProductPageBuilder(
             future: searchMethod(),
             keywords: currentSearchText,
             crossAxisCount: 2,

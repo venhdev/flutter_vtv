@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/features/home/presentation/components/search_components/btn_filter.dart';
 
+import '../../../../app_state.dart';
 import '../../../../core/presentation/components/app_bar.dart';
+import '../../../../core/presentation/components/nested_lazy_load_builder.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/best_selling_product_list.dart';
 import '../components/product_components/category_list.dart';
-import '../components/product_components/lazy_product_list_builder.dart';
+import '../components/product_components/product_item.dart';
+import 'product_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,8 +25,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ScrollController scrollController = ScrollController();
   final _productPerPage = 8; //! page size
+  final lazyController = LazyLoadController(
+    scrollController: ScrollController(),
+    items: [],
+    useGrid: true,
+  );
 
   // filter & sort
   FilterParams currentFilter = FilterParams(
@@ -50,6 +57,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    lazyController.scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (isRefreshing) {
       return const Scaffold(
@@ -67,7 +80,7 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView(
-            controller: scrollController,
+            controller: lazyController.scrollController,
             children: [
               //# Category
               const CategoryList(),
@@ -76,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                 future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
               ),
               //# Product list with filter
-              // TODO off filter by price --> ERROR
+              // BUG turn off filter by price --> ERROR
               _buildProductActionBar(context),
               _buildLazyProducts(),
             ],
@@ -88,9 +101,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildLazyProducts() {
     if (isShowing) {
-      return LazyProductListBuilder(
-        crossAxisCount: crossAxisCount,
-        scrollController: scrollController,
+      return NestedLazyLoadBuilder(
+        controller: lazyController,
+        crossAxisCount: 2,
         dataCallback: (page) async {
           if (currentFilter.isFiltering) {
             if (currentFilter.filterPriceRange) {
@@ -111,9 +124,61 @@ class _HomePageState extends State<HomePage> {
           }
           return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
         },
+        itemBuilder: (context, index, data) {
+          return ProductItem(
+            product: lazyController.items[index],
+            onPressed: () {
+              // context.go(ProductDetailPage.path, extra: _products[index].productId);
+              context.read<AppState>().hideBottomNav();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ProductDetailPage(productId: lazyController.items[index].productId);
+                  },
+                ),
+              ).then(
+                (_) {
+                  context.read<AppState>().showBottomNav();
+                },
+              );
+            },
+          );
+        },
       );
+      // return LazyProductListBuilder(
+      //   crossAxisCount: crossAxisCount,
+      //   // scrollController: (execute) {
+      //   //   _scrollController.addListener(() {
+      //   //     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      //   //       execute();
+      //   //     }
+      //   //   });
+      //   //   return _scrollController;
+      //   // },
+      //   scrollController: _scrollController,
+      //   dataCallback: (page) async {
+      //     if (currentFilter.isFiltering) {
+      //       if (currentFilter.filterPriceRange) {
+      //         return sl<ProductRepository>().getProductFilterByPriceRange(
+      //           page,
+      //           _productPerPage,
+      //           currentFilter.minPrice,
+      //           currentFilter.maxPrice,
+      //           currentFilter.sortType,
+      //         );
+      //       } else {
+      //         return sl<ProductRepository>().getProductFilter(
+      //           page,
+      //           _productPerPage,
+      //           currentFilter.sortType,
+      //         );
+      //       }
+      //     }
+      //     return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
+      //   },
+      // );
     } else {
-      return const SizedBox.shrink();
+      return const SizedBox();
     }
   }
 
