@@ -1,16 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-
-import '../../../../core/constants/api.dart';
-import '../../../../core/helpers/secure_storage_helper.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/add_address_param.dart';
-import '../../domain/entities/address_dto.dart';
-import '../../domain/entities/district_entity.dart';
-import '../../domain/entities/province_entity.dart';
-import '../../domain/entities/ward_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class ProfileDataSource {
   //! location

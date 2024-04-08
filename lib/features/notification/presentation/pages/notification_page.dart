@@ -1,11 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
-import '../../../../core/presentation/components/nested_lazy_load_builder.dart';
 import '../../../../service_locator.dart';
-import '../../domain/entities/notification_entity.dart';
 import '../../domain/repository/notification_repository.dart';
 import '../components/notification_item.dart';
 
@@ -27,11 +26,7 @@ class NotificationPage extends StatelessWidget {
       ),
       body: Builder(builder: (context) {
         final controller = LazyLoadController<NotificationEntity>(
-          items: [],
-          scrollController: ScrollController(),
-          useGrid: false,
-          emptyMessage: 'Không có thông báo nào.'
-        );
+            items: [], scrollController: ScrollController(), useGrid: false, emptyMessage: 'Không có thông báo nào.');
         return ListView(
           controller: controller.scrollController,
           children: [

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_detail_resp.dart';
-import '../../../domain/dto/product_page_resp.dart';
 import '../../pages/product_detail_page.dart';
 import 'page_number.dart';
 import 'product_item.dart';
@@ -180,7 +178,7 @@ class ProductPageBuilder extends StatelessWidget {
                   if (showPageNumber) ...[
                     PageNumber(
                       currentPage: currentPage ?? 1,
-                      totalPages: dataResp.data.totalPage,
+                      totalPages: dataResp.data.totalPage!,
                       onPageChanged: (page) {
                         onPageChanged?.call(page);
                       },

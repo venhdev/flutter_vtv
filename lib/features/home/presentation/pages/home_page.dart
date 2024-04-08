@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/features/home/presentation/components/search_components/btn_filter.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../app_state.dart';
 import '../../../../core/presentation/components/app_bar.dart';
-import '../../../../core/presentation/components/nested_lazy_load_builder.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';

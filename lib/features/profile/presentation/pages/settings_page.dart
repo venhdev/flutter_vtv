@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../config/themes/theme_provider.dart';
-import '../../../../core/presentation/components/custom_dialogs.dart';
 import 'address_page.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 

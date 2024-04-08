@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_page_resp.dart';
-import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';
 import 'product_item.dart';
 

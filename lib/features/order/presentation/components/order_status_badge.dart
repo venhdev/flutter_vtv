@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../core/constants/enum.dart';
-import '../../../../core/helpers/helpers.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class OrderStatusBadge extends StatelessWidget {
   const OrderStatusBadge({
@@ -22,11 +20,11 @@ class OrderStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card.filled(
-      color: getOrderStatusBackgroundColor(status),
+      color: ColorHelper.getOrderStatusBackgroundColor(status),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
       child: Padding(
         padding: const EdgeInsets.all(2.0),
-        child: Text(formatOrderStatusName(status), style: const TextStyle(fontWeight: FontWeight.w600)),
+        child: Text(StringHelper.getOrderStatusName(status), style: const TextStyle(fontWeight: FontWeight.w600)),
       ),
     );
   }

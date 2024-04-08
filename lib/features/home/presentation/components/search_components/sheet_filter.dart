@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/helpers/helpers.dart';
 import 'btn_filter.dart';
 import 'btn_dropdown_sort_types.dart';
 
@@ -280,8 +280,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Từ: ${formatCurrency(_currentRangeValues.start.round())}'),
-            Text('Đến: ${formatCurrency(_currentRangeValues.end.round())}'),
+            Text('Từ: ${StringHelper.formatCurrency(_currentRangeValues.start.round())}'),
+            Text('Đến: ${StringHelper.formatCurrency(_currentRangeValues.end.round())}'),
           ],
         ),
         const SizedBox(height: 10),
@@ -291,8 +291,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
           max: _maxRange,
           divisions: widget.divisions,
           labels: RangeLabels(
-            formatCurrency(_currentRangeValues.start.round()),
-            formatCurrency(_currentRangeValues.end.round()),
+            StringHelper.formatCurrency(_currentRangeValues.start.round()),
+            StringHelper.formatCurrency(_currentRangeValues.end.round()),
           ),
           onChanged: (RangeValues values) {
             setState(() {

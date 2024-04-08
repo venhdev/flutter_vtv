@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../domain/entities/order_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../pages/order_detail_page.dart';
 import 'order_status_badge.dart';
@@ -66,7 +65,7 @@ class PurchaseOrderItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('${order.orderItems.length} sản phẩm'),
-                  Text('Tổng thanh toán: ${formatCurrency(order.paymentTotal)}'),
+                  Text('Tổng thanh toán: ${StringHelper.formatCurrency(order.paymentTotal)}'),
                 ],
               ),
             ),

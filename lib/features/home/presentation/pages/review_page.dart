@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../domain/dto/review_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class ReviewPage extends StatelessWidget {
   const ReviewPage({super.key, required this.reviewResp});

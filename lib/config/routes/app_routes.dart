@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_vtv/features/search/presentation/pages/search_products_page.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../core/presentation/pages/dev_page.dart';
 import '../../core/presentation/pages/intro_page.dart';
 import '../../core/presentation/pages/main_page.dart';
-import '../../features/auth/domain/entities/user_info_entity.dart';
 import '../../features/auth/presentation/pages/change_password_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/home/domain/dto/product_detail_resp.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
-import '../../features/order/domain/dto/order_detail_entity.dart';
 import '../../features/order/presentation/pages/order_detail_page.dart';
 import '../../features/order/presentation/pages/purchase_page.dart';
 import '../../features/profile/presentation/pages/add_address_page.dart';
@@ -20,7 +17,6 @@ import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/product_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
-import '../../features/order/domain/entities/order_entity.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
@@ -33,10 +29,8 @@ part 'routes.dart';
 
 // config bottom navigation bar in 'lib\core\presentation\pages\main_page.dart'
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'shell');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 class AppRoutes {
   static GoRouter router = GoRouter(

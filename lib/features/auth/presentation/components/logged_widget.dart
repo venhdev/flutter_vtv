@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/notification/local_notification_manager.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/local_product_data_source.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../app_state.dart';
-import '../../../../core/presentation/components/custom_buttons.dart';
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../../home/domain/repository/product_repository.dart';
@@ -17,7 +15,6 @@ import '../../../home/presentation/pages/favorite_product_page.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../order/presentation/pages/voucher_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
-import '../../domain/entities/auth_entity.dart';
 import 'catalog_item.dart';
 
 class LoggedView extends StatefulWidget {
@@ -50,13 +47,13 @@ class _LoggedViewState extends State<LoggedView> {
             children: [
               //# My Purchase
               _buildMyPurchase(context),
-        
+
               //# Favorite product
               _buildFavoriteProduct(context),
-        
+
               //# Recent Product Viewed
               _buildRecentProduct(),
-        
+
               //! DEV
               // _buildDEV(context),
             ],
@@ -110,7 +107,7 @@ class _LoggedViewState extends State<LoggedView> {
         ),
         ElevatedButton(
           onPressed: () {
-            sl<LocalNotificationManager>().showNotification(
+            sl<LocalNotificationUtils>().showNotification(
               id: 1,
               title: 'Title',
               body: 'Body',

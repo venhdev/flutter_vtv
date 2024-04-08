@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import 'app.dart';
 import 'app_state.dart';
 import 'config/bloc_config.dart';
 import 'config/themes/theme_provider.dart';
-import 'core/constants/api.dart';
-import 'core/helpers/shared_preferences_helper.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
-import 'core/notification/local_notification_manager.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'firebase_options.dart';
@@ -27,7 +25,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeLocator();
-  sl<LocalNotificationManager>().init();
+  sl<LocalNotificationUtils>().init();
   sl<FirebaseCloudMessagingManager>().init();
 
   final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());

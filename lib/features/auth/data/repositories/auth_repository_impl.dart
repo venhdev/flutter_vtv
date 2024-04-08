@@ -1,21 +1,11 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/constants.dart';
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/helpers/secure_storage_helper.dart';
-import '../../../../core/network/base_response.dart';
-import '../../domain/dto/register_params.dart';
-import '../../domain/entities/auth_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_sources/auth_data_source.dart';
-import '../models/auth_model.dart';
-import '../models/user_info_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authDataSource, this._secureStorageHelper);
@@ -56,6 +46,9 @@ class AuthRepositoryImpl implements AuthRepository {
   FResult<AuthEntity> retrieveAuth() async {
     try {
       final authData = await _secureStorageHelper.readAuth();
+      if (authData == null) {
+        return const Left(CacheFailure(message: 'Không tìm thấy thông tin người dùng!'));
+      }
       return Right(authData);
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
@@ -94,6 +87,9 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<String> getNewAccessToken() async {
     try {
       final localAuth = await _secureStorageHelper.readAuth();
+      if (localAuth == null) {
+        return const Left(ClientError(message: 'Không tìm thấy thông tin người dùng!'));
+      }
       final newAccessToken = await _authDataSource.getNewAccessToken(localAuth.refreshToken);
       return Right(newAccessToken);
     } on CacheException catch (e) {

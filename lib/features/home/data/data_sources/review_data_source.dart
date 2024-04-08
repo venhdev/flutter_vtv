@@ -1,9 +1,5 @@
 import 'package:http/http.dart' as http;
-
-import '../../../../core/constants/api.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/review_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class ReviewDataSource {
   Future<DataResponse<ReviewResp>> getReviewProduct(int productId);

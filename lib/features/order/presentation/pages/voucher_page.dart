@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
-import '../../domain/entities/voucher_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/voucher_item.dart';
 

@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/presentation/components/custom_dialogs.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../../profile/domain/entities/address_dto.dart';
-import '../../domain/dto/place_order_param.dart';
-import '../../domain/dto/place_order_with_variant_param.dart';
-import '../../domain/entities/order_entity.dart';
-import '../../domain/entities/voucher_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
 import '../components/shop_info.dart';
@@ -302,7 +296,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title),
-        Text(formatCurrency(price)),
+        Text(StringHelper.formatCurrency(price)),
       ],
     );
   }
@@ -323,7 +317,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(_order.paymentMethod),
-              Text(formatPaymentMethod(_order.paymentMethod)),
+              Text(StringHelper.getPaymentName(_order.paymentMethod)),
             ],
           )
         ],
@@ -526,7 +520,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             'Tổng thanh toán: ',
           ),
           Text(
-            formatCurrency(_order.paymentTotal),
+            StringHelper.formatCurrency(_order.paymentTotal),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
           ),
           const SizedBox(width: 8),

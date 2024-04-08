@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../../app_state.dart';
-import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../service_locator.dart';
 import '../../../domain/repository/product_repository.dart';
 import 'lazy_product_list_builder.dart';

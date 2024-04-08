@@ -2,19 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/converter.dart';
-import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/custom_buttons.dart';
-import '../../../../core/presentation/components/custom_widgets.dart';
-import '../../../../core/presentation/components/image_cacheable.dart';
-import '../../../../core/presentation/components/nested_lazy_load_builder.dart';
-import '../../../../core/presentation/pages/photo_view.dart';
 import '../../../../service_locator.dart';
 import '../../../auth/presentation/components/rating.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
-import '../../domain/dto/product_detail_resp.dart';
-import '../../domain/entities/product_entity.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
@@ -369,8 +361,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildProductPrice() {
     return Text(
       _productDetail.product.cheapestPrice != _productDetail.product.mostExpensivePrice
-          ? '${formatCurrency(_productDetail.product.cheapestPrice)} - ${formatCurrency(_productDetail.product.mostExpensivePrice)}'
-          : formatCurrency(_productDetail.product.cheapestPrice),
+          ? '${StringHelper.formatCurrency(_productDetail.product.cheapestPrice)} - ${StringHelper.formatCurrency(_productDetail.product.mostExpensivePrice)}'
+          : StringHelper.formatCurrency(_productDetail.product.cheapestPrice),
       style: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w500,
@@ -669,7 +661,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                         //# date
                         Text(
-                          convertDateTimeToString(
+                          StringHelper.convertDateTimeToString(
                             ok.data.reviews[index].createdAt,
                             pattern: 'dd-MM-yyyy HH:mm',
                           ),

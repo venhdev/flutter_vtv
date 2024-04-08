@@ -1,16 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_vtv/features/home/domain/dto/review_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/favorite_product_resp.dart';
-import '../../domain/dto/product_detail_resp.dart';
-import '../../domain/dto/product_page_resp.dart';
-import '../../domain/entities/category_entity.dart';
-import '../../domain/entities/favorite_product_entity.dart';
 import '../../domain/repository/product_repository.dart';
 import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/helpers/helpers.dart';
-import '../../../../../core/presentation/components/image_cacheable.dart';
 import '../../../../../service_locator.dart';
-import '../../../domain/entities/product_entity.dart';
 import '../../../domain/repository/product_repository.dart';
 import '../../pages/product_detail_page.dart';
 
@@ -134,7 +132,7 @@ class _ProductItemState extends State<ProductItem> {
                   children: [
                     // Price
                     Text(
-                      formatCurrency(_product.cheapestPrice),
+                      StringHelper.formatCurrency(_product.cheapestPrice),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: widget.fontSizePrice,

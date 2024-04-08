@@ -3,11 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../../app_state.dart';
-import '../../../../../core/constants/typedef.dart';
-import '../../../domain/dto/product_page_resp.dart';
-import '../../../domain/entities/product_entity.dart';
 import '../../pages/product_detail_page.dart';
 import 'product_item.dart';
 

@@ -1,14 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/presentation/components/custom_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
 import '../../../order/domain/repository/order_repository.dart';
 import '../../../order/presentation/pages/checkout_page.dart';
-import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/address_page.dart';
 import '../bloc/cart_bloc.dart';
@@ -172,7 +170,7 @@ class _CartPageState extends State<CartPage> {
                                 child: Text('Tổng cộng:'),
                               ),
                               Text(
-                                formatCurrency(ok.data.order.totalPrice),
+                                StringHelper.formatCurrency(ok.data.order.totalPrice),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Padding(

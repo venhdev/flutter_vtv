@@ -1,10 +1,5 @@
-import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
-import 'package:flutter_vtv/core/network/base_response.dart';
-import 'package:flutter_vtv/core/network/response_handler.dart';
 import 'package:http/http.dart' as http;
-
-import '../../../../core/constants/api.dart';
-import '../../domain/entities/notification_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class NotificationDataSource {
   Future<DataResponse<NotificationResp>> getPageNotifications(int page, int size);

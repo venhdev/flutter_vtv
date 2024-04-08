@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/constants/enum.dart';
-import '../../../../../core/helpers/helpers.dart';
-import '../../../../../core/presentation/components/image_cacheable.dart';
-import '../../../../../core/presentation/pages/photo_view.dart';
 import '../../../../../service_locator.dart';
 import '../../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../../order/domain/repository/order_repository.dart';
 import '../../../../order/presentation/pages/checkout_page.dart';
-import '../../../domain/entities/product_entity.dart';
-import '../../../domain/entities/product_variant_entity.dart';
 
 class SheetAddToCartOrBuyNow extends StatefulWidget {
   const SheetAddToCartOrBuyNow({
@@ -34,12 +29,12 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
 
   String priceString() {
     if (_variant != null) {
-      return formatCurrency(_variant!.price);
+      return StringHelper.formatCurrency(_variant!.price);
     }
     if (widget.product.cheapestPrice == widget.product.mostExpensivePrice) {
-      return formatCurrency(widget.product.cheapestPrice);
+      return StringHelper.formatCurrency(widget.product.cheapestPrice);
     }
-    return '${formatCurrency(widget.product.cheapestPrice)} - ${formatCurrency(widget.product.mostExpensivePrice)}';
+    return '${StringHelper.formatCurrency(widget.product.cheapestPrice)} - ${StringHelper.formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
   void handleTapAddToCartOrBuyNow() async {

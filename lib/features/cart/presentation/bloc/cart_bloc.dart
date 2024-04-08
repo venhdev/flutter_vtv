@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../domain/dto/cart_resp.dart';
 import '../../domain/repository/cart_repository.dart';
 
 part 'cart_event.dart';
