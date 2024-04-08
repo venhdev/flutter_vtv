@@ -31,7 +31,20 @@ class CartBadge extends StatelessWidget {
                   if (state is CartLoaded) {
                     if (state.cart.count == 0) {
                       return IconButton(
-                        onPressed: () => context.go(CartPage.path),
+                        onPressed: () {
+                          if (pushOnNav) {
+                            context.read<AppState>().hideBottomNav();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const CartPage();
+                                },
+                              ),
+                            ).then((_) => context.read<AppState>().showBottomNav());
+                          } else {
+                            context.go(CartPage.path);
+                          }
+                        },
                         icon: const Icon(Icons.shopping_cart_outlined),
                       );
                     }

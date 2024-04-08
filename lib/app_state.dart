@@ -31,11 +31,13 @@ class AppState extends ChangeNotifier {
   bool get isBottomNavigationVisible => _isBottomNavigationVisible;
 
   void hideBottomNav() {
+    if (_isBottomNavigationVisible == false) return;
     _isBottomNavigationVisible = false;
     notifyListeners();
   }
 
   void showBottomNav() {
+    if (_isBottomNavigationVisible == true) return;
     _isBottomNavigationVisible = true;
     notifyListeners();
   }

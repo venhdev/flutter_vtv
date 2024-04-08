@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class CatalogItem extends StatelessWidget {
@@ -31,20 +30,24 @@ class CatalogItem extends StatelessWidget {
         children: [
           Row(
             children: [
+              icon ?? const SizedBox(),
+              const SizedBox(width: 4),
               Text(
                 catalogName,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              icon ?? const SizedBox(),
             ],
           ),
           // underline
           Text(
             catalogDescription,
             style: const TextStyle(
+              fontWeight: FontWeight.w300,
+              // color: Colors.grey.shade800,
               decoration: TextDecoration.underline,
+              decorationThickness: 0.6,
             ),
           ),
         ],

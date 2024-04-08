@@ -7,48 +7,28 @@ import '../../../../../core/constants/typedef.dart';
 import '../../base/base_lazy_load_entity.dart';
 
 // OK_BUG rebuild when the parent long list is scrolled >> lost data + rebuild lazy load
-class NestedLazyLoadBuilder<T> extends StatefulWidget {
-  const NestedLazyLoadBuilder({
-    super.key,
-    required this.dataCallback,
-    required this.controller,
-    // this.onReachEnd,
-    // this.scrollController,
-    this.crossAxisCount = 2,
-    required this.itemBuilder,
-    this.showIndicator = false,
-    this.emptyMessage = 'Trống',
-  }) : assert(crossAxisCount > 0);
-
-  final Future<RespData<IBasePageResp<T>>> Function(int page) dataCallback;
-  final LazyLoadController<T> controller;
-  // final void Function(List<T>)? onReachEnd;
-
-  final int crossAxisCount;
-
-  // final ScrollController? scrollController; //: null -> use internal scrollController
-  final Widget Function(BuildContext context, int index, T data) itemBuilder;
-
-  /// Show loading indicator at the end of the list
-  final bool showIndicator;
-  final String emptyMessage;
-
-  @override
-  State<NestedLazyLoadBuilder<T>> createState() => _NestedLazyLoadBuilderState<T>();
-}
+//: DONE create a controller to keep the data + current page
 
 class LazyLoadController<T> {
   LazyLoadController({
     required this.scrollController,
     required this.items,
-    this.useGrid = false,
+    this.useGrid = true,
     this.currentPage = 1,
+    this.emptyMessage = 'Trống',
+    this.showIndicator = false,
   });
 
   final ScrollController scrollController;
   final List<T> items;
-  final bool useGrid;
   int currentPage;
+
+  /// Use GridView or ListView
+  final bool useGrid;
+  final String emptyMessage;
+
+  /// Show loading indicator at the end of the list
+  final bool showIndicator;
 
   //add
   void addItems(List<T> newItems) {
@@ -56,36 +36,40 @@ class LazyLoadController<T> {
   }
 }
 
+class NestedLazyLoadBuilder<T> extends StatefulWidget {
+  //? no longer use internal scrollController >> cause unexpected rebuild
+  const NestedLazyLoadBuilder({
+    super.key,
+    required this.dataCallback,
+    required this.controller,
+    this.crossAxisCount = 2,
+    required this.itemBuilder,
+  }) : assert(crossAxisCount > 0);
+
+  final Future<RespData<IBasePageResp<T>>> Function(int page) dataCallback;
+  final LazyLoadController<T> controller;
+
+  final int crossAxisCount;
+
+  final Widget Function(BuildContext context, int index, T data) itemBuilder;
+
+  @override
+  State<NestedLazyLoadBuilder<T>> createState() => _NestedLazyLoadBuilderState<T>();
+}
+
 class _NestedLazyLoadBuilderState<T> extends State<NestedLazyLoadBuilder<T>> {
-  // late ScrollController _scrollController; //
-  // late int _currentPage;
   bool _isLoading = false;
-  String? _message;
-  // final List<T> _items = []; //
+  // String? _message;
+  bool _reachEnd = false;
 
-  // @override
-  // void dispose() {
-  //   //> dispose the scrollController if it's internal
-  //   if (widget.scrollController == null) {
-  //     _scrollController.dispose();
-  //   }
-  //   super.dispose();
-  // }
-
+  //> scrollController dispose handled by parent
   @override
   void initState() {
     super.initState();
-    // if (widget.scrollController != null) {
-    //   _scrollController = widget.scrollController!;
-    // } else {
-    //   _scrollController = ScrollController();
-    // }
-    // _currentPage = 1;
     _loadData(widget.controller.currentPage);
     widget.controller.scrollController.addListener(() {
-      if (widget.controller.scrollController.position.pixels ==
-              widget.controller.scrollController.position.maxScrollExtent &&
-          !_isLoading) {
+      final pos = widget.controller.scrollController.position;
+      if (pos.pixels == pos.maxScrollExtent && !_isLoading && !_reachEnd) {
         _loadData(widget.controller.currentPage);
       }
     });
@@ -112,27 +96,19 @@ class _NestedLazyLoadBuilderState<T> extends State<NestedLazyLoadBuilder<T>> {
           final newItems = dataResp.data.listItem;
           if (newItems.isEmpty) {
             log('[LazyLoadBuilder] No more items at page $page');
-            _message = 'No more items';
+            _reachEnd = true;
           } else {
-            // _currentPage++; // After loading data, increase the current page by 1
             widget.controller.currentPage++;
           }
           return newItems;
         },
       );
 
-      log('data length: ${data.length}');
-
       if (mounted) {
         setState(() {
           log('[LazyLoadBuilder] load more ${data.length} items at page $page');
-          // _items.addAll(data);
-          //? If parent passes the controller >> call onAddItems
-          if (widget.controller.items.isEmpty) {
-            widget.controller.addItems(data);
-          } else {
-            widget.controller.addItems(data);
-          }
+
+          widget.controller.addItems(data);
           _isLoading = false;
         });
       }
@@ -141,19 +117,18 @@ class _NestedLazyLoadBuilderState<T> extends State<NestedLazyLoadBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    // log('[LazyLoadBuilder] build with ${_items.length} items');
     log('[LazyLoadBuilder] build with ${widget.controller.items.length} items');
     if (widget.controller.items.isEmpty && !_isLoading) {
       return Center(
         child: Text(
-          widget.emptyMessage,
+          widget.controller.emptyMessage,
           style: const TextStyle(color: Colors.grey, fontSize: 12),
         ),
       );
     }
-    //? If parent passes the scrollController
+    //? scrollController passed from parent
     //: 1: Disable the physics of the GridView & shrinkWrap it
-    //: 2: Use the parent's scrollController
+    //! 2: Use the parent's scrollController --no longer use internal scrollController
     return widget.controller.useGrid ? _buildLazyLoadWithGridView() : _buildLazyLoadWithListView();
   }
 
@@ -170,7 +145,7 @@ class _NestedLazyLoadBuilderState<T> extends State<NestedLazyLoadBuilder<T>> {
       //   crossAxisSpacing: 8,
       //   mainAxisSpacing: 8,
       // ),
-      itemCount: widget.showIndicator ? widget.controller.items.length + 1 : widget.controller.items.length,
+      itemCount: widget.controller.showIndicator ? widget.controller.items.length + 1 : widget.controller.items.length,
       itemBuilder: (context, index) {
         if (widget.controller.items.isEmpty && _isLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -178,9 +153,9 @@ class _NestedLazyLoadBuilderState<T> extends State<NestedLazyLoadBuilder<T>> {
           return Center(
             child: _isLoading
                 ? const CircularProgressIndicator()
-                : _message == null
+                : !_reachEnd
                     ? Container()
-                    : Text('$_message'),
+                    : Text(widget.controller.emptyMessage),
           );
         } else {
           return widget.itemBuilder(context, index, widget.controller.items[index]);
@@ -202,17 +177,18 @@ class _NestedLazyLoadBuilderState<T> extends State<NestedLazyLoadBuilder<T>> {
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
-      itemCount: widget.showIndicator ? widget.controller.items.length + 1 : widget.controller.items.length,
+      itemCount: widget.controller.showIndicator ? widget.controller.items.length + 1 : widget.controller.items.length,
       itemBuilder: (context, index) {
         if (widget.controller.items.isEmpty && _isLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (index == widget.controller.items.length) {
+          //> only show when [showIndicator] is true >> length + 1
           return Center(
             child: _isLoading
                 ? const CircularProgressIndicator()
-                : _message == null
+                : !_reachEnd
                     ? Container()
-                    : Text('$_message'),
+                    : Text(widget.controller.emptyMessage),
           );
         } else {
           return widget.itemBuilder(context, index, widget.controller.items[index]);

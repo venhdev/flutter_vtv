@@ -20,7 +20,7 @@ import '../../../profile/presentation/pages/user_detail_page.dart';
 import '../../domain/entities/auth_entity.dart';
 import 'catalog_item.dart';
 
-class LoggedView extends StatelessWidget {
+class LoggedView extends StatefulWidget {
   const LoggedView({
     super.key,
     required this.auth,
@@ -28,30 +28,39 @@ class LoggedView extends StatelessWidget {
 
   final AuthEntity auth;
 
-  // appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
+  @override
+  State<LoggedView> createState() => _LoggedViewState();
+}
 
+class _LoggedViewState extends State<LoggedView> {
+  // appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
   @override
   Widget build(BuildContext context) {
     return NestedScrollView(
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return _buildHeaderSliver(context);
       },
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //# My Purchase
-            _buildMyPurchase(context),
-
-            //# Favorite product
-            _buildFavoriteProduct(context),
-
-            //# Recent Product Viewed
-            _buildRecentProduct(),
-
-            //! DEV
-            // _buildDEV(context),
-          ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //# My Purchase
+              _buildMyPurchase(context),
+        
+              //# Favorite product
+              _buildFavoriteProduct(context),
+        
+              //# Recent Product Viewed
+              _buildRecentProduct(),
+        
+              //! DEV
+              // _buildDEV(context),
+            ],
+          ),
         ),
       ),
     );
@@ -117,14 +126,24 @@ class LoggedView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        IconTextButton(
-          onPressed: () {
-            sl<LocalProductDataSource>()
-                .removeAllRecentProduct()
-                .then((value) => Fluttertoast.showToast(msg: 'remove all recent product success'));
-          },
-          icon: Icons.history,
-          label: 'Xem gần đây',
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const IconTextButton(
+              icon: Icons.history,
+              label: 'Xem gần đây',
+            ),
+
+            // delete all recent product
+            TextButton(
+              onPressed: () {
+                sl<LocalProductDataSource>()
+                    .removeAllRecentProduct()
+                    .then((value) => Fluttertoast.showToast(msg: 'Đã xóa lịch sử xem gần đây'));
+              },
+              child: const Text('Xóa lịch sử', style: TextStyle(color: Colors.grey)),
+            ),
+          ],
         ),
         FutureBuilder(
           future: sl<ProductRepository>().getRecentViewedProducts(),
@@ -173,7 +192,7 @@ class LoggedView extends StatelessWidget {
       SliverAppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
         actions: [
-          const CartBadge(),
+          const CartBadge(pushOnNav: true),
           IconButton(
             onPressed: () => context.go('/user/settings'),
             icon: const Icon(Icons.settings_outlined),
@@ -188,7 +207,7 @@ class LoggedView extends StatelessWidget {
             backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
           ),
           padding: EdgeInsets.zero,
-          onPressed: () => context.go(UserDetailPage.path, extra: auth.userInfo),
+          onPressed: () => context.go(UserDetailPage.path, extra: widget.auth.userInfo),
           icon: Padding(
             padding: const EdgeInsets.only(bottom: 4.0),
             child: Row(
@@ -209,7 +228,7 @@ class LoggedView extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      '${auth.userInfo.fullName!} (${auth.userInfo.username!})',
+                      '${widget.auth.userInfo.fullName!} (${widget.auth.userInfo.username!})',
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
