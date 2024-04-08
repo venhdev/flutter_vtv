@@ -112,9 +112,10 @@ class _ProductItemState extends State<ProductItem> {
         ),
         //# Name
         Text(
-          '${_product.name} ${_product.name}${_product.name}',
+          _product.name,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: widget.fontSizeName,
           ),

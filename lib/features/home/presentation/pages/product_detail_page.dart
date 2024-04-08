@@ -8,12 +8,14 @@ import '../../../../core/helpers/helpers.dart';
 import '../../../../core/presentation/components/custom_buttons.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../core/presentation/components/image_cacheable.dart';
+import '../../../../core/presentation/components/nested_lazy_load_builder.dart';
 import '../../../../core/presentation/pages/photo_view.dart';
 import '../../../../service_locator.dart';
 import '../../../auth/presentation/components/rating.dart';
+import '../../../cart/presentation/components/cart_badge.dart';
 import '../../domain/dto/product_detail_resp.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product_components/lazy_product_list_builder.dart';
+import '../components/product_components/product_item.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
 
 //! this page should use to easily pop back to the previous screen
@@ -43,7 +45,7 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  final ScrollController _scrollController = ScrollController();
+  late LazyLoadController _lazyController;
   // bool _showBottomSheet = true;
   int? _favoriteProductId;
   bool _isShowMoreDescription = false;
@@ -64,18 +66,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       },
     );
   }
-
-  // void _scrollListener() {
-  //   if (_scrollController.position.userScrollDirection == ScrollDirection.reverse && _showBottomSheet) {
-  //     setState(() {
-  //       _showBottomSheet = false;
-  //     });
-  //   } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward && !_showBottomSheet) {
-  //     setState(() {
-  //       _showBottomSheet = true;
-  //     });
-  //   }
-  // }
 
   void handleTapFavoriteButton() async {
     // add to favorite
@@ -135,9 +125,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   @override
+  void dispose() {
+    _lazyController.scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
-    // _scrollController.addListener(_scrollListener);
+    // _scrollController = ScrollController();
+    _lazyController = LazyLoadController(
+      scrollController: ScrollController(),
+      items: [],
+      useGrid: true,
+    );
     if (widget.productId != null) {
       fetchProductDetail(widget.productId!);
     } else {
@@ -146,13 +147,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
     checkIsFavorite();
     cacheRecentView();
-  }
-
-  @override
-  void dispose() {
-    // _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
@@ -182,7 +176,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   CustomScrollView _buildBody(BuildContext context) {
     return CustomScrollView(
-      // controller: _scrollController,
+      controller: _lazyController.scrollController,
       slivers: <Widget>[
         //# image
         _buildSliverAppBar(context),
@@ -206,7 +200,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               _buildProductDescription(),
 
               //# review
-              _buildProductReview(),
+              // _buildProductReview(),
 
               //# suggestion products (if any alike current product)
               _buildSuggestionProducts(),
@@ -267,11 +261,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         },
         icon: const Icon(Icons.arrow_back),
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(
-            Colors.white24,
-          ),
+          backgroundColor: MaterialStateProperty.all(Colors.white24),
         ),
       ),
+      actions: const [CartBadge(pushOnNav: true), SizedBox(width: 8)],
       flexibleSpace: FlexibleSpaceBar(
         background: GestureDetector(
           onTap: () {
@@ -331,6 +324,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildProductDescription() {
     return Column(
       children: [
+        Container(
+          color: Colors.red,
+          height: 1500,
+        ),
+        DividerWithText(
+          text: 'Thông tin sản phẩm',
+          color: Colors.grey[300],
+          centerText: true,
+        ),
+        Text(
+          _productDetail.product.information,
+          style: const TextStyle(fontSize: 14),
+        ),
         DividerWithText(
           text: 'Mô tả sản phẩm',
           color: Colors.grey[300],
@@ -530,12 +536,38 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           color: Colors.grey[300],
           centerText: true,
         ),
-        LazyProductListBuilder(
-          scrollController: _scrollController,
+        NestedLazyLoadBuilder(
+          controller: _lazyController,
+          crossAxisCount: 2,
+          itemBuilder: (context, index, data) {
+            return ProductItem(
+              product: _lazyController.items[index],
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ProductDetailPage(productId: _lazyController.items[index].productId);
+                    },
+                  ),
+                );
+              },
+            );
+          },
+          // scrollController: (execute) {
+          //   _scrollController.addListener(() {
+          //     log('Scroll position: ${_scrollController.position.pixels}');
+          //     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+          //       execute();
+          //     }
+          //   });
+          //   return _scrollController;
+          // },
+          // scrollController: _scrollController,
+
           emptyMessage: 'Không tìm thấy sản phẩm tương tự',
           dataCallback: (page) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
             page,
-            5,
+            6,
             _productDetail.product.productId,
             false,
           ),
@@ -606,55 +638,52 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                 ),
                 Divider(color: Colors.grey[200], indent: 32, endIndent: 32, height: 8),
-                Container(
-                  height: 350,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: ok.data.reviews.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //# user info + rating
-                          ListTile(
-                            leading: const CircleAvatar(
-                              // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
-                              backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
-                            ),
-                            title: Text(ok.data.reviews[index].username),
-                            subtitle: Rating(rating: double.parse(ok.data.reviews[index].rating.toString())),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: ok.data.reviews.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //# user info + rating
+                        ListTile(
+                          leading: const CircleAvatar(
+                            // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
+                            backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
                           ),
-                  
-                          //# review content
-                          Text(ok.data.reviews[index].content),
-                  
-                          //# review image
-                          if (ok.data.reviews[index].image != null)
-                            SizedBox(
-                              height: 100,
-                              child: ImageCacheable(
-                                ok.data.reviews[index].image!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                  
-                          //# date
-                          Text(
-                            convertDateTimeToString(
-                              ok.data.reviews[index].createdAt,
-                              pattern: 'dd-MM-yyyy HH:mm',
-                            ),
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
+                          title: Text(ok.data.reviews[index].username),
+                          subtitle: Rating(rating: double.parse(ok.data.reviews[index].rating.toString())),
+                        ),
+
+                        //# review content
+                        Text(ok.data.reviews[index].content),
+
+                        //# review image
+                        if (ok.data.reviews[index].image != null)
+                          SizedBox(
+                            height: 100,
+                            child: ImageCacheable(
+                              ok.data.reviews[index].image!,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
+
+                        //# date
+                        Text(
+                          convertDateTimeToString(
+                            ok.data.reviews[index].createdAt,
+                            pattern: 'dd-MM-yyyy HH:mm',
+                          ),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

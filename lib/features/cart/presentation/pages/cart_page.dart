@@ -78,9 +78,6 @@ class _CartPageState extends State<CartPage> {
                         itemBuilder: (context, shopIndex) {
                           return CartsByShop(
                             state.cart.cartByShopDTOs[shopIndex],
-                            // onSelected: (cartId) {
-                            //   setState(() {});
-                            // },
                             onUpdateCartCallback: (cartId, quantity, cartIndex) {
                               context.read<CartBloc>().add(UpdateCart(
                                     cartId: cartId,

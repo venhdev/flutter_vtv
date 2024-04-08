@@ -2,8 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../../app_state.dart';
 import '../../../../../core/constants/typedef.dart';
 import '../../../domain/dto/product_page_resp.dart';
 import '../../../domain/entities/product_entity.dart';
@@ -16,13 +17,17 @@ class LazyProductListBuilder extends StatefulWidget {
   const LazyProductListBuilder({
     super.key,
     required this.dataCallback,
+    // this.invokeLoadData,
     this.scrollController,
     this.crossAxisCount = 2,
     this.emptyMessage = 'Không có sản phẩm nào',
   }) : assert(crossAxisCount > 0);
 
   final Future<RespData<ProductPageResp>> Function(int page) dataCallback;
+  // invoke internal loadData function when _scrollController passed from parent
+  // final void Function(Function() execute)? invokeLoadData;
   final int crossAxisCount;
+  // final ScrollController Function(void Function() execute)? scrollController; //! null -> use internal scrollController
   final ScrollController? scrollController; //! null -> use internal scrollController
 
   final String emptyMessage;
@@ -32,30 +37,54 @@ class LazyProductListBuilder extends StatefulWidget {
 }
 
 class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
+  //! this _scrollController must add listener before if it is passed from parent
   late ScrollController _scrollController;
   late int _currentPage;
   bool _isLoading = false;
   final List<ProductEntity> _products = [];
   String? _message;
 
-  //! cannot dispose scrollController because it is passed from parent
+  @override
+  void dispose() {
+    log('[LazyProductListBuilder] dispose');
+    if (widget.scrollController == null) {
+      _scrollController.dispose();
+    }
+    super.dispose();
+  }
 
+  //! cannot dispose scrollController if it is passed from parent
+  int count = 0;
   @override
   void initState() {
-    log('[LazyProductListBuilder] initState');
+    log('[LazyProductListBuilder] initState $count times');
     super.initState();
+    count++;
     if (widget.scrollController != null) {
       _scrollController = widget.scrollController!;
+      // _scrollController = widget.scrollController!(() => _loadData(_currentPage));
+      //? this [LazyProductListBuilder] may rebuild when parent's state changes... >> addListener again
+      //: Remove the listener before adding a new one
+
+      _scrollController.removeListener(() {});
+      _scrollController.addListener(() {
+        // log('[LazyProductListBuilder] Add listener to parent\'s scrollController $count times');
+        log('position: ${_scrollController.position.pixels}');
+        if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
+          _loadData(_currentPage);
+        }
+      });
     } else {
-      _scrollController = ScrollController();
+      _scrollController = ScrollController()
+        ..addListener(() {
+          log('position: ${_scrollController.position.pixels}');
+          if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
+            _loadData(_currentPage);
+          }
+        });
     }
     _currentPage = 1;
     _loadData(_currentPage);
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
-        _loadData(_currentPage);
-      }
-    });
   }
 
   Future<void> _loadData(int page) async {
@@ -66,7 +95,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         });
       }
 
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 300));
 
       List<ProductEntity> data;
       final dataEither = await widget.dataCallback(page);
@@ -76,7 +105,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
           return [];
         },
         (dataResp) {
-          final newProducts = dataResp.data.products;
+          final newProducts = dataResp.data.listItem;
           if (newProducts.isEmpty) {
             log('[LazyProductListBuilder] No more products');
             _message = 'Không còn sản phẩm nào';
@@ -108,6 +137,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
         ),
       );
     }
+
     //? If parent passes the scrollController
     //: 1: Disable the physics of the GridView & shrinkWrap it
     //: 2: Use the parent's scrollController
@@ -136,7 +166,19 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
           return ProductItem(
             product: _products[index],
             onPressed: () {
-              context.go(ProductDetailPage.path, extra: _products[index].productId);
+              // context.go(ProductDetailPage.path, extra: _products[index].productId);
+              context.read<AppState>().hideBottomNav();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ProductDetailPage(productId: _products[index].productId);
+                  },
+                ),
+              ).then(
+                (_) {
+                  context.read<AppState>().showBottomNav();
+                },
+              );
             },
           );
         }

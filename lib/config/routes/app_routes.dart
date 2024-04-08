@@ -40,7 +40,7 @@ final GlobalKey<NavigatorState> _shellNavigatorKey =
 
 class AppRoutes {
   static GoRouter router = GoRouter(
-    debugLogDiagnostics: true, // NOTE: Only set this to true for debugging
+    debugLogDiagnostics: true, // NOTE: dev
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/home',
     extraCodec: const MyExtraCodec(),

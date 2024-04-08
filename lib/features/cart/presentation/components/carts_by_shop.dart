@@ -59,7 +59,6 @@ class CartsByShop extends StatelessWidget {
     );
   }
 
-  // Navigator.of(context).push(
   Widget _buildShopInfo(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -73,7 +72,7 @@ class CartsByShop extends StatelessWidget {
           icon: Icons.storefront_sharp,
           label: cartByShop.shopName,
           onPressed: () {
-            // navigate to shop detail
+            //TODO shop detail
           },
         ),
       ],

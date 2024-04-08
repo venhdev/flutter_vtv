@@ -66,6 +66,7 @@ class CategoryList extends StatelessWidget {
                                       appBar: AppBar(
                                         title: Text(category.name),
                                       ),
+                                      // BUG: got error when scroll to the end of the list (categoryId = 1)
                                       body: LazyProductListBuilder(
                                         dataCallback: (page) {
                                           return sl<ProductRepository>().getProductPageByCategory(

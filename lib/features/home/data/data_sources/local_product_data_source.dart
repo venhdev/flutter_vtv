@@ -6,6 +6,7 @@ int _maxRecentProduct = 10;
 abstract class LocalProductDataSource {
   Future<void> cacheProductId(int productId);
   Future<List<String>> getRecentProductIds();
+  Future<void> removeAllRecentProduct();
 }
 
 class LocalProductDataSourceImpl extends LocalProductDataSource {
@@ -30,6 +31,11 @@ class LocalProductDataSourceImpl extends LocalProductDataSource {
   @override
   Future<List<String>> getRecentProductIds() async {
     List<String> recentProductIds = _pref.I.getStringList(_keyRecentProduct) ?? [];
-    return recentProductIds.reversed.toList();
+    return recentProductIds;
+  }
+  
+  @override
+  Future<void> removeAllRecentProduct() async{
+    await _pref.I.remove(_keyRecentProduct);
   }
 }

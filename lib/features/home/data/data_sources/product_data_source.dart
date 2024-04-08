@@ -231,7 +231,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
+      '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId with params: page=$page&size=$size&inShop=$inShop',
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }

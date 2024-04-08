@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/constants/typedef.dart';
 import 'package:flutter_vtv/core/notification/local_notification_manager.dart';
-import 'package:flutter_vtv/features/home/domain/dto/product_detail_resp.dart';
+import 'package:flutter_vtv/features/home/data/data_sources/local_product_data_source.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../app_state.dart';
-import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/components/custom_buttons.dart';
 import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
+import '../../../cart/presentation/components/cart_badge.dart';
 import '../../../home/domain/repository/product_repository.dart';
-import '../../../home/presentation/components/product_components/product_list_builder.dart';
+import '../../../home/presentation/components/product_components/product_page_builder.dart';
 import '../../../home/presentation/pages/favorite_product_page.dart';
+import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../order/presentation/pages/voucher_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
 import '../../domain/entities/auth_entity.dart';
@@ -116,8 +117,16 @@ class LoggedView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const IconTextButton(icon: Icons.history, label: 'Xem gần đây'),
-        FutureBuilder<Result<List<ProductDetailResp>>>(
+        IconTextButton(
+          onPressed: () {
+            sl<LocalProductDataSource>()
+                .removeAllRecentProduct()
+                .then((value) => Fluttertoast.showToast(msg: 'remove all recent product success'));
+          },
+          icon: Icons.history,
+          label: 'Xem gần đây',
+        ),
+        FutureBuilder(
           future: sl<ProductRepository>().getRecentViewedProducts(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -127,12 +136,23 @@ class LoggedView extends StatelessWidget {
                   return MessageScreen.error(error.toString());
                 },
                 (data) {
-                  return SizedBox(
-                    height: 150,
-                    child: ProductDetailListBuilder(
-                      productDetails: data,
-                      crossAxisCount: 1,
-                    ),
+                  return ProductDetailListBuilder(
+                    productDetails: data,
+                    crossAxisCount: 1,
+                    itemHeight: 150,
+                    emptyMessage: 'Không có sản phẩm nào được xem gần đây',
+                    scrollDirection: Axis.horizontal,
+                    onTap: (index) async {
+                      Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ProductDetailPage(productDetail: data[index]);
+                          },
+                        ),
+                      ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
+                    },
                   );
                 },
               );

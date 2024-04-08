@@ -6,6 +6,7 @@ class IconTextButton extends StatelessWidget {
     super.key,
     this.onPressed,
     this.icon,
+    this.trailingIcon,
     required this.label,
     this.reversePosition = false,
     this.reverseDirection = false,
@@ -18,6 +19,7 @@ class IconTextButton extends StatelessWidget {
   });
   // Required parameters
   final IconData? icon; // Icon now is optional
+  final IconData? trailingIcon; // Icon now is optional
   final String label;
   final void Function()? onPressed;
 
@@ -60,7 +62,15 @@ class IconTextButton extends StatelessWidget {
                         fontSize: fontSize,
                         fontWeight: FontWeight.bold,
                       )),
+                  if (trailingIcon != null) ...[
+                    const SizedBox(width: 4),
+                    if (trailingIcon != null) Icon(trailingIcon, size: iconSize, color: iconColor),
+                  ]
                 ] else ...[
+                  if (trailingIcon != null) ...[
+                    if (trailingIcon != null) Icon(trailingIcon, size: iconSize, color: iconColor),
+                    const SizedBox(width: 4),
+                  ],
                   Text(label,
                       style: TextStyle(
                         fontSize: fontSize,

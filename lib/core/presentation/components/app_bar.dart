@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../features/auth/presentation/bloc/auth_cubit.dart';
-import '../../../features/cart/presentation/bloc/cart_bloc.dart';
-import '../../../features/cart/presentation/pages/cart_page.dart';
+import '../../../features/cart/presentation/components/cart_badge.dart';
 import '../../../features/home/presentation/components/search_components/search_bar.dart';
 import '../../../features/home/presentation/pages/search_page.dart';
 
@@ -21,6 +18,7 @@ AppBar buildAppBar(
   Color? backgroundColor,
   PreferredSizeWidget? bottom,
   double? scrolledUnderElevation,
+  bool pushOnNav = false,
 }) {
   // title & search bar can't be shown at the same time
   assert(title == null || showSearchBar == false, 'title & search bar can\'t be shown at the same time');
@@ -48,7 +46,7 @@ AppBar buildAppBar(
           ),
         ),
       // icon cart badge (number of items in cart)
-      const CartBadge(),
+      CartBadge(pushOnNav: pushOnNav),
 
       // icon settings
       if (showSettingButton)
@@ -62,68 +60,7 @@ AppBar buildAppBar(
   );
 }
 
-class CartBadge extends StatelessWidget {
-  const CartBadge({
-    super.key,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        if (state.status != AuthStatus.authenticated) {
-          return const SizedBox.shrink();
-        } else {
-          return Row(
-            children: [
-              // icon cart
-              BlocBuilder<CartBloc, CartState>(
-                builder: (context, state) {
-                  if (state is CartLoaded) {
-                    if (state.cart.count == 0) {
-                      return IconButton(
-                        onPressed: () => context.go(CartPage.path),
-                        icon: const Icon(Icons.shopping_cart_outlined),
-                      );
-                    }
-                    return Badge(
-                      label: Text(state.cart.count.toString()),
-                      backgroundColor: Colors.orange,
-                      offset: const Offset(0, 0),
-                      child: IconButton(
-                        onPressed: () => context.go(CartPage.path),
-                        icon: const Icon(Icons.shopping_cart),
-                      ),
-                    );
-                  } else if (state is CartInitial || state is CartLoading) {
-                    return const IconButton(
-                      onPressed: null,
-                      icon: Icon(Icons.shopping_cart),
-                    );
-                  }
-                  // NOTE: there may be some other states/errors that need to be handled
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              ),
-              // TODO chat
-              // icon chat
-              // const IconButton.outlined(
-              //   onPressed: null,
-              //   // onPressed: () {
-              //   //   // log(context.read<CartBloc>().state.toString());
-              //   //   // context.read<CartBloc>().add(InitialCart());
-              //   // },
-              //   icon: Icon(Icons.chat_outlined),
-              // ),
-            ],
-          );
-        }
-      },
-    );
-  }
-}
 // return Badge(
 //   label: BlocBuilder<AuthCubit, AuthState>(
 //     builder: (context, state) {
