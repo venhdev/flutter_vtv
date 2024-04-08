@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../config/themes/theme_provider.dart';
 import '../../../../core/presentation/components/custom_dialogs.dart';
 import 'address_page.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
@@ -29,44 +30,51 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        centerTitle: true,
-        actions: [
-          // dev page button
-          IconButton(
-            onPressed: () {
-              GoRouter.of(context).go('/dev');
-            },
-            icon: const Icon(Icons.developer_mode),
-          ),
-        ],
+      appBar: _buildAppBarSetting(context),
+      body: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state.status == AuthStatus.unauthenticated) {
+            return const SizedBox.shrink();
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildAddress(context),
+              _buildChangePassword(context),
+              _buildLogout(context),
+            ],
+          );
+        },
       ),
-      body: Column(
-        // fill the column width
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // logout button
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              if (state.status == AuthStatus.unauthenticated) {
-                return const SizedBox.shrink();
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildAddress(context),
-                  _buildChangePassword(context),
-                  _buildLogout(context),
-                ],
-              );
-            },
-          ),
-          // if (isLogin(context)) _buildChangePasswordButton(context),
-          // if (isLogin(context)) _buildLogoutButton(context),
-        ],
-      ),
+    );
+  }
+
+  AppBar _buildAppBarSetting(BuildContext context) {
+    return AppBar(
+      title: const Text('Settings'),
+      centerTitle: true,
+      actions: [
+        // dev page button
+        IconButton(
+          onPressed: () {
+            GoRouter.of(context).go('/dev');
+          },
+          icon: const Icon(Icons.developer_mode),
+        ),
+
+        //# toggle theme
+        ToggleButtons(
+          borderRadius: BorderRadius.circular(8),
+          isSelected: [!isDarkMode(context), isDarkMode(context)],
+          onPressed: (index) {
+            context.read<ThemeProvider>().toggleTheme();
+          },
+          children: const [
+            Icon(Icons.light_mode),
+            Icon(Icons.dark_mode),
+          ],
+        ),
+      ],
     );
   }
 

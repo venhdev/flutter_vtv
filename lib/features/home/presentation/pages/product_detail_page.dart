@@ -14,6 +14,7 @@ import '../../../../service_locator.dart';
 import '../../../auth/presentation/components/rating.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../domain/dto/product_detail_resp.dart';
+import '../../domain/entities/product_entity.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
@@ -45,7 +46,7 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  late LazyLoadController _lazyController;
+  late LazyLoadController<ProductEntity> _lazyController;
   // bool _showBottomSheet = true;
   int? _favoriteProductId;
   bool _isShowMoreDescription = false;
@@ -138,6 +139,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       scrollController: ScrollController(),
       items: [],
       useGrid: true,
+      emptyMessage: 'Không tìm thấy sản phẩm tương tự',
     );
     if (widget.productId != null) {
       fetchProductDetail(widget.productId!);
@@ -200,7 +202,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               _buildProductDescription(),
 
               //# review
-              // _buildProductReview(),
+              _buildProductReview(),
 
               //# suggestion products (if any alike current product)
               _buildSuggestionProducts(),
@@ -324,10 +326,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildProductDescription() {
     return Column(
       children: [
-        Container(
-          color: Colors.red,
-          height: 1500,
-        ),
         DividerWithText(
           text: 'Thông tin sản phẩm',
           color: Colors.grey[300],
@@ -536,7 +534,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           color: Colors.grey[300],
           centerText: true,
         ),
-        NestedLazyLoadBuilder(
+        NestedLazyLoadBuilder<ProductEntity>(
           controller: _lazyController,
           crossAxisCount: 2,
           itemBuilder: (context, index, data) {
@@ -564,7 +562,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           // },
           // scrollController: _scrollController,
 
-          emptyMessage: 'Không tìm thấy sản phẩm tương tự',
           dataCallback: (page) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
             page,
             6,

@@ -32,13 +32,10 @@ class ProductDetailListBuilder extends StatelessWidget {
       builder: (context) {
         if (productDetails.isEmpty) {
           // return const SizedBox();
-          return Container(
-            color: Colors.red,
-            child: Center(
-              child: Text(
-                emptyMessage ?? 'Không tìm thấy sản phẩm phù hợp',
-                style: const TextStyle(fontSize: 12),
-              ),
+          return Center(
+            child: Text(
+              emptyMessage ?? 'Không tìm thấy sản phẩm phù hợp',
+              style: const TextStyle(fontSize: 12),
             ),
           );
         }

@@ -1,22 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../core/presentation/components/nested_lazy_load_builder.dart';
 import '../../../../service_locator.dart';
+import '../../domain/entities/notification_entity.dart';
 import '../../domain/repository/notification_repository.dart';
 import '../components/notification_item.dart';
 
-class NotificationPage extends StatefulWidget {
+class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
 
   static const String routeRoot = '/notification';
   static const String routeName = 'notification';
 
-  @override
-  State<NotificationPage> createState() => _NotificationPageState();
-}
-
-class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,76 +25,48 @@ class _NotificationPageState extends State<NotificationPage> {
         scrolledUnderElevation: 0,
         pushOnNav: true,
       ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {
-                  // context.go('/notification/all');
-                },
-                child: const Text('Đánh dấu tất cả đã đọc'),
-              ),
-            ],
-          ),
-          Divider(height: 0, thickness: 1, color: Colors.grey.shade300),
-          Expanded(
-            child: NestedLazyLoadBuilder(
-              controller: LazyLoadController(
-                items: [],
-                scrollController: ScrollController(),
-              ),
+      body: Builder(builder: (context) {
+        final controller = LazyLoadController<NotificationEntity>(
+          items: [],
+          scrollController: ScrollController(),
+          useGrid: false,
+          emptyMessage: 'Không có thông báo nào.'
+        );
+        return ListView(
+          controller: controller.scrollController,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    // context.go('/notification/all');
+                  },
+                  child: const Text('Đánh dấu tất cả đã đọc'),
+                ),
+
+                // reload
+                IconButton(
+                  onPressed: () {
+                    // controller.reload();
+                    log('test ');
+                  },
+                  icon: const Icon(Icons.refresh),
+                ),
+              ],
+            ),
+            Divider(height: 0, thickness: 1, color: Colors.grey.shade300),
+            NestedLazyLoadBuilder(
+              controller: controller,
               dataCallback: (page) => sl<NotificationRepository>().getPageNotifications(page, 10),
               itemBuilder: (_, __, data) {
                 return NotificationItem(notification: data);
               },
               crossAxisCount: 1,
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
-
-  // Widget _buildNotificationOld() {
-  //   return Expanded(
-  //     child: FutureBuilder(
-  //       future: sl<NotificationRepository>().getPageNotifications(1, 100), //TODO lazy load
-  //       builder: (context, snapshot) {
-  //         if (snapshot.hasData) {
-  //           final resultEither = snapshot.data!;
-  //           return resultEither.fold(
-  //             (error) => MessageScreen.error(error.message),
-  //             (ok) => RefreshIndicator(
-  //               onRefresh: () async {
-  //                 setState(() {});
-  //               },
-  //               child: Builder(builder: (context) {
-  //                 if (ok.data.notifications.isEmpty) {
-  //                   return const MessageScreen(
-  //                     message: 'Không có thông báo nào',
-  //                     enableBack: false,
-  //                     icon: Icon(Icons.notifications_off, size: 52),
-  //                   );
-  //                 }
-  //                 return ListView.builder(
-  //                   itemCount: ok.data.notifications.length,
-  //                   itemBuilder: (context, index) {
-  //                     return NotificationItem(notification: ok.data.notifications[index]);
-  //                   },
-  //                 );
-  //               }),
-  //             ),
-  //           );
-  //         } else if (snapshot.hasError) {
-  //           return MessageScreen.error(snapshot.error.toString());
-  //         }
-  //         return const Center(
-  //           child: CircularProgressIndicator(),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }

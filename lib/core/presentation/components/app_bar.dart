@@ -18,10 +18,18 @@ AppBar buildAppBar(
   Color? backgroundColor,
   PreferredSizeWidget? bottom,
   double? scrolledUnderElevation,
+  /// if true, push screen on nav stack
   bool pushOnNav = false,
 }) {
   // title & search bar can't be shown at the same time
   assert(title == null || showSearchBar == false, 'title & search bar can\'t be shown at the same time');
+  // if (leading == null && pushOnNav) {
+  //   leading = IconButton(
+  //     onPressed: () => context.pop(),
+  //     icon: const Icon(Icons.arrow_back),
+  //   );
+  // }
+  
   return AppBar(
     scrolledUnderElevation: scrolledUnderElevation,
     title: title,
