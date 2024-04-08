@@ -1,11 +1,6 @@
 import 'dart:convert';
 
-import '../../features/auth/data/models/user_info_model.dart';
-import '../../features/auth/domain/entities/user_info_entity.dart';
-import '../../features/home/domain/dto/product_detail_resp.dart';
-import '../../features/order/domain/dto/order_detail_entity.dart';
-import '../../features/order/domain/entities/order_entity.dart';
-import '../../features/home/domain/entities/product_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 // <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
 

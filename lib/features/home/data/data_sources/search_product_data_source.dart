@@ -1,12 +1,8 @@
 import 'package:http/http.dart' as http show Client;
-import '../../../../core/network/base_response.dart';
-import '../../../../core/constants/api.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_page_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductPageResp>> searchProductSort(
-      int page, int size, String keyword, String sort);
+  Future<DataResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort);
 
   Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
@@ -24,8 +20,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductPageResp>> searchProductSort(
-      int page, int size, String keyword, String sort) async {
+  Future<DataResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
     // send request
     final response = await _client.get(
       baseUri(

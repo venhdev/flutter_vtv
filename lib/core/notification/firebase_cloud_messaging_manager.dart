@@ -1,19 +1,19 @@
 import 'dart:developer';
 import 'dart:math' show Random;
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../service_locator.dart';
-import 'local_notification_manager.dart';
 
 // foreground message handler
 void _foregroundMessageHandler(RemoteMessage message) {
   try {
     log('Got a message whilst in the foreground!');
 
-    logTest(message);
-    handleShowPushNotification(message);
+    if (message.notification != null) {
+      handleShowPushNotification(message);
+    }
   } catch (e) {
     log('_foregroundMessageHandler Exception: type: ${e.runtimeType.toString()} -- ${e.toString()}');
   }
@@ -26,12 +26,7 @@ void _foregroundMessageHandler(RemoteMessage message) {
 /// see: https://firebase.google.com/docs/cloud-messaging/flutter/receive
 @pragma('vm:entry-point')
 Future<void> _backgroundMessageHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
-
   log('Got a message whilst in the background!');
-  logTest(message);
   handleShowPushNotification(message);
 }
 
@@ -81,31 +76,10 @@ class FirebaseCloudMessagingManager {
 }
 
 void handleShowPushNotification(RemoteMessage message) {
-  sl<LocalNotificationManager>().showNotification(
+  sl<LocalNotificationUtils>().showNotification(
     id: Random().nextInt(1000),
     title: message.notification?.title ?? 'No title',
     body: message.notification?.body ?? 'No body',
     payload: message.data.toString(),
   );
-}
-
-void logTest(RemoteMessage message) {
-  log('message: ${message.toString()}');
-
-  log('message.data: ${message.data}');
-  log('message.data.title: ${message.data['title']}');
-  log('message.data.body: ${message.data['body']}');
-
-  log('message.notification: ${message.notification == null ? 'null' : 'not null'}');
-  log('message.notification.title: ${message.notification?.title}');
-  log('message.notification.body: ${message.notification?.body}');
-  // log('message.notification.image: ${message.notification?.image}');
-  log('message.notification.android: ${message.notification?.android}');
-  log('message.notification.android.imageUrl: ${message.notification?.android?.imageUrl}');
-  log('message.notification.android.clickAction: ${message.notification?.android?.clickAction}');
-  log('message.notification.android.color: ${message.notification?.android?.color}');
-  log('message.notification.android.priority: ${message.notification?.android?.priority}');
-  // log('message.notification.android.notificationCount: ${message.notification?.android?.notificationCount}');
-  log('message.notification.android.ticker: ${message.notification?.android?.ticker}');
-  // log('message.notification.android.defaultSound: ${message.notification?.android?.defaultSound}');
 }

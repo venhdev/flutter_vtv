@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/helpers/helpers.dart';
-
-import '../../domain/entities/voucher_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class VoucherItem extends StatelessWidget {
   const VoucherItem({
@@ -51,7 +49,7 @@ class VoucherItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    formatVoucherType(type: voucher.type, discount: voucher.discount),
+                    StringHelper.getVoucherDescribe(type: voucher.type, discount: voucher.discount),
                     style: const TextStyle(fontSize: 16.0, color: Colors.red, fontWeight: FontWeight.bold),
                   ),
                   Text(

@@ -1,10 +1,4 @@
-import '../../../../core/constants/typedef.dart';
-import '../dto/favorite_product_resp.dart';
-import '../dto/product_detail_resp.dart';
-import '../dto/product_page_resp.dart';
-import '../dto/review_resp.dart';
-import '../entities/category_entity.dart';
-import '../entities/favorite_product_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class ProductRepository {
   //# other

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_vtv/features/home/domain/entities/category_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class CategoryModel extends CategoryEntity {
   const CategoryModel({
@@ -62,12 +62,10 @@ class CategoryModel extends CategoryEntity {
     );
   }
 
-  factory CategoryModel.fromJson(String source) =>
-      CategoryModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CategoryModel.fromJson(String source) => CategoryModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   static List<CategoryModel> fromJsonToList(String source) {
-    final Map<String, dynamic> sourceMap =
-        json.decode(source) as Map<String, dynamic>;
+    final Map<String, dynamic> sourceMap = json.decode(source) as Map<String, dynamic>;
     final List<dynamic> mapList = sourceMap['categoryDTOs'] as List<dynamic>;
 
     return mapList.map((e) => CategoryModel.fromMap(e)).toList();
@@ -75,8 +73,7 @@ class CategoryModel extends CategoryEntity {
 
   static List<CategoryModel> fromMapToList(Map<String, dynamic> mapList) {
     return (mapList['categoryDTOs'] as List<dynamic>)
-        .map<CategoryModel>(
-            (e) => CategoryModel.fromMap(e as Map<String, dynamic>))
+        .map<CategoryModel>((e) => CategoryModel.fromMap(e as Map<String, dynamic>))
         .toList();
   }
 }

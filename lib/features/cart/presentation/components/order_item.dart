@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/helpers/helpers.dart';
-
-import '../../../order/domain/entities/order_item_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class OrderItem extends StatelessWidget {
   const OrderItem(
@@ -65,7 +63,7 @@ class OrderItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      formatCurrency(item.productVariant.price),
+                      StringHelper.formatCurrency(item.productVariant.price),
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                       ),

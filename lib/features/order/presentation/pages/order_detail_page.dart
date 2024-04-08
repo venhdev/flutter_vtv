@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/helpers/helpers.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../domain/dto/order_detail_entity.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
 
@@ -145,7 +144,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
       children: [
         Text(title),
         Text(
-          formatCurrency(price),
+          StringHelper.formatCurrency(price),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: color,
@@ -168,7 +167,7 @@ class _OrderDetailPage extends State<OrderDetailPage> {
             ),
           ),
           // Text(widget.order.paymentMethod),
-          Text(formatPaymentMethod(widget.orderDetail.order.paymentMethod)),
+          Text(StringHelper.getPaymentName(widget.orderDetail.order.paymentMethod)),
         ],
       ),
     );

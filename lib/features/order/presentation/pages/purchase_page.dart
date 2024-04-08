@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/enum.dart';
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
-import '../../domain/entities/multi_order_entity.dart';
-import '../../domain/entities/order_entity.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/purchase_order_item.dart';
 
@@ -138,12 +133,12 @@ class _PurchasePageState extends State<PurchasePage> {
                       tabs: List.generate(
                         _totalTab,
                         (index) => _buildTapButton(
-                          formatOrderStatusName(_statusFromIndex(index)),
+                          StringHelper.getOrderStatusName(_statusFromIndex(index)),
                           listMultiOrder[index].fold(
                             (error) => 0,
                             (ok) => ok.data.orders.length,
                           ),
-                          backgroundColor: getOrderStatusBackgroundColor(_statusFromIndex(index)),
+                          backgroundColor: ColorHelper.getOrderStatusBackgroundColor(_statusFromIndex(index)),
                         ),
                       )
                       // _buildTapButton(_buttonText(0), _totalOrdersAt[0]),

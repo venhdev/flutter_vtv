@@ -1,4 +1,4 @@
-import '../../../../core/helpers/shared_preferences_helper.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 String _keyRecentProduct = 'RECENT_PRODUCT';
 int _maxRecentProduct = 10;
@@ -33,9 +33,9 @@ class LocalProductDataSourceImpl extends LocalProductDataSource {
     List<String> recentProductIds = _pref.I.getStringList(_keyRecentProduct) ?? [];
     return recentProductIds;
   }
-  
+
   @override
-  Future<void> removeAllRecentProduct() async{
+  Future<void> removeAllRecentProduct() async {
     await _pref.I.remove(_keyRecentProduct);
   }
 }

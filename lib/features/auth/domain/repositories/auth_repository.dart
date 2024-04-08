@@ -1,7 +1,4 @@
-import '../../../../core/constants/typedef.dart';
-import '../dto/register_params.dart';
-import '../entities/auth_entity.dart';
-import '../entities/user_info_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class AuthRepository {
   // ----------------- Auth -----------------
@@ -9,8 +6,7 @@ abstract class AuthRepository {
   FResult<AuthEntity> retrieveAuth(); // local storage
 
   //* login
-  FRespData<AuthEntity> loginWithUsernameAndPassword(
-      String username, String password);
+  FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password);
   FResult<void> cacheAuth(AuthEntity authEntity);
 
   // change password
@@ -33,8 +29,7 @@ abstract class AuthRepository {
   //* forgot password
   /// send otp code to email that match with [username]
   FRespEither sendOTPForResetPassword(String username);
-  FRespEither resetPasswordViaOTP(
-      String username, String otpCode, String newPassword);
+  FRespEither resetPasswordViaOTP(String username, String otpCode, String newPassword);
 
   // ----------------- Auth -----------------
 }

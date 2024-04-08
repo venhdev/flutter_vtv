@@ -2,15 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart';
-import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart';
 import 'package:http/http.dart' as http show Client;
-
-import '../../../../core/constants/api.dart';
-import '../../../../core/helpers/secure_storage_helper.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/register_params.dart';
-import '../models/auth_model.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 // <https://pub.dev/packages/jwt_decoder>
 

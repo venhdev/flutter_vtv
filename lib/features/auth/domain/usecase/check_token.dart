@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/base_usecase.dart';
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/error/failures.dart';
 import '../repositories/auth_repository.dart';
 
 /// params: access token

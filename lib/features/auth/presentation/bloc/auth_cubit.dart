@@ -2,11 +2,8 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/constants.dart';
-import '../../domain/dto/register_params.dart';
-import '../../domain/entities/auth_entity.dart';
-import '../../domain/entities/user_info_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecase/use_cases.dart';
 

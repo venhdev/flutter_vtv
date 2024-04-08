@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../profile/domain/entities/address_dto.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class AddressSummary extends StatelessWidget {
   const AddressSummary({
@@ -14,7 +13,7 @@ class AddressSummary extends StatelessWidget {
     this.maxLines,
     this.overflow,
     this.color,
-    this.border ,
+    this.border,
   });
 
   final AddressEntity address;

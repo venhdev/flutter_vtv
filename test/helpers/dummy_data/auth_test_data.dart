@@ -1,10 +1,6 @@
-import 'package:flutter_vtv/core/constants/enum.dart';
-import 'package:flutter_vtv/core/network/base_response.dart';
-import 'package:flutter_vtv/features/auth/data/models/auth_model.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart';
-
 //! Error when using vi language in jsonEncode
+
+import 'package:vtv_common/vtv_common.dart';
 
 const tUsername = 'admin';
 const tPassword = 'admin';

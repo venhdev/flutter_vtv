@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/features/auth/data/models/auth_model.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/auth_entity.dart';
-
+import 'package:vtv_common/vtv_common.dart';
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 
 void main() {

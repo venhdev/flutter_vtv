@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../shop/domain/entities/shop_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class ShopInfo extends StatelessWidget {
   const ShopInfo({

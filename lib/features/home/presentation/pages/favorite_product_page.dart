@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';

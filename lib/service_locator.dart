@@ -6,11 +6,9 @@ import 'package:flutter_vtv/features/home/data/data_sources/category_data_source
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import 'core/helpers/secure_storage_helper.dart';
-import 'core/helpers/shared_preferences_helper.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
-import 'core/notification/local_notification_manager.dart';
 import 'features/auth/data/data_sources/auth_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -62,7 +60,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<SharedPreferencesHelper>(SharedPreferencesHelper(sharedPreferences));
   sl.registerSingleton<SecureStorageHelper>(SecureStorageHelper(secureStorage));
 
-  sl.registerSingleton<LocalNotificationManager>(LocalNotificationManager(flutterLocalNotificationsPlugin));
+  sl.registerSingleton<LocalNotificationUtils>(LocalNotificationUtils(flutterLocalNotificationsPlugin));
   sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source

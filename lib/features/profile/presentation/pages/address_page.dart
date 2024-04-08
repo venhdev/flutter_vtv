@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import 'add_address_page.dart';
-import '../../domain/entities/address_dto.dart';
 import '../../domain/repository/profile_repository.dart';
 
 class AddressPage extends StatefulWidget {

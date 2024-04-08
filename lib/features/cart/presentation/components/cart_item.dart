@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_vtv/core/presentation/components/custom_dialogs.dart';
 import 'package:provider/provider.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/image_cacheable.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
-import '../../domain/entities/cart_entity.dart';
 import '../bloc/cart_bloc.dart';
 
 class CartItem extends StatelessWidget {
@@ -53,7 +50,7 @@ class CartItem extends StatelessWidget {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          Text(formatCurrency(cart.productVariant.price),
+          Text(StringHelper.formatCurrency(cart.productVariant.price),
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.orange,
