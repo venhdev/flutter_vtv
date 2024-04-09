@@ -63,4 +63,9 @@ class OrderRepositoryImpl extends OrderRepository {
   FRespData<OrderDetailEntity> getOrderDetail(String orderId) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getOrderDetail(orderId));
   }
+
+  @override
+  FRespData<OrderDetailEntity> getOrderCancel(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getOrderCancel(orderId));
+  }
 }

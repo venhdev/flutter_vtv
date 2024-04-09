@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/order_item.dart';
+import '../../domain/repository/order_repository.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
 
@@ -30,38 +33,42 @@ class _OrderDetailPage extends State<OrderDetailPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
-          child: IgnorePointer(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                //! order status
-                _buildOrderStatus(),
-                const SizedBox(height: 8),
+          child: Column(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //! order status
+              _buildOrderStatus(),
+              const SizedBox(height: 8),
 
-                //! address
-                _buildDeliveryAddress(),
-                const SizedBox(height: 8),
+              //! address
+              _buildDeliveryAddress(),
+              const SizedBox(height: 8),
 
-                //! order summary
-                _buildShopInfoAndItems(), // shop info, list of items
-                const SizedBox(height: 8),
+              //! order summary
+              _buildShopInfoAndItems(), // shop info, list of items
+              const SizedBox(height: 8),
 
-                //! shipping method
-                _buildShippingMethod(),
-                const SizedBox(height: 8),
+              //! shipping method
+              _buildShippingMethod(),
+              const SizedBox(height: 8),
 
-                //! payment method
-                _buildPaymentMethod(),
-                const SizedBox(height: 8),
+              //! payment method
+              _buildPaymentMethod(),
+              const SizedBox(height: 8),
 
-                //! total price
-                _buildTotalPrice(),
-                const SizedBox(height: 8),
+              //! total price
+              _buildTotalPrice(),
+              const SizedBox(height: 8),
 
-                //! note
-                _buildNote(),
-              ],
-            ),
+              //! note
+              _buildNote(),
+              const SizedBox(height: 8),
+
+              //! cancel button
+              if (widget.orderDetail.order.status == OrderStatus.PENDING ||
+                  widget.orderDetail.order.status == OrderStatus.PROCESSING)
+                _buildCancelButton(),
+            ],
           ),
         ),
       ),
@@ -87,25 +94,24 @@ class _OrderDetailPage extends State<OrderDetailPage> {
   }
 
   Widget _buildNote() {
-    return Wrapper(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Ghi chú',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text.rich(
+        TextSpan(
+          text: 'Ghi chú: ',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          children: [
+            TextSpan(
+              text: widget.orderDetail.order.note ?? '(không có)',
+              style: TextStyle(
+                color: widget.orderDetail.order.note == null ? Colors.grey : Colors.black,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
         ),
-        Text(
-          widget.orderDetail.order.note ?? '(không có)',
-          style: TextStyle(
-            color: widget.orderDetail.order.note == null ? Colors.grey : Colors.black,
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   Widget _buildTotalPrice() {
@@ -221,6 +227,48 @@ class _OrderDetailPage extends State<OrderDetailPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCancelButton() {
+    return ElevatedButton(
+      //color red
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red.shade100,
+      ),
+      onPressed: () async {
+        final isConfirm = await showDialogToConfirm(
+          context: context,
+          title: 'Hủy đơn hàng',
+          content: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+          confirmText: 'Hủy đơn hàng',
+          confirmBackgroundColor: Colors.red.shade300,
+        );
+
+        if (isConfirm) {
+          final resp = await sl<OrderRepository>().getOrderCancel(widget.orderDetail.order.orderId!);
+
+          resp.fold(
+            (error) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message!)));
+            },
+            (ok) {
+              showDialogToAlert(
+                context,
+                title: const Text('Hủy đơn hàng thành công!'),
+                titleTextStyle: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                children: [],
+              );
+              context.go(OrderDetailPage.path, extra: ok.data);
+            },
+          );
+        }
+      },
+      child: const Text('Hủy đơn hàng'),
     );
   }
 }
