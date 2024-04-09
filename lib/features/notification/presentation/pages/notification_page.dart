@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:vtv_common/vtv_common.dart';
 
@@ -26,30 +24,15 @@ class NotificationPage extends StatelessWidget {
       ),
       body: Builder(builder: (context) {
         final controller = LazyLoadController<NotificationEntity>(
-            items: [], scrollController: ScrollController(), useGrid: false, emptyMessage: 'Không có thông báo nào.');
+          items: [],
+          scrollController: ScrollController(),
+          useGrid: false,
+          emptyMessage: 'Không có thông báo nào.',
+        );
         return ListView(
           controller: controller.scrollController,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    // context.go('/notification/all');
-                  },
-                  child: const Text('Đánh dấu tất cả đã đọc'),
-                ),
-
-                // reload
-                IconButton(
-                  onPressed: () {
-                    // controller.reload();
-                    log('test ');
-                  },
-                  icon: const Icon(Icons.refresh),
-                ),
-              ],
-            ),
+            _buildReadAllAndReloadBtn(controller),
             Divider(height: 0, thickness: 1, color: Colors.grey.shade300),
             NestedLazyLoadBuilder(
               controller: controller,
@@ -62,6 +45,28 @@ class NotificationPage extends StatelessWidget {
           ],
         );
       }),
+    );
+  }
+
+  Row _buildReadAllAndReloadBtn(LazyLoadController<NotificationEntity> controller) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          onPressed: () {
+            // context.go('/notification/all');
+          },
+          child: const Text('Đánh dấu tất cả đã đọc'),
+        ),
+
+        // reload
+        IconButton(
+          onPressed: () {
+            controller.reload();
+          },
+          icon: const Icon(Icons.refresh),
+        ),
+      ],
     );
   }
 }

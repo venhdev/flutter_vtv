@@ -42,6 +42,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   // bool _showBottomSheet = true;
   int? _favoriteProductId;
   bool _isShowMoreDescription = false;
+  bool _isShowMoreInformation = false;
 
   bool isInitializing = true;
   late ProductDetailResp _productDetail;
@@ -148,13 +149,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Scaffold(
       // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
       bottomSheet: _buildBottomActionBar(context),
-      // onTap: () {
-      //     if (!_showBottomSheet) {
-      //       setState(() {
-      //         _showBottomSheet = true;
-      //       });
-      //     }
-      //   },
       body: isInitializing
           ? const Center(
               child: CircularProgressIndicator(),
@@ -178,26 +172,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           delegate: SliverChildListDelegate(
             [
               //# price
-              _buildProductPrice(),
-              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  children: [
+                    _buildProductPrice(),
+                    const SizedBox(height: 8),
 
-              //# name
-              _buildProductName(),
-              _buildMoreInfo(), // rating, sold, favorite
-              const SizedBox(height: 8),
+                    //# name
+                    _buildProductName(),
+                    _buildMoreInfo(), // rating, sold, favorite
+                    const SizedBox(height: 8),
 
-              //# shop info
-              _buildShopInfo(),
-              const SizedBox(height: 8),
+                    //# shop info
+                    _buildShopInfo(),
+                    const SizedBox(height: 8),
 
-              //# description
-              _buildProductDescription(),
+                    //# description
+                    _buildProductDescription(),
 
-              //# review
-              _buildProductReview(),
+                    //# review
+                    _buildProductReview(),
 
-              //# suggestion products (if any alike current product)
-              _buildSuggestionProducts(),
+                    //# suggestion products (if any alike current product)
+                    _buildSuggestionProducts(),
+                  ],
+                ),
+              ),
 
               const SizedBox(height: 56),
             ],
@@ -325,8 +326,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         Text(
           _productDetail.product.information,
-          style: const TextStyle(fontSize: 14),
+          maxLines: _isShowMoreInformation ? null : 4,
+          overflow: _isShowMoreInformation ? null : TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 14,
+          ),
         ),
+        if (_productDetail.product.description.length > 100)
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _isShowMoreInformation = !_isShowMoreInformation;
+              });
+            },
+            child: Text(
+              _isShowMoreInformation ? 'Thu gọn' : 'Xem thêm thông tin',
+              style: const TextStyle(
+                color: Colors.blue,
+              ),
+            ),
+          ),
         DividerWithText(
           text: 'Mô tả sản phẩm',
           color: Colors.grey[300],
@@ -340,7 +359,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             fontSize: 16,
           ),
         ),
-        if (_productDetail.product.description.length > 50)
+        if (_productDetail.product.description.length > 100)
           TextButton(
             onPressed: () {
               setState(() {
@@ -348,7 +367,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               });
             },
             child: Text(
-              _isShowMoreDescription ? 'Thu gọn' : 'Xem thêm',
+              _isShowMoreDescription ? 'Thu gọn' : 'Xem thêm mô tả',
               style: const TextStyle(
                 color: Colors.blue,
               ),
@@ -359,26 +378,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildProductPrice() {
-    return Text(
-      _productDetail.product.cheapestPrice != _productDetail.product.mostExpensivePrice
-          ? '${StringHelper.formatCurrency(_productDetail.product.cheapestPrice)} - ${StringHelper.formatCurrency(_productDetail.product.mostExpensivePrice)}'
-          : StringHelper.formatCurrency(_productDetail.product.cheapestPrice),
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w500,
-        color: Colors.red,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        _productDetail.product.cheapestPrice != _productDetail.product.mostExpensivePrice
+            ? '${StringHelper.formatCurrency(_productDetail.product.cheapestPrice)} - ${StringHelper.formatCurrency(_productDetail.product.mostExpensivePrice)}'
+            : StringHelper.formatCurrency(_productDetail.product.cheapestPrice),
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+          color: Colors.red,
+        ),
       ),
     );
   }
 
   Widget _buildProductName() {
-    return Text(
-      _productDetail.product.name,
-      maxLines: 4,
-      overflow: TextOverflow.ellipsis,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        _productDetail.product.name,
+        maxLines: 4,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -529,31 +551,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         NestedLazyLoadBuilder<ProductEntity>(
           controller: _lazyController,
           crossAxisCount: 2,
-          itemBuilder: (context, index, data) {
+          itemBuilder: (context, __, data) {
             return ProductItem(
-              product: _lazyController.items[index],
+              // product: _lazyController.items[index],
+              product: data,
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) {
-                      return ProductDetailPage(productId: _lazyController.items[index].productId);
+                      return ProductDetailPage(productId: data.productId);
                     },
                   ),
                 );
               },
             );
           },
-          // scrollController: (execute) {
-          //   _scrollController.addListener(() {
-          //     log('Scroll position: ${_scrollController.position.pixels}');
-          //     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-          //       execute();
-          //     }
-          //   });
-          //   return _scrollController;
-          // },
-          // scrollController: _scrollController,
-
           dataCallback: (page) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
             page,
             6,
@@ -563,35 +575,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
       ],
     );
-    // return FutureBuilder(
-    //   future: sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
-    //     1,
-    //     5,
-    //     _productDetail.product.productId,
-    //     false,
-    //   ),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.hasData) {
-    //       final resultEither = snapshot.data!;
-    //       return resultEither.fold(
-    //         (error) => MessageScreen.error(error.message),
-    //         (ok) => ListView.builder(
-    //           shrinkWrap: true,
-    //           itemCount: ok.data.products.length,
-    //           itemBuilder: (context, index) {
-    //             return ProductItem(
-    //               product: ok.data.products[index],
-    //               onPressed: () {},
-    //             );
-    //           },
-    //         ),
-    //       );
-    //     } else if (snapshot.hasError) {
-    //       return MessageScreen.error(snapshot.error.toString());
-    //     }
-    //     return MessageScreen(message: snapshot.hasData.toString());
-    //   },
-    // );
   }
 
   Widget _buildProductReview() {
