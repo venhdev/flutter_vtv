@@ -27,4 +27,6 @@ abstract class OrderRepository {
 
   /// Get order detail by orderId
   FRespData<OrderDetailEntity> getOrderDetail(String orderId);
+  /// Cancel order
+  FRespData<OrderDetailEntity> getOrderCancel(String orderId);
 }

@@ -5,8 +5,9 @@ import '../../../../service_locator.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/purchase_order_item.dart';
 
-const int _totalTab = 6;
+const int _totalTab = 7;
 
+/// position of each tab
 OrderStatus? _statusFromIndex(int index) {
   switch (index) {
     case 0:
@@ -14,12 +15,14 @@ OrderStatus? _statusFromIndex(int index) {
     case 1:
       return OrderStatus.PENDING;
     case 2:
-      return OrderStatus.SHIPPING;
+      return OrderStatus.PROCESSING;
     case 3:
-      return OrderStatus.DELIVERED;
+      return OrderStatus.SHIPPING;
     case 4:
-      return OrderStatus.COMPLETED;
+      return OrderStatus.DELIVERED;
     case 5:
+      return OrderStatus.COMPLETED;
+    case 6:
       return OrderStatus.CANCEL;
     default:
       throw Exception('Invalid index');
@@ -79,22 +82,26 @@ Widget _buildTabBarViewWithData({required int index, required List<OrderEntity> 
 }
 
 FRespData<MultiOrderEntity> _callFuture(OrderStatus? status) {
-  switch (status) {
-    case OrderStatus.WAITING:
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.WAITING.name);
-    case OrderStatus.PENDING:
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
-    case OrderStatus.SHIPPING:
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.SHIPPING.name);
-    case OrderStatus.DELIVERED:
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.DELIVERED.name);
-    case OrderStatus.COMPLETED:
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.COMPLETED.name);
-    case OrderStatus.CANCEL:
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.CANCEL.name);
-    default:
-      return sl<OrderRepository>().getListOrders();
-  }
+  if (status == null) return sl<OrderRepository>().getListOrders();
+  return sl<OrderRepository>().getListOrdersByStatus(status.name);
+  // switch (status) {
+  //   case OrderStatus.WAITING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.WAITING.name);
+  //   case OrderStatus.PENDING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
+  //   case OrderStatus.PENDING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
+  //   case OrderStatus.SHIPPING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.SHIPPING.name);
+  //   case OrderStatus.DELIVERED:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.DELIVERED.name);
+  //   case OrderStatus.COMPLETED:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.COMPLETED.name);
+  //   case OrderStatus.CANCEL:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.CANCEL.name);
+  //   default:
+  //     return sl<OrderRepository>().getListOrders();
+  // }
 }
 
 class PurchasePage extends StatefulWidget {
