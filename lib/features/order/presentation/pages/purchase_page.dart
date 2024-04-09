@@ -86,6 +86,8 @@ FRespData<MultiOrderEntity> _callFuture(OrderStatus? status) {
       return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
     case OrderStatus.SHIPPING:
       return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.SHIPPING.name);
+    case OrderStatus.DELIVERED:
+      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.DELIVERED.name);
     case OrderStatus.COMPLETED:
       return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.COMPLETED.name);
     case OrderStatus.CANCEL:
