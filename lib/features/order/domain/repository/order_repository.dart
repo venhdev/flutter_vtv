@@ -24,6 +24,7 @@ abstract class OrderRepository {
   /// Get orders by status
   /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
   FRespData<MultiOrderEntity> getListOrdersByStatus(String status);
+  FRespData<MultiOrderEntity> getListOrdersByStatusProcessingAndPickupPending(); //custom status PROCESSING + PICKUP_PENDING
 
   /// Get order detail by orderId
   FRespData<OrderDetailEntity> getOrderDetail(String orderId);

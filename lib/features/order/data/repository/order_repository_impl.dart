@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../domain/repository/order_repository.dart';
@@ -67,5 +68,25 @@ class OrderRepositoryImpl extends OrderRepository {
   @override
   FRespData<OrderDetailEntity> getOrderCancel(String orderId) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getOrderCancel(orderId));
+  }
+
+  @override
+  FRespData<MultiOrderEntity> getListOrdersByStatusProcessingAndPickupPending() async {
+    //> Custom status PROCESSING + PICKUP_PENDING
+    try {
+      return Future.wait([
+        _orderDataSource.getListOrdersByStatus(OrderStatus.PROCESSING.name),
+        _orderDataSource.getListOrdersByStatus(OrderStatus.PICKUP_PENDING.name),
+      ]).then((value) {
+        final processing = value[0];
+        final pickupPending = value[1];
+        final MultiOrderEntity result = MultiOrderEntity(
+          orders: processing.data.orders + pickupPending.data.orders,
+        );
+        return Right(DataResponse<MultiOrderEntity>(result));
+      });
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
   }
 }

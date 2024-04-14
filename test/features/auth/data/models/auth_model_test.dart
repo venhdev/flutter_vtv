@@ -5,7 +5,7 @@ import 'package:vtv_common/vtv_common.dart';
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 
 void main() {
-  test('[AuthModel] should be a subclass of auth entity', () async {
+  test('[AuthEntity] should be a subclass of auth entity', () async {
     //assert
     expect(tAuthModel, isA<AuthEntity>());
   });
@@ -30,7 +30,7 @@ void main() {
       "refresh_token": "refreshToken"
     };
     //act
-    final result = AuthModel.fromJson(json.encode(tResLoginSuccess));
+    final result = AuthEntity.fromJson(json.encode(tResLoginSuccess));
 
     //assert
     expect(result, equals(tAuthModel));

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -8,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import 'config/dio/auth_interceptor.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
 import 'features/auth/data/data_sources/auth_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -52,8 +56,28 @@ Future<void> initializeLocator() async {
 
   final fMessaging = FirebaseMessaging.instance;
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 3),
+      receiveTimeout: const Duration(seconds: 3),
+    ),
+  );
+  dio.interceptors.addAll(
+    [
+      // LogInterceptor(
+      //   // request: true,
+      //   // requestBody: true,
+      //   // responseBody: true,
+      //   // requestHeader: true,
+      //   // responseHeader: true,
+      //   // error: true,
+      // ),
+      AuthInterceptor(),
+    ],
+  );
 
   sl.registerSingleton<http.Client>(http.Client());
+  sl.registerSingleton<Dio>(dio);
   sl.registerSingleton<Connectivity>(connectivity);
 
   //! Core - Helpers - Managers

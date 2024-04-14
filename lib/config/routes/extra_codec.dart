@@ -32,7 +32,7 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
       return inputAsList[1];
     }
     if (inputAsList[0] == 'UserInfoEntity') {
-      return UserInfoModel.fromJson(inputAsList[1] as String).toEntity();
+      return UserInfoEntity.fromJson(inputAsList[1] as String);
     }
     if (inputAsList[0] == 'ProductEntity') {
       return ProductEntity.fromJson(inputAsList[1] as String);
@@ -63,7 +63,7 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case UserInfoEntity _:
         return <Object?>[
           'UserInfoEntity',
-          UserInfoModel.fromEntity(input).toJson(),
+          input.toJson(),
         ];
       case ProductEntity _:
         return <Object?>[

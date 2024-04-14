@@ -103,7 +103,7 @@ void main() {
       // --expect something equals, isA, throwsA
       expect(future, throwsA(isA<ClientException>()));
     });
-    test('should return [AuthModel] when status code is 200', () async {
+    test('should return [AuthEntity] when status code is 200', () async {
       // Arrange (setup @mocks)
 
       when(mockSecureStorageHelper.cacheAuth(any)).thenAnswer((_) async => {});

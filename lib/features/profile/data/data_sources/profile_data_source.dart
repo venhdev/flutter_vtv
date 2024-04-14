@@ -23,14 +23,15 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   ProfileDataSourceImpl(this._client, this._secureStorageHelper);
   @override
   Future<DataResponse<List<AddressEntity>>> getAllAddress() async {
+    final url = baseUri(path: kAPIAddressAllURL);
     final response = await _client.get(
-      baseUri(path: kAPIAddressAllURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<List<AddressEntity>>(
       response,
-      kAPIAddressAllURL,
+      url,
       (data) => (data['addressDTOs'] as List<dynamic>)
           .map(
             (address) => AddressEntity.fromMap(address),
@@ -41,14 +42,15 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<DataResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode) async {
+    final url = baseUri(path: '$kAPILocationDistrictGetAllByProvinceCodeURL/$provinceCode');
     final response = await _client.get(
-      baseUri(path: '$kAPILocationDistrictGetAllByProvinceCodeURL/$provinceCode'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<List<DistrictEntity>>(
       response,
-      kAPILocationDistrictGetAllByProvinceCodeURL,
+      url,
       (data) => (data['districtDTOs'] as List<dynamic>)
           .map(
             (district) => DistrictEntity.fromMap(district),
@@ -64,14 +66,15 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<DataResponse<List<ProvinceEntity>>> getProvinces() async {
+    final url = baseUri(path: kAPILocationProvinceGetAllURL);
     final response = await _client.get(
-      baseUri(path: kAPILocationProvinceGetAllURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<List<ProvinceEntity>>(
       response,
-      kAPILocationProvinceGetAllURL,
+      url,
       (data) => (data['provinceDTOs'] as List<dynamic>)
           .map(
             (province) => ProvinceEntity.fromMap(province),
@@ -82,14 +85,15 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<DataResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode) async {
+    final url = baseUri(path: '$kAPILocationWardGetAllByDistrictCodeURL/$districtCode');
     final response = await _client.get(
-      baseUri(path: '$kAPILocationWardGetAllByDistrictCodeURL/$districtCode'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<List<WardEntity>>(
       response,
-      kAPILocationWardGetAllByDistrictCodeURL,
+      url,
       (data) => (data['wardDTOs'] as List<dynamic>)
           .map(
             (ward) => WardEntity.fromMap(ward),
@@ -100,8 +104,9 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<DataResponse<AddressEntity>> addAddress(AddAddressParam addAddressParam) async {
+    final url = baseUri(path: kAPIAddressAddURL);
     final response = await _client.post(
-      baseUri(path: kAPIAddressAddURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(addAddressParam.toJson()),
     );
@@ -112,7 +117,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
     // );
     return handleResponseWithData<AddressEntity>(
       response,
-      kAPIAddressAddURL,
+      url,
       (data) => AddressEntity.fromMap(data['addressDTO']),
     );
   }
@@ -125,15 +130,17 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       "status": "ACTIVE",
     };
 
+    final url = baseUri(path: kAPIAddressUpdateStatusURL);
+
     final response = await _client.patch(
-      baseUri(path: kAPIAddressUpdateStatusURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(body),
     );
 
     return handleResponseNoData(
       response,
-      kAPIAddressUpdateStatusURL,
+      url,
     );
   }
 }

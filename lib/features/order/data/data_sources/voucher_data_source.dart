@@ -18,42 +18,45 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<DataResponse<List<VoucherEntity>>> listAll() async {
+    final url = baseUri(path: kAPIVoucherListAllURL);
     final response = await _client.get(
-      baseUri(path: kAPIVoucherListAllURL),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<List<VoucherEntity>>(
       response,
-      kAPIVoucherListAllURL,
+      url,
       (data) => VoucherEntity.fromList(data['voucherDTOs'] as List<dynamic>),
     );
   }
 
   @override
   Future<DataResponse<List<VoucherEntity>>> listOnShop(String shopId) async {
+    final url = baseUri(path: '$kAPIVoucherListOnShopURL/$shopId');
     final response = await _client.get(
-      baseUri(path: '$kAPIVoucherListOnShopURL/$shopId'),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<List<VoucherEntity>>(
       response,
-      kAPIVoucherListOnShopURL,
+      url,
       (data) => VoucherEntity.fromList(data['voucherDTOs'] as List<dynamic>),
     );
   }
 
   @override
   Future<DataResponse<List<VoucherEntity>>> listOnSystem() async {
+    final url = baseUri(path: kAPIVoucherListOnSystemURL);
     final response = await _client.get(
-      baseUri(path: kAPIVoucherListOnSystemURL),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<List<VoucherEntity>>(
       response,
-      kAPIVoucherListOnSystemURL,
+      url,
       (data) => VoucherEntity.fromList(data['voucherDTOs'] as List<dynamic>),
     );
   }

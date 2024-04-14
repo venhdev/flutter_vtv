@@ -17,7 +17,7 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
     try {
       final result = await _authDataSource.loginWithUsernameAndPassword(username, password);
-      return Right(DataResponse(result.data.toEntity()));
+      return Right(DataResponse(result.data));
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
     } on ClientException catch (e) {
@@ -32,8 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FResult<void> cacheAuth(AuthEntity authEntity) async {
     try {
-      final jsonAuthData = AuthModel.fromEntity(authEntity).toJson();
-      await _secureStorageHelper.cacheAuth(jsonAuthData);
+      await _secureStorageHelper.cacheAuth(authEntity);
       return const Right(null);
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
@@ -46,9 +45,6 @@ class AuthRepositoryImpl implements AuthRepository {
   FResult<AuthEntity> retrieveAuth() async {
     try {
       final authData = await _secureStorageHelper.readAuth();
-      if (authData == null) {
-        return const Left(CacheFailure(message: 'Không tìm thấy thông tin người dùng!'));
-      }
       return Right(authData);
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
@@ -74,7 +70,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FResult<void> deleteAuth() async {
     try {
-      await _secureStorageHelper.deleteAuth();
+      await _secureStorageHelper.deleteAll();
       return const Right(null);
     } on CacheException {
       return const Left(CacheFailure(message: 'Lỗi xóa thông tin người dùng!'));
@@ -87,9 +83,6 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<String> getNewAccessToken() async {
     try {
       final localAuth = await _secureStorageHelper.readAuth();
-      if (localAuth == null) {
-        return const Left(ClientError(message: 'Không tìm thấy thông tin người dùng!'));
-      }
       final newAccessToken = await _authDataSource.getNewAccessToken(localAuth.refreshToken);
       return Right(newAccessToken);
     } on CacheException catch (e) {
@@ -159,10 +152,10 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async {
     try {
       final resOK = await _authDataSource.editUserProfile(
-        newInfo: UserInfoModel.fromEntity(newInfo),
+        newInfo: newInfo,
       );
       // update user info in local storage
-      await _secureStorageHelper.updateUserInfo(resOK.data);
+      await _secureStorageHelper.saveOrUpdateUserInfo(resOK.data);
       return Right(resOK);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));

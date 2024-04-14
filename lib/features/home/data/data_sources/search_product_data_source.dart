@@ -21,23 +21,24 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
   @override
   Future<DataResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
+    final url = baseUri(
+      path: kAPISearchProductSortURL,
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+        'search': keyword,
+        'sort': sort,
+      },
+    );
     // send request
     final response = await _client.get(
-      baseUri(
-        path: kAPISearchProductSortURL,
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-          'search': keyword,
-          'sort': sort,
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData(
       response,
-      kAPISearchProductSortURL,
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
@@ -71,25 +72,26 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     int minPrice,
     int maxPrice,
   ) async {
+    final url = baseUri(
+      path: kAPIGetSearchProductPriceRangeSortURL,
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+        'search': keyword.toString(),
+        'sort': sort.toString(),
+        'minPrice': minPrice.toString(),
+        'maxPrice': maxPrice.toString(),
+      },
+    );
     // send request
     final response = await _client.get(
-      baseUri(
-        path: kAPIGetSearchProductPriceRangeSortURL,
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-          'search': keyword.toString(),
-          'sort': sort.toString(),
-          'minPrice': minPrice.toString(),
-          'maxPrice': maxPrice.toString(),
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData(
       response,
-      kAPIGetSearchProductPriceRangeSortURL,
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
