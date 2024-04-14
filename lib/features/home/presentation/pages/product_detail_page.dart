@@ -634,11 +634,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                         //# review image
                         if (ok.data.reviews[index].image != null)
-                          SizedBox(
-                            height: 100,
-                            child: ImageCacheable(
-                              ok.data.reviews[index].image!,
-                              fit: BoxFit.cover,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PhotoViewPage(imageUrl: ok.data.reviews[index].image!),
+                                ),
+                              );
+                            },
+                            child: SizedBox(
+                              height: 100,
+                              child: ImageCacheable(
+                                ok.data.reviews[index].image!,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
 

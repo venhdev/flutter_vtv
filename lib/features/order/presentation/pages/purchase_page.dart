@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:vtv_common/vtv_common.dart';
 
@@ -82,13 +84,16 @@ Widget _buildTabBarViewWithData({required int index, required List<OrderEntity> 
 }
 
 FRespData<MultiOrderEntity> _callFuture(OrderStatus? status) {
-  if (status == null) return sl<OrderRepository>().getListOrders();
+  if (status == null) {
+    return sl<OrderRepository>().getListOrders();
+  } else if (status == OrderStatus.PROCESSING) {
+    log('Get orders with status PROCESSING and PICKUP_PENDING');
+    return sl<OrderRepository>().getListOrdersByStatusProcessingAndPickupPending();
+  }
   return sl<OrderRepository>().getListOrdersByStatus(status.name);
   // switch (status) {
   //   case OrderStatus.WAITING:
   //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.WAITING.name);
-  //   case OrderStatus.PENDING:
-  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
   //   case OrderStatus.PENDING:
   //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
   //   case OrderStatus.SHIPPING:

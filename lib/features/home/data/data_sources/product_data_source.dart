@@ -40,20 +40,21 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size) async {
+    final url = baseUri(
+      path: kAPISuggestionProductPageRandomlyURL,
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+      },
+    );
     final response = await _client.get(
-      baseUri(
-        path: kAPISuggestionProductPageRandomlyURL,
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      kAPISuggestionProductPageRandomlyURL,
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
@@ -66,142 +67,154 @@ class ProductDataSourceImpl implements ProductDataSource {
     required int maxPrice,
     required String filter,
   }) async {
+    final url = baseUri(
+      path: '$kAPIProductFilterPriceRangeURL/$filter',
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+        'minPrice': minPrice.toString(),
+        'maxPrice': maxPrice.toString(),
+      },
+    );
     final response = await _client.get(
-      baseUri(
-        path: '$kAPIProductFilterPriceRangeURL/$filter',
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-          'minPrice': minPrice.toString(),
-          'maxPrice': maxPrice.toString(),
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      '$kAPIProductFilterPriceRangeURL/$filter',
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
 
   @override
   Future<DataResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType) async {
+    final url = baseUri(
+      path: '$kAPIProductFilterURL/$sortType',
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+      },
+    );
     final response = await _client.get(
-      baseUri(
-        path: '$kAPIProductFilterURL/$sortType',
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      '$kAPIProductFilterURL/$sortType',
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
 
   @override
   Future<DataResponse<FavoriteProductEntity>> favoriteProductAdd(int productId) async {
+    final url = baseUri(path: '$kAPIFavoriteProductAddURL/$productId');
     final response = await _client.post(
-      baseUri(path: '$kAPIFavoriteProductAddURL/$productId'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<FavoriteProductEntity>(
       response,
-      '$kAPIFavoriteProductAddURL/$productId',
+      url,
       (jsonMap) => FavoriteProductEntity.fromMap(jsonMap['favoriteProductDTO']),
     );
   }
 
   @override
   Future<DataResponse<List<FavoriteProductEntity>>> favoriteProductList() async {
+    final url = baseUri(path: kAPIFavoriteProductListURL);
     final response = await _client.get(
-      baseUri(path: kAPIFavoriteProductListURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<List<FavoriteProductEntity>>(
       response,
-      kAPIFavoriteProductListURL,
+      url,
       (jsonMap) => FavoriteProductEntity.fromList(jsonMap['favoriteProductDTOs'] as List<dynamic>),
     );
   }
 
   @override
   Future<SuccessResponse> favoriteProductDelete(int favoriteProductId) async {
+    final url = baseUri(path: '$kAPIFavoriteProductDeleteURL/$favoriteProductId');
     final response = await _client.delete(
-      baseUri(path: '$kAPIFavoriteProductDeleteURL/$favoriteProductId'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
-    return handleResponseNoData(response, '$kAPIFavoriteProductDeleteURL/$favoriteProductId');
+    return handleResponseNoData(
+      response,
+      url,
+    );
   }
 
   @override
   Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId) async {
+    final url = baseUri(path: '$kAPIFavoriteProductCheckExistURL/$productId');
     final response = await _client.get(
-      baseUri(path: '$kAPIFavoriteProductCheckExistURL/$productId'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<FavoriteProductEntity?>(
       response,
-      '$kAPIFavoriteProductCheckExistURL/$productId',
+      url,
       (jsonMap) => FavoriteProductEntity.fromMapNull(jsonMap['favoriteProductDTO']),
     );
   }
 
   @override
   Future<DataResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId) async {
+    final url = baseUri(path: '$kAPIFavoriteProductDetailURL/$favoriteProductId');
     final response = await _client.get(
-      baseUri(path: '$kAPIFavoriteProductDetailURL/$favoriteProductId'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     return handleResponseWithData<FavoriteProductResp>(
       response,
-      '$kAPIFavoriteProductDetailURL/$favoriteProductId',
+      url,
       (jsonMap) => FavoriteProductResp.fromMap(jsonMap),
     );
   }
 
   @override
   Future<DataResponse<ProductDetailResp>> getProductDetailById(int productId) async {
+    final url = baseUri(path: '$kAPIProductDetailURL/$productId');
     final response = await _client.get(
-      baseUri(path: '$kAPIProductDetailURL/$productId'),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<ProductDetailResp>(
       response,
-      '$kAPIProductDetailURL/$productId',
+      url,
       (jsonMap) => ProductDetailResp.fromMap(jsonMap),
     );
   }
 
   @override
   Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId) async {
+    final url = baseUri(
+      path: '$kAPIProductPageCategoryURL/$categoryId',
+      queryParameters: {
+        'page': page,
+        'size': size,
+      }.map((key, value) => MapEntry(key, value.toString())),
+    );
     final response = await _client.get(
-      baseUri(
-        path: '$kAPIProductPageCategoryURL/$categoryId',
-        queryParameters: {
-          'page': page,
-          'size': size,
-        }.map((key, value) => MapEntry(key, value.toString())),
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      '$kAPIProductPageCategoryURL/$categoryId',
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
@@ -209,21 +222,22 @@ class ProductDataSourceImpl implements ProductDataSource {
   @override
   Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
       int page, int size, int productId, bool inShop) async {
+    final url = baseUri(
+      path: '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
+      queryParameters: {
+        'page': page,
+        'size': size,
+        'inShop': inShop,
+      }.map((key, value) => MapEntry(key, value.toString())),
+    );
     final response = await _client.get(
-      baseUri(
-        path: '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
-        queryParameters: {
-          'page': page,
-          'size': size,
-          'inShop': inShop,
-        }.map((key, value) => MapEntry(key, value.toString())),
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData<ProductPageResp>(
       response,
-      '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId with params: page=$page&size=$size&inShop=$inShop',
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }

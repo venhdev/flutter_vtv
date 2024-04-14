@@ -23,7 +23,7 @@ final tAuthEntity = AuthEntity(
   userInfo: tUserInfoEntity,
 );
 
-final tAuthModel = AuthModel(
+final tAuthModel = AuthEntity(
   accessToken: 'accessToken',
   refreshToken: 'refreshToken',
   userInfo: tUserInfoEntity,

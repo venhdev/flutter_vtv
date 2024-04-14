@@ -180,16 +180,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           title: const Text('Thanh toán'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              context.pop();
-              // if (widget.isCreateWithCart) {
-              //   // pop to cart page
-              //   context.pop();
-              // } else {
-              //   // TODO: pop to product detail page
-              //   context.pop();
-              // }
-            },
+            onPressed: () => context.pop(),
           )),
       bottomSheet: _buildPlaceOrderBtn(),
       body: Padding(
@@ -216,6 +207,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
               //! voucher
               _buildSystemVoucherBtn(),
               const SizedBox(height: 8),
+
+              //! loyalty point
+              // _buildLoyaltyPoint(), //TODO implement this feature
 
               //! total price
               _buildTotalPrice(),

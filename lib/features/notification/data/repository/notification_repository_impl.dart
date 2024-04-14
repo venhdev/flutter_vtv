@@ -1,4 +1,3 @@
-
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../domain/repository/notification_repository.dart';
@@ -13,6 +12,20 @@ class NotificationRepositoryImpl extends NotificationRepository {
   FRespData<NotificationResp> getPageNotifications(int page, int size) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () => _dataSource.getPageNotifications(page, size),
+    );
+  }
+
+  @override
+  FRespData<NotificationResp> markAsRead(String id) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () => _dataSource.markAsRead(id),
+    );
+  }
+
+  @override
+  FRespData<NotificationResp> deleteNotification(String id) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () => _dataSource.deleteNotification(id),
     );
   }
 }

@@ -79,8 +79,8 @@ class _FakeFlutterSecureStorage_3 extends _i1.SmartFake
         );
 }
 
-class _FakeResponse_4 extends _i1.SmartFake implements _i5.Response {
-  _FakeResponse_4(
+class _FakeAuthEntity_4 extends _i1.SmartFake implements _i3.AuthEntity {
+  _FakeAuthEntity_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -89,9 +89,19 @@ class _FakeResponse_4 extends _i1.SmartFake implements _i5.Response {
         );
 }
 
-class _FakeStreamedResponse_5 extends _i1.SmartFake
+class _FakeResponse_5 extends _i1.SmartFake implements _i5.Response {
+  _FakeResponse_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeStreamedResponse_6 extends _i1.SmartFake
     implements _i5.StreamedResponse {
-  _FakeStreamedResponse_5(
+  _FakeStreamedResponse_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -373,7 +383,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
   }
 
   @override
-  _i7.Future<_i3.DataResponse<_i3.AuthModel>> loginWithUsernameAndPassword(
+  _i7.Future<_i3.DataResponse<_i3.AuthEntity>> loginWithUsernameAndPassword(
     String? username,
     String? password,
   ) =>
@@ -385,8 +395,8 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             password,
           ],
         ),
-        returnValue: _i7.Future<_i3.DataResponse<_i3.AuthModel>>.value(
-            _FakeDataResponse_1<_i3.AuthModel>(
+        returnValue: _i7.Future<_i3.DataResponse<_i3.AuthEntity>>.value(
+            _FakeDataResponse_1<_i3.AuthEntity>(
           this,
           Invocation.method(
             #loginWithUsernameAndPassword,
@@ -396,7 +406,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             ],
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<_i3.AuthModel>>);
+      ) as _i7.Future<_i3.DataResponse<_i3.AuthEntity>>);
 
   @override
   _i7.Future<_i3.SuccessResponse> register(_i3.RegisterParams? registerDTO) =>
@@ -452,33 +462,33 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
       ) as _i7.Future<_i3.DataResponse<String>>);
 
   @override
-  _i7.Future<_i3.DataResponse<_i3.AuthModel>> getUserProfile() =>
+  _i7.Future<_i3.DataResponse<_i3.AuthEntity>> getUserProfile() =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserProfile,
           [],
         ),
-        returnValue: _i7.Future<_i3.DataResponse<_i3.AuthModel>>.value(
-            _FakeDataResponse_1<_i3.AuthModel>(
+        returnValue: _i7.Future<_i3.DataResponse<_i3.AuthEntity>>.value(
+            _FakeDataResponse_1<_i3.AuthEntity>(
           this,
           Invocation.method(
             #getUserProfile,
             [],
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<_i3.AuthModel>>);
+      ) as _i7.Future<_i3.DataResponse<_i3.AuthEntity>>);
 
   @override
-  _i7.Future<_i3.DataResponse<_i3.UserInfoModel>> editUserProfile(
-          {required _i3.UserInfoModel? newInfo}) =>
+  _i7.Future<_i3.DataResponse<_i3.UserInfoEntity>> editUserProfile(
+          {required _i3.UserInfoEntity? newInfo}) =>
       (super.noSuchMethod(
         Invocation.method(
           #editUserProfile,
           [],
           {#newInfo: newInfo},
         ),
-        returnValue: _i7.Future<_i3.DataResponse<_i3.UserInfoModel>>.value(
-            _FakeDataResponse_1<_i3.UserInfoModel>(
+        returnValue: _i7.Future<_i3.DataResponse<_i3.UserInfoEntity>>.value(
+            _FakeDataResponse_1<_i3.UserInfoEntity>(
           this,
           Invocation.method(
             #editUserProfile,
@@ -486,7 +496,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             {#newInfo: newInfo},
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<_i3.UserInfoModel>>);
+      ) as _i7.Future<_i3.DataResponse<_i3.UserInfoEntity>>);
 
   @override
   _i7.Future<_i3.SuccessResponse> sendOTPForResetPasswordViaUsername(
@@ -594,16 +604,22 @@ class MockSecureStorageHelper extends _i1.Mock
       ) as _i7.Future<bool>);
 
   @override
-  _i7.Future<List<String>?> get roles => (super.noSuchMethod(
-        Invocation.getter(#roles),
-        returnValue: _i7.Future<List<String>?>.value(),
-      ) as _i7.Future<List<String>?>);
-
-  @override
   _i7.Future<String?> get accessToken => (super.noSuchMethod(
         Invocation.getter(#accessToken),
         returnValue: _i7.Future<String?>.value(),
       ) as _i7.Future<String?>);
+
+  @override
+  _i7.Future<String?> get refreshToken => (super.noSuchMethod(
+        Invocation.getter(#refreshToken),
+        returnValue: _i7.Future<String?>.value(),
+      ) as _i7.Future<String?>);
+
+  @override
+  _i7.Future<List<_i3.Role>?> get roles => (super.noSuchMethod(
+        Invocation.getter(#roles),
+        returnValue: _i7.Future<List<_i3.Role>?>.value(),
+      ) as _i7.Future<List<_i3.Role>?>);
 
   @override
   _i7.Future<String?> get username => (super.noSuchMethod(
@@ -612,40 +628,64 @@ class MockSecureStorageHelper extends _i1.Mock
       ) as _i7.Future<String?>);
 
   @override
-  _i7.Future<_i3.AuthEntity?> readAuth() => (super.noSuchMethod(
+  _i7.Future<_i3.UserInfoEntity?> get getUserInfo => (super.noSuchMethod(
+        Invocation.getter(#getUserInfo),
+        returnValue: _i7.Future<_i3.UserInfoEntity?>.value(),
+      ) as _i7.Future<_i3.UserInfoEntity?>);
+
+  @override
+  _i7.Future<_i3.AuthEntity> readAuth() => (super.noSuchMethod(
         Invocation.method(
           #readAuth,
           [],
         ),
-        returnValue: _i7.Future<_i3.AuthEntity?>.value(),
-      ) as _i7.Future<_i3.AuthEntity?>);
+        returnValue: _i7.Future<_i3.AuthEntity>.value(_FakeAuthEntity_4(
+          this,
+          Invocation.method(
+            #readAuth,
+            [],
+          ),
+        )),
+      ) as _i7.Future<_i3.AuthEntity>);
 
   @override
-  _i7.Future<void> cacheAuth(String? jsonData) => (super.noSuchMethod(
+  _i7.Future<void> cacheAuth(_i3.AuthEntity? auth) => (super.noSuchMethod(
         Invocation.method(
           #cacheAuth,
-          [jsonData],
+          [auth],
         ),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
 
   @override
-  _i7.Future<void> updateUserInfo(_i3.UserInfoEntity? newInfo) =>
+  _i7.Future<void> saveOrUpdateUserInfo(_i3.UserInfoEntity? userInfo) =>
       (super.noSuchMethod(
         Invocation.method(
-          #updateUserInfo,
-          [newInfo],
+          #saveOrUpdateUserInfo,
+          [userInfo],
         ),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
 
   @override
-  _i7.Future<void> deleteAuth() => (super.noSuchMethod(
+  _i7.Future<void> saveOrUpdateAccessToken(String? accessToken) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #deleteAuth,
-          [],
+          #saveOrUpdateAccessToken,
+          [accessToken],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> saveOrUpdateRefreshToken(String? refreshToken) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #saveOrUpdateRefreshToken,
+          [refreshToken],
         ),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
@@ -737,7 +777,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_4(
+        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_5(
           this,
           Invocation.method(
             #head,
@@ -758,7 +798,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_4(
+        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_5(
           this,
           Invocation.method(
             #get,
@@ -785,7 +825,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_4(
+        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_5(
           this,
           Invocation.method(
             #post,
@@ -816,7 +856,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_4(
+        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_5(
           this,
           Invocation.method(
             #put,
@@ -847,7 +887,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_4(
+        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_5(
           this,
           Invocation.method(
             #patch,
@@ -878,7 +918,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_4(
+        returnValue: _i7.Future<_i5.Response>.value(_FakeResponse_5(
           this,
           Invocation.method(
             #delete,
@@ -935,7 +975,7 @@ class MockHttpClient extends _i1.Mock implements _i5.Client {
           [request],
         ),
         returnValue:
-            _i7.Future<_i5.StreamedResponse>.value(_FakeStreamedResponse_5(
+            _i7.Future<_i5.StreamedResponse>.value(_FakeStreamedResponse_6(
           this,
           Invocation.method(
             #send,
