@@ -118,7 +118,7 @@ class SettingsPage extends StatelessWidget {
         // Navigator.of(context).push(MaterialPageRoute(
         //   builder: (context) => const AddressPage(),
         // ));
-        GoRouter.of(context).go(AddressPage.path);
+        GoRouter.of(context).go(AddressPage.path, extra: false); //extra: false >> avoid pop
       },
     );
   }

@@ -6,9 +6,10 @@ abstract class ProfileRepository {
   FRespData<List<DistrictEntity>> getDistrictsByProvinceCode(String provinceCode);
   FRespData<List<WardEntity>> getWardsByDistrictCode(String districtCode);
   FRespData<String> getFullAddressByWardCode(String wardCode);
-  FRespEither updateAddressStatus(int addressId);
 
-  //! address
+  //! address-controller
+  FRespEither updateAddressStatus(int addressId);
   FRespData<List<AddressEntity>> getAllAddress();
-  FRespData<AddressEntity> addAddress(AddAddressParam addAddressParam);
+  FRespData<AddressEntity> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+  FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
 }

@@ -8,9 +8,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   final ProfileDataSource _profileDataSource;
 
   @override
-  FRespData<AddressEntity> addAddress(AddAddressParam addAddressParam) async {
+  FRespData<AddressEntity> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => await _profileDataSource.addAddress(addAddressParam),
+      dataCallback: () async => await _profileDataSource.addAddress(addOrUpdateAddressParam),
     );
   }
 
@@ -53,6 +53,13 @@ class ProfileRepositoryImpl extends ProfileRepository {
   FRespEither updateAddressStatus(int addressId) async {
     return await handleSuccessResponseFromDataSource(
       noDataCallback: () async => await _profileDataSource.updateAddressStatus(addressId),
+    );
+  }
+  
+  @override
+  FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => await _profileDataSource.updateAddress(addOrUpdateAddressParam),
     );
   }
 }

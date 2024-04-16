@@ -248,7 +248,7 @@ class _CartPageState extends State<CartPage> {
                         // GoRouter.of(context).go(AddressPage.path);
                         final isChangeSuccess = await Navigator.of(context).push<bool>(
                           MaterialPageRoute(
-                            builder: (context) => const AddressPage(),
+                            builder: (context) => const AddressPage(willPopOnChanged: true),
                           ),
                         );
 
