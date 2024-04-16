@@ -6,7 +6,7 @@ abstract class OrderRepository {
   FRespData<OrderDetailEntity> createOrderByCartIds(List<String> cartIds);
   FRespData<OrderDetailEntity> createUpdateWithCart(PlaceOrderWithCartParam params);
   //* With Product Variant
-  FRespData<OrderDetailEntity> createByProductVariant(int productVariantId, int quantity);
+  FRespData<OrderDetailEntity> createByProductVariant(Map<int,int> mapParam); //int productVariantId, int quantity
   FRespData<OrderDetailEntity> createUpdateWithVariant(PlaceOrderWithVariantParam params);
 
   //! Place Order

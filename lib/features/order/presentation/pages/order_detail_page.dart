@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,6 +15,7 @@ import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
+import 'checkout_page.dart';
 import 'review_add_page.dart';
 import 'review_details_by_order_page.dart';
 
@@ -102,6 +105,9 @@ class OrderDetailPage extends StatelessWidget {
           return _buildCancelButton(context);
         case OrderStatus.COMPLETED:
           return _buildReviewBtn();
+        case OrderStatus.CANCEL:
+          return _buildRePurchaseBtn(context);
+
         default:
           throw UnimplementedError('Not implement for status: $status');
       }
@@ -133,9 +139,44 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
+  Widget _buildRePurchaseBtn(BuildContext context) {
+    return _buildBottomActionBtn(
+      context,
+      label: 'Mua lại',
+      onPressed: () async {
+        final Map<int, int> rePurchaseItems = {}; // cre a list to store productVariantId and quantity for re-purchase
+
+        for (var item in orderDetail.order.orderItems) {
+          rePurchaseItems.addAll({item.productVariant.productVariantId: item.quantity});
+        }
+
+        final respEither = await sl<OrderRepository>().createByProductVariant(rePurchaseItems);
+
+        respEither.fold(
+          (error) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(error.message!),
+                ),
+              );
+          },
+          (ok) {
+            // context.pop(); // pop out the bottom sheet
+            context.push(
+              Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
+              extra: ok.data.order,
+            );
+          },
+        );
+      },
+      backgroundColor: Colors.green.shade300,
+    );
+  }
+
   Widget _buildReviewBtn() {
     return FutureBuilder(
-      // wait 2s
       future: sl<ProductRepository>().isOrderReviewed(orderDetail.order),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -511,6 +552,24 @@ class OrderDetailPage extends StatelessWidget {
       child: const Text('Hủy đơn hàng'),
     );
   }
+}
+
+Widget _buildBottomActionBtn(
+  BuildContext context, {
+  required String label,
+  required void Function() onPressed,
+  required Color backgroundColor,
+}) {
+  return ElevatedButton(
+    //color red
+    style: ElevatedButton.styleFrom(
+      backgroundColor: backgroundColor,
+      shape: const RoundedRectangleBorder(),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+    onPressed: onPressed,
+    child: Text(label),
+  );
 }
 
 class Wrapper extends StatelessWidget {
