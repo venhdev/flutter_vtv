@@ -1,5 +1,7 @@
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../order/domain/dto/add_review_dto.dart';
+
 abstract class ProductRepository {
   //# other
   FRespData<ProductDetailResp> getProductDetailById(int productId);
@@ -42,4 +44,18 @@ abstract class ProductRepository {
 
   //# review-controller
   FRespData<ReviewResp> getReviewProduct(int productId);
+
+  //# review-customer-controller
+  FRespData<ReviewEntity> addReview(ReviewParam params);
+  FResult<void> addReviews(List<ReviewParam> params); // custom: add multiple reviews
+  FRespData<bool> checkExistReview(String orderItemId);
+
+  /// check if all items in the order have been reviewed
+  /// - return true if all items are reviewed
+  /// - return false if there is at least one item not reviewed
+  FResult<bool> isOrderReviewed(OrderEntity order); // custom: check review status of an order
+  FRespEither deleteReview(String reviewId);
+  FRespData<ReviewEntity> getReviewDetail(String orderItemId);
+  FResult<List<ReviewEntity>> getAllReviewDetailByOrder(OrderEntity order); // custom: get reviews of an order
+
 }

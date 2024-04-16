@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-import '../../../../app_state.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../bloc/cart_bloc.dart';
 import '../pages/cart_page.dart';
@@ -11,10 +9,7 @@ import '../pages/cart_page.dart';
 class CartBadge extends StatelessWidget {
   const CartBadge({
     super.key,
-    this.pushOnNav = false,
   });
-
-  final bool pushOnNav;
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +27,19 @@ class CartBadge extends StatelessWidget {
                     if (state.cart.count == 0) {
                       return IconButton(
                         onPressed: () {
-                          if (pushOnNav) {
-                            context.read<AppState>().hideBottomNav();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const CartPage();
-                                },
-                              ),
-                            ).then((_) => context.read<AppState>().showBottomNav());
-                          } else {
-                            context.go(CartPage.path);
-                          }
+                          // if (pushOnNav) {
+                          //   context.read<AppState>().hideBottomNav();
+                          //   Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //       builder: (context) {
+                          //         return const CartPage();
+                          //       },
+                          //     ),
+                          //   ).then((_) => context.read<AppState>().showBottomNav());
+                          // } else {
+                          //   context.go(CartPage.path);
+                          // }
+                          context.push(CartPage.path);
                         },
                         icon: const Icon(Icons.shopping_cart_outlined),
                       );
@@ -54,19 +50,20 @@ class CartBadge extends StatelessWidget {
                       offset: const Offset(0, 0),
                       child: IconButton(
                         onPressed: () {
-                          if (pushOnNav) {
-                            Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const CartPage();
-                                },
-                              ),
-                            ).then((_) =>
-                                Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
-                          } else {
-                            context.go(CartPage.path);
-                          }
+                          // if (pushOnNav) {
+                          //   Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
+                          //   Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //       builder: (context) {
+                          //         return const CartPage();
+                          //       },
+                          //     ),
+                          //   ).then((_) =>
+                          //       Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
+                          // } else {
+                          //   context.go(CartPage.path);
+                          // }
+                          context.push(CartPage.path);
                         },
                         icon: const Icon(Icons.shopping_cart),
                       ),

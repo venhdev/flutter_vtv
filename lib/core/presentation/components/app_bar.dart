@@ -12,7 +12,7 @@ AppBar buildAppBar(
   bool showSearchBar = true,
   TextEditingController? searchController,
   Widget? leading,
-  Function(String)? onSubmittedCallback,
+  void Function(String)? onSearchSubmitted,
   bool clearOnSubmit = false,
   bool automaticallyImplyLeading = false,
   Color? backgroundColor,
@@ -40,16 +40,17 @@ AppBar buildAppBar(
             controller: searchController,
             clearOnSubmit: clearOnSubmit,
             onSubmitted: (text) {
-              if (onSubmittedCallback != null) {
-                onSubmittedCallback(text);
+              if (onSearchSubmitted != null) {
+                onSearchSubmitted(text);
               } else {
-                context.go(SearchPage.path, extra: text);
+                // context.go(SearchPage.path, extra: text);
+                context.go(Uri(path: SearchPage.path, queryParameters: {'q': text}).toString());
               }
             },
           ),
         ),
       // icon cart badge (number of items in cart)
-      CartBadge(pushOnNav: pushOnNav),
+      const CartBadge(),
 
       // icon settings
       if (showSettingButton)

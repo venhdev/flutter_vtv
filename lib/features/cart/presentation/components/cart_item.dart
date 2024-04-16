@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vtv_common/vtv_common.dart';
 
@@ -121,7 +120,7 @@ class CartItem extends StatelessWidget {
           onTap: () async {
             //_TODO navigate to product detail
             // Provider.of<AppState>(context, listen: false).hideBottomNav();
-            context.pop();
+            // context.pop();
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {

@@ -73,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: buildAppBar(
         context,
         searchController: searchController,
-        onSubmittedCallback: (text) {
+        onSearchSubmitted: (text) {
           setState(() {
             currentSearchText = text;
             currentPage = 1; // Reset to the first page when search text changes

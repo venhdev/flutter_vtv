@@ -84,7 +84,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
           const Divider(thickness: 0.5, color: Colors.grey),
           _filterByPrice(),
           _buildSortTypes(),
-          _btnApplyCancel(context),
+          _btnApplyOrCancel(context),
         ],
       ),
     );
@@ -113,7 +113,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     );
   }
 
-  Expanded _btnApplyCancel(BuildContext context) {
+  Expanded _btnApplyOrCancel(BuildContext context) {
     return Expanded(
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -275,31 +275,36 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
             ),
           ],
         ),
-        _buildSuggestionFilterPrice(),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Từ: ${StringHelper.formatCurrency(_currentRangeValues.start.round())}'),
-            Text('Đến: ${StringHelper.formatCurrency(_currentRangeValues.end.round())}'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        RangeSlider(
-          values: _currentRangeValues,
-          min: _minRange,
-          max: _maxRange,
-          divisions: widget.divisions,
-          labels: RangeLabels(
-            StringHelper.formatCurrency(_currentRangeValues.start.round()),
-            StringHelper.formatCurrency(_currentRangeValues.end.round()),
+        if (_filterPriceRange)
+          Column(
+            children: [
+              _buildSuggestionFilterPrice(),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Từ: ${StringHelper.formatCurrency(_currentRangeValues.start.round())}'),
+                  Text('Đến: ${StringHelper.formatCurrency(_currentRangeValues.end.round())}'),
+                ],
+              ),
+              const SizedBox(height: 10),
+              RangeSlider(
+                values: _currentRangeValues,
+                min: _minRange,
+                max: _maxRange,
+                divisions: widget.divisions,
+                labels: RangeLabels(
+                  StringHelper.formatCurrency(_currentRangeValues.start.round()),
+                  StringHelper.formatCurrency(_currentRangeValues.end.round()),
+                ),
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _currentRangeValues = values;
+                  });
+                },
+              ),
+            ],
           ),
-          onChanged: (RangeValues values) {
-            setState(() {
-              _currentRangeValues = values;
-            });
-          },
-        ),
       ],
     );
   }
