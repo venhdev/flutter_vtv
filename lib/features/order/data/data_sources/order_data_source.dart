@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:vtv_common/vtv_common.dart';
@@ -9,7 +10,8 @@ abstract class OrderDataSource {
   Future<DataResponse<OrderDetailEntity>> createByCartIds(List<String> cartIds);
   Future<DataResponse<OrderDetailEntity>> createUpdateWithCart(PlaceOrderWithCartParam params);
   // * With Product Variant
-  Future<DataResponse<OrderDetailEntity>> createByProductVariant(int productVariantId, int quantity);
+  Future<DataResponse<OrderDetailEntity>> createByProductVariant(
+      Map<int, int> mapParam); //int productVariantId, int quantity
   Future<DataResponse<OrderDetailEntity>> createUpdateWithVariant(PlaceOrderWithVariantParam params);
 
   //# Place order
@@ -108,11 +110,12 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<DataResponse<OrderDetailEntity>> createByProductVariant(int productVariantId, int quantity) async {
+  Future<DataResponse<OrderDetailEntity>> createByProductVariant(Map<int, int> mapParam) async {
     final url = baseUri(path: kAPIOrderCreateByProductVariantURL);
-    final body = {
-      productVariantId.toString(): quantity.toString(),
-    };
+    // final body = {
+    //   productVariantId.toString(): quantity.toString(),
+    // };
+    final body = mapParam.map((key, value) => MapEntry(key.toString(), value.toString()));
 
     final response = await _client.post(
       url,

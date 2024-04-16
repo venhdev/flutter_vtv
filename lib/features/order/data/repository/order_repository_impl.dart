@@ -44,9 +44,9 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrderDetailEntity> createByProductVariant(int productVariantId, int quantity) async {
+  FRespData<OrderDetailEntity> createByProductVariant(Map<int,int> mapParam) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _orderDataSource.createByProductVariant(productVariantId, quantity),
+      dataCallback: () => _orderDataSource.createByProductVariant(mapParam),
     );
   }
 

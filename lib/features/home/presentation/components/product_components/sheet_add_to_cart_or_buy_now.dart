@@ -40,12 +40,12 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
     return '${StringHelper.formatCurrency(widget.product.cheapestPrice)} - ${StringHelper.formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
-  void handleTapAddToCartOrBuyNow() async {
+  void handlePressedAddToCartOrBuyNow() async {
     // check if variant is selected
     if (_variant != null) {
       // ? create temp order and navigate to checkout page || else just add to cart
       if (widget.isBuyNow) {
-        final respEither = await sl<OrderRepository>().createByProductVariant(_variant!.productVariantId, _quantity);
+        final respEither = await sl<OrderRepository>().createByProductVariant({_variant!.productVariantId: _quantity});
 
         respEither.fold(
           (error) {
@@ -218,7 +218,7 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
         style: ElevatedButton.styleFrom(
           backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
         ),
-        onPressed: handleTapAddToCartOrBuyNow,
+        onPressed: handlePressedAddToCartOrBuyNow,
         child: Text(widget.isBuyNow ? 'Mua ngay' : 'Thêm vào giỏ'),
       ),
     );
