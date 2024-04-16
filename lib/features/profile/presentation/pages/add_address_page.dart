@@ -6,17 +6,22 @@ import '../../../../service_locator.dart';
 import '../../data/data_sources/profile_data_source.dart';
 import '../../domain/repository/profile_repository.dart';
 
-class AddAddressPage extends StatefulWidget {
-  const AddAddressPage({super.key});
+class AddOrUpdateAddressPage extends StatefulWidget {
+  const AddOrUpdateAddressPage({super.key, this.address});
 
-  static const routeName = 'add-address';
-  static const path = '/user/settings/address/add-address';
+  static const routeNameAdd = 'add-address';
+  static const pathAdd = '/user/settings/address/add-address';
+
+  static const routeNameUpdate = 'update-address';
+  static const pathUpdate = '/user/settings/address/update-address';
+
+  final AddressEntity? address;
 
   @override
-  State<AddAddressPage> createState() => _AddAddressPageState();
+  State<AddOrUpdateAddressPage> createState() => _AddOrUpdateAddressPageState();
 }
 
-class _AddAddressPageState extends State<AddAddressPage> {
+class _AddOrUpdateAddressPageState extends State<AddOrUpdateAddressPage> {
   // text controllers
   final TextEditingController _fullAddressController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -28,17 +33,45 @@ class _AddAddressPageState extends State<AddAddressPage> {
   String? _wardName;
   String? _wardCode;
 
+  //update
+  late int _addressId;
+
   bool isSaving = false; // for loading indicator when tapping 'Lưu địa chỉ'
 
   void _reset() {
-    setState(() {
-      _provinceName = null;
-      _districtName = null;
-      _wardName = null;
-      _fullAddressController.clear();
-      _phoneNumberController.clear();
-      _receiverNameController.clear();
-    });
+    if (widget.address == null) {
+      setState(() {
+        _provinceName = null;
+        _districtName = null;
+        _wardName = null;
+        _fullAddressController.clear();
+        _phoneNumberController.clear();
+        _receiverNameController.clear();
+      });
+    } else {
+      setState(() {
+        _provinceName = null;
+        _districtName = null;
+        _wardName = null;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.address != null) {
+      _addressId = widget.address!.addressId;
+      _provinceName = widget.address!.provinceName;
+      _districtName = widget.address!.districtName;
+      _wardName = widget.address!.wardName;
+
+      _fullAddressController.text = widget.address!.fullAddress;
+      _receiverNameController.text = widget.address!.fullName;
+      _phoneNumberController.text = widget.address!.phone;
+
+      _wardCode = widget.address!.wardCode;
+    }
   }
 
   @override
@@ -150,47 +183,92 @@ class _AddAddressPageState extends State<AddAddressPage> {
               ),
             ],
             // save button
-            ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  isSaving = true;
-                });
-                final respEither = await sl<ProfileRepository>().addAddress(
-                  AddAddressParam(
-                    provinceName: _provinceName,
-                    districtName: _districtName,
-                    wardName: _wardName,
-                    fullAddress: _fullAddressController.text,
-                    fullName: _receiverNameController.text,
-                    phone: _phoneNumberController.text,
-                    wardCode: _wardCode,
-                  ),
-                );
-
-                respEither.fold(
-                  (error) {
-                    Fluttertoast.showToast(msg: error.message!);
-                  },
-                  (ok) {
-                    Fluttertoast.showToast(msg: ok.message!);
-                    // pop this page
-                    Navigator.of(context).pop<AddressEntity>(ok.data);
-                  },
-                );
-
-                setState(() {
-                  isSaving = false;
-                });
-              },
-              child: !isSaving
-                  ? const Text('Lưu địa chỉ')
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-            ),
+            widget.address == null ? _buildAddAddressBtn(context) : _buildUpdateAddressBtn(context),
           ],
         ),
       ),
+    );
+  }
+
+  ElevatedButton _buildAddAddressBtn(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        setState(() {
+          isSaving = true;
+        });
+        final respEither = await sl<ProfileRepository>().addAddress(
+          AddOrUpdateAddressParam(
+            provinceName: _provinceName,
+            districtName: _districtName,
+            wardName: _wardName,
+            fullAddress: _fullAddressController.text,
+            fullName: _receiverNameController.text,
+            phone: _phoneNumberController.text,
+            wardCode: _wardCode,
+          ),
+        );
+
+        respEither.fold(
+          (error) {
+            Fluttertoast.showToast(msg: error.message!);
+          },
+          (ok) {
+            Fluttertoast.showToast(msg: ok.message!);
+            // pop this page
+            Navigator.of(context).pop<AddressEntity>(ok.data);
+          },
+        );
+
+        setState(() {
+          isSaving = false;
+        });
+      },
+      child: !isSaving
+          ? const Text('Lưu địa chỉ')
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
+    );
+  }
+
+  ElevatedButton _buildUpdateAddressBtn(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        setState(() {
+          isSaving = true;
+        });
+        final respEither = await sl<ProfileRepository>().updateAddress(
+          AddOrUpdateAddressParam(
+            addressId: _addressId,
+            provinceName: _provinceName,
+            districtName: _districtName,
+            wardName: _wardName,
+            fullAddress: _fullAddressController.text,
+            fullName: _receiverNameController.text,
+            phone: _phoneNumberController.text,
+            wardCode: _wardCode,
+          ),
+        );
+
+        respEither.fold(
+          (error) {
+            Fluttertoast.showToast(msg: error.message!);
+          },
+          (ok) {
+            Fluttertoast.showToast(msg: ok.message!);
+            Navigator.of(context).pop<bool>(true); // true => flag to refresh address list on AddressPage (previous page)
+          },
+        );
+
+        setState(() {
+          isSaving = false;
+        });
+      },
+      child: !isSaving
+          ? const Text('Cập nhật địa chỉ')
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

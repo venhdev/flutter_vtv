@@ -4,16 +4,17 @@ import 'package:http/http.dart' as http;
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class ProfileDataSource {
-  //! location
+  //! location: ward-controller, province-controller, district-controller, ward-controller
   Future<DataResponse<List<ProvinceEntity>>> getProvinces();
   Future<DataResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode);
   Future<DataResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode);
   Future<DataResponse<String>> getFullAddressByWardCode(String wardCode);
-  Future<SuccessResponse> updateAddressStatus(int addressId);
 
-  //! address
+  //! address-controller
+  Future<SuccessResponse> updateAddressStatus(int addressId);
   Future<DataResponse<List<AddressEntity>>> getAllAddress();
-  Future<DataResponse<AddressEntity>> addAddress(AddAddressParam addAddressParam);
+  Future<DataResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+  Future<DataResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
 }
 
 class ProfileDataSourceImpl extends ProfileDataSource {
@@ -103,12 +104,12 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   }
 
   @override
-  Future<DataResponse<AddressEntity>> addAddress(AddAddressParam addAddressParam) async {
+  Future<DataResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
     final url = baseUri(path: kAPIAddressAddURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      body: jsonEncode(addAddressParam.toJson()),
+      body: jsonEncode(addOrUpdateAddressParam.toJson()),
     );
 
     // return handleResponseNoData(
@@ -142,5 +143,22 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       response,
       url,
     );
+  }
+  
+  @override
+  Future<DataResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async{
+    final url = baseUri(path: kAPIAddressUpdateURL);
+    final response = await _client.put(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: jsonEncode(addOrUpdateAddressParam.toJson()),
+    );
+
+    return handleResponseWithData<AddressEntity>(
+      response,
+      url,
+      (data) => AddressEntity.fromMap(data['addressDTO']),
+    );
+  
   }
 }

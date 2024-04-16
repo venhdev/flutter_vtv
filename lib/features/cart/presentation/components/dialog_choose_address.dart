@@ -66,7 +66,7 @@ class _DialogChooseAddressState extends State<DialogChooseAddress> {
           onPressed: () async {
             final newAddress = await Navigator.of(context).push<AddressEntity>(
               MaterialPageRoute(
-                builder: (context) => const AddAddressPage(),
+                builder: (context) => const AddOrUpdateAddressPage(),
               ),
             );
 

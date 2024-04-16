@@ -263,14 +263,23 @@ class AppRoutes {
                         path: AddressPage.routeName, // 'user/settings/address'
                         name: AddressPage.routeName,
                         builder: (context, state) {
-                          return const AddressPage();
+                          final bool? willPopOnChanged = state.extra as bool?;
+                          return AddressPage(willPopOnChanged: willPopOnChanged ?? true);
                         },
                         routes: [
                           GoRoute(
-                            path: AddAddressPage.routeName, // 'user/settings/address/add-address'
-                            name: AddAddressPage.routeName,
+                            path: AddOrUpdateAddressPage.routeNameAdd, // 'user/settings/address/add-address'
+                            name: AddOrUpdateAddressPage.routeNameAdd,
                             builder: (context, state) {
-                              return const AddAddressPage();
+                              return const AddOrUpdateAddressPage();
+                            },
+                          ),
+                          GoRoute(
+                            path: AddOrUpdateAddressPage.routeNameUpdate, // 'user/settings/address/update-address'
+                            name: AddOrUpdateAddressPage.routeNameUpdate,
+                            builder: (context, state) {
+                              final address = state.extra as AddressEntity;
+                              return AddOrUpdateAddressPage(address: address);
                             },
                           ),
                         ],

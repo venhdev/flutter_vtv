@@ -26,33 +26,35 @@ class FavoriteProductPage extends StatelessWidget {
               final resultEither = snapshot.data!;
               return resultEither.fold(
                 (error) => MessageScreen.error(error.message),
-                (ok) => GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  children: ok.data.map((f) {
-                    return ProductItem(
-                      productId: f.productId,
-                      onPressed: () async {
-                        final productResp = await sl<ProductRepository>().getProductDetailById(f.productId);
-                        productResp.fold(
-                          (error) => MessageScreen.error(error.message),
-                          (ok) {
-                            final productDetail = ok.data;
-                            context.go(ProductDetailPage.path, extra: productDetail);
-                            // Navigator.of(context).push(
-                            //   MaterialPageRoute(
-                            //     builder: (context) {
-                            //       return ProductDetailPage(productDetail: productDetail);
-                            //     },
-                            //   ),
-                            // );
-                          },
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
+                (ok) => ok.data.isNotEmpty
+                    ? GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        children: ok.data.map((f) {
+                          return ProductItem(
+                            productId: f.productId,
+                            onPressed: () async {
+                              final productResp = await sl<ProductRepository>().getProductDetailById(f.productId);
+                              productResp.fold(
+                                (error) => MessageScreen.error(error.message),
+                                (ok) {
+                                  final productDetail = ok.data;
+                                  context.go(ProductDetailPage.path, extra: productDetail);
+                                  // Navigator.of(context).push(
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) {
+                                  //       return ProductDetailPage(productDetail: productDetail);
+                                  //     },
+                                  //   ),
+                                  // );
+                                },
+                              );
+                            },
+                          );
+                        }).toList(),
+                      )
+                    : const MessageScreen(message: 'Không có sản phẩm yêu thích nào'),
               );
             } else if (snapshot.hasError) {
               return MessageScreen.error(snapshot.error.toString());
