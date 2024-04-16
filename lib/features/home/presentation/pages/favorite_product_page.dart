@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
@@ -8,6 +9,9 @@ import 'product_detail_page.dart';
 
 class FavoriteProductPage extends StatelessWidget {
   const FavoriteProductPage({super.key});
+
+  static const String routeName = 'favorite-product';
+  static const String path = '/user/favorite-product';
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +39,14 @@ class FavoriteProductPage extends StatelessWidget {
                           (error) => MessageScreen.error(error.message),
                           (ok) {
                             final productDetail = ok.data;
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return ProductDetailPage(productDetail: productDetail);
-                                },
-                              ),
-                            );
+                            context.go(ProductDetailPage.path, extra: productDetail);
+                            // Navigator.of(context).push(
+                            //   MaterialPageRoute(
+                            //     builder: (context) {
+                            //       return ProductDetailPage(productDetail: productDetail);
+                            //     },
+                            //   ),
+                            // );
                           },
                         );
                       },

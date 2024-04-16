@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
 import 'package:timelines/timelines.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/order_item.dart';
+import '../../../home/domain/repository/product_repository.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
+import 'review_add_page.dart';
+import 'review_details_by_order_page.dart';
 
 // const String _noVoucherMsg = 'Không áp dụng';
 
@@ -29,12 +32,26 @@ class OrderDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chi tiết đơn hàng'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
+      bottomSheet: _buildBottomActionByOrderStatus(context, orderDetail.order.status),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // //# notification: not review yet,...
+              // if (orderDetail.order.status == OrderStatus.COMPLETED)
+              //   const Text.rich(
+              //     textAlign: TextAlign.center,
+              //     TextSpan(
+              //       text: 'Chưa đánh giá sản phẩm',
+              //       style: TextStyle(
+              //         color: Colors.red,
+              //         fontWeight: FontWeight.normal,
+              //       ),
+              //     ),
+              //   ),
+
               //! order status
               _buildOrderStatus(),
               const SizedBox(height: 8),
@@ -65,15 +82,99 @@ class OrderDetailPage extends StatelessWidget {
 
               //! note
               _buildNote(),
-              const SizedBox(height: 8),
 
-              //! cancel button
-              if (orderDetail.order.status == OrderStatus.PENDING || orderDetail.order.status == OrderStatus.PROCESSING)
-                _buildCancelButton(context),
+              //? cancel button -> move to bottom sheet
+              // if (orderDetail.order.status == OrderStatus.PENDING || orderDetail.order.status == OrderStatus.PROCESSING)
+              //   _buildCancelButton(context),
+
+              const SizedBox(height: 48),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget? _buildBottomActionByOrderStatus(BuildContext context, OrderStatus status) {
+    Widget buildStatus(BuildContext context, OrderStatus status) {
+      switch (status) {
+        case OrderStatus.PENDING || OrderStatus.PROCESSING:
+          return _buildCancelButton(context);
+        case OrderStatus.COMPLETED:
+          return _buildReviewBtn();
+        default:
+          throw UnimplementedError('Not implement for status: $status');
+      }
+    }
+
+    return Container(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Row(
+        children: [
+          //# chat
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: const RoundedRectangleBorder(),
+                backgroundColor: Colors.blue.shade300,
+              ),
+              child: const Text('Chat với cửa hàng'),
+            ),
+          ),
+
+          //# cancel - add review - view review
+          Expanded(
+            child: buildStatus(context, status),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewBtn() {
+    return FutureBuilder(
+      // wait 2s
+      future: sl<ProductRepository>().isOrderReviewed(orderDetail.order),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return snapshot.data!.fold(
+            (error) => MessageScreen.error(error.message),
+            (ok) => ok
+                ? ElevatedButton(
+                    onPressed: () {
+                      context.push(ReviewDetailsByOrderPage.path, extra: orderDetail.order);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: const RoundedRectangleBorder(),
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                    child: const Text('Xem đánh giá'),
+                  )
+                : IconTextButton(
+                    style: IconButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: const RoundedRectangleBorder(),
+                    ),
+                    // child: Text('Đánh giá sản phẩm'),
+                    label: 'Đánh giá sản phẩm',
+                    leadingIcon: Icons.warning_amber_rounded,
+                    iconSize: 20,
+                    iconColor: Colors.red,
+                    onPressed: () {
+                      context.push(ReviewAddPage.path, extra: orderDetail.order);
+                    },
+                  ),
+          );
+        }
+        return const Text(
+          'Đang tải...',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black54),
+        );
+      },
     );
   }
 
@@ -86,7 +187,7 @@ class OrderDetailPage extends StatelessWidget {
             children: [
               const Expanded(
                 child: Text(
-                  'Tổng quan đơn hàng',
+                  'Thông tin vận chuyển',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -178,17 +279,22 @@ class OrderDetailPage extends StatelessWidget {
 
   Wrapper _buildOrderStatus() {
     return Wrapper(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          const Text(
-            'Trạng thái đơn hàng',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+          //# order status
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Trạng thái đơn hàng',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              OrderStatusBadge(status: orderDetail.order.status),
+            ],
           ),
-          OrderStatusBadge(status: orderDetail.order.status),
         ],
       ),
     );
@@ -366,7 +472,9 @@ class OrderDetailPage extends StatelessWidget {
     return ElevatedButton(
       //color red
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red.shade100,
+        backgroundColor: Colors.red.shade200,
+        shape: const RoundedRectangleBorder(),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       onPressed: () async {
         final isConfirm = await showDialogToConfirm(

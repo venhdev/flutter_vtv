@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'config/routes/app_routes.dart';
+import 'config/routes/routes.dart';
 import 'config/themes/theme_provider.dart';
 
 class VTVApp extends StatelessWidget {
@@ -12,7 +12,7 @@ class VTVApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'VTV Shop',
-      routerConfig: AppRoutes.router,
+      routerConfig: AppRoutes.router2,
       theme: Provider.of<ThemeProvider>(context).themeData,
     );
   }

@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../order/domain/dto/add_review_dto.dart';
 import '../../domain/repository/product_repository.dart';
 import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
@@ -169,5 +172,72 @@ class ProductRepositoryImpl extends ProductRepository {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => _reviewDataSource.getReviewProduct(productId),
     );
+  }
+
+  @override
+  FRespData<ReviewEntity> addReview(ReviewParam params) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.addReview(params));
+  }
+
+  @override
+  FRespData<bool> checkExistReview(String orderItemId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.checkExistReview(orderItemId));
+  }
+
+  @override
+  FRespEither deleteReview(String reviewId) async {
+    return handleSuccessResponseFromDataSource(noDataCallback: () => _reviewDataSource.deleteReview(reviewId));
+  }
+
+  @override
+  FRespData<ReviewEntity> getReviewDetail(String orderItemId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.getReviewDetail(orderItemId));
+  }
+
+  Future<bool> isReviewedItem(OrderItemEntity orderItem) async {
+    final rs = await _reviewDataSource.checkExistReview(orderItem.orderItemId!);
+    return rs.data;
+  }
+
+  @override
+  FResult<bool> isOrderReviewed(OrderEntity order) async {
+    //> check if any item in the order is not reviewed
+    try {
+      final multiCheck = await Future.wait(order.orderItems.map((item) async => isReviewedItem(item)));
+
+      log('{isOrderReviewed} multiCheck: $multiCheck');
+
+      final rs = multiCheck.every((check) => check == true); // true means the item is reviewed
+      log('{isOrderReviewed} isOrderReviewed: $rs');
+
+      return Right(rs);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  FResult<void> addReviews(List<ReviewParam> params) async {
+    try {
+      await Future.wait(params.map((param) async {
+        await _reviewDataSource.addReview(param);
+      }));
+      return const Right(null);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  FResult<List<ReviewEntity>> getAllReviewDetailByOrder(OrderEntity order) async {
+    try {
+      final rs = await Future.wait(order.orderItems.map((item) async {
+        final review = await _reviewDataSource.getReviewDetail(item.orderItemId!);
+        return review.data;
+      }));
+      return Right(rs);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
   }
 }

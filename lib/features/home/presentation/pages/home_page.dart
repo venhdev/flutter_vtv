@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/home/presentation/components/search_components/btn_filter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../app_state.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/best_selling_product_list.dart';
@@ -24,11 +25,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _productPerPage = 8; //! page size
-  final lazyController = LazyLoadController(
+  final _productPerPage = 6; //! page size
+  final lazyController = LazyLoadController<ProductEntity>(
     scrollController: ScrollController(),
     items: [],
     useGrid: true,
+    showIndicator: true,
   );
 
   // filter & sort
@@ -45,13 +47,23 @@ class _HomePageState extends State<HomePage> {
   int crossAxisCount = 2;
 
   Future<void> _refresh() async {
+    // setState(() {
+    //   isRefreshing = true;
+    //   lazyController.reload();
+    //   if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
+    //     context.read<CartBloc>().add(InitialCart());
+    //   }
+    // });
+    // await Future.delayed(const Duration(milliseconds: 300));
+    // setState(() {
+    //   isRefreshing = false;
+    // });
+
     setState(() {
-      isRefreshing = true;
-      context.read<CartBloc>().add(InitialCart());
-    });
-    await Future.delayed(const Duration(milliseconds: 300));
-    setState(() {
-      isRefreshing = false;
+      lazyController.reload();
+      if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
+        context.read<CartBloc>().add(InitialCart());
+      }
     });
   }
 
@@ -100,7 +112,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildLazyProducts() {
     if (isShowing) {
-      return NestedLazyLoadBuilder(
+      return NestedLazyLoadBuilder<ProductEntity>(
         controller: lazyController,
         crossAxisCount: 2,
         dataCallback: (page) async {
@@ -128,17 +140,22 @@ class _HomePageState extends State<HomePage> {
             product: lazyController.items[index],
             onPressed: () {
               // context.go(ProductDetailPage.path, extra: _products[index].productId);
-              context.read<AppState>().hideBottomNav();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return ProductDetailPage(productId: lazyController.items[index].productId);
-                  },
-                ),
-              ).then(
-                (_) {
-                  context.read<AppState>().showBottomNav();
-                },
+              // context.read<AppState>().hideBottomNav();
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return ProductDetailPage(productId: lazyController.items[index].productId);
+              //     },
+              //   ),
+              // ).then(
+              //   (_) {
+              //     context.read<AppState>().showBottomNav();
+              //   },
+              // );
+
+              context.push(
+                ProductDetailPage.path,
+                extra: lazyController.items[index].productId,
               );
             },
           );
@@ -202,8 +219,9 @@ class _HomePageState extends State<HomePage> {
           onFilterChanged: (filterParams) {
             if (filterParams != null) {
               setState(() {
-                isShowing = false;
+                // isShowing = false; //> no longer need this >> controlled by [LazyProductListBuilder]
                 currentFilter = filterParams;
+                lazyController.reload();
 
                 // isFiltering = filterParams.isFiltering;
                 // minPrice = filterParams.minPrice;
@@ -212,13 +230,14 @@ class _HomePageState extends State<HomePage> {
                 // filterPriceRange = filterParams.filterPriceRange;
               });
             }
+            //> no longer need this >> controlled by [LazyProductListBuilder]
             // use [isSortTypeChanged] to completed remove [LazyProductListBuilder]
             // out of the widget tree before re-render
-            Future.delayed(const Duration(milliseconds: 300), () {
-              setState(() {
-                isShowing = true;
-              });
-            });
+            // Future.delayed(const Duration(milliseconds: 300), () {
+            //   setState(() {
+            //     isShowing = true;
+            //   });
+            // });
           },
         ),
       ],

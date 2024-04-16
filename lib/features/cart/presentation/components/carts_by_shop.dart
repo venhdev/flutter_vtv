@@ -34,13 +34,13 @@ class CartsByShop extends StatelessWidget {
           // shop info
           _buildShopInfo(context),
           // carts in shop
-          _buildListOfCarts(),
+          _buildListCartItemsInShop(),
         ],
       ),
     );
   }
 
-  ListView _buildListOfCarts() {
+  ListView _buildListCartItemsInShop() {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -68,7 +68,7 @@ class CartsByShop extends StatelessWidget {
           onChanged: (value) {},
         ),
         IconTextButton(
-          icon: Icons.storefront_sharp,
+          leadingIcon: Icons.storefront_sharp,
           label: cartByShop.shopName,
           onPressed: () {
             //TODO shop detail

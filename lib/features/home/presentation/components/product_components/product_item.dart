@@ -81,7 +81,7 @@ class _ProductItemState extends State<ProductItem> {
       child: Container(
         height: widget.height,
         width: widget.width,
-        padding: const EdgeInsets.all(4.0),
+        padding: widget.padding ?? const EdgeInsets.all(4.0),
         margin: widget.margin,
         decoration: BoxDecoration(
           color: Colors.grey.shade200,

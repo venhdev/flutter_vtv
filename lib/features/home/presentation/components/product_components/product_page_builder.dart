@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../pages/product_detail_page.dart';
@@ -49,6 +50,8 @@ class ProductDetailListBuilder extends StatelessWidget {
                 for (var i = 0; i < productDetails.length; i++)
                   ProductItem(
                     product: productDetails[i].product,
+                    margin: const EdgeInsets.all(2.0),
+                    scaleBottom: 1.5,
                     onPressed: () {
                       onTap?.call(i);
                       // context.go(ProductDetailPage.path, extra: productDetails[i].product);
@@ -161,12 +164,17 @@ class ProductPageBuilder extends StatelessWidget {
                             product: product,
                             onPressed: () {
                               // context.go(ProductDetailPage.path, extra: product.productId);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return ProductDetailPage(productId: product.productId);
-                                  },
-                                ),
+                              // Navigator.of(context).push(
+                              //   MaterialPageRoute(
+                              //     builder: (context) {
+                              //       return ProductDetailPage(productId: product.productId);
+                              //     },
+                              //   ),
+                              // );
+
+                              context.push(
+                                ProductDetailPage.path,
+                                extra: product.productId,
                               );
                             },
                           ),

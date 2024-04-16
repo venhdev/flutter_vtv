@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../auth/presentation/components/rating.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../domain/repository/product_repository.dart';
@@ -30,8 +32,8 @@ class ProductDetailPage extends StatefulWidget {
   final int? productId;
   final ProductDetailResp? productDetail;
 
-  static const String routeName = 'product-detail';
-  static const String path = '/home/product-detail';
+  static const String routeName = 'product';
+  static const String path = '/home/product';
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -40,7 +42,7 @@ class ProductDetailPage extends StatefulWidget {
 class _ProductDetailPageState extends State<ProductDetailPage> {
   late LazyLoadController<ProductEntity> _lazyController;
   // bool _showBottomSheet = true;
-  int? _favoriteProductId;
+  // int? _favoriteProductId;
   bool _isShowMoreDescription = false;
   bool _isShowMoreInformation = false;
 
@@ -61,9 +63,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  void handleTapFavoriteButton() async {
+  void handleTapFavoriteButton(int? favoriteProductId) async {
+    //REVIEW function
     // add to favorite
-    if (_favoriteProductId == null) {
+    if (favoriteProductId == null) {
       final respEither = await sl<ProductRepository>().favoriteProductAdd(_productDetail.product.productId);
 
       respEither.fold(
@@ -71,38 +74,39 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         (ok) {
           Fluttertoast.showToast(msg: ok.message ?? 'Đã thêm vào yêu thích');
           setState(() {
-            _favoriteProductId = ok.data.favoriteProductId;
+            favoriteProductId = ok.data.favoriteProductId;
           });
         },
       );
+      // return;
     } else {
-      final respEither = await sl<ProductRepository>().favoriteProductDelete(_favoriteProductId!);
+      final respEither = await sl<ProductRepository>().favoriteProductDelete(favoriteProductId);
 
       respEither.fold(
         (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
         (ok) {
           Fluttertoast.showToast(msg: ok.message ?? 'Đã xóa khỏi yêu thích');
           setState(() {
-            _favoriteProductId = null;
+            favoriteProductId = null;
           });
         },
       );
     }
   }
 
-  void checkIsFavorite() async {
-    // final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
-    final checkEither = await sl<ProductRepository>().favoriteProductCheckExist(
-      widget.productId ?? widget.productDetail!.product.productId,
-    );
+  // void checkIsFavorite() async {
+  //   // final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
+  //   final checkEither = await sl<ProductRepository>().favoriteProductCheckExist(
+  //     widget.productId ?? widget.productDetail!.product.productId,
+  //   );
 
-    setState(() {
-      _favoriteProductId = checkEither.fold(
-        (error) => null,
-        (ok) => ok.data?.favoriteProductId,
-      );
-    });
-  }
+  //   setState(() {
+  //     _favoriteProductId = checkEither.fold(
+  //       (error) => null,
+  //       (ok) => ok.data?.favoriteProductId,
+  //     );
+  //   });
+  // }
 
   void cacheRecentView() async {
     final respEither = await sl<ProductRepository>().cacheRecentViewedProductId(
@@ -140,7 +144,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       _productDetail = widget.productDetail!;
       isInitializing = false;
     }
-    checkIsFavorite();
+    // checkIsFavorite();
     cacheRecentView();
   }
 
@@ -155,7 +159,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             )
           : RefreshIndicator(
               onRefresh: () async {
-                fetchProductDetail(widget.productId!);
+                fetchProductDetail(_productDetail.product.productId);
               },
               child: _buildBody(context),
             ),
@@ -245,11 +249,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7),
       expandedHeight: MediaQuery.of(context).size.height * 0.4,
       floating: false,
       pinned: true,
-      snap: false,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
@@ -259,7 +262,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           backgroundColor: MaterialStateProperty.all(Colors.white24),
         ),
       ),
-      actions: const [CartBadge(pushOnNav: true), SizedBox(width: 8)],
+      actions: const [CartBadge(), SizedBox(width: 8)],
       flexibleSpace: FlexibleSpaceBar(
         background: GestureDetector(
           onTap: () {
@@ -299,17 +302,35 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
 
           // Add to favorite button
-          IconButton(
-            icon: _favoriteProductId != null
-                ? const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  )
-                : const Icon(
-                    Icons.favorite_border,
-                    color: Colors.red,
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state.status == AuthStatus.unauthenticated) return const SizedBox();
+              return FutureBuilder(
+                  future: sl<ProductRepository>().favoriteProductCheckExist(
+                    widget.productId ?? widget.productDetail!.product.productId,
                   ),
-            onPressed: handleTapFavoriteButton,
+                  builder: (context, snapshot) {
+                    final favoriteProductId = snapshot.data?.fold(
+                      (error) {
+                        Fluttertoast.showToast(msg: 'error: ${error.message}');
+                        return null;
+                      },
+                      (ok) => ok.data?.favoriteProductId,
+                    );
+                    return IconButton(
+                      icon: favoriteProductId != null
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : const Icon(
+                              Icons.favorite_border,
+                              color: Colors.red,
+                            ),
+                      onPressed: () => handleTapFavoriteButton(favoriteProductId),
+                    );
+                  });
+            },
           ),
         ],
       ),
@@ -444,19 +465,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
               // favorite button
-              Positioned(
-                top: 16,
-                right: 16,
-                child: IconButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Colors.white.withOpacity(0.6),
-                    ),
-                  ),
-                  icon: _favoriteProductId != null ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
-                  onPressed: handleTapFavoriteButton,
-                ),
-              ),
+              // Positioned(
+              //   top: 16,
+              //   right: 16,
+              //   child: IconButton(
+              //     style: ButtonStyle(
+              //       backgroundColor: MaterialStateProperty.all(
+              //         Colors.white.withOpacity(0.6),
+              //       ),
+              //     ),
+              //     icon: _favoriteProductId != null ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+              //     onPressed: handleTapFavoriteButton,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -481,12 +502,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onPressed: () {
                 // TODO: open chat
               },
-              icon: Icons.chat_outlined,
-              backgroundColor: Colors.grey[200],
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+              ),
+              leadingIcon: Icons.chat_outlined,
+              // backgroundColor: Colors.grey[200],
               label: 'Chat',
               fontSize: 12,
               iconSize: 18,
-              borderRadius: BorderRadius.zero,
+              // borderRadius: BorderRadius.zero,
               reverseDirection: true,
             ),
           ),
@@ -504,12 +531,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   },
                 );
               },
-              backgroundColor: Theme.of(context).buttonTheme.colorScheme?.tertiaryContainer,
-              icon: Icons.shopping_cart_outlined,
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).buttonTheme.colorScheme?.tertiaryContainer,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+              ),
+              // backgroundColor: Theme.of(context).buttonTheme.colorScheme?.tertiaryContainer,
+              leadingIcon: Icons.shopping_cart_outlined,
               label: 'Thêm vào giỏ hàng',
               fontSize: 12,
               iconSize: 18,
-              borderRadius: BorderRadius.zero,
+              // borderRadius: BorderRadius.zero,
               reverseDirection: true,
             ),
           ),
@@ -527,12 +560,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   },
                 );
               },
-              backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
-              icon: Icons.attach_money_outlined,
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+              ),
+              // backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
+              leadingIcon: Icons.attach_money_outlined,
               label: 'Mua ngay',
               fontSize: 14,
               iconSize: 20,
-              borderRadius: BorderRadius.zero,
+              // borderRadius: BorderRadius.zero,
             ),
           ),
         ],

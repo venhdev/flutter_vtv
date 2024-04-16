@@ -4,8 +4,7 @@ abstract class OrderRepository {
   //! Create Temp Order
   //* With Cart
   FRespData<OrderDetailEntity> createOrderByCartIds(List<String> cartIds);
-  FRespData<OrderDetailEntity> createUpdateWithCart(
-      PlaceOrderWithCartParam params); // Use to change order status (in checkout page)
+  FRespData<OrderDetailEntity> createUpdateWithCart(PlaceOrderWithCartParam params);
   //* With Product Variant
   FRespData<OrderDetailEntity> createByProductVariant(int productVariantId, int quantity);
   FRespData<OrderDetailEntity> createUpdateWithVariant(PlaceOrderWithVariantParam params);
@@ -24,10 +23,12 @@ abstract class OrderRepository {
   /// Get orders by status
   /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
   FRespData<MultiOrderEntity> getListOrdersByStatus(String status);
-  FRespData<MultiOrderEntity> getListOrdersByStatusProcessingAndPickupPending(); //custom status PROCESSING + PICKUP_PENDING
+  FRespData<MultiOrderEntity>
+      getListOrdersByStatusProcessingAndPickupPending(); //custom status PROCESSING + PICKUP_PENDING
 
   /// Get order detail by orderId
   FRespData<OrderDetailEntity> getOrderDetail(String orderId);
+
   /// Cancel order
   FRespData<OrderDetailEntity> getOrderCancel(String orderId);
 }

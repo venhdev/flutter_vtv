@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import 'config/dio/auth_interceptor.dart';
+import 'config/dio/error_interceptor.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
 import 'features/auth/data/data_sources/auth_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -73,6 +72,8 @@ Future<void> initializeLocator() async {
       //   // error: true,
       // ),
       AuthInterceptor(),
+      ErrorInterceptor(),
+      LogInterceptor(requestBody: true, responseBody: true)
     ],
   );
 
@@ -94,7 +95,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
   sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl(), sl()));
   sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
-  sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl()));
+  sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl(), sl()));
   sl.registerSingleton<NotificationDataSource>(NotificationDataSourceImpl(sl(), sl()));
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));

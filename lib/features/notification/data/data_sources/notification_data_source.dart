@@ -33,7 +33,7 @@ class NotificationDataSourceImpl implements NotificationDataSource {
       ),
     );
 
-    return handleDioResponseWithData<NotificationResp>(
+    return handleDioResponseWithData<NotificationResp, Map<String, dynamic>>(
       response,
       url,
       (dataMap) => NotificationResp.fromMap(dataMap),
@@ -53,7 +53,7 @@ class NotificationDataSourceImpl implements NotificationDataSource {
       ),
     );
 
-    return handleDioResponseWithData(
+    return handleDioResponseWithData<NotificationResp, Map<String, dynamic>>(
       response,
       url,
       (dataMap) => NotificationResp.fromMap(dataMap),
@@ -73,7 +73,7 @@ class NotificationDataSourceImpl implements NotificationDataSource {
       ),
     );
 
-    return handleDioResponseWithData(
+    return handleDioResponseWithData<NotificationResp, Map<String, dynamic>>(
       response,
       url,
       (dataMap) => NotificationResp.fromMap(dataMap),

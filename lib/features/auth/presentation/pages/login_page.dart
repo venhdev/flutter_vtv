@@ -82,42 +82,49 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                     prefixIcon: const Icon(Icons.lock),
                   ),
-                  // forgot password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => context.go(ForgotPasswordPage.path),
-                      child: const Text(
-                        'Quên mật khẩu?',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // forgot password btn
+                  _buildForgotPasswordBtn(context),
                   const SizedBox(height: 18),
                   // btn login
                   _buildLoginButton(context),
-
                   // register
-                  Align(
-                    alignment: Alignment.center,
-                    child: TextButton(
-                      onPressed: () => context.go('/user/register'),
-                      child: const Text(
-                        'Chưa có tài khoản? Đăng ký ngay!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildRegisterBtn(context),
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Align _buildRegisterBtn(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: () => context.go('/user/register'),
+        child: const Text(
+          'Chưa có tài khoản? Đăng ký ngay!',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Align _buildForgotPasswordBtn(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () => context.go(ForgotPasswordPage.path),
+        child: const Text(
+          'Quên mật khẩu?',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
