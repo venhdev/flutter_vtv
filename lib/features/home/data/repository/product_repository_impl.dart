@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_vtv/features/home/domain/dto/comment_param.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../order/domain/dto/review_param.dart';
@@ -297,5 +298,19 @@ class ProductRepositoryImpl extends ProductRepository {
     } catch (e) {
       return Left(UnexpectedFailure(message: e.toString()));
     }
+  }
+
+  @override
+  FRespData<CommentEntity> addCustomerComment(CommentParam param) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.addCustomerComment(param),
+    );
+  }
+
+  @override
+  FRespEither deleteCustomerComment(String commentId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.deleteCustomerComment(commentId),
+    );
   }
 }

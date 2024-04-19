@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../order/presentation/components/shop_info.dart';
 import 'cart_item.dart';
 
 class CartsByShop extends StatelessWidget {
@@ -59,23 +60,29 @@ class CartsByShop extends StatelessWidget {
   }
 
   Widget _buildShopInfo(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // checkbox
-        Checkbox(
-          value: false,
-          onChanged: (value) {},
-        ),
-        IconTextButton(
-          leadingIcon: Icons.storefront_sharp,
-          label: cartByShop.shopName,
-          onPressed: () {
-            //TODO shop detail
-          },
-        ),
-      ],
+    return ShopInfo(
+      shopId: cartByShop.shopId,
+      avatar: cartByShop.avatar,
+      name: cartByShop.shopName,
+      showViewShopBtn: true,
     );
+    // return Row(
+    //   mainAxisSize: MainAxisSize.min,
+    //   children: [
+    //     // checkbox
+    //     Checkbox(
+    //       value: false,
+    //       onChanged: (value) {},
+    //     ),
+    //     IconTextButton(
+    //       leadingIcon: Icons.storefront_sharp,
+    //       label: cartByShop.shopName,
+    //       onPressed: () {
+    //         //_TODO shop detail
+    //       },
+    //     ),
+    //   ],
+    // );
     // return Row(
     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
     //   children: [

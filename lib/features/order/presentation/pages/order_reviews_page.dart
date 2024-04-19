@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:vtv_common/vtv_common.dart';
 
@@ -8,12 +6,12 @@ import '../../../home/domain/repository/product_repository.dart';
 import '../../domain/dto/review_param.dart';
 import '../components/sheet_add_or_update_review.dart';
 
-//Show review of order items in an order
+//Show review in an order (for all items )
 class OrderReviewsPage extends StatefulWidget {
   const OrderReviewsPage({super.key, required this.order});
 
-  static const String routeName = 'review-detail';
-  static const String path = '/user/purchase/order-detail/review-detail';
+  static const String routeName = 'order-review';
+  static const String path = '/user/purchase/order-detail/order-review';
 
   final OrderEntity order;
 

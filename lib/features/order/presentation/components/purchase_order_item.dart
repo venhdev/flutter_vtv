@@ -5,7 +5,6 @@ import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../../home/presentation/pages/shop_page.dart';
 import '../../domain/repository/order_repository.dart';
 import '../pages/order_detail_page.dart';
 import 'btn/review_btn.dart';

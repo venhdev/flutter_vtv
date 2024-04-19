@@ -4,6 +4,8 @@ import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.d
 import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../core/constants/customer_apis.dart';
+
 // <https://pub.dev/packages/jwt_decoder>
 
 abstract class AuthDataSource {
@@ -225,7 +227,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     // handle response
     if (response.statusCode == 200) {
       final result = SuccessResponse<UserInfoEntity>(
-      data:  UserInfoEntity.fromMap(decodedBody['customerDTO']),
+        data: UserInfoEntity.fromMap(decodedBody['customerDTO']),
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -257,7 +259,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     // handle response
     if (response.statusCode == 200) {
       final result = SuccessResponse<AuthEntity>(
-      data:  AuthEntity.fromMap(decodedBody),
+        data: AuthEntity.fromMap(decodedBody),
         code: response.statusCode,
         message: decodedBody['message'],
       );

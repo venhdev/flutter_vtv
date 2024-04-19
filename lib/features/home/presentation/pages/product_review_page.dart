@@ -3,8 +3,11 @@ import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
-import 'product_detail_page.dart';
+import '../components/review/review_item.dart';
 
+// Show all reviews of a product, customer can:
+// - View all reviews
+// - Navigate to review detail page to add their comment
 class ProductReviewPage extends StatefulWidget {
   const ProductReviewPage({
     super.key,

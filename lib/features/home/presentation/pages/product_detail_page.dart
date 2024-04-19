@@ -14,6 +14,7 @@ import '../../../order/presentation/components/shop_info.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
+import '../components/review/review_item.dart';
 import 'product_review_page.dart';
 import 'shop_page.dart';
 
@@ -668,7 +669,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                 ),
                 Divider(color: Colors.grey[200], indent: 32, endIndent: 32, height: 8),
-                ListView.builder(
+                ListView.separated(
+                  separatorBuilder: (context, index) => Divider(
+                    height: 0,
+                    color: Colors.grey.withOpacity(0.5),
+                    indent: 32,
+                    endIndent: 32,
+                  ),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: ok.data!.reviews.length > 3 ? 3 : ok.data!.reviews.length, // show only 3 reviews
@@ -698,69 +705,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           child: CircularProgressIndicator(),
         );
       },
-    );
-  }
-}
-
-class ReviewItem extends StatelessWidget {
-  const ReviewItem(
-    this.review, {
-    super.key,
-  });
-
-  final ReviewEntity review;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //# user info + rating
-        ListTile(
-          leading: const CircleAvatar(
-            // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
-            backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
-          ),
-          title: Text(review.username),
-          subtitle: Rating(rating: double.parse(review.rating.toString())),
-        ),
-
-        //# review content
-        Text(review.content),
-
-        //# review image
-        if (review.image != null)
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PhotoViewPage(imageUrl: review.image!),
-                ),
-              );
-            },
-            child: SizedBox(
-              height: 100,
-              child: ImageCacheable(
-                review.image!,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
-        //# date
-        Text(
-          StringHelper.convertDateTimeToString(
-            review.createdAt,
-            pattern: 'dd-MM-yyyy HH:mm',
-          ),
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-          ),
-        ),
-      ],
     );
   }
 }
