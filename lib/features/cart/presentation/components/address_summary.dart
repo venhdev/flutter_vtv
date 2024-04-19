@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../profile/domain/entities/address_dto.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class AddressSummary extends StatelessWidget {
   const AddressSummary({
@@ -14,7 +13,8 @@ class AddressSummary extends StatelessWidget {
     this.maxLines,
     this.overflow,
     this.color,
-    this.border ,
+    this.border,
+    this.decoration,
   });
 
   final AddressEntity address;
@@ -27,6 +27,7 @@ class AddressSummary extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final int? maxLines;
   final TextOverflow? overflow;
+  final Decoration? decoration;
 
   /// Override color of container (overlayColor will be ignored)
   final Color? color;
@@ -39,18 +40,19 @@ class AddressSummary extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
       child: Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-          border: border ?? Border.all(color: Colors.grey.shade500),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withOpacity(0.5),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+        decoration: decoration ??
+            BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+              border: border ?? Border.all(color: Colors.grey.shade500),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.5),
+                  blurRadius: 2,
+                  offset: const Offset(0, 1),
+                ),
+              ],
             ),
-          ],
-        ),
         margin: margin,
         padding: padding,
         child: Row(

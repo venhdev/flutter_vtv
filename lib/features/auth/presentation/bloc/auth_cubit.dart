@@ -2,11 +2,8 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/constants.dart';
-import '../../domain/dto/register_params.dart';
-import '../../domain/entities/auth_entity.dart';
-import '../../domain/entities/user_info_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecase/use_cases.dart';
 
@@ -59,8 +56,7 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  Future<void> loginWithUsernameAndPassword(
-      {required String username, required String password}) async {
+  Future<void> loginWithUsernameAndPassword({required String username, required String password}) async {
     emit(const AuthState.authenticating());
 
     await _loginWithUsernameAndPasswordUC(
@@ -71,8 +67,9 @@ class AuthCubit extends Cubit<AuthState> {
     ).then((respEither) {
       respEither.fold(
         (failure) => emit(AuthState.error(code: failure.code, message: failure.message)),
-        (ok) => emit(AuthState.authenticated(ok.data,
-            message: kMsgLoggedInSuccessfully, code: 200, redirectTo: '/home')),
+        (ok) => emit(
+          AuthState.authenticated(ok.data!, message: kMsgLoggedInSuccessfully, code: 200, redirectTo: '/home'),
+        ),
       );
     });
   }
@@ -112,8 +109,7 @@ class AuthCubit extends Cubit<AuthState> {
       //? even user change password success or not, keep the user authenticated
       resultEither.fold(
         (error) => emit(previousState.copyWith(message: error.message, code: error.code)),
-        (ok) =>
-            emit(previousState.copyWith(message: ok.message, code: ok.code, redirectTo: '/user')),
+        (ok) => emit(previousState.copyWith(message: ok.message, code: ok.code, redirectTo: '/user')),
       );
     });
   }

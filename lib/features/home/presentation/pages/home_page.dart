@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/constants/enum.dart';
 import 'package:flutter_vtv/features/home/presentation/components/search_components/btn_filter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
+import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/best_selling_product_list.dart';
 import '../components/product_components/category_list.dart';
-import '../components/product_components/lazy_product_list_builder.dart';
+import '../components/product_components/product_item.dart';
+import 'product_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  static const String routeRoot = '/home';
   static const String routeName = 'home';
 
   @override
@@ -21,8 +25,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ScrollController scrollController = ScrollController();
-  final _productPerPage = 4; // page size
+  final _productPerPage = 6; //! page size
+  final lazyController = LazyLoadController<ProductEntity>(
+    scrollController: ScrollController(),
+    items: [],
+    useGrid: true,
+    showIndicator: true,
+  );
 
   // filter & sort
   FilterParams currentFilter = FilterParams(
@@ -38,14 +47,30 @@ class _HomePageState extends State<HomePage> {
   int crossAxisCount = 2;
 
   Future<void> _refresh() async {
+    // setState(() {
+    //   isRefreshing = true;
+    //   lazyController.reload();
+    //   if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
+    //     context.read<CartBloc>().add(InitialCart());
+    //   }
+    // });
+    // await Future.delayed(const Duration(milliseconds: 300));
+    // setState(() {
+    //   isRefreshing = false;
+    // });
+
     setState(() {
-      isRefreshing = true;
-      context.read<CartBloc>().add(InitialCart());
+      lazyController.reload();
+      if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
+        context.read<CartBloc>().add(InitialCart());
+      }
     });
-    await Future.delayed(const Duration(milliseconds: 300));
-    setState(() {
-      isRefreshing = false;
-    });
+  }
+
+  @override
+  void dispose() {
+    lazyController.scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,7 +91,7 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView(
-            controller: scrollController,
+            controller: lazyController.scrollController,
             children: [
               //# Category
               const CategoryList(),
@@ -74,36 +99,103 @@ class _HomePageState extends State<HomePage> {
               BestSellingProductListBuilder(
                 future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
               ),
-              // Product
+              //# Product list with filter
+              // BUG turn off filter by price --> ERROR
               _buildProductActionBar(context),
-              isShowing
-                  ? LazyProductListBuilder(
-                      crossAxisCount: crossAxisCount,
-                      scrollController: scrollController,
-                      dataCallback: (page) async {
-                        if (currentFilter.isFiltering) {
-                          if (currentFilter.filterPriceRange) {
-                            return sl<ProductRepository>().getProductFilterByPriceRange(
-                              page,
-                              _productPerPage,
-                              currentFilter.minPrice,
-                              currentFilter.maxPrice,
-                              currentFilter.sortType,
-                            );
-                          } else {
-                            return sl<ProductRepository>()
-                                .getProductFilter(page, _productPerPage, currentFilter.sortType);
-                          }
-                        }
-                        return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
-                      },
-                    )
-                  : const SizedBox.shrink(),
+              _buildLazyProducts(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildLazyProducts() {
+    if (isShowing) {
+      return NestedLazyLoadBuilder<ProductEntity>(
+        controller: lazyController,
+        crossAxisCount: 2,
+        dataCallback: (page) async {
+          if (currentFilter.isFiltering) {
+            if (currentFilter.filterPriceRange) {
+              return sl<ProductRepository>().getProductFilterByPriceRange(
+                page,
+                _productPerPage,
+                currentFilter.minPrice,
+                currentFilter.maxPrice,
+                currentFilter.sortType,
+              );
+            } else {
+              return sl<ProductRepository>().getProductFilter(
+                page,
+                _productPerPage,
+                currentFilter.sortType,
+              );
+            }
+          }
+          return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
+        },
+        itemBuilder: (context, index, data) {
+          return ProductItem(
+            product: lazyController.items[index],
+            onPressed: () {
+              // context.go(ProductDetailPage.path, extra: _products[index].productId);
+              // context.read<AppState>().hideBottomNav();
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return ProductDetailPage(productId: lazyController.items[index].productId);
+              //     },
+              //   ),
+              // ).then(
+              //   (_) {
+              //     context.read<AppState>().showBottomNav();
+              //   },
+              // );
+
+              context.push(
+                ProductDetailPage.path,
+                extra: lazyController.items[index].productId,
+              );
+            },
+          );
+        },
+      );
+      // return LazyProductListBuilder(
+      //   crossAxisCount: crossAxisCount,
+      //   // scrollController: (execute) {
+      //   //   _scrollController.addListener(() {
+      //   //     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      //   //       execute();
+      //   //     }
+      //   //   });
+      //   //   return _scrollController;
+      //   // },
+      //   scrollController: _scrollController,
+      //   dataCallback: (page) async {
+      //     if (currentFilter.isFiltering) {
+      //       if (currentFilter.filterPriceRange) {
+      //         return sl<ProductRepository>().getProductFilterByPriceRange(
+      //           page,
+      //           _productPerPage,
+      //           currentFilter.minPrice,
+      //           currentFilter.maxPrice,
+      //           currentFilter.sortType,
+      //         );
+      //       } else {
+      //         return sl<ProductRepository>().getProductFilter(
+      //           page,
+      //           _productPerPage,
+      //           currentFilter.sortType,
+      //         );
+      //       }
+      //     }
+      //     return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
+      //   },
+      // );
+    } else {
+      return const SizedBox();
+    }
   }
 
   Row _buildProductActionBar(BuildContext context) {
@@ -127,8 +219,9 @@ class _HomePageState extends State<HomePage> {
           onFilterChanged: (filterParams) {
             if (filterParams != null) {
               setState(() {
-                isShowing = false;
+                // isShowing = false; //> no longer need this >> controlled by [LazyProductListBuilder]
                 currentFilter = filterParams;
+                lazyController.reload();
 
                 // isFiltering = filterParams.isFiltering;
                 // minPrice = filterParams.minPrice;
@@ -137,13 +230,14 @@ class _HomePageState extends State<HomePage> {
                 // filterPriceRange = filterParams.filterPriceRange;
               });
             }
+            //> no longer need this >> controlled by [LazyProductListBuilder]
             // use [isSortTypeChanged] to completed remove [LazyProductListBuilder]
             // out of the widget tree before re-render
-            Future.delayed(const Duration(milliseconds: 300), () {
-              setState(() {
-                isShowing = true;
-              });
-            });
+            // Future.delayed(const Duration(milliseconds: 300), () {
+            //   setState(() {
+            //     isShowing = true;
+            //   });
+            // });
           },
         ),
       ],

@@ -1,26 +1,19 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/helpers/helpers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
-import '../../../profile/domain/entities/address_dto.dart';
-import '../../domain/dto/place_order_with_variant_param.dart';
-import '../components/shop_info.dart';
-import 'order_detail_page.dart';
-import 'voucher_page.dart';
-import '../../domain/dto/place_order_param.dart';
-import '../../domain/entities/order_entity.dart';
-import '../../domain/entities/voucher_entity.dart';
-import '../../domain/repository/order_repository.dart';
-import '../../domain/repository/voucher_repository.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../../cart/presentation/components/order_item.dart';
+import '../../domain/repository/order_repository.dart';
+import '../../domain/repository/voucher_repository.dart';
+import '../components/shop_info.dart';
+import 'order_detail_page.dart';
+import 'voucher_page.dart';
 
 const String _noVoucherMsg = 'Chọn hoặc nhập mã';
 
@@ -46,23 +39,51 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late PlaceOrderWithCartParam _placeOrderWithCartParam;
   late PlaceOrderWithVariantParam _placeOrderWithVariantParam;
 
-  handlePlaceOrder() async {
-    final respEither = widget.isCreateWithCart
-        ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
-        : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
-
-    respEither.fold(
-      (error) {
-        Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
-      },
-      (ok) {
-        // FetchCart to BLoC to update cart
-        context.read<CartBloc>().add(const FetchCart());
-
-        // navigate to order detail page
-        context.go(OrderDetailPage.path, extra: ok.data.order);
-      },
+  Future<T?> showConfirmationDialog<T>() async {
+    return await showDialogToConfirm(
+      context: context,
+      title: 'Xác nhận đặt hàng',
+      content: 'Bạn có chắc chắn muốn đặt hàng?',
+      titleTextStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      ),
+      confirmText: 'Xác nhận',
+      dismissText: 'Hủy',
+      confirmBackgroundColor: Colors.green.shade200,
+      dismissBackgroundColor: Colors.grey.shade400,
     );
+  }
+
+  handlePlaceOrder() async {
+    final isConfirmed = await showConfirmationDialog<bool>();
+
+    if (isConfirmed ?? false) {
+      final respEither = widget.isCreateWithCart
+          ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
+          : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
+
+      respEither.fold(
+        (error) {
+          // Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
+          showDialogToAlert(
+            context,
+            title: const Text('Đặt hàng thất bại', textAlign: TextAlign.center),
+            titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
+            children: [
+              Text(error.message ?? 'Đã có lỗi xảy ra'),
+            ],
+          );
+        },
+        (ok) {
+          // FetchCart to BLoC to update cart
+          context.read<CartBloc>().add(const FetchCart()); //TODO this make show unwanted toast
+
+          // navigate to order detail page
+          context.go(OrderDetailPage.path, extra: ok.data);
+        },
+      );
+    }
   }
 
   Future<T?> showDialogToChangeAddress<T>(BuildContext context) {
@@ -96,7 +117,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (newAddress != null) {
             _address = newAddress;
           }
-          _order = ok.data.order;
+          _order = ok.data!.order;
         });
       },
     );
@@ -115,7 +136,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (newAddress != null) {
             _address = newAddress;
           }
-          _order = ok.data.order;
+          _order = ok.data!.order;
         });
       },
     );
@@ -127,10 +148,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _address = widget.order.address;
     _order = widget.order;
 
-    log('widget.isCreateWithCart: ${widget.isCreateWithCart}');
-
     if (widget.isCreateWithCart) {
-      log('here');
       _placeOrderWithCartParam = PlaceOrderWithCartParam(
         addressId: widget.order.address.addressId,
         systemVoucherCode: null,
@@ -142,7 +160,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
         cartIds: widget.order.orderItems.map((e) => e.cartId).toList(),
       );
     } else {
-      log('here2');
       _placeOrderWithVariantParam = PlaceOrderWithVariantParam(
         addressId: widget.order.address.addressId,
         systemVoucherCode: null,
@@ -153,7 +170,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
         note: '',
         variantIds: widget.order.getVariantIdsAndQuantityMap,
       );
-      log('_placeOrderWithVariantParam: ${_placeOrderWithVariantParam.toString()}');
     }
   }
 
@@ -161,21 +177,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thanh toán'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.pop();
-            // if (widget.isCreateWithCart) {
-            //   // pop to cart page
-            //   context.pop();
-            // } else {
-            //   // TODO: pop to product detail page
-            //   context.pop();
-            // }
-          },
-        )
-      ),
+          title: const Text('Thanh toán'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+          )),
       bottomSheet: _buildPlaceOrderBtn(),
       body: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 64),
@@ -201,6 +207,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
               //! voucher
               _buildSystemVoucherBtn(),
               const SizedBox(height: 8),
+
+              //! loyalty point
+              // _buildLoyaltyPoint(), //TODO implement this feature
 
               //! total price
               _buildTotalPrice(),
@@ -281,7 +290,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title),
-        Text(formatCurrency(price)),
+        Text(StringHelper.formatCurrency(price)),
       ],
     );
   }
@@ -302,7 +311,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(_order.paymentMethod),
-              Text(formatPaymentMethod(_order.paymentMethod)),
+              Text(StringHelper.getPaymentName(_order.paymentMethod)),
             ],
           )
         ],
@@ -351,7 +360,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          ShopInfo(shop: _order.shop),
+          ShopInfo(
+            shopId: _order.shop.shopId,
+            name: _order.shop.name,
+            avatar: _order.shop.avatar,
+          ),
 
           //! Shop voucher
           Wrapper(
@@ -505,7 +518,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             'Tổng thanh toán: ',
           ),
           Text(
-            formatCurrency(_order.paymentTotal),
+            StringHelper.formatCurrency(_order.paymentTotal),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
           ),
           const SizedBox(width: 8),

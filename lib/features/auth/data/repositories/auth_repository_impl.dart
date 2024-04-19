@@ -1,21 +1,11 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter_vtv/features/auth/domain/entities/user_info_entity.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/constants.dart';
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/helpers/secure_storage_helper.dart';
-import '../../../../core/network/base_response.dart';
-import '../../domain/dto/register_params.dart';
-import '../../domain/entities/auth_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_sources/auth_data_source.dart';
-import '../models/auth_model.dart';
-import '../models/user_info_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authDataSource, this._secureStorageHelper);
@@ -27,7 +17,7 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
     try {
       final result = await _authDataSource.loginWithUsernameAndPassword(username, password);
-      return Right(DataResponse(result.data.toEntity()));
+      return Right(SuccessResponse(data: result.data));
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
     } on ClientException catch (e) {
@@ -42,8 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FResult<void> cacheAuth(AuthEntity authEntity) async {
     try {
-      final jsonAuthData = AuthModel.fromEntity(authEntity).toJson();
-      await _secureStorageHelper.cacheAuth(jsonAuthData);
+      await _secureStorageHelper.cacheAuth(authEntity);
       return const Right(null);
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
@@ -81,7 +70,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FResult<void> deleteAuth() async {
     try {
-      await _secureStorageHelper.deleteAuth();
+      await _secureStorageHelper.deleteAll();
       return const Right(null);
     } on CacheException {
       return const Left(CacheFailure(message: 'Lỗi xóa thông tin người dùng!'));
@@ -163,10 +152,10 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<UserInfoEntity> editUserProfile(UserInfoEntity newInfo) async {
     try {
       final resOK = await _authDataSource.editUserProfile(
-        newInfo: UserInfoModel.fromEntity(newInfo),
+        newInfo: newInfo,
       );
       // update user info in local storage
-      await _secureStorageHelper.updateUserInfo(resOK.data);
+      await _secureStorageHelper.saveOrUpdateUserInfo(resOK.data!);
       return Right(resOK);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));

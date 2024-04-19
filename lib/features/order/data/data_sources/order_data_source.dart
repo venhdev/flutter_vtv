@@ -1,31 +1,30 @@
 import 'dart:convert';
 
-import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
 import 'package:http/http.dart' as http;
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/api.dart';
-import '../../../../core/helpers/secure_storage_helper.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../../cart/domain/dto/order_resp.dart';
-import '../../domain/dto/place_order_with_variant_param.dart';
+import '../../../../core/constants/customer_apis.dart';
 
 abstract class OrderDataSource {
-  // Create Temp Order
+  //# Create Temp Order
   // * With Cart
-  Future<DataResponse<OrderResp>> createByCartIds(List<String> cartIds);
-  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderWithCartParam params);
+  Future<SuccessResponse<OrderDetailEntity>> createByCartIds(List<String> cartIds);
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(PlaceOrderWithCartParam params);
   // * With Product Variant
-  Future<DataResponse<OrderResp>> createByProductVariant(int productVariantId, int quantity);
-  Future<DataResponse<OrderResp>> createUpdateWithVariant(PlaceOrderWithVariantParam params);
+  Future<SuccessResponse<OrderDetailEntity>> createByProductVariant(
+      Map<int, int> mapParam); //int productVariantId, int quantity
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(PlaceOrderWithVariantParam params);
 
-  // Place order
-  Future<DataResponse<OrderResp>> placeOrderWithCart(PlaceOrderWithCartParam params);
-  Future<DataResponse<OrderResp>> placeOrderWithVariant(PlaceOrderWithVariantParam params);
+  //# Place order
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(PlaceOrderWithCartParam params);
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(PlaceOrderWithVariantParam params);
 
-  // Manage orders
-  Future<DataResponse<OrdersResp>> getListOrders();
-  Future<DataResponse<OrdersResp>> getListOrdersByStatus(String status);
+  //# Manage orders
+  Future<SuccessResponse<MultiOrderEntity>> getListOrders();
+  Future<SuccessResponse<MultiOrderEntity>> getListOrdersByStatus(String status);
+  Future<SuccessResponse<OrderDetailEntity>> getOrderDetail(String orderId);
+  Future<SuccessResponse<OrderDetailEntity>> cancelOrder(String orderId);
+  Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId);
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
@@ -35,124 +34,178 @@ class OrderDataSourceImpl extends OrderDataSource {
   final SecureStorageHelper _secureStorageHelper;
 
   @override
-  Future<DataResponse<OrderResp>> createByCartIds(List<String> cartIds) async {
+  Future<SuccessResponse<OrderDetailEntity>> createByCartIds(List<String> cartIds) async {
+    final url = baseUri(path: kAPIOrderCreateByCartIdsURL);
     final response = await _client.post(
-      baseUri(path: kAPIOrderCreateByCartIdsURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(cartIds),
     );
 
-    return handleResponseWithData<OrderResp>(
+    return handleResponseWithData<OrderDetailEntity>(
       response,
-      kAPIOrderCreateByCartIdsURL,
-      (data) => OrderResp.fromMap(data),
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<OrderResp>> createUpdateWithCart(PlaceOrderWithCartParam param) async {
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(PlaceOrderWithCartParam params) async {
+    final url = baseUri(path: kAPIOrderCreateUpdateWithCartURL);
     final response = await _client.post(
-      baseUri(path: kAPIOrderCreateUpdateWithCartURL),
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      body: param.toJson(),
-    );
-
-    return handleResponseWithData<OrderResp>(
-      response,
-      kAPIOrderCreateUpdateWithCartURL,
-      (data) => OrderResp.fromMap(data),
-    );
-  }
-
-  @override
-  Future<DataResponse<OrderResp>> placeOrderWithCart(PlaceOrderWithCartParam params) async {
-    final response = await _client.post(
-      baseUri(path: kAPIOrderAddWithCartURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: params.toJson(),
     );
 
-    return handleResponseWithData<OrderResp>(
+    return handleResponseWithData<OrderDetailEntity>(
       response,
-      kAPIOrderAddWithCartURL,
-      (data) => OrderResp.fromMap(data),
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<OrdersResp>> getListOrders() async {
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(PlaceOrderWithCartParam params) async {
+    final url = baseUri(path: kAPIOrderAddWithCartURL);
+    final response = await _client.post(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: params.toJson(),
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<MultiOrderEntity>> getListOrders() async {
+    final url = baseUri(path: kAPIOrderListURL);
     final response = await _client.get(
-      baseUri(path: kAPIOrderListURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
-    return handleResponseWithData<OrdersResp>(
+    return handleResponseWithData<MultiOrderEntity>(
       response,
-      kAPIOrderListURL,
-      (data) => OrdersResp.fromMap(data),
+      url,
+      (dataMap) => MultiOrderEntity.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<OrdersResp>> getListOrdersByStatus(String status) async {
+  Future<SuccessResponse<MultiOrderEntity>> getListOrdersByStatus(String status) async {
+    final url = baseUri(path: '$kAPIOrderListByStatusURL/$status');
     final response = await _client.get(
-      baseUri(path: '$kAPIOrderListByStatusURL/$status'),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
-    return handleResponseWithData<OrdersResp>(
+    return handleResponseWithData<MultiOrderEntity>(
       response,
-      '$kAPIOrderListByStatusURL/$status',
-      (data) => OrdersResp.fromMap(data),
+      url,
+      (dataMap) => MultiOrderEntity.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<OrderResp>> createByProductVariant(int productVariantId, int quantity) async {
-    final body = {
-      productVariantId.toString(): quantity.toString(),
-    };
+  Future<SuccessResponse<OrderDetailEntity>> createByProductVariant(Map<int, int> mapParam) async {
+    final url = baseUri(path: kAPIOrderCreateByProductVariantURL);
+    // final body = {
+    //   productVariantId.toString(): quantity.toString(),
+    // };
+    final body = mapParam.map((key, value) => MapEntry(key.toString(), value.toString()));
 
     final response = await _client.post(
-      baseUri(path: kAPIOrderCreateByProductVariantURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(body),
     );
 
-    return handleResponseWithData<OrderResp>(
+    return handleResponseWithData<OrderDetailEntity>(
       response,
-      kAPIOrderCreateByProductVariantURL,
-      (data) => OrderResp.fromMap(data),
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<OrderResp>> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
+    final url = baseUri(path: kAPIOrderCreateUpdateWithProductVariantURL);
     final response = await _client.post(
-      baseUri(path: kAPIOrderCreateUpdateWithProductVariantURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: params.toJson(),
     );
 
-    return handleResponseWithData<OrderResp>(
+    return handleResponseWithData<OrderDetailEntity>(
       response,
-      kAPIOrderCreateUpdateWithProductVariantURL,
-      (data) => OrderResp.fromMap(data),
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<OrderResp>> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
+    final url = baseUri(path: kAPIOrderAddWithProductVariantURL);
     final response = await _client.post(
-      baseUri(path: kAPIOrderAddWithProductVariantURL),
+      url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: params.toJson(),
     );
 
-    return handleResponseWithData<OrderResp>(
+    return handleResponseWithData<OrderDetailEntity>(
       response,
-      kAPIOrderAddWithProductVariantURL,
-      (data) => OrderResp.fromMap(data),
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<OrderDetailEntity>> getOrderDetail(String orderId) async {
+    final url = baseUri(path: '$kAPIOrderDetailURL/$orderId');
+    final response = await _client.get(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<OrderDetailEntity>> cancelOrder(String orderId) async {
+    final url = baseUri(path: '$kAPIOrderCancelURL/$orderId');
+    final response = await _client.patch(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+  
+  @override
+  Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId) async{
+    final url = baseUri(path: '$kAPIOrderCompleteURL/$orderId');
+    final response = await _client.patch(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
 }

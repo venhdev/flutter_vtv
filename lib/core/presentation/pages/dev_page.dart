@@ -1,16 +1,18 @@
+import 'dart:developer';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/helpers/secure_storage_helper.dart';
-import 'package:flutter_vtv/core/helpers/shared_preferences_helper.dart';
 import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
+import '../../../config/dio/auth_interceptor.dart';
 import '../../../features/auth/presentation/bloc/auth_cubit.dart';
 import '../../../service_locator.dart';
-import '../../constants/api.dart';
-import '../components/custom_buttons.dart';
+import '../../constants/customer_apis.dart';
 
 class DevPage extends StatefulWidget {
   const DevPage({super.key});
@@ -25,6 +27,8 @@ class _DevPageState extends State<DevPage> {
   String accessToken = '';
   String? fcmToken = '';
   String? newAccessToken;
+
+  String? forceAccessToken;
 
   TextEditingController domainTextController = TextEditingController(text: devDOMAIN);
   Future<void> setDomain(String newDomain) async {
@@ -63,37 +67,125 @@ class _DevPageState extends State<DevPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const Text('Dev Page - Tap to copy'),
-          leading: IconButton(
-            onPressed: () {
-              context.go('/home');
-            },
-            icon: const Icon(Icons.arrow_back),
-          )),
+      appBar: _devAppBar(context),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            _buildRoles(),
             _buildDomain(),
             const Divider(),
             _buildToken(),
             const Divider(),
             _buildFCM(),
             const Divider(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const TestPage(),
-                  ),
-                );
-              },
-              child: const Text('Button'),
-            ),
+            // textfield to force replace accessToken
+            _buildForceChangeAccessToken(),
+
+            //*--------------------------------
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const TestPage(),
+            //       ),
+            //     );
+            //   },
+            //   child: const Text('Button'),
+            // ),
+
+            _goToTestPage(context),
           ],
         ),
       ),
+    );
+  }
+
+  ElevatedButton _goToTestPage(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        debugPrint('text');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return const TestPage();
+            },
+          ),
+        );
+      },
+      child: const Text('Test Page'),
+    );
+  }
+
+  AppBar _devAppBar(BuildContext context) {
+    return AppBar(
+      title: const Text('Dev Page - Tap to copy'),
+      leading: IconButton(
+        onPressed: () {
+          context.go('/home');
+        },
+        icon: const Icon(Icons.arrow_back),
+      ),
+      actions: [
+        // btn change token
+        IconButton(
+          onPressed: () {
+            sl<SecureStorageHelper>()
+                .saveOrUpdateAccessToken(
+                    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2MSIsImlhdCI6MTcxMjY2MzE4NCwiZXhwIjoxNzEyNzIzMTg0fQ.njQ0wEqDXmthW5kz7q2s_g-5Ot0CrMnb_6rrmqnUkfU')
+                .then((_) => Fluttertoast.showToast(msg: 'expired token has been set'));
+          },
+          icon: const Icon(Icons.device_unknown),
+        ),
+      ],
+    );
+  }
+
+  FutureBuilder<List<Role>?> _buildRoles() {
+    return FutureBuilder(
+      future: sl<SecureStorageHelper>().roles,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final roles = snapshot.data!;
+          return Text('${roles.length} Roles: $roles');
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  TextField _buildForceChangeAccessToken() {
+    return TextField(
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        hintText: 'forceAccessToken',
+        suffixIcon: IconButton(
+          onPressed: () async {
+            if (forceAccessToken != null) {
+              final oldAccessToken = await sl<SecureStorageHelper>().accessToken;
+              if (oldAccessToken != null) {
+                // final newAuth = auth.copyWith(accessToken: forceAccessToken!);
+
+                log('authBeforeSet: $oldAccessToken');
+                await sl<SecureStorageHelper>().saveOrUpdateAccessToken(forceAccessToken ?? '');
+                final authAfterSet = await sl<SecureStorageHelper>().accessToken;
+
+                log('authAfterSet: $authAfterSet');
+
+                Fluttertoast.showToast(msg: 'forceAccessToken has been set');
+              }
+            }
+          },
+          icon: const Icon(Icons.save),
+        ),
+      ),
+      onChanged: (value) {
+        setState(() {
+          forceAccessToken = value;
+        });
+      },
     );
   }
 
@@ -197,43 +289,84 @@ class _DevPageState extends State<DevPage> {
   }
 }
 
-class TestPage extends StatelessWidget {
-  const TestPage({
-    super.key,
-  });
+class TestPage extends StatefulWidget {
+  const TestPage({super.key});
+
+  @override
+  State<TestPage> createState() => _TestPageState();
+}
+
+class _TestPageState extends State<TestPage> {
+  final dio = Dio();
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    dio.options.baseUrl = 'http://$devDOMAIN:$kPORT/api';
+
+    dio.interceptors.add(AuthInterceptor());
+    // dio.interceptors.add(LogInterceptor(
+    //   request: true,
+    //   responseBody: true,
+    //   requestBody: false,
+    //   requestHeader: true,
+    //   responseHeader: false,
+    // ));
+  }
 
   @override
   Widget build(BuildContext context) {
+    // ignore: prefer_const_constructors
     return Scaffold(
       body: Center(
-        child: Container(
-          color: Colors.green,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ---------------------------
-              IconTextButton(
-                onPressed: () {},
-                icon: Icons.chat,
-                label: 'Chat',
-                borderRadius: BorderRadius.zero,
-                backgroundColor: Colors.blue,
-              ),
-
-              Container(
-                color: Colors.red,
-                child: TextButton(
-                  onPressed: () {
-                    context.go('/dev');
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                dio.get(
+                  kAPINotificationGetPageURL,
+                  queryParameters: {
+                    'page': 1,
+                    'size': 10,
                   },
-                  child: const Text('Go to dev page'),
-                ),
-              ),
-            ],
-          ),
+                ).then(
+                  (value) {
+                    log('result: ${value.data}');
+                  },
+                );
+                // dio
+                //     .get('https://661931f99a41b1b3dfbf2dfd.mockapi.io/api/demo')
+                //     .then((value) => log('result: ${value.data}'));
+
+                // dio
+                //     .get('https://661931f99a41b1b3dfbf2dfd.mockapi.io/api/refreshToken')
+                //     .then((value) => log('result: ${value.data}'));
+              },
+              child: const Text('Notification Get Page'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                sl<SharedPreferencesHelper>().I.setString('token', 'oldToken').then((value) => log(
+                      value.toString(),
+                    ));
+              },
+              child: const Text('set old token'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                log('${sl<SharedPreferencesHelper>().I.getString('token')}');
+              },
+              child: const Text('get token'),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
+
+
+// expired token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2MSIsImlhdCI6MTcxMjY2MzE4NCwiZXhwIjoxNzEyNzIzMTg0fQ.njQ0wEqDXmthW5kz7q2s_g-5Ot0CrMnb_6rrmqnUkfU

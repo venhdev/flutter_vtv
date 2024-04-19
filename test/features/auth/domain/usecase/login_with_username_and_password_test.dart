@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/domain/usecase/login_with_username_and_password.dart';
 import 'package:mockito/mockito.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 import '../../../../helpers/test_helper.mocks.dart';
@@ -22,7 +22,7 @@ void main() {
       tUsername,
       tPassword,
     )).thenAnswer(
-      (_) async => Right(DataResponse(tAuthEntity)),
+      (_) async => Right(SuccessResponse(data: tAuthEntity)),
     );
     when(mockAuthRepository.cacheAuth(tAuthEntity)).thenAnswer(
       (_) async => const Right(null),
@@ -39,7 +39,7 @@ void main() {
     verify(mockAuthRepository.loginWithUsernameAndPassword(tUsername, tPassword));
     verify(mockAuthRepository.cacheAuth(tAuthEntity));
     // --expect something equals, isA, throwsA
-    expect(result, Right(DataResponse(tAuthEntity)));
+    expect(result, Right(SuccessResponse(data: tAuthEntity)));
   });
   test('should return [Failure] when login is unsuccessful', () async {
     // Arrange (setup @mocks)

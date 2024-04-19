@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import '../../features/auth/data/models/user_info_model.dart';
-import '../../features/auth/domain/entities/user_info_entity.dart';
-import '../../features/order/domain/entities/order_entity.dart';
-import '../../features/home/domain/entities/product_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 // <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
 
@@ -35,13 +32,22 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
       return inputAsList[1];
     }
     if (inputAsList[0] == 'UserInfoEntity') {
-      return UserInfoModel.fromJson(inputAsList[1] as String).toEntity();
+      return UserInfoEntity.fromJson(inputAsList[1] as String);
     }
     if (inputAsList[0] == 'ProductEntity') {
       return ProductEntity.fromJson(inputAsList[1] as String);
     }
     if (inputAsList[0] == 'OrderEntity') {
       return OrderEntity.fromJson(inputAsList[1] as String);
+    }
+    if (inputAsList[0] == 'ProductDetailResp') {
+      return ProductDetailResp.fromJson(inputAsList[1] as String);
+    }
+    if (inputAsList[0] == 'OrderDetailEntity') {
+      return OrderDetailEntity.fromJson(inputAsList[1] as String);
+    }
+    if (inputAsList[0] == 'AddressEntity') {
+      return AddressEntity.fromJson(inputAsList[1] as String);
     }
     throw FormatException('Unable to parse input: $input');
   }
@@ -60,7 +66,7 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case UserInfoEntity _:
         return <Object?>[
           'UserInfoEntity',
-          UserInfoModel.fromEntity(input).toJson(),
+          input.toJson(),
         ];
       case ProductEntity _:
         return <Object?>[
@@ -70,6 +76,21 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case OrderEntity _:
         return <Object?>[
           'OrderEntity',
+          (input).toJson(),
+        ];
+      case ProductDetailResp _:
+        return <Object?>[
+          'ProductDetailResp',
+          (input).toJson(),
+        ];
+      case OrderDetailEntity _:
+        return <Object?>[
+          'OrderDetailEntity',
+          (input).toJson(),
+        ];
+      case AddressEntity _:
+        return <Object?>[
+          'AddressEntity',
           (input).toJson(),
         ];
       default:

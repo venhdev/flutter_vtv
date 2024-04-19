@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/converter.dart';
-import '../../../auth/domain/entities/user_info_entity.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../auth/presentation/components/text_field_custom.dart';
 
@@ -10,7 +9,7 @@ class UserDetailPage extends StatefulWidget {
   const UserDetailPage({super.key, required this.userInfo});
 
   static const String routeName = 'user-detail';
-  static const String path = '/user/detail';
+  static const String path = '/user/user-detail';
 
   final UserInfoEntity userInfo;
 
@@ -34,7 +33,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     super.initState();
     _fullNameController.text = widget.userInfo.fullName!;
     _emailController.text = widget.userInfo.email!;
-    _dobController.text = convertDateTimeToString(widget.userInfo.birthday!);
+    _dobController.text = StringHelper.convertDateTimeToString(widget.userInfo.birthday!);
     _genderController.text = widget.userInfo.gender! ? 'Nam' : 'Nữ';
     _dob = widget.userInfo.birthday;
     _gender = widget.userInfo.gender;
@@ -53,8 +52,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:
-            Colors.transparent, // Set the background color to transparent
+        backgroundColor: Colors.transparent, // Set the background color to transparent
         title: const Text('Thông tin cá nhân'),
       ),
       body: Padding(
@@ -102,15 +100,13 @@ class _UserDetailPageState extends State<UserDetailPage> {
                             onPressed: () {
                               Navigator.pop(context, true);
                             },
-                            child: const Text('Nam',
-                                style: TextStyle(fontSize: 16)),
+                            child: const Text('Nam', style: TextStyle(fontSize: 16)),
                           ),
                           SimpleDialogOption(
                             onPressed: () {
                               Navigator.pop(context, false);
                             },
-                            child: const Text('Nữ',
-                                style: TextStyle(fontSize: 16)),
+                            child: const Text('Nữ', style: TextStyle(fontSize: 16)),
                           ),
                         ],
                       ),
@@ -144,12 +140,11 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       confirmText: 'Chọn',
                       context: context,
                       firstDate: DateTime(1900),
-                      lastDate: DateTime(
-                          DateTime.now().year - 12), // least 12 years old
+                      lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
                     );
 
                     if (pickedDate != null) {
-                      _dobController.text = convertDateTimeToString(pickedDate);
+                      _dobController.text = StringHelper.convertDateTimeToString(pickedDate);
                       _dob = pickedDate;
                     }
                   },

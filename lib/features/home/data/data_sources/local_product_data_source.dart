@@ -1,11 +1,12 @@
-import '../../../../core/helpers/shared_preferences_helper.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 String _keyRecentProduct = 'RECENT_PRODUCT';
 int _maxRecentProduct = 10;
 
 abstract class LocalProductDataSource {
-  Future<void> cacheProductId(String productId);
+  Future<void> cacheProductId(int productId);
   Future<List<String>> getRecentProductIds();
+  Future<void> removeAllRecentProduct();
 }
 
 class LocalProductDataSourceImpl extends LocalProductDataSource {
@@ -14,12 +15,13 @@ class LocalProductDataSourceImpl extends LocalProductDataSource {
   final SharedPreferencesHelper _pref;
 
   @override
-  Future<void> cacheProductId(String productId) async {
+  Future<void> cacheProductId(int productId) async {
+    final id = productId.toString();
     List<String> recentProductIds = await getRecentProductIds();
-    if (recentProductIds.contains(productId)) {
-      recentProductIds.remove(productId);
+    if (recentProductIds.contains(id)) {
+      recentProductIds.remove(id);
     }
-    recentProductIds.insert(0, productId);
+    recentProductIds.insert(0, id);
     if (recentProductIds.length > _maxRecentProduct) {
       recentProductIds.removeLast();
     }
@@ -29,6 +31,11 @@ class LocalProductDataSourceImpl extends LocalProductDataSource {
   @override
   Future<List<String>> getRecentProductIds() async {
     List<String> recentProductIds = _pref.I.getStringList(_keyRecentProduct) ?? [];
-    return recentProductIds.reversed.toList();
+    return recentProductIds;
+  }
+
+  @override
+  Future<void> removeAllRecentProduct() async {
+    await _pref.I.remove(_keyRecentProduct);
   }
 }

@@ -1,94 +1,119 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/presentation/components/custom_widgets.dart';
+import 'dart:developer';
 
-import '../../../../core/constants/enum.dart';
-import '../../../../core/constants/typedef.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
+
 import '../../../../service_locator.dart';
-import '../../../cart/domain/dto/order_resp.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/purchase_order_item.dart';
+import 'order_detail_page.dart';
 
-String _buttonText(int index) {
+const int _totalTab = 7;
+
+/// position of each tab
+OrderStatus? _statusFromIndex(int index) {
   switch (index) {
     case 0:
-      return 'Tất cả';
+      return null;
     case 1:
-      return 'Chờ xác nhận';
+      return OrderStatus.PENDING;
     case 2:
-      return 'Đang giao';
+      return OrderStatus.PROCESSING;
     case 3:
-      return 'Đã giao';
+      return OrderStatus.SHIPPING;
+    case 4:
+      return OrderStatus.DELIVERED;
+    case 5:
+      return OrderStatus.COMPLETED;
+    case 6:
+      return OrderStatus.CANCEL;
     default:
-      return 'Tất cả';
+      throw Exception('Invalid index');
   }
 }
 
-String _getEmptyMessage(int index) {
-  switch (index) {
-    case 0:
-      return 'Không có đơn hàng nào!';
-    case 1:
+String _getEmptyMessage(OrderStatus? status) {
+  switch (status) {
+    case OrderStatus.WAITING:
       return 'Không có đơn hàng chờ xác nhận nào!';
-    case 2:
+    case OrderStatus.PENDING:
+      return 'Không có đơn hàng chờ xác nhận nào!';
+    case OrderStatus.SHIPPING:
       return 'Không có đơn hàng đang giao nào!';
-    case 3:
+    case OrderStatus.COMPLETED:
       return 'Không có đơn hàng đã giao nào!';
+    case OrderStatus.CANCEL:
+      return 'Không có đơn hàng đã hủy nào!';
     default:
       return 'Không có đơn hàng nào!';
   }
 }
 
-Widget _buildTabBarView({required int index}) {
-  return FutureBuilder(
-    future: _callFuture(index),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        final respEither = snapshot.data!;
+Icon _getIcon(OrderStatus? status) {
+  switch (status) {
+    case OrderStatus.WAITING:
+      return const Icon(Icons.pending_actions_rounded);
+    case OrderStatus.PENDING:
+      return const Icon(Icons.pending_actions_rounded);
+    case OrderStatus.SHIPPING:
+      return const Icon(Icons.delivery_dining);
+    case OrderStatus.COMPLETED:
+      return const Icon(Icons.check_circle_rounded);
+    case OrderStatus.CANCEL:
+      return const Icon(Icons.cancel_rounded);
+    default:
+      return const Icon(Icons.remove_shopping_cart_rounded);
+  }
+}
 
-        return respEither.fold(
-          (error) => MessageScreen.error(error.message),
-          (ok) {
-            if (ok.data.orders.isEmpty) {
-              return MessageScreen.error(
-                _getEmptyMessage(index),
-                const Icon(Icons.remove_shopping_cart_rounded),
-              );
-            }
-
-            return ListView.separated(
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: ok.data.orders.length,
-              itemBuilder: (context, index) {
-                return PurchaseOrderItem(
-                  order: ok.data.orders[index],
-                );
-              },
-            );
-          },
-        );
-      } else if (snapshot.hasError) {
-        return MessageScreen.error(snapshot.error.toString());
-      }
-      return const Center(
-        child: CircularProgressIndicator(),
+Widget _buildTabBarViewWithData({
+  required int index,
+  required List<OrderEntity> orders,
+  required void Function(OrderDetailEntity completedOrder) setState,
+}) {
+  if (orders.isEmpty) {
+    return MessageScreen.error(
+      _getEmptyMessage(_statusFromIndex(index)),
+      _getIcon(_statusFromIndex(index)),
+    );
+  }
+  return ListView.separated(
+    separatorBuilder: (context, index) => const Divider(),
+    itemCount: orders.length,
+    itemBuilder: (context, index) {
+      return PurchaseOrderItem(
+        order: orders[index],
+        onReceived: setState,
       );
     },
   );
 }
 
-FRespData<OrdersResp>? _callFuture(int index) {
-  switch (index) {
-    case 0: // All purchase orders
-      return sl<OrderRepository>().getListOrders();
-    case 1: // Pending purchase orders
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
-    case 2: // Shipping purchase orders
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.SHIPPING.name);
-    case 3: // Completed purchase orders
-      return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.COMPLETED.name);
-    default:
-      return null;
+FRespData<MultiOrderEntity> _callFuture(OrderStatus? status) {
+  if (status == null) {
+    return sl<OrderRepository>().getListOrders();
+  } else if (status == OrderStatus.PROCESSING) {
+    log('Get orders with status PROCESSING and PICKUP_PENDING');
+    return sl<OrderRepository>().getListOrdersByStatusProcessingAndPickupPending();
   }
+  return sl<OrderRepository>().getListOrdersByStatus(status.name);
+  // switch (status) {
+  //   case OrderStatus.WAITING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.WAITING.name);
+  //   case OrderStatus.PENDING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.PENDING.name);
+  //   case OrderStatus.SHIPPING:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.SHIPPING.name);
+  //   case OrderStatus.DELIVERED:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.DELIVERED.name);
+  //   case OrderStatus.COMPLETED:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.COMPLETED.name);
+  //   case OrderStatus.CANCEL:
+  //     return sl<OrderRepository>().getListOrdersByStatus(OrderStatus.CANCEL.name);
+  //   default:
+  //     return sl<OrderRepository>().getListOrders();
+  // }
 }
 
 class PurchasePage extends StatefulWidget {
@@ -102,48 +127,128 @@ class PurchasePage extends StatefulWidget {
 }
 
 class _PurchasePageState extends State<PurchasePage> {
-  List<int> _totalOrdersAt = List.generate(4, (index) => 0);
+  Future<List<RespData<MultiOrderEntity>>> _futureDataOrders() async {
+    return Future.wait(
+      List.generate(_totalTab, (index) async {
+        return await _callFuture(_statusFromIndex(index));
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Đơn mua hàng'),
-          bottom: TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            tabs: [
-              _buildTapButton(_buttonText(0), _totalOrdersAt[0]),
-              _buildTapButton(_buttonText(1), _totalOrdersAt[1]),
-              _buildTapButton(_buttonText(2), _totalOrdersAt[2]),
-              _buildTapButton(_buttonText(3), _totalOrdersAt[3]),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: List.generate(
-            4,
-            // _buildTabBarView,
-            (index) => RefreshIndicator(
-              onRefresh: () async {
-                setState(() {});
-              },
-              child: _buildTabBarView(index: index),
-            ),
-          ),
-        ),
-      ),
+      length: _totalTab,
+      child: FutureBuilder<List<RespData<MultiOrderEntity>>>(
+          future: _futureDataOrders(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final listMultiOrder = snapshot.data!;
+
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Đơn mua hàng'),
+                  bottom: TabBar(
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      tabs: List.generate(
+                        _totalTab,
+                        (index) => _buildTapButton(
+                          StringHelper.getOrderStatusName(_statusFromIndex(index)),
+                          listMultiOrder[index].fold(
+                            (error) => 0,
+                            (ok) => ok.data!.orders.length,
+                          ),
+                          backgroundColor: ColorHelper.getOrderStatusBackgroundColor(_statusFromIndex(index)),
+                        ),
+                      )
+                      // _buildTapButton(_buttonText(0), _totalOrdersAt[0]),
+                      // _buildTapButton(_buttonText(1), _totalOrdersAt[1]),
+                      // _buildTapButton(_buttonText(2), _totalOrdersAt[2]),
+                      // _buildTapButton(_buttonText(3), _totalOrdersAt[3]),
+                      ),
+                ),
+                body: TabBarView(
+                  children: List.generate(
+                    _totalTab,
+                    // _buildTabBarView,
+                    (index) => RefreshIndicator(
+                      onRefresh: () async {
+                        setState(() {});
+                      },
+                      // child: _buildTabBarView(index: index),
+                      // child: _buildTabBarViewWithData(index: index, orders: []),
+                      child: _buildTabBarViewWithData(
+                        index: index,
+                        //? this [orders] is empty, so it will show empty message
+                        //? if [orders] is not empty, it will show the list of orders with the corresponding status
+                        orders: listMultiOrder[index].fold(
+                          (error) => [],
+                          (ok) => ok.data!.orders,
+                        ),
+                        setState: (completedOrder) {
+                          setState(() {});
+                          context.go(OrderDetailPage.path, extra: completedOrder);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
     );
   }
 
-  Badge _buildTapButton(String text, int total, {Color? backgroundColor}) {
+  Widget _buildTapButton(String text, int total, {Color? backgroundColor}) {
     return Badge(
       label: Text(total.toString()),
       backgroundColor: backgroundColor,
       isLabelVisible: total > 0,
+      offset: const Offset(12, 0),
       child: Tab(text: text),
     );
   }
 }
+
+// Widget _buildTabBarView({required int index}) {
+//   return FutureBuilder(
+//     future: _callFuture(index),
+//     builder: (context, snapshot) {
+//       if (snapshot.hasData) {
+//         final respEither = snapshot.data!;
+
+//         return respEither.fold(
+//           (error) => MessageScreen.error(error.message),
+//           (ok) {
+//             if (ok.data.orders.isEmpty) {
+//               return MessageScreen.error(
+//                 _getEmptyMessage(index),
+//                 const Icon(Icons.remove_shopping_cart_rounded),
+//               );
+//             }
+
+//             return ListView.separated(
+//               separatorBuilder: (context, index) => const Divider(),
+//               itemCount: ok.data.orders.length,
+//               itemBuilder: (context, index) {
+//                 return PurchaseOrderItem(
+//                   order: ok.data.orders[index],
+//                 );
+//               },
+//             );
+//           },
+//         );
+//       } else if (snapshot.hasError) {
+//         return MessageScreen.error(snapshot.error.toString());
+//       }
+//       return const Center(
+//         child: CircularProgressIndicator(),
+//       );
+//     },
+//   );
+// }

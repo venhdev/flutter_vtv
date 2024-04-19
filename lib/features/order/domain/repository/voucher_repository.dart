@@ -1,5 +1,4 @@
-import '../../../../core/constants/typedef.dart';
-import '../entities/voucher_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class VoucherRepository {
   FRespData<List<VoucherEntity>> listAll();

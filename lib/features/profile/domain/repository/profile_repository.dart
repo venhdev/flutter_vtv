@@ -1,9 +1,4 @@
-import '../../../../core/constants/typedef.dart';
-import '../dto/add_address_param.dart';
-import '../entities/address_dto.dart';
-import '../entities/district_entity.dart';
-import '../entities/province_entity.dart';
-import '../entities/ward_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class ProfileRepository {
   //! location
@@ -11,9 +6,13 @@ abstract class ProfileRepository {
   FRespData<List<DistrictEntity>> getDistrictsByProvinceCode(String provinceCode);
   FRespData<List<WardEntity>> getWardsByDistrictCode(String districtCode);
   FRespData<String> getFullAddressByWardCode(String wardCode);
-  FRespEither updateAddressStatus(int addressId);
 
-  //! address
+  //! address-controller
+  FRespEither updateAddressStatus(int addressId);
   FRespData<List<AddressEntity>> getAllAddress();
-  FRespData<AddressEntity> addAddress(AddAddressParam addAddressParam);
+  FRespData<AddressEntity> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+  FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+
+  //# loyalty-point-controller
+  FRespData<LoyaltyPointEntity> getLoyaltyPoint();
 }

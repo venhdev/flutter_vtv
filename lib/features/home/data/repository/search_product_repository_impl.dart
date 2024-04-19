@@ -1,7 +1,5 @@
-import 'package:flutter_vtv/core/constants/typedef.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_page_resp.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../data_sources/search_product_data_source.dart';
 
@@ -20,8 +18,7 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
     int maxPrice,
   ) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () async =>
-          _searchProductDataSource.searchProductPriceRangeSort(
+      dataCallback: () async => _searchProductDataSource.searchProductPriceRangeSort(
         page,
         size,
         keyword,
@@ -32,25 +29,23 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
     );
     // try {
     //   final result = _searchProductDataSource.searchProductPriceRangeSort(page, size, keyword, sort, minPrice, maxPrice);
-    //   return FRespData(Right(Future.value(result)) as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //   return FRespData(Right(Future.value(result)) as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // } on ClientException catch (e) {
     //   return FRespData(Left(ClientError(code: e.code, message: e.message))
-    //       as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //       as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // } on ServerException catch (e) {
     //   return FRespData(Left(ServerError(code: e.code, message: e.message))
-    //       as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //       as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // } catch (e) {
     //   return FRespData(
-    //       Left(UnexpectedError(message: e.toString())) as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //       Left(UnexpectedError(message: e.toString())) as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // }
   }
 
   @override
-  FRespData<ProductPageResp> searchProductSort(
-      int page, int size, String keyword, String sort) async {
+  FRespData<ProductPageResp> searchProductSort(int page, int size, String keyword, String sort) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () =>
-          _searchProductDataSource.searchProductSort(page, size, keyword, sort),
+      dataCallback: () => _searchProductDataSource.searchProductSort(page, size, keyword, sort),
     );
     // try {
     //   final result = await _searchProductDataSource.searchProductSort(page, size, keyword, sort);

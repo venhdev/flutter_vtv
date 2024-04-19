@@ -1,30 +1,28 @@
-import 'package:dartz/dartz.dart';
+import 'dart:developer';
 
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/favorite_product_resp.dart';
-import '../../domain/dto/product_detail_resp.dart';
-import '../../domain/dto/product_page_resp.dart';
-import '../../domain/entities/category_entity.dart';
-import '../../domain/entities/favorite_product_entity.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter_vtv/features/home/domain/dto/comment_param.dart';
+import 'package:vtv_common/vtv_common.dart';
+
+import '../../../order/domain/dto/review_param.dart';
 import '../../domain/repository/product_repository.dart';
 import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
 import '../data_sources/product_data_source.dart';
+import '../data_sources/review_data_source.dart';
 
 class ProductRepositoryImpl extends ProductRepository {
   ProductRepositoryImpl(
     this._productDataSource,
     this._categoryDataSource,
     this._localProductDataSource,
+    this._reviewDataSource,
   );
 
   final ProductDataSource _productDataSource;
   final CategoryDataSource _categoryDataSource;
   final LocalProductDataSource _localProductDataSource;
+  final ReviewDataSource _reviewDataSource;
 
   @override
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size) async {
@@ -118,8 +116,8 @@ class ProductRepositoryImpl extends ProductRepository {
 
       final products = await Future.wait(
         recentProductIds.map((productId) async {
-          final product = await _productDataSource.getProductDetailById(productId);
-          return product.data;
+          final product = await _productDataSource.getProductDetailById(int.parse(productId));
+          return product.data!;
         }),
       );
 
@@ -130,12 +128,189 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FResult<void> cacheRecentViewedProductId(String productId) async {
+  FResult<void> cacheRecentViewedProductId(int productId) async {
     try {
       await _localProductDataSource.cacheProductId(productId);
       return const Right(null);
     } catch (e) {
       return Left(UnexpectedFailure(message: e.toString()));
     }
+  }
+
+  @override
+  FRespData<ProductDetailResp> getProductDetailById(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getProductDetailById(productId),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getProductPageByCategory(page, size, categoryId),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> getSuggestionProductsRandomlyByAlikeProduct(
+    int page,
+    int size,
+    int productId,
+    bool inShop,
+  ) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getSuggestionProductsRandomlyByAlikeProduct(
+        page,
+        size,
+        productId,
+        inShop,
+      ),
+    );
+  }
+
+  @override
+  FRespData<ReviewResp> getReviewProduct(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _reviewDataSource.getReviewProduct(productId),
+    );
+  }
+
+  @override
+  FRespData<ReviewEntity> addReview(ReviewParam params) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.addReview(params));
+  }
+
+  @override
+  FRespData<bool> checkExistReview(String orderItemId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.checkExistReview(orderItemId));
+  }
+
+  @override
+  FRespEither deleteReview(String reviewId) async {
+    return handleSuccessResponseFromDataSource(noDataCallback: () => _reviewDataSource.deleteReview(reviewId));
+  }
+
+  @override
+  FRespData<ReviewEntity> getReviewDetail(String orderItemId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.getReviewDetail(orderItemId));
+  }
+
+  Future<bool> isReviewedItem(OrderItemEntity orderItem) async {
+    final rs = await _reviewDataSource.checkExistReview(orderItem.orderItemId!);
+    return rs.data!;
+  }
+
+  @override
+  FResult<bool> isOrderReviewed(OrderEntity order) async {
+    //> check if any item in the order is not reviewed
+    try {
+      final multiCheck = await Future.wait(order.orderItems.map((item) async => isReviewedItem(item)));
+
+      log('{isOrderReviewed} multiCheck: $multiCheck');
+
+      final rs = multiCheck.every((check) => check == true); // true means the item is reviewed
+      log('{isOrderReviewed} isOrderReviewed: $rs');
+
+      return Right(rs);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  FResult<void> addReviews(List<ReviewParam> params) async {
+    try {
+      await Future.wait(params.map((param) async {
+        await _reviewDataSource.addReview(param);
+      }));
+      return const Right(null);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  FResult<List<ReviewEntity>> getAllReviewDetailByOrder(OrderEntity order) async {
+    try {
+      final rs = await Future.wait(order.orderItems.map((item) async {
+        final review = await _reviewDataSource.getReviewDetail(item.orderItemId!);
+        return review.data!;
+      }));
+      return Right(rs);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  FRespData<int> getProductCountFavorite(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getProductCountFavorite(productId),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> getProductPageByShop(int page, int size, int shopId) {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.getProductPageByShop(page, size, shopId),
+    );
+  }
+
+  @override
+  FRespData<int> countShopFollowed(int shopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.countShopFollowed(shopId),
+    );
+  }
+
+  @override
+  FRespData<FollowedShopEntity> followedShopAdd(int shopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.followedShopAdd(shopId),
+    );
+  }
+
+  @override
+  FRespEither followedShopDelete(int followedShopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.followedShopDelete(followedShopId),
+    );
+  }
+
+  @override
+  FRespData<List<FollowedShopEntity>> followedShopList() async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.followedShopList(),
+    );
+  }
+
+  @override
+  FResult<int?> followedShopCheckExist(int shopId) async {
+    try {
+      final listResp = await _productDataSource.followedShopList();
+      // final FollowedShopEntity rs = list.data!.firstWhere((e) => e.shopId == shopId);
+      for (var e in listResp.data!) {
+        if (e.shopId == shopId) {
+          return Right(e.followedShopId);
+        }
+      }
+      return const Right(null);
+    } catch (e) {
+      return Left(UnexpectedFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  FRespData<CommentEntity> addCustomerComment(CommentParam param) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.addCustomerComment(param),
+    );
+  }
+
+  @override
+  FRespEither deleteCustomerComment(String commentId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.deleteCustomerComment(commentId),
+    );
   }
 }
