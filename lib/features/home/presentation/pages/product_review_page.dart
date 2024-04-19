@@ -35,11 +35,18 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
 
             return resultEither.fold(
               (error) => MessageScreen.error(error.toString()),
-              (ok) => ListView.builder(
-                itemCount: ok.data.reviews.length,
+              (ok) => ListView.separated(
+                separatorBuilder: (context, index) => const Divider(
+                  height: 1,
+                  color: Colors.grey,
+                ),
+                itemCount: ok.data!.reviews.length,
                 itemBuilder: (context, index) {
-                  final review = ok.data.reviews[index];
-                  return ReviewItem(review);
+                  final review = ok.data!.reviews[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ReviewItem(review),
+                  );
                 },
               ),
             );

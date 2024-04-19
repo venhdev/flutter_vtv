@@ -8,17 +8,17 @@ import 'package:vtv_common/vtv_common.dart';
 
 abstract class AuthDataSource {
   // ======================  Auth controller ======================
-  Future<DataResponse<AuthEntity>> loginWithUsernameAndPassword(String username, String password);
+  Future<SuccessResponse<AuthEntity>> loginWithUsernameAndPassword(String username, String password);
   Future<SuccessResponse> register(RegisterParams registerDTO);
   Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken); // use for logout
-  Future<DataResponse<String>> getNewAccessToken(String refreshToken); // handing expired token
+  Future<SuccessResponse<String>> getNewAccessToken(String refreshToken); // handing expired token
   // ======================  Auth controller ======================
 
   // ======================  Customer controller ======================
   // Get user's profile
-  Future<DataResponse<AuthEntity>> getUserProfile();
+  Future<SuccessResponse<AuthEntity>> getUserProfile();
   // Edit user's profile
-  Future<DataResponse<UserInfoEntity>> editUserProfile({required UserInfoEntity newInfo});
+  Future<SuccessResponse<UserInfoEntity>> editUserProfile({required UserInfoEntity newInfo});
 
   /// Request send OTP to the user's email
   Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username);
@@ -45,7 +45,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   AuthDataSourceImpl(this._client, this._fcmManager, this._secureStorageHelper);
 
   @override
-  Future<DataResponse<AuthEntity>> loginWithUsernameAndPassword(String username, String password) async {
+  Future<SuccessResponse<AuthEntity>> loginWithUsernameAndPassword(String username, String password) async {
     final fcmToken = _fcmManager.currentFCMToken;
 
     final body = {
@@ -68,8 +68,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = DataResponse<AuthEntity>(
-        AuthEntity.fromMap(decodedBody),
+      final result = SuccessResponse<AuthEntity>(
+        data: AuthEntity.fromMap(decodedBody),
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -101,7 +101,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<DataResponse<String>> getNewAccessToken(String refreshToken) async {
+  Future<SuccessResponse<String>> getNewAccessToken(String refreshToken) async {
     // send request
     final url = baseUri(path: kAPIAuthRefreshTokenURL);
 
@@ -116,8 +116,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      return DataResponse(
-        decodedBody['accessToken'],
+      return SuccessResponse(
+        data: decodedBody['accessToken'],
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -209,7 +209,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<DataResponse<UserInfoEntity>> editUserProfile({required UserInfoEntity newInfo}) async {
+  Future<SuccessResponse<UserInfoEntity>> editUserProfile({required UserInfoEntity newInfo}) async {
     final url = baseUri(path: kAPICustomerProfileURL);
     // send request
     final response = await _client.put(
@@ -224,8 +224,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = DataResponse<UserInfoEntity>(
-        UserInfoEntity.fromMap(decodedBody['customerDTO']),
+      final result = SuccessResponse<UserInfoEntity>(
+      data:  UserInfoEntity.fromMap(decodedBody['customerDTO']),
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -242,7 +242,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<DataResponse<AuthEntity>> getUserProfile() async {
+  Future<SuccessResponse<AuthEntity>> getUserProfile() async {
     final url = baseUri(path: kAPICustomerProfileURL);
     // send request
     final response = await _client.get(
@@ -256,8 +256,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = DataResponse<AuthEntity>(
-        AuthEntity.fromMap(decodedBody),
+      final result = SuccessResponse<AuthEntity>(
+      data:  AuthEntity.fromMap(decodedBody),
         code: response.statusCode,
         message: decodedBody['message'],
       );

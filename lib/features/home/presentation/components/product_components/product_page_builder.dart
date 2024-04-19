@@ -144,7 +144,7 @@ class ProductPageBuilder extends StatelessWidget {
               child: Text('Error: ${errorResp.message}', style: const TextStyle(color: Colors.red)),
             ),
             (dataResp) => Builder(builder: (context) {
-              if (dataResp.data.items.isEmpty) {
+              if (dataResp.data!.items.isEmpty) {
                 return const Center(
                   child: Text(
                     'Không tìm thấy sản phẩm phù hợp',
@@ -158,7 +158,7 @@ class ProductPageBuilder extends StatelessWidget {
                     crossAxisCount: crossAxisCount,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: dataResp.data.items
+                    children: dataResp.data!.items
                         .map(
                           (product) => ProductItem(
                             product: product,
@@ -186,7 +186,7 @@ class ProductPageBuilder extends StatelessWidget {
                   if (showPageNumber) ...[
                     PageNumber(
                       currentPage: currentPage ?? 1,
-                      totalPages: dataResp.data.totalPage!,
+                      totalPages: dataResp.data!.totalPage!,
                       onPageChanged: (page) {
                         onPageChanged?.call(page);
                       },

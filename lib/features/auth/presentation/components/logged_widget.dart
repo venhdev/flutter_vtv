@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/local_product_data_source.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +16,8 @@ import '../../../home/presentation/components/product_components/product_page_bu
 import '../../../home/presentation/pages/favorite_product_page.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../order/presentation/pages/voucher_page.dart';
+import '../../../profile/domain/repository/profile_repository.dart';
+import '../../../profile/presentation/pages/followed_shop_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
 import 'catalog_item.dart';
 
@@ -118,33 +124,6 @@ class _LoggedViewState extends State<LoggedView> {
     );
   }
 
-  // ignore: unused_element
-  Column _buildDEV(BuildContext context) {
-    return Column(
-      children: [
-        const Divider(height: 32, thickness: 1, color: Colors.red),
-        const Text('DEV'),
-        ElevatedButton(
-          onPressed: () {
-            // debugPrint('text');
-            context.go(VoucherPage.path);
-          },
-          child: const Text('All Vouchers'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            sl<LocalNotificationUtils>().showNotification(
-              id: 1,
-              title: 'Title',
-              body: 'Body',
-            );
-          },
-          child: const Text('Notification'),
-        ),
-      ],
-    );
-  }
-
   Widget _buildRecentProduct() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,43 +212,106 @@ class _LoggedViewState extends State<LoggedView> {
                 const SizedBox(width: 12),
 
                 //# full name + username + followed count
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // full name + username
-                      Text(
-                        '${widget.auth.userInfo.fullName!} (${widget.auth.userInfo.username!})',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-
-                      // followed count
-                      FutureBuilder(
-                        future: sl<ProductRepository>().followedShopList(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return snapshot.data!.fold(
-                              (error) {
-                                return const SizedBox();
-                              },
-                              (ok) => Text(
-                                'Đang theo dõi ${ok.data.length}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                _buildCustomerInfo(),
               ],
             ),
           ),
         ),
       ),
     ];
+  }
+
+  Widget _buildCustomerInfo() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //# full name + username
+          Text(
+            '${widget.auth.userInfo.fullName!} (${widget.auth.userInfo.username!})',
+            style: const TextStyle(fontSize: 18),
+          ),
+
+          //# followed count + loyalty point
+          IntrinsicHeight(
+            child: SizedBox(
+              height: 24,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // followed count
+                  FutureBuilder(
+                    future: sl<ProductRepository>().followedShopList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data!.fold(
+                          (error) {
+                            return const SizedBox();
+                          },
+                          (ok) => TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(0, 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                            ),
+                            child: Text(
+                              'Đang theo dõi ${ok.data!.length}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            onPressed: () {
+                              context.go(FollowedShopPage.path);
+                            },
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+
+                  const VerticalDivider(
+                    color: Colors.grey,
+                    thickness: 1,
+                    width: 14,
+                    indent: 4,
+                    endIndent: 4,
+                  ),
+
+                  // loyalty point
+                  FutureBuilder(
+                    future: sl<ProfileRepository>().getLoyaltyPoint(),
+                    builder: (context, snapshot) {
+                      log('{getLoyaltyPoint} snapshot: $snapshot');
+                      if (snapshot.hasData) {
+                        return snapshot.data!.fold(
+                          (error) {
+                            return const SizedBox();
+                          },
+                          (ok) => TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(0, 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                            ),
+                            onPressed: null,
+                            child: Text(
+                              'Điểm thưởng ${ok.data!.totalPoint}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

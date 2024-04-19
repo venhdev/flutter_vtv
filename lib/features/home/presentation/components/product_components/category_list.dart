@@ -51,7 +51,7 @@ class CategoryList extends StatelessWidget {
                     crossAxisCount: 1,
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
-                    children: r.data
+                    children: r.data!
                         .map(
                           (category) => CategoryItem(
                             title: category.name,

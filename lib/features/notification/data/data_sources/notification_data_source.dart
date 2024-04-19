@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class NotificationDataSource {
-  Future<DataResponse<NotificationResp>> getPageNotifications(int page, int size);
-  Future<DataResponse<NotificationResp>> markAsRead(String id);
-  Future<DataResponse<NotificationResp>> deleteNotification(String id);
+  Future<SuccessResponse<NotificationResp>> getPageNotifications(int page, int size);
+  Future<SuccessResponse<NotificationResp>> markAsRead(String id);
+  Future<SuccessResponse<NotificationResp>> deleteNotification(String id);
 }
 
 class NotificationDataSourceImpl implements NotificationDataSource {
@@ -17,7 +17,7 @@ class NotificationDataSourceImpl implements NotificationDataSource {
   final SecureStorageHelper _secureStorage;
 
   @override
-  Future<DataResponse<NotificationResp>> getPageNotifications(int page, int size) async {
+  Future<SuccessResponse<NotificationResp>> getPageNotifications(int page, int size) async {
     final url = baseUri(
       path: kAPINotificationGetPageURL,
       queryParameters: {
@@ -33,15 +33,15 @@ class NotificationDataSourceImpl implements NotificationDataSource {
       ),
     );
 
-    return handleDioResponseWithData<NotificationResp, Map<String, dynamic>>(
+    return handleDioResponse<NotificationResp, Map<String, dynamic>>(
       response,
       url,
-      (dataMap) => NotificationResp.fromMap(dataMap),
+      parse: (dataMap) => NotificationResp.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<NotificationResp>> markAsRead(String id) async {
+  Future<SuccessResponse<NotificationResp>> markAsRead(String id) async {
     final url = baseUri(
       path: '$kAPINotificationReadURL/$id',
     );
@@ -53,15 +53,15 @@ class NotificationDataSourceImpl implements NotificationDataSource {
       ),
     );
 
-    return handleDioResponseWithData<NotificationResp, Map<String, dynamic>>(
+    return handleDioResponse<NotificationResp, Map<String, dynamic>>(
       response,
       url,
-      (dataMap) => NotificationResp.fromMap(dataMap),
+      parse: (dataMap) => NotificationResp.fromMap(dataMap),
     );
   }
 
   @override
-  Future<DataResponse<NotificationResp>> deleteNotification(String id) async {
+  Future<SuccessResponse<NotificationResp>> deleteNotification(String id) async {
     final url = baseUri(
       path: '$kAPINotificationDeleteURL/$id',
     );
@@ -73,10 +73,10 @@ class NotificationDataSourceImpl implements NotificationDataSource {
       ),
     );
 
-    return handleDioResponseWithData<NotificationResp, Map<String, dynamic>>(
+    return handleDioResponse<NotificationResp, Map<String, dynamic>>(
       response,
       url,
-      (dataMap) => NotificationResp.fromMap(dataMap),
+      parse: (dataMap) => NotificationResp.fromMap(dataMap),
     );
   }
 }

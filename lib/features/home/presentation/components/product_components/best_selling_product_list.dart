@@ -43,9 +43,9 @@ class BestSellingProductListBuilder extends StatelessWidget {
                   child: ListView.separated(
                     separatorBuilder: (context, index) => const SizedBox(width: 4.0),
                     scrollDirection: Axis.horizontal,
-                    itemCount: ok.data.items.length,
+                    itemCount: ok.data!.items.length,
                     itemBuilder: (context, index) {
-                      final ProductEntity product = ok.data.items[index];
+                      final ProductEntity product = ok.data!.items[index];
                       return ProductItem(
                         onPressed: () {
                           context.go(ProductDetailPage.path, extra: product.productId);

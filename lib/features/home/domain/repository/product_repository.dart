@@ -1,6 +1,6 @@
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../order/domain/dto/add_review_dto.dart';
+import '../../../order/domain/dto/review_param.dart';
 
 abstract class ProductRepository {
   //# product-controller
@@ -66,7 +66,7 @@ abstract class ProductRepository {
   //# followed-shop-controller
   FRespData<FollowedShopEntity> followedShopAdd(int shopId);
   FRespData<List<FollowedShopEntity>> followedShopList();
-  FRespData<FollowedShopEntity> followedShopDelete(int followedShopId);
+  FRespEither followedShopDelete(int followedShopId);
   /// return followedShopId if exist, null if not found
-  Future<int?> followedShopCheckExist(int shopId); // custom: get list then check contain
+  FResult<int?> followedShopCheckExist(int shopId); // custom: get list then check contain
 }

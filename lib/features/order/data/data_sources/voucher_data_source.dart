@@ -2,9 +2,9 @@ import 'package:http/http.dart' as http;
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class VoucherDataSource {
-  Future<DataResponse<List<VoucherEntity>>> listAll();
-  Future<DataResponse<List<VoucherEntity>>> listOnSystem();
-  Future<DataResponse<List<VoucherEntity>>> listOnShop(String shopId);
+  Future<SuccessResponse<List<VoucherEntity>>> listAll();
+  Future<SuccessResponse<List<VoucherEntity>>> listOnSystem();
+  Future<SuccessResponse<List<VoucherEntity>>> listOnShop(String shopId);
 }
 
 class VoucherDataSourceImpl extends VoucherDataSource {
@@ -17,7 +17,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   final http.Client _client;
 
   @override
-  Future<DataResponse<List<VoucherEntity>>> listAll() async {
+  Future<SuccessResponse<List<VoucherEntity>>> listAll() async {
     final url = baseUri(path: kAPIVoucherListAllURL);
     final response = await _client.get(
       url,
@@ -32,7 +32,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   }
 
   @override
-  Future<DataResponse<List<VoucherEntity>>> listOnShop(String shopId) async {
+  Future<SuccessResponse<List<VoucherEntity>>> listOnShop(String shopId) async {
     final url = baseUri(path: '$kAPIVoucherListOnShopURL/$shopId');
     final response = await _client.get(
       url,
@@ -47,7 +47,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   }
 
   @override
-  Future<DataResponse<List<VoucherEntity>>> listOnSystem() async {
+  Future<SuccessResponse<List<VoucherEntity>>> listOnSystem() async {
     final url = baseUri(path: kAPIVoucherListOnSystemURL);
     final response = await _client.get(
       url,

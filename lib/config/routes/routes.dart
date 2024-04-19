@@ -20,11 +20,12 @@ import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
 import '../../features/order/presentation/pages/order_detail_page.dart';
 import '../../features/order/presentation/pages/purchase_page.dart';
-import '../../features/order/presentation/pages/review_add_page.dart';
-import '../../features/order/presentation/pages/review_details_by_order_page.dart';
+import '../../features/order/presentation/pages/add_review_page.dart';
+import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
 import '../../features/profile/presentation/pages/add_address_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
+import '../../features/profile/presentation/pages/followed_shop_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/user_detail_page.dart';
 import '../../features/profile/presentation/pages/user_page.dart';
@@ -231,6 +232,15 @@ class AppRoutes {
                     },
                   ),
                   GoRoute(
+                    // get extra from state
+                    path: FollowedShopPage.routeName, // '/user/followed'
+                    name: FollowedShopPage.routeName, // followed
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) {
+                      return const FollowedShopPage();
+                    },
+                  ),
+                  GoRoute(
                     path: VoucherPage.routeName, // '/user/voucher'
                     name: VoucherPage.routeName, // voucher
                     parentNavigatorKey: _rootNavigatorKey,
@@ -267,12 +277,12 @@ class AppRoutes {
                             },
                           ),
                           GoRoute(
-                            path: ReviewDetailsByOrderPage.routeName, // '/user/purchase/order-detail/review-detail'
-                            name: ReviewDetailsByOrderPage.routeName, // review-detail
+                            path: OrderReviewsPage.routeName, // '/user/purchase/order-detail/review-detail'
+                            name: OrderReviewsPage.routeName, // review-detail
                             parentNavigatorKey: _rootNavigatorKey,
                             builder: (context, state) {
                               final orderItemId = state.extra as OrderEntity;
-                              return ReviewDetailsByOrderPage(order: orderItemId);
+                              return OrderReviewsPage(order: orderItemId);
                             },
                           ),
                         ],

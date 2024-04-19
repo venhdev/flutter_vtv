@@ -19,4 +19,9 @@ class ReviewParam {
     // review exist
     this.reviewId,
   });
+
+  @override
+  String toString() {
+    return 'ReviewParam(content: $content, rating: $rating, orderItemId: $orderItemId, imagePath: $imagePath, hasImage: $hasImage, reviewId: $reviewId)';
+  }
 }

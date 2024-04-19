@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../order/domain/dto/add_review_dto.dart';
+import '../../../order/domain/dto/review_param.dart';
 import '../../domain/repository/product_repository.dart';
 import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
@@ -116,7 +116,7 @@ class ProductRepositoryImpl extends ProductRepository {
       final products = await Future.wait(
         recentProductIds.map((productId) async {
           final product = await _productDataSource.getProductDetailById(int.parse(productId));
-          return product.data;
+          return product.data!;
         }),
       );
 
@@ -196,7 +196,7 @@ class ProductRepositoryImpl extends ProductRepository {
 
   Future<bool> isReviewedItem(OrderItemEntity orderItem) async {
     final rs = await _reviewDataSource.checkExistReview(orderItem.orderItemId!);
-    return rs.data;
+    return rs.data!;
   }
 
   @override
@@ -233,7 +233,7 @@ class ProductRepositoryImpl extends ProductRepository {
     try {
       final rs = await Future.wait(order.orderItems.map((item) async {
         final review = await _reviewDataSource.getReviewDetail(item.orderItemId!);
-        return review.data;
+        return review.data!;
       }));
       return Right(rs);
     } catch (e) {
@@ -270,7 +270,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<FollowedShopEntity> followedShopDelete(int followedShopId) async {
+  FRespEither followedShopDelete(int followedShopId) async {
     return handleDataResponseFromDataSource(
       dataCallback: () => _productDataSource.followedShopDelete(followedShopId),
     );
@@ -284,14 +284,18 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  Future<int?> followedShopCheckExist(int shopId) async {
+  FResult<int?> followedShopCheckExist(int shopId) async {
     try {
-      final list = await _productDataSource.followedShopList();
-      final FollowedShopEntity rs = list.data.firstWhere((e) => e.shopId == shopId);
-      return rs.followedShopId;
+      final listResp = await _productDataSource.followedShopList();
+      // final FollowedShopEntity rs = list.data!.firstWhere((e) => e.shopId == shopId);
+      for (var e in listResp.data!) {
+        if (e.shopId == shopId) {
+          return Right(e.followedShopId);
+        }
+      }
+      return const Right(null);
     } catch (e) {
-      log('{followedShopCheckExist} error: $e');
-      return null;
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 }

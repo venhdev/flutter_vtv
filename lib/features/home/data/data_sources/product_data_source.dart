@@ -5,13 +5,13 @@ import 'package:vtv_common/vtv_common.dart';
 //! Remote data source
 abstract class ProductDataSource {
   //# product-suggestion-controller
-  Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size);
-  Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
+  Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size);
+  Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
       int page, int size, int productId, bool inShop);
 
   //# product-filter-controller
-  Future<DataResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType);
-  Future<DataResponse<ProductPageResp>> getProductFilterByPriceRange({
+  Future<SuccessResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType);
+  Future<SuccessResponse<ProductPageResp>> getProductFilterByPriceRange({
     required int page,
     required int size,
     required int minPrice,
@@ -20,26 +20,26 @@ abstract class ProductDataSource {
   });
 
   //# favorite-product-controller
-  Future<DataResponse<List<FavoriteProductEntity>>> favoriteProductList();
-  Future<DataResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId);
-  Future<DataResponse<FavoriteProductEntity>> favoriteProductAdd(int productId);
+  Future<SuccessResponse<List<FavoriteProductEntity>>> favoriteProductList();
+  Future<SuccessResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId);
+  Future<SuccessResponse<FavoriteProductEntity>> favoriteProductAdd(int productId);
   Future<SuccessResponse> favoriteProductDelete(int favoriteProductId);
-  Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId);
+  Future<SuccessResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId);
 
   //# product-controller
-  Future<DataResponse<ProductDetailResp>> getProductDetailById(int productId);
-  Future<DataResponse<int>> getProductCountFavorite(int productId);
+  Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId);
+  Future<SuccessResponse<int>> getProductCountFavorite(int productId);
 
   //# product-page-controller
-  Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
-  Future<DataResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId);
+  Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
+  Future<SuccessResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId);
 
   //# shop-detail-controller
-  Future<DataResponse<int>> countShopFollowed(int shopId);
+  Future<SuccessResponse<int>> countShopFollowed(int shopId);
 
   //# followed-shop-controller
-  Future<DataResponse<FollowedShopEntity>> followedShopAdd(int shopId);
-  Future<DataResponse<List<FollowedShopEntity>>> followedShopList();
+  Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId);
+  Future<SuccessResponse<List<FollowedShopEntity>>> followedShopList();
   Future<SuccessResponse> followedShopDelete(int followedShopId);
 }
 
@@ -51,7 +51,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   final SecureStorageHelper _secureStorageHelper;
 
   @override
-  Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size) async {
+  Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size) async {
     final url = baseUri(
       path: kAPISuggestionProductPageRandomlyURL,
       queryParameters: {
@@ -72,7 +72,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> getProductFilterByPriceRange({
+  Future<SuccessResponse<ProductPageResp>> getProductFilterByPriceRange({
     required int page,
     required int size,
     required int minPrice,
@@ -101,7 +101,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType) async {
+  Future<SuccessResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType) async {
     final url = baseUri(
       path: '$kAPIProductFilterURL/$sortType',
       queryParameters: {
@@ -122,7 +122,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<FavoriteProductEntity>> favoriteProductAdd(int productId) async {
+  Future<SuccessResponse<FavoriteProductEntity>> favoriteProductAdd(int productId) async {
     final url = baseUri(path: '$kAPIFavoriteProductAddURL/$productId');
     final response = await _client.post(
       url,
@@ -137,7 +137,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<List<FavoriteProductEntity>>> favoriteProductList() async {
+  Future<SuccessResponse<List<FavoriteProductEntity>>> favoriteProductList() async {
     final url = baseUri(path: kAPIFavoriteProductListURL);
     final response = await _client.get(
       url,
@@ -166,7 +166,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId) async {
+  Future<SuccessResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId) async {
     final url = baseUri(path: '$kAPIFavoriteProductCheckExistURL/$productId');
     final response = await _client.get(
       url,
@@ -181,7 +181,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId) async {
+  Future<SuccessResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId) async {
     final url = baseUri(path: '$kAPIFavoriteProductDetailURL/$favoriteProductId');
     final response = await _client.get(
       url,
@@ -196,7 +196,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductDetailResp>> getProductDetailById(int productId) async {
+  Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId) async {
     final url = baseUri(path: '$kAPIProductDetailURL/$productId');
     final response = await _client.get(
       url,
@@ -211,7 +211,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId) async {
+  Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId) async {
     final url = baseUri(
       path: '$kAPIProductPageCategoryURL/$categoryId',
       queryParameters: {
@@ -232,7 +232,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
+  Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
       int page, int size, int productId, bool inShop) async {
     final url = baseUri(
       path: '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
@@ -255,7 +255,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   }
 
   @override
-  Future<DataResponse<int>> getProductCountFavorite(int productId) async {
+  Future<SuccessResponse<int>> getProductCountFavorite(int productId) async {
     final url = baseUri(path: '$kAPIProductCountFavoriteURL/$productId');
 
     final response = await _dio.getUri(
@@ -265,15 +265,15 @@ class ProductDataSourceImpl implements ProductDataSource {
       ),
     );
 
-    return handleDioResponseWithData<int, int>(
+    return handleDioResponse<int, int>(
       response,
       url,
-      (count) => count,
+      parse: (count) => count,
     );
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId) async {
+  Future<SuccessResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId) async {
     final url = baseUri(
       path: '$kAPIProductPageShopURL/$shopId',
       queryParameters: {
@@ -289,15 +289,15 @@ class ProductDataSourceImpl implements ProductDataSource {
       ),
     );
 
-    return handleDioResponseWithData<ProductPageResp, Map<String, dynamic>>(
+    return handleDioResponse<ProductPageResp, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => ProductPageResp.fromMap(jsonMap),
+      parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
 
   @override
-  Future<DataResponse<int>> countShopFollowed(int shopId) async {
+  Future<SuccessResponse<int>> countShopFollowed(int shopId) async {
     final url = baseUri(path: '$kAPIShopDetailCountFollowedURL/$shopId');
     final response = await _dio.getUri(
       url,
@@ -308,15 +308,15 @@ class ProductDataSourceImpl implements ProductDataSource {
       ),
     );
 
-    return handleDioResponseWithData<int, int>(
+    return handleDioResponse<int, int>(
       response,
       url,
-      (count) => count,
+      parse: (count) => count,
     );
   }
 
   @override
-  Future<DataResponse<FollowedShopEntity>> followedShopAdd(int shopId) async {
+  Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId) async {
     final url = baseUri(
       path: kAPIFollowedShopAddURL,
       queryParameters: {'shopId': shopId.toString()},
@@ -329,10 +329,10 @@ class ProductDataSourceImpl implements ProductDataSource {
       ),
     );
 
-    return handleDioResponseWithData<FollowedShopEntity, Map<String, dynamic>>(
+    return handleDioResponse<FollowedShopEntity, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => FollowedShopEntity.fromMap(jsonMap['followedShopDTO']),
+      parse: (jsonMap) => FollowedShopEntity.fromMap(jsonMap['followedShopDTO']),
     );
   }
 
@@ -347,15 +347,15 @@ class ProductDataSourceImpl implements ProductDataSource {
       ),
     );
 
-    return handleDioResponseWithData<FollowedShopEntity, Map<String, dynamic>>(
+    return handleDioResponse<Object?, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => FollowedShopEntity.fromMap(jsonMap['followedShopDTO']),
+      hasData: false,
     );
   }
 
   @override
-  Future<DataResponse<List<FollowedShopEntity>>> followedShopList() async {
+  Future<SuccessResponse<List<FollowedShopEntity>>> followedShopList() async {
     final url = baseUri(path: kAPIFollowedShopListURL);
 
     final response = await _dio.getUri(
@@ -365,10 +365,10 @@ class ProductDataSourceImpl implements ProductDataSource {
       ),
     );
 
-    return handleDioResponseWithData<List<FollowedShopEntity>, Map<String, dynamic>>(
+    return handleDioResponse<List<FollowedShopEntity>, Map<String, dynamic>>(
       response,
       url,
-      (jsonList) => (jsonList['followedShopDTOs'] as List)
+      parse: (jsonList) => (jsonList['followedShopDTOs'] as List)
           .map(
             (jsonMap) => FollowedShopEntity.fromMap(jsonMap),
           )

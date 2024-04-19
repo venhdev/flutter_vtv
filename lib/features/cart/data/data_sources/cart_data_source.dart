@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class CartDataSource {
-  Future<DataResponse<CartResp>> getCarts();
+  Future<SuccessResponse<CartResp>> getCarts();
   Future<SuccessResponse> addToCart(int productVariantId, int quantity);
   Future<SuccessResponse> updateCart(String cartId, int quantity);
   Future<SuccessResponse> deleteToCart(String cartId);
@@ -18,7 +18,7 @@ class CartDataSourceImpl extends CartDataSource {
   final SecureStorageHelper _secureStorageHelper;
 
   @override
-  Future<DataResponse<CartResp>> getCarts() async {
+  Future<SuccessResponse<CartResp>> getCarts() async {
     final url = baseUri(path: kAPICartGetListURL);
     final response = await _client.get(
       url,

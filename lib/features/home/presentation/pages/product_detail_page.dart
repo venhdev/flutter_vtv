@@ -60,7 +60,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       (error) => log('Error: ${error.message}'),
       (ok) {
         setState(() {
-          _productDetail = ok.data;
+          _productDetail = ok.data!;
           isInitializing = false;
         });
       },
@@ -77,7 +77,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         (ok) {
           Fluttertoast.showToast(msg: ok.message ?? 'Đã thêm vào yêu thích');
           setState(() {
-            favoriteProductId = ok.data.favoriteProductId;
+            favoriteProductId = ok.data!.favoriteProductId;
           });
         },
       );
@@ -221,7 +221,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       shopId: _productDetail.shopId,
       name: _productDetail.shopName,
       avatar: _productDetail.shopAvatar,
-      // showViewShopBtn: true,
+      showViewShopBtn: true,
       showFollowBtn: true,
       onPressed: () {
         // GoRouter.of(context).push('${ShopPage.path}/${_productDetail.shopId}');
@@ -661,7 +661,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         showRatingText: false,
                       ),
                       Text(
-                        '(${ok.data.count} đánh giá)',
+                        '(${ok.data!.count} đánh giá)',
                         style: const TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
@@ -671,23 +671,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: ok.data.reviews.length > 3 ? 3 : ok.data.reviews.length, // show only 3 reviews
+                  itemCount: ok.data!.reviews.length > 3 ? 3 : ok.data!.reviews.length, // show only 3 reviews
                   itemBuilder: (context, index) {
-                    return ReviewItem(ok.data.reviews[index]);
+                    return ReviewItem(ok.data!.reviews[index]);
                   },
                 ),
 
                 // show all reviews button
-                // if (ok.data.reviews.length > 3)
-                TextButton(
-                  onPressed: () {
-                    context.go(ProductReviewPage.path, extra: _productDetail.product.productId);
-                  },
-                  child: const Text(
-                    'Xem tất cả đánh giá',
-                    style: TextStyle(color: Colors.blue),
+                if (ok.data!.reviews.length > 3)
+                  TextButton(
+                    onPressed: () {
+                      context.go(ProductReviewPage.path, extra: _productDetail.product.productId);
+                    },
+                    child: const Text(
+                      'Xem tất cả đánh giá',
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   ),
-                ),
               ],
             ),
           );

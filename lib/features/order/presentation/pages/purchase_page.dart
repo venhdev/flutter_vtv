@@ -157,7 +157,7 @@ class _PurchasePageState extends State<PurchasePage> {
                           StringHelper.getOrderStatusName(_statusFromIndex(index)),
                           listMultiOrder[index].fold(
                             (error) => 0,
-                            (ok) => ok.data.orders.length,
+                            (ok) => ok.data!.orders.length,
                           ),
                           backgroundColor: ColorHelper.getOrderStatusBackgroundColor(_statusFromIndex(index)),
                         ),
@@ -184,7 +184,7 @@ class _PurchasePageState extends State<PurchasePage> {
                         //? if [orders] is not empty, it will show the list of orders with the corresponding status
                         orders: listMultiOrder[index].fold(
                           (error) => [],
-                          (ok) => ok.data.orders,
+                          (ok) => ok.data!.orders,
                         ),
                         setState: (completedOrder) {
                           setState(() {});

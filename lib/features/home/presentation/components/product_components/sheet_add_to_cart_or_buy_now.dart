@@ -72,7 +72,7 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
             context.pop(); // pop out the bottom sheet
             context.push(
               Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
-              extra: ok.data.order,
+              extra: ok.data!.order,
             );
           },
         );

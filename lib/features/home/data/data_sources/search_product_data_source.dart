@@ -3,8 +3,8 @@ import 'package:vtv_common/vtv_common.dart';
 
 abstract class SearchProductDataSource {
   //# search-product-controller
-  Future<DataResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort);
-  Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
+  Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort);
+  Future<SuccessResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -20,7 +20,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
+  Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
     final url = baseUri(
       path: kAPISearchProductSortURL,
       queryParameters: {
@@ -49,7 +49,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     // // handle response
     // if (response.statusCode == 200) {
     //   final result = ProductDTO.fromMap(decodedBody);
-    //   return DataResponse<ProductDTO>(
+    //   return SuccessResponse<ProductDTO>(
     //     result,
     //     code: response.statusCode,
     //     message: decodedBody['message'],
@@ -64,7 +64,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
+  Future<SuccessResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -102,7 +102,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     // // handle response
     // if (response.statusCode == 200) {
     //   final result = ProductDTO.fromMap(decodedBody);
-    //   return DataResponse<ProductDTO>(
+    //   return SuccessResponse<ProductDTO>(
     //     result,
     //     code: response.statusCode,
     //     message: decodedBody['message'],

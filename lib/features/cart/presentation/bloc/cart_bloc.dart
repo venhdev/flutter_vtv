@@ -35,7 +35,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
-      (ok) => emit(CartLoaded(ok.data)),
+      (ok) => emit(CartLoaded(ok.data!)),
     );
   }
 
@@ -48,7 +48,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     resp.fold(
       (error) => emit(CartError(message: error.message)),
-      (ok) => emit(CartLoaded(ok.data, message: event.message ?? ok.message, selectedCartIds: event.selectedCartIds)),
+      (ok) => emit(CartLoaded(ok.data!, message: event.message ?? ok.message, selectedCartIds: event.selectedCartIds)),
     );
   }
 

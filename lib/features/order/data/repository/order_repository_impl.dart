@@ -81,9 +81,9 @@ class OrderRepositoryImpl extends OrderRepository {
         final processing = value[0];
         final pickupPending = value[1];
         final MultiOrderEntity result = MultiOrderEntity(
-          orders: processing.data.orders + pickupPending.data.orders,
+          orders: processing.data!.orders + pickupPending.data!.orders,
         );
-        return Right(DataResponse<MultiOrderEntity>(result));
+        return Right(SuccessResponse<MultiOrderEntity>(data: result));
       });
     } catch (e) {
       return Left(UnexpectedError(message: e.toString()));

@@ -45,7 +45,7 @@ class _AddressPageState extends State<AddressPage> {
                           return MessageScreen.error(error.toString());
                         },
                         (ok) {
-                          return _buildAddressList(ok.data);
+                          return _buildAddressList(ok.data!);
                         },
                       );
                     }

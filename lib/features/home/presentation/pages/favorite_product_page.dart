@@ -26,12 +26,12 @@ class FavoriteProductPage extends StatelessWidget {
               final resultEither = snapshot.data!;
               return resultEither.fold(
                 (error) => MessageScreen.error(error.message),
-                (ok) => ok.data.isNotEmpty
+                (ok) => ok.data!.isNotEmpty
                     ? GridView.count(
                         crossAxisCount: 2,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
-                        children: ok.data.map((f) {
+                        children: ok.data!.map((f) {
                           return ProductItem(
                             productId: f.productId,
                             onPressed: () async {

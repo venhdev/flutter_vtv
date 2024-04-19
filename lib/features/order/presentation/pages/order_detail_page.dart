@@ -10,14 +10,12 @@ import 'package:vtv_common/vtv_common.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/order_item.dart';
-import '../../../home/domain/repository/product_repository.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../domain/repository/order_repository.dart';
+import '../components/btn/review_btn.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
 import 'checkout_page.dart';
-import 'review_add_page.dart';
-import 'review_details_by_order_page.dart';
 
 // const String _noVoucherMsg = 'Không áp dụng';
 
@@ -49,59 +47,7 @@ class OrderDetailPage extends StatelessWidget {
                 child: Column(
                   children: [
                     // order date + order id
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text.rich(
-                            // 'Ngày đặt hàng',
-                            TextSpan(text: 'Ngày đặt hàng:\n', children: [
-                              TextSpan(
-                                text: StringHelper.convertDateTimeToString(
-                                  orderDetail.order.orderDate,
-                                  pattern: 'dd-MM-yyyy HH:mm',
-                                ),
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                              ),
-                            ]),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text.rich(
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  TextSpan(
-                                    text: 'Mã đơn hàng: ',
-                                    style: const TextStyle(fontSize: 12),
-                                    children: [
-                                      TextSpan(
-                                        text: orderDetail.order.orderId.toString(),
-                                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              // Icon(Icons.copy),
-                              IconButton(
-                                icon: const Icon(Icons.copy),
-                                style: IconButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: orderDetail.order.orderId.toString()));
-                                  Fluttertoast.showToast(msg: 'Đã sao chép mã đơn hàng');
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    _buildOrderInfo(),
                     // status
                     _buildOrderStatus(),
                   ],
@@ -114,7 +60,7 @@ class OrderDetailPage extends StatelessWidget {
               const SizedBox(height: 8),
 
               //! order summary
-              _buildShopInfoAndItems(), // shop info, list of items
+              _buildShopInfoAndItems(context), // shop info, list of items
               const SizedBox(height: 8),
 
               //! payment method
@@ -140,13 +86,69 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
+  Row _buildOrderInfo() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text.rich(
+            // 'Ngày đặt hàng',
+            TextSpan(text: 'Ngày đặt hàng:\n', children: [
+              TextSpan(
+                text: StringHelper.convertDateTimeToString(
+                  (orderDetail.order.orderDate).toLocal(),
+                  pattern: 'dd-MM-yyyy hh:mm aa',
+                ),
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+              ),
+            ]),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: Text.rich(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  TextSpan(
+                    text: 'Mã đơn hàng: ',
+                    style: const TextStyle(fontSize: 12),
+                    children: [
+                      TextSpan(
+                        text: orderDetail.order.orderId.toString(),
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Icon(Icons.copy),
+              IconButton(
+                icon: const Icon(Icons.copy),
+                style: IconButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: orderDetail.order.orderId.toString()));
+                  Fluttertoast.showToast(msg: 'Đã sao chép mã đơn hàng');
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget? _buildBottomActionByOrderStatus(BuildContext context, OrderStatus status) {
     Widget buildStatus(BuildContext context, OrderStatus status) {
       switch (status) {
         case OrderStatus.PENDING || OrderStatus.PROCESSING:
           return _buildCancelButton(context);
         case OrderStatus.COMPLETED:
-          return _buildReviewBtn();
+          return ReviewBtn(order: orderDetail.order);
         case OrderStatus.CANCEL:
           return _buildRePurchaseBtn(context);
         case OrderStatus.PICKUP_PENDING || OrderStatus.SHIPPING:
@@ -197,14 +199,11 @@ class OrderDetailPage extends StatelessWidget {
         children: [
           //# chat
           Expanded(
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                shape: const RoundedRectangleBorder(),
-                backgroundColor: Colors.blue.shade300,
-              ),
-              child: const Text('Chat với cửa hàng'),
+            child: Row(
+              children: [
+                Expanded(flex: 1, child: _buildChatBtn()),
+                if (status == OrderStatus.COMPLETED) Expanded(flex: 2, child: _buildRePurchaseBtn(context)),
+              ],
             ),
           ),
 
@@ -214,6 +213,20 @@ class OrderDetailPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildChatBtn([String text = 'Chat']) {
+    return ElevatedButton(
+      onPressed: null,
+      style: ElevatedButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        shape: const RoundedRectangleBorder(),
+        backgroundColor: Colors.blue.shade300,
+        padding: EdgeInsets.zero,
+        disabledBackgroundColor: Colors.blue.shade300,
+      ),
+      child: Text(text),
     );
   }
 
@@ -244,56 +257,12 @@ class OrderDetailPage extends StatelessWidget {
             // context.pop(); // pop out the bottom sheet
             context.push(
               Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
-              extra: ok.data.order,
+              extra: ok.data!.order,
             );
           },
         );
       },
       backgroundColor: Colors.green.shade300,
-    );
-  }
-
-  Widget _buildReviewBtn() {
-    return FutureBuilder(
-      future: sl<ProductRepository>().isOrderReviewed(orderDetail.order),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return snapshot.data!.fold(
-            (error) => MessageScreen.error(error.message),
-            (ok) => ok
-                ? ElevatedButton(
-                    onPressed: () {
-                      context.push(ReviewDetailsByOrderPage.path, extra: orderDetail.order);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: const RoundedRectangleBorder(),
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    child: const Text('Xem đánh giá'),
-                  )
-                : IconTextButton(
-                    style: IconButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: const RoundedRectangleBorder(),
-                    ),
-                    // child: Text('Đánh giá sản phẩm'),
-                    label: 'Đánh giá sản phẩm',
-                    leadingIcon: Icons.warning_amber_rounded,
-                    iconSize: 20,
-                    iconColor: Colors.red,
-                    onPressed: () {
-                      context.push(ReviewAddPage.path, extra: orderDetail.order);
-                    },
-                  ),
-          );
-        }
-        return const Text(
-          'Đang tải...',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black54),
-        );
-      },
     );
   }
 
@@ -547,7 +516,7 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildShopInfoAndItems() {
+  Widget _buildShopInfoAndItems(BuildContext context) {
     return Wrapper(
       child: Column(
         children: [
@@ -557,7 +526,10 @@ class OrderDetailPage extends StatelessWidget {
             shopId: orderDetail.order.shop.shopId,
             name: orderDetail.order.shop.name,
             avatar: orderDetail.order.shop.avatar,
+            showViewShopBtn: true,
+            showFollowedCount: false,
           ),
+          SizedBox(height: 8),
 
           //! list of items
           ListView.separated(

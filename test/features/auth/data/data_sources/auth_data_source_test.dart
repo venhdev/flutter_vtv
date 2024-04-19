@@ -131,7 +131,7 @@ void main() {
       // --verify something should(not) happen/call
       // verify(mockSecureStorageHelper.cacheAuth(result)); // should call secure storage
       // --expect something equals, isA, throwsA
-      expect(result, isA<DataResponse>());
+      expect(result, isA<SuccessResponse>());
     });
   });
 

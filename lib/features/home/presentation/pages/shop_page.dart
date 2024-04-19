@@ -27,7 +27,6 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage> {
   late TextEditingController searchController;
-
   late LazyLoadController<ProductEntity> controller;
 
   @override
@@ -59,6 +58,7 @@ class _ShopPageState extends State<ShopPage> {
                   avatar: 'https://placehold.co/300/png',
                   showChatBtn: true,
                   showFollowBtn: true,
+                  showFollowedCount: true,
                   padding: const EdgeInsets.only(left: 8, right: 4),
                 ),
               ),
