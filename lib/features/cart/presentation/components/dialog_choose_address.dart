@@ -34,11 +34,11 @@ class _DialogChooseAddressState extends State<DialogChooseAddress> {
                 (ok) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(
-                    ok.data.length,
+                    ok.data!.length,
                     (index) => AddressSummary(
-                      address: ok.data[index],
+                      address: ok.data![index],
                       onTap: () {
-                        widget.onAddressChanged(ok.data[index]);
+                        widget.onAddressChanged(ok.data![index]);
                         Navigator.pop(context);
                       },
                       suffixIcon: null,

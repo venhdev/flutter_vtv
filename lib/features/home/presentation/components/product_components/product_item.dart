@@ -47,7 +47,7 @@ class _ProductItemState extends State<ProductItem> {
     final respEither = await sl<ProductRepository>().getProductDetailById(id);
     final product = respEither.fold<ProductEntity?>(
       (error) => null,
-      (ok) => ok.data.product,
+      (ok) => ok.data!.product,
     );
     setState(() {
       if (mounted && product != null && _isLoading) {

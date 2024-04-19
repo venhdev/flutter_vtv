@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../../home/domain/repository/product_repository.dart';
-import '../../domain/dto/add_review_dto.dart';
+import '../../domain/dto/review_param.dart';
 import '../components/sheet_add_or_update_review.dart';
 
 class ReviewAddPage extends StatelessWidget {
@@ -56,6 +58,7 @@ class ReviewAddPage extends StatelessWidget {
                     orderItemId: order.orderItems[index].orderItemId!,
                     initParam: listParam[index],
                     onChange: (value) {
+                      log('value: ${value.toString()}');
                       listParam[index] = value;
                     },
                   ),
@@ -70,8 +73,15 @@ class ReviewAddPage extends StatelessWidget {
               // submit review
               if (listParam.any((review) => review.content.isEmpty)) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Vui lòng nhập đánh giá cho tất cả sản phẩm'),
-                  backgroundColor: Colors.red,
+                  content: Text(
+                    'Vui lòng nhập đánh giá cho tất cả sản phẩm',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  backgroundColor: Colors.redAccent,
                 ));
                 return;
               }

@@ -117,7 +117,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (newAddress != null) {
             _address = newAddress;
           }
-          _order = ok.data.order;
+          _order = ok.data!.order;
         });
       },
     );
@@ -136,7 +136,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (newAddress != null) {
             _address = newAddress;
           }
-          _order = ok.data.order;
+          _order = ok.data!.order;
         });
       },
     );

@@ -4,17 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../order/domain/dto/add_review_dto.dart';
+import '../../../order/domain/dto/review_param.dart';
 
 abstract class ReviewDataSource {
   //# review-controller (guest)
-  Future<DataResponse<ReviewResp>> getReviewProduct(int productId);
+  Future<SuccessResponse<ReviewResp>> getReviewProduct(int productId);
 
   //# review-customer-controller (customer)
-  Future<DataResponse<ReviewEntity>> addReview(ReviewParam params);
-  Future<DataResponse<bool>> checkExistReview(String orderItemId);
+  Future<SuccessResponse<ReviewEntity>> addReview(ReviewParam params);
+  Future<SuccessResponse<bool>> checkExistReview(String orderItemId);
   Future<SuccessResponse> deleteReview(String reviewId);
-  Future<DataResponse<ReviewEntity>> getReviewDetail(String orderItemId);
+  Future<SuccessResponse<ReviewEntity>> getReviewDetail(String orderItemId);
 }
 
 class ReviewDataSourceImpl implements ReviewDataSource {
@@ -24,7 +24,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
   final SecureStorageHelper _secureStorage;
 
   @override
-  Future<DataResponse<ReviewResp>> getReviewProduct(int productId) async {
+  Future<SuccessResponse<ReviewResp>> getReviewProduct(int productId) async {
     final url = baseUri(
       path: '$kAPIReviewProductURL/$productId',
     );
@@ -33,15 +33,15 @@ class ReviewDataSourceImpl implements ReviewDataSource {
       options: Options(headers: baseHttpHeaders()),
     );
 
-    return handleDioResponseWithData<ReviewResp, Map<String, dynamic>>(
+    return handleDioResponse<ReviewResp, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => ReviewResp.fromMap(jsonMap),
+      parse: (jsonMap) => ReviewResp.fromMap(jsonMap),
     );
   }
 
   @override
-  Future<DataResponse<ReviewEntity>> addReview(ReviewParam params) async {
+  Future<SuccessResponse<ReviewEntity>> addReview(ReviewParam params) async {
     // final url = baseUri(
     //   path: kAPIReviewAddURL,
     // );
@@ -82,15 +82,15 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
     log('response: ${response.data}');
 
-    return handleDioResponseWithData<ReviewEntity, Map<String, dynamic>>(
+    return handleDioResponse<ReviewEntity, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => ReviewEntity.fromMap(jsonMap['reviewDTO']),
+      parse: (jsonMap) => ReviewEntity.fromMap(jsonMap['reviewDTO']),
     );
   }
 
   @override
-  Future<DataResponse<bool>> checkExistReview(String orderItemId) async {
+  Future<SuccessResponse<bool>> checkExistReview(String orderItemId) async {
     final url = baseUri(
       path: '$kAPIReviewExistByOrderItemURL/$orderItemId',
     );
@@ -99,10 +99,10 @@ class ReviewDataSourceImpl implements ReviewDataSource {
       options: Options(headers: baseHttpHeaders(accessToken: await _secureStorage.accessToken)),
     );
 
-    return handleDioResponseWithData<bool, bool>(
+    return handleDioResponse<bool, bool>(
       response,
       url,
-      (data) => data,
+      parse: (data) => data,
     );
   }
 
@@ -120,7 +120,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
   }
 
   @override
-  Future<DataResponse<ReviewEntity>> getReviewDetail(String orderItemId) async {
+  Future<SuccessResponse<ReviewEntity>> getReviewDetail(String orderItemId) async {
     final url = baseUri(
       path: '$kAPIReviewDetailByOrderItemURL/$orderItemId',
     );
@@ -129,10 +129,10 @@ class ReviewDataSourceImpl implements ReviewDataSource {
       options: Options(headers: baseHttpHeaders(accessToken: await _secureStorage.accessToken)),
     );
 
-    return handleDioResponseWithData<ReviewEntity, Map<String, dynamic>>(
+    return handleDioResponse<ReviewEntity, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => ReviewEntity.fromMap(jsonMap['reviewDTO']),
+      parse: (jsonMap) => ReviewEntity.fromMap(jsonMap['reviewDTO']),
     );
   }
 }

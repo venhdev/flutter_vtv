@@ -29,16 +29,16 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
     );
     // try {
     //   final result = _searchProductDataSource.searchProductPriceRangeSort(page, size, keyword, sort, minPrice, maxPrice);
-    //   return FRespData(Right(Future.value(result)) as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //   return FRespData(Right(Future.value(result)) as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // } on ClientException catch (e) {
     //   return FRespData(Left(ClientError(code: e.code, message: e.message))
-    //       as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //       as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // } on ServerException catch (e) {
     //   return FRespData(Left(ServerError(code: e.code, message: e.message))
-    //       as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //       as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // } catch (e) {
     //   return FRespData(
-    //       Left(UnexpectedError(message: e.toString())) as FutureOr<Either<ErrorResponse, DataResponse<ProductDTO>>> Function());
+    //       Left(UnexpectedError(message: e.toString())) as FutureOr<Either<ErrorResponse, SuccessResponse<ProductDTO>>> Function());
     // }
   }
 

@@ -31,7 +31,7 @@ class _CartPageState extends State<CartPage> {
       setState(() {
         _defaultAddress = respEither.fold(
           (_) => null,
-          (ok) => ok.data.firstWhere((element) => element.status == 'ACTIVE'),
+          (ok) => ok.data!.firstWhere((element) => element.status == 'ACTIVE'),
         );
       });
     });
@@ -170,7 +170,7 @@ class _CartPageState extends State<CartPage> {
                                 child: Text('Tổng cộng:'),
                               ),
                               Text(
-                                StringHelper.formatCurrency(ok.data.order.totalPrice),
+                                StringHelper.formatCurrency(ok.data!.order.totalPrice),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Padding(
@@ -180,7 +180,7 @@ class _CartPageState extends State<CartPage> {
                                     backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                                   ),
                                   onPressed: () {
-                                    GoRouter.of(context).go(CheckoutPage.path, extra: ok.data.order);
+                                    GoRouter.of(context).go(CheckoutPage.path, extra: ok.data!.order);
                                   },
                                   child: const Text('Thanh toán'),
                                 ),
@@ -220,7 +220,7 @@ class _CartPageState extends State<CartPage> {
                 return respEither.fold(
                   (error) => MessageScreen.error(error.toString()),
                   (ok) {
-                    if (ok.data.isEmpty) {
+                    if (ok.data!.isEmpty) {
                       return SizedBox(
                         height: 120,
                         child: Center(
@@ -241,7 +241,7 @@ class _CartPageState extends State<CartPage> {
                         ),
                       );
                     }
-                    final defaultAddress = ok.data.firstWhere((element) => element.status == 'ACTIVE');
+                    final defaultAddress = ok.data!.firstWhere((element) => element.status == 'ACTIVE');
                     return AddressSummary(
                       address: defaultAddress,
                       onTap: () async {

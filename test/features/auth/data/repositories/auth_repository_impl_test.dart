@@ -31,7 +31,7 @@ void main() {
       when(mockAuthDataSource.loginWithUsernameAndPassword(
         tUsername,
         tPassword,
-      )).thenAnswer((_) async => DataResponse(tAuthModel));
+      )).thenAnswer((_) async => SuccessResponse(data: tAuthModel));
 
       // when(mockConnectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.wifi);
 
@@ -44,7 +44,7 @@ void main() {
       // Assert
       // --verify something should(not) happen/call
       // --expect something equals, isA, throwsA
-      expect(result, equals(Right(DataResponse(tAuthEntity))));
+      expect(result, equals(Right(SuccessResponse(data: tAuthEntity))));
     });
     test('should return [void] when cache success', () async {
       // Arrange (setup @mocks)

@@ -32,7 +32,7 @@ class VoucherPage extends StatelessWidget {
                   return MessageScreen.error(error.message);
                 },
                 (ok) {
-                  if (ok.data.isEmpty) {
+                  if (ok.data!.isEmpty) {
                     return MessageScreen(
                       message: 'Không tìm thấy voucher nào!',
                       text: 'Quay lại',
@@ -41,10 +41,10 @@ class VoucherPage extends StatelessWidget {
                   }
 
                   return ListView.builder(
-                    itemCount: ok.data.length,
+                    itemCount: ok.data!.length,
                     itemBuilder: (context, index) {
                       return VoucherItem(
-                        voucher: ok.data[index],
+                        voucher: ok.data![index],
                         onSelected: (voucher) {
                           if (returnValue) Navigator.of(context).pop(voucher);
                         },

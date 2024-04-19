@@ -1,29 +1,34 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart' as dio;
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class ProfileDataSource {
   //! location: ward-controller, province-controller, district-controller, ward-controller
-  Future<DataResponse<List<ProvinceEntity>>> getProvinces();
-  Future<DataResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode);
-  Future<DataResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode);
-  Future<DataResponse<String>> getFullAddressByWardCode(String wardCode);
+  Future<SuccessResponse<List<ProvinceEntity>>> getProvinces();
+  Future<SuccessResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode);
+  Future<SuccessResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode);
+  Future<SuccessResponse<String>> getFullAddressByWardCode(String wardCode);
 
   //! address-controller
   Future<SuccessResponse> updateAddressStatus(int addressId);
-  Future<DataResponse<List<AddressEntity>>> getAllAddress();
-  Future<DataResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
-  Future<DataResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+  Future<SuccessResponse<List<AddressEntity>>> getAllAddress();
+  Future<SuccessResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+  Future<SuccessResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+
+  //# loyalty-point-controller
+  Future<SuccessResponse<LoyaltyPointEntity>> getLoyaltyPoint();
 }
 
 class ProfileDataSourceImpl extends ProfileDataSource {
   final http.Client _client;
+  final dio.Dio _dio;
   final SecureStorageHelper _secureStorageHelper;
 
-  ProfileDataSourceImpl(this._client, this._secureStorageHelper);
+  ProfileDataSourceImpl(this._client, this._secureStorageHelper, this._dio);
   @override
-  Future<DataResponse<List<AddressEntity>>> getAllAddress() async {
+  Future<SuccessResponse<List<AddressEntity>>> getAllAddress() async {
     final url = baseUri(path: kAPIAddressAllURL);
     final response = await _client.get(
       url,
@@ -42,7 +47,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   }
 
   @override
-  Future<DataResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode) async {
+  Future<SuccessResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode) async {
     final url = baseUri(path: '$kAPILocationDistrictGetAllByProvinceCodeURL/$provinceCode');
     final response = await _client.get(
       url,
@@ -61,12 +66,12 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   }
 
   @override
-  Future<DataResponse<String>> getFullAddressByWardCode(String wardCode) async {
+  Future<SuccessResponse<String>> getFullAddressByWardCode(String wardCode) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<DataResponse<List<ProvinceEntity>>> getProvinces() async {
+  Future<SuccessResponse<List<ProvinceEntity>>> getProvinces() async {
     final url = baseUri(path: kAPILocationProvinceGetAllURL);
     final response = await _client.get(
       url,
@@ -85,7 +90,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   }
 
   @override
-  Future<DataResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode) async {
+  Future<SuccessResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode) async {
     final url = baseUri(path: '$kAPILocationWardGetAllByDistrictCodeURL/$districtCode');
     final response = await _client.get(
       url,
@@ -104,7 +109,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   }
 
   @override
-  Future<DataResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
+  Future<SuccessResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
     final url = baseUri(path: kAPIAddressAddURL);
     final response = await _client.post(
       url,
@@ -144,9 +149,9 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       url,
     );
   }
-  
+
   @override
-  Future<DataResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async{
+  Future<SuccessResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
     final url = baseUri(path: kAPIAddressUpdateURL);
     final response = await _client.put(
       url,
@@ -159,6 +164,23 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       url,
       (data) => AddressEntity.fromMap(data['addressDTO']),
     );
-  
+  }
+
+  @override
+  Future<SuccessResponse<LoyaltyPointEntity>> getLoyaltyPoint() async {
+    final url = baseUri(path: kAPILoyaltyPointGetURL);
+
+    final response = await _dio.getUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      ),
+    );
+
+    return handleDioResponse<LoyaltyPointEntity, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => LoyaltyPointEntity.fromMap(jsonMap['loyaltyPointDTO']),
+    );
   }
 }

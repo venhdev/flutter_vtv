@@ -17,7 +17,7 @@ class AuthRepositoryImpl implements AuthRepository {
   FRespData<AuthEntity> loginWithUsernameAndPassword(String username, String password) async {
     try {
       final result = await _authDataSource.loginWithUsernameAndPassword(username, password);
-      return Right(DataResponse(result.data));
+      return Right(SuccessResponse(data: result.data));
     } on SocketException {
       return const Left(ClientError(message: kMsgNetworkError));
     } on ClientException catch (e) {
@@ -155,7 +155,7 @@ class AuthRepositoryImpl implements AuthRepository {
         newInfo: newInfo,
       );
       // update user info in local storage
-      await _secureStorageHelper.saveOrUpdateUserInfo(resOK.data);
+      await _secureStorageHelper.saveOrUpdateUserInfo(resOK.data!);
       return Right(resOK);
     } on ClientException catch (e) {
       return Left(ClientError(code: e.code, message: e.message));

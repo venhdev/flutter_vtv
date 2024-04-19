@@ -16,7 +16,7 @@ class LoginWithUsernameAndPasswordUC
     await resEither.fold(
       (error) async => null, // do nothing
       (ok) async => {
-        await _authRepository.cacheAuth(ok.data),
+        await _authRepository.cacheAuth(ok.data!),
       },
     );
 

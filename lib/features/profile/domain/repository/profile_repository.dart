@@ -12,4 +12,7 @@ abstract class ProfileRepository {
   FRespData<List<AddressEntity>> getAllAddress();
   FRespData<AddressEntity> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
   FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
+
+  //# loyalty-point-controller
+  FRespData<LoyaltyPointEntity> getLoyaltyPoint();
 }

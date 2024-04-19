@@ -18,7 +18,7 @@ void main() {
   test('should return new token when get refresh token success', () async {
     // Arrange (setup @mocks)
     when(mockAuthRepository.isExpiredToken(any)).thenAnswer((_) async => const Right(true));
-    when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right(DataResponse('new_token')));
+    when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right(SuccessResponse(data:'new_token')));
     // Act
 
     final result = await checkTokenUC('any');

@@ -11,23 +11,41 @@ import '../../../cart/presentation/components/cart_badge.dart';
 import '../../domain/repository/notification_repository.dart';
 import '../components/notification_item.dart';
 
-class NotificationPage extends StatelessWidget {
+class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
 
   static const String routeRoot = '/notification';
   static const String routeName = 'notification';
 
   @override
-  Widget build(BuildContext context) {
-    final controller = LazyLoadController<NotificationEntity>(
+  State<NotificationPage> createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  late LazyLoadController<NotificationEntity> controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = LazyLoadController<NotificationEntity>(
       items: [],
       scrollController: ScrollController(),
       useGrid: false,
       emptyMessage: 'Không có thông báo nào',
     );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AuthCubit, AuthState>(
+      body: BlocConsumer<AuthCubit, AuthState>(
+        listener: (context, state) {
+          if (state.status == AuthStatus.authenticated) {
+            controller.reload();
+          } else if (state.status == AuthStatus.unauthenticated) {
+            controller.clearItemsNoReload();
+          }
+        },
         builder: (context, state) {
           if (state.status == AuthStatus.unauthenticated) {
             return const Center(
@@ -36,86 +54,92 @@ class NotificationPage extends StatelessWidget {
           }
           return RefreshIndicator(
             onRefresh: () async {
-              log('onRefresh');
-              log(controller.toString());
               controller.reload();
             },
             child: CustomScrollView(
               slivers: [
-                const SliverAppBar(
-                  title: Text('Thông báo'),
-                  pinned: true,
-                  backgroundColor: Colors.transparent,
-                  actions: [CartBadge(), SizedBox(width: 8)],
-                  // bottom: PreferredSize(
-                  //   preferredSize: const Size.fromHeight(48),
-                  //   child: Container(
-                  //     color: Theme.of(context).scaffoldBackgroundColor,
-                  //     child: Column(
-                  //       children: [
-                  //         _buildReadAllAndReloadBtn(controller),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      ListView(
-                        controller: controller.scrollController,
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        children: [
-                          NestedLazyLoadBuilder(
-                            controller: controller,
-                            dataCallback: (page) => sl<NotificationRepository>().getPageNotifications(page, 20),
-                            itemBuilder: (_, __, data) {
-                              return NotificationItem(
-                                notification: data,
-                                markAsRead: (id) async {
-                                  final resultEither = await sl<NotificationRepository>().markAsRead(id);
-            
-                                  resultEither.fold(
-                                    (error) {
-                                      Fluttertoast.showToast(msg: '${error.message}');
-                                    },
-                                    (ok) {
-                                      controller.reload(newItems: ok.data.items);
-                                    },
-                                  );
-                                },
-                                onDismiss: (id) async {
-                                  final resultEither = await sl<NotificationRepository>().deleteNotification(id);
-            
-                                  log('{deleteNotification} resultEither: $resultEither');
-            
-                                  return resultEither.fold(
-                                    (error) {
-                                      log('{deleteNotification} Error: ${error.message}');
-                                      // Fluttertoast.showToast(msg: '${error.message}');
-                                      return false;
-                                    },
-                                    (ok) {
-                                      // controller.reload(newItems: ok.data.items);
-                                      return true;
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                            crossAxisCount: 1,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                _buildSliverAppBar(context),
+                _buildBody(controller),
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  SliverList _buildBody(LazyLoadController<NotificationEntity> controller) {
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          ListView(
+            controller: controller.scrollController,
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            children: [
+              NestedLazyLoadBuilder(
+                controller: controller,
+                dataCallback: (page) => sl<NotificationRepository>().getPageNotifications(page, 20),
+                itemBuilder: (_, __, data) {
+                  return NotificationItem(
+                    notification: data,
+                    markAsRead: (id) async {
+                      final resultEither = await sl<NotificationRepository>().markAsRead(id);
+
+                      resultEither.fold(
+                        (error) {
+                          Fluttertoast.showToast(msg: '${error.message}');
+                        },
+                        (ok) {
+                          controller.reload(newItems: ok.data!.items);
+                        },
+                      );
+                    },
+                    onDismiss: (id) async {
+                      final resultEither = await sl<NotificationRepository>().deleteNotification(id);
+
+                      log('{deleteNotification} resultEither: $resultEither');
+
+                      return resultEither.fold(
+                        (error) {
+                          log('{deleteNotification} Error: ${error.message}');
+                          // Fluttertoast.showToast(msg: '${error.message}');
+                          return false;
+                        },
+                        (ok) {
+                          // controller.reload(newItems: ok.data.items);
+                          return true;
+                        },
+                      );
+                    },
+                  );
+                },
+                crossAxisCount: 1,
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  SliverAppBar _buildSliverAppBar(BuildContext context) {
+    return SliverAppBar(
+      title: const Text('Thông báo'),
+      pinned: true,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+      actions: const [CartBadge(), SizedBox(width: 8)],
+      // bottom: PreferredSize(
+      //   preferredSize: const Size.fromHeight(48),
+      //   child: Container(
+      //     color: Theme.of(context).scaffoldBackgroundColor,
+      //     child: Column(
+      //       children: [
+      //         _buildReadAllAndReloadBtn(controller),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 

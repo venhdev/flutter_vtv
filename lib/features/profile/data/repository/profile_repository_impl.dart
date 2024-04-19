@@ -55,11 +55,18 @@ class ProfileRepositoryImpl extends ProfileRepository {
       noDataCallback: () async => await _profileDataSource.updateAddressStatus(addressId),
     );
   }
-  
+
   @override
   FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => await _profileDataSource.updateAddress(addOrUpdateAddressParam),
+    );
+  }
+
+  @override
+  FRespData<LoyaltyPointEntity> getLoyaltyPoint() async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => await _profileDataSource.getLoyaltyPoint(),
     );
   }
 }

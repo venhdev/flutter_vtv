@@ -47,7 +47,7 @@ class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
 }
 
 class _FakeDataResponse_1<T> extends _i1.SmartFake
-    implements _i3.DataResponse<T> {
+    implements _i3.SuccessResponse<T> {
   _FakeDataResponse_1(
     Object parent,
     Invocation parentInvocation,
@@ -136,7 +136,7 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
       ) as _i7.Future<_i2.Either<_i3.Failure, _i3.AuthEntity>>);
 
   @override
-  _i7.Future<_i2.Either<_i3.ErrorResponse, _i3.DataResponse<_i3.AuthEntity>>>
+  _i7.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse<_i3.AuthEntity>>>
       loginWithUsernameAndPassword(
     String? username,
     String? password,
@@ -151,8 +151,8 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
             ),
             returnValue: _i7.Future<
                 _i2.Either<_i3.ErrorResponse,
-                    _i3.DataResponse<_i3.AuthEntity>>>.value(_FakeEither_0<
-                _i3.ErrorResponse, _i3.DataResponse<_i3.AuthEntity>>(
+                    _i3.SuccessResponse<_i3.AuthEntity>>>.value(_FakeEither_0<
+                _i3.ErrorResponse, _i3.SuccessResponse<_i3.AuthEntity>>(
               this,
               Invocation.method(
                 #loginWithUsernameAndPassword,
@@ -163,7 +163,7 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
               ),
             )),
           ) as _i7.Future<
-              _i2.Either<_i3.ErrorResponse, _i3.DataResponse<_i3.AuthEntity>>>);
+              _i2.Either<_i3.ErrorResponse, _i3.SuccessResponse<_i3.AuthEntity>>>);
 
   @override
   _i7.Future<_i2.Either<_i3.Failure, void>> cacheAuth(
@@ -212,7 +212,7 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
 
   @override
   _i7.Future<
-          _i2.Either<_i3.ErrorResponse, _i3.DataResponse<_i3.UserInfoEntity>>>
+          _i2.Either<_i3.ErrorResponse, _i3.SuccessResponse<_i3.UserInfoEntity>>>
       editUserProfile(_i3.UserInfoEntity? newInfo) => (super.noSuchMethod(
             Invocation.method(
               #editUserProfile,
@@ -220,8 +220,8 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
             ),
             returnValue: _i7.Future<
                 _i2.Either<_i3.ErrorResponse,
-                    _i3.DataResponse<_i3.UserInfoEntity>>>.value(_FakeEither_0<
-                _i3.ErrorResponse, _i3.DataResponse<_i3.UserInfoEntity>>(
+                    _i3.SuccessResponse<_i3.UserInfoEntity>>>.value(_FakeEither_0<
+                _i3.ErrorResponse, _i3.SuccessResponse<_i3.UserInfoEntity>>(
               this,
               Invocation.method(
                 #editUserProfile,
@@ -230,7 +230,7 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
             )),
           ) as _i7.Future<
               _i2.Either<_i3.ErrorResponse,
-                  _i3.DataResponse<_i3.UserInfoEntity>>>);
+                  _i3.SuccessResponse<_i3.UserInfoEntity>>>);
 
   @override
   _i7.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>> logout(
@@ -305,7 +305,7 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
       ) as _i7.Future<_i2.Either<_i3.Failure, bool>>);
 
   @override
-  _i7.Future<_i2.Either<_i3.ErrorResponse, _i3.DataResponse<String>>>
+  _i7.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse<String>>>
       getNewAccessToken() => (super.noSuchMethod(
             Invocation.method(
               #getNewAccessToken,
@@ -313,8 +313,8 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
             ),
             returnValue: _i7.Future<
                     _i2
-                    .Either<_i3.ErrorResponse, _i3.DataResponse<String>>>.value(
-                _FakeEither_0<_i3.ErrorResponse, _i3.DataResponse<String>>(
+                    .Either<_i3.ErrorResponse, _i3.SuccessResponse<String>>>.value(
+                _FakeEither_0<_i3.ErrorResponse, _i3.SuccessResponse<String>>(
               this,
               Invocation.method(
                 #getNewAccessToken,
@@ -322,7 +322,7 @@ class MockAuthRepository extends _i1.Mock implements _i6.AuthRepository {
               ),
             )),
           ) as _i7
-              .Future<_i2.Either<_i3.ErrorResponse, _i3.DataResponse<String>>>);
+              .Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse<String>>>);
 
   @override
   _i7.Future<_i2.Either<_i3.ErrorResponse, _i3.SuccessResponse>>
@@ -383,7 +383,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
   }
 
   @override
-  _i7.Future<_i3.DataResponse<_i3.AuthEntity>> loginWithUsernameAndPassword(
+  _i7.Future<_i3.SuccessResponse<_i3.AuthEntity>> loginWithUsernameAndPassword(
     String? username,
     String? password,
   ) =>
@@ -395,7 +395,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             password,
           ],
         ),
-        returnValue: _i7.Future<_i3.DataResponse<_i3.AuthEntity>>.value(
+        returnValue: _i7.Future<_i3.SuccessResponse<_i3.AuthEntity>>.value(
             _FakeDataResponse_1<_i3.AuthEntity>(
           this,
           Invocation.method(
@@ -406,7 +406,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             ],
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<_i3.AuthEntity>>);
+      ) as _i7.Future<_i3.SuccessResponse<_i3.AuthEntity>>);
 
   @override
   _i7.Future<_i3.SuccessResponse> register(_i3.RegisterParams? registerDTO) =>
@@ -444,14 +444,14 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
       ) as _i7.Future<_i3.SuccessResponse>);
 
   @override
-  _i7.Future<_i3.DataResponse<String>> getNewAccessToken(
+  _i7.Future<_i3.SuccessResponse<String>> getNewAccessToken(
           String? refreshToken) =>
       (super.noSuchMethod(
         Invocation.method(
           #getNewAccessToken,
           [refreshToken],
         ),
-        returnValue: _i7.Future<_i3.DataResponse<String>>.value(
+        returnValue: _i7.Future<_i3.SuccessResponse<String>>.value(
             _FakeDataResponse_1<String>(
           this,
           Invocation.method(
@@ -459,16 +459,16 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             [refreshToken],
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<String>>);
+      ) as _i7.Future<_i3.SuccessResponse<String>>);
 
   @override
-  _i7.Future<_i3.DataResponse<_i3.AuthEntity>> getUserProfile() =>
+  _i7.Future<_i3.SuccessResponse<_i3.AuthEntity>> getUserProfile() =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserProfile,
           [],
         ),
-        returnValue: _i7.Future<_i3.DataResponse<_i3.AuthEntity>>.value(
+        returnValue: _i7.Future<_i3.SuccessResponse<_i3.AuthEntity>>.value(
             _FakeDataResponse_1<_i3.AuthEntity>(
           this,
           Invocation.method(
@@ -476,10 +476,10 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             [],
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<_i3.AuthEntity>>);
+      ) as _i7.Future<_i3.SuccessResponse<_i3.AuthEntity>>);
 
   @override
-  _i7.Future<_i3.DataResponse<_i3.UserInfoEntity>> editUserProfile(
+  _i7.Future<_i3.SuccessResponse<_i3.UserInfoEntity>> editUserProfile(
           {required _i3.UserInfoEntity? newInfo}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -487,7 +487,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
           [],
           {#newInfo: newInfo},
         ),
-        returnValue: _i7.Future<_i3.DataResponse<_i3.UserInfoEntity>>.value(
+        returnValue: _i7.Future<_i3.SuccessResponse<_i3.UserInfoEntity>>.value(
             _FakeDataResponse_1<_i3.UserInfoEntity>(
           this,
           Invocation.method(
@@ -496,7 +496,7 @@ class MockAuthDataSource extends _i1.Mock implements _i8.AuthDataSource {
             {#newInfo: newInfo},
           ),
         )),
-      ) as _i7.Future<_i3.DataResponse<_i3.UserInfoEntity>>);
+      ) as _i7.Future<_i3.SuccessResponse<_i3.UserInfoEntity>>);
 
   @override
   _i7.Future<_i3.SuccessResponse> sendOTPForResetPasswordViaUsername(

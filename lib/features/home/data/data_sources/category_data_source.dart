@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class CategoryDataSource {
-  Future<DataResponse<List<CategoryModel>>> getAllParentCategories();
+  Future<SuccessResponse<List<CategoryModel>>> getAllParentCategories();
 }
 
 class CategoryDataSourceImpl implements CategoryDataSource {
@@ -12,7 +12,7 @@ class CategoryDataSourceImpl implements CategoryDataSource {
   CategoryDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<List<CategoryModel>>> getAllParentCategories() async {
+  Future<SuccessResponse<List<CategoryModel>>> getAllParentCategories() async {
     // send request
     final url = baseUri(path: kAPIAllCategoryURL);
     final response = await _client.get(
@@ -33,7 +33,7 @@ class CategoryDataSourceImpl implements CategoryDataSource {
     // // handle response
     // if (response.statusCode == 200) {
     //   final result = CategoryModel.fromJsonList(utf8BodyMap);
-    //   return DataResponse<List<CategoryModel>>(
+    //   return SuccessResponse<List<CategoryModel>>(
     //     result,
     //     code: response.statusCode,
     //     message: decodedBody['message'],
