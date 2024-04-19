@@ -14,6 +14,7 @@ import '../../features/home/presentation/pages/favorite_product_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/product_detail_page.dart';
 import '../../features/home/presentation/pages/product_review_page.dart';
+import '../../features/home/presentation/pages/review_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
 import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
@@ -91,7 +92,6 @@ class AppRoutes {
         },
         branches: <StatefulShellBranch>[
           //! Home Route
-          // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
             navigatorKey: _sectionHomeNavigatorKey,
             routes: <RouteBase>[
@@ -116,13 +116,24 @@ class AppRoutes {
                     },
                     routes: [
                       GoRoute(
-                        path: ProductReviewPage.routeName,
-                        name: ProductReviewPage.routeName,
+                        path: ProductReviewPage.routeName, // '/home/product/review'
+                        name: ProductReviewPage.routeName, // review
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: (context, state) {
                           final productId = state.extra as int;
                           return ProductReviewPage(productId: productId);
                         },
+                        routes: [
+                          GoRoute(
+                            path: ReviewDetailPage.routeName, // '/home/product/review/review-detail'
+                            name: ReviewDetailPage.routeName, // review-detail
+                            parentNavigatorKey: _rootNavigatorKey,
+                            builder: (context, state) {
+                              final reviewId = state.extra as String;
+                              return ReviewDetailPage(reviewId: reviewId);
+                            },
+                          ),
+                        ]
                       )
                     ],
                   ),
@@ -176,7 +187,6 @@ class AppRoutes {
             ],
           ),
           //! Notification Route
-          // The route branch for the second tab of the bottom navigation bar.
           StatefulShellBranch(
             // It's not necessary to provide a navigatorKey if it isn't also
             // needed elsewhere. If not provided, a default key will be used.
@@ -191,7 +201,6 @@ class AppRoutes {
             ],
           ),
           //! User Route
-          // The route branch for the third tab of the bottom navigation bar.
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
@@ -277,8 +286,8 @@ class AppRoutes {
                             },
                           ),
                           GoRoute(
-                            path: OrderReviewsPage.routeName, // '/user/purchase/order-detail/review-detail'
-                            name: OrderReviewsPage.routeName, // review-detail
+                            path: OrderReviewsPage.routeName, // '/user/purchase/order-detail/order-review'
+                            name: OrderReviewsPage.routeName, // order-review
                             parentNavigatorKey: _rootNavigatorKey,
                             builder: (context, state) {
                               final orderItemId = state.extra as OrderEntity;

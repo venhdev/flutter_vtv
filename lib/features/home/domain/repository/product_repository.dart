@@ -1,6 +1,7 @@
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../order/domain/dto/review_param.dart';
+import '../dto/comment_param.dart';
 
 abstract class ProductRepository {
   //# product-controller
@@ -69,4 +70,8 @@ abstract class ProductRepository {
   FRespEither followedShopDelete(int followedShopId);
   /// return followedShopId if exist, null if not found
   FResult<int?> followedShopCheckExist(int shopId); // custom: get list then check contain
+
+  //# comment-customer-controller
+  FRespData<CommentEntity> addCustomerComment(CommentParam param);
+  FRespEither deleteCustomerComment(String commentId); //uuid
 }

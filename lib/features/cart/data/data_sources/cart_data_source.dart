@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../core/constants/customer_apis.dart';
+
 abstract class CartDataSource {
   Future<SuccessResponse<CartResp>> getCarts();
   Future<SuccessResponse> addToCart(int productVariantId, int quantity);

@@ -1,6 +1,10 @@
-import 'package:http/http.dart' as http show Client;
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart' as dio;
+import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
+
+import '../../../../core/constants/customer_apis.dart';
+import '../../domain/dto/comment_param.dart';
 
 //! Remote data source
 abstract class ProductDataSource {
@@ -41,6 +45,13 @@ abstract class ProductDataSource {
   Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId);
   Future<SuccessResponse<List<FollowedShopEntity>>> followedShopList();
   Future<SuccessResponse> followedShopDelete(int followedShopId);
+
+  //# comment-controller
+  Future<SuccessResponse<List<CommentEntity>>> getReviewComments(String reviewId); //uuid
+
+  //# comment-customer-controller
+  Future<SuccessResponse<CommentEntity>> addCustomerComment(CommentParam param);
+  Future<SuccessResponse> deleteCustomerComment(String commentId); //uuid
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
@@ -374,5 +385,46 @@ class ProductDataSourceImpl implements ProductDataSource {
           )
           .toList(),
     );
+  }
+
+  @override
+  Future<SuccessResponse<CommentEntity>> addCustomerComment(CommentParam param) async {
+    final url = baseUri(path: kAPICommentAddURL);
+    final response = await _dio.postUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      ),
+      data: param.toMap(),
+    );
+
+    return handleDioResponse<CommentEntity, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => CommentEntity.fromMap(jsonMap['commentDTO']),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<Object?>> deleteCustomerComment(String commentId) async {
+    final url = baseUri(path: '$kAPICommentDeleteURL/$commentId');
+    final response = await _dio.deleteUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      ),
+    );
+
+    return handleDioResponse<Object?, Map<String, dynamic>>(
+      response,
+      url,
+      hasData: false,
+    );
+  }
+
+  @override
+  Future<SuccessResponse<List<CommentEntity>>> getReviewComments(String reviewId) {
+    throw UnimplementedError();
+    //! TODO: implement getReviewComments (API not available)
   }
 }
