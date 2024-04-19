@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [v0.0.7-pre] - 20/04/2024
+
+### Added
+
+- Stateful Shell Route
+- Dio (small part use)
+- Notification
+- Update UI
+
+### Changed
+
+- Use vtv_common package to keep all common file (entity, theme,...)
+
 ### [v0.0.5-pre] - 31/03/2024
 
 - Notification
@@ -56,7 +69,9 @@ All notable changes to this project will be documented in this file.
 
 - Initial App
 
-[unreleased]: https://github.com/venhha/flutter_vtv/compare/v0.0.4-pre...HEAD
+[unreleased]: https://github.com/venhha/flutter_vtv/compare/v0.0.7-pre...HEAD
+[v0.0.7-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.5-pre...v0.0.7-pre
+[v0.0.5-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.4-pre...v0.0.5-pre
 [v0.0.4-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.3-pre...v0.0.4-pre
 [v0.0.3-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.2-pre...v0.0.3-pre
 [v0.0.2-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.1-pre...v0.0.2-pre
