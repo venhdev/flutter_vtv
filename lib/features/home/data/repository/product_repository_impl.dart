@@ -240,4 +240,58 @@ class ProductRepositoryImpl extends ProductRepository {
       return Left(UnexpectedFailure(message: e.toString()));
     }
   }
+
+  @override
+  FRespData<int> getProductCountFavorite(int productId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => _productDataSource.getProductCountFavorite(productId),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> getProductPageByShop(int page, int size, int shopId) {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.getProductPageByShop(page, size, shopId),
+    );
+  }
+
+  @override
+  FRespData<int> countShopFollowed(int shopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.countShopFollowed(shopId),
+    );
+  }
+
+  @override
+  FRespData<FollowedShopEntity> followedShopAdd(int shopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.followedShopAdd(shopId),
+    );
+  }
+
+  @override
+  FRespData<FollowedShopEntity> followedShopDelete(int followedShopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.followedShopDelete(followedShopId),
+    );
+  }
+
+  @override
+  FRespData<List<FollowedShopEntity>> followedShopList() async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _productDataSource.followedShopList(),
+    );
+  }
+
+  @override
+  Future<int?> followedShopCheckExist(int shopId) async {
+    try {
+      final list = await _productDataSource.followedShopList();
+      final FollowedShopEntity rs = list.data.firstWhere((e) => e.shopId == shopId);
+      return rs.followedShopId;
+    } catch (e) {
+      log('{followedShopCheckExist} error: $e');
+      return null;
+    }
+  }
 }

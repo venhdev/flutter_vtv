@@ -56,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
       //   ),
       //   actions: [
       //     SizedBox(
-      //       width: MediaQuery.of(context).size.width * 0.7,
+      //       width: MediaQuery.of(context).size.width * 0.7, // DO NOT use in build body
       //       child: SearchBarComponent(
       //         controller: searchController,
       //         onSubmitted: (text) => {

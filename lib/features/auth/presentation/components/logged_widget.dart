@@ -212,7 +212,6 @@ class _LoggedViewState extends State<LoggedView> {
       ),
       SliverToBoxAdapter(
         child: IconButton(
-          // no border
           style: IconButton.styleFrom(
             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
@@ -223,7 +222,7 @@ class _LoggedViewState extends State<LoggedView> {
             padding: const EdgeInsets.only(bottom: 4.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              // avatar
+              //# avatar
               children: [
                 const SizedBox(width: 12),
                 const CircleAvatar(
@@ -233,15 +232,37 @@ class _LoggedViewState extends State<LoggedView> {
 
                 const SizedBox(width: 12),
 
-                // username
-                SizedBox(
-                  height: 60,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '${widget.auth.userInfo.fullName!} (${widget.auth.userInfo.username!})',
-                      style: const TextStyle(fontSize: 18),
-                    ),
+                //# full name + username + followed count
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // full name + username
+                      Text(
+                        '${widget.auth.userInfo.fullName!} (${widget.auth.userInfo.username!})',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+
+                      // followed count
+                      FutureBuilder(
+                        future: sl<ProductRepository>().followedShopList(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!.fold(
+                              (error) {
+                                return const SizedBox();
+                              },
+                              (ok) => Text(
+                                'Đang theo dõi ${ok.data.length}',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],

@@ -85,8 +85,8 @@ class SettingsPage extends StatelessWidget {
         title: 'Đăng xuất',
         content: 'Bạn có chắc chắn muốn đăng xuất?',
         // confirmTextColor: Colors.red,
-        confirmBackgroundColor: Colors.red.shade100,
-        confirmTextColor: Colors.red.shade900,
+        confirmBackgroundColor: Colors.red.shade300,
+        // confirmTextColor: Colors.red.shade900,
         confirmText: 'Đăng xuất',
         dismissText: 'Thoát',
         onConfirm: () async {

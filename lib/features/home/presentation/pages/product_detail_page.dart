@@ -3,15 +3,19 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../auth/presentation/components/rating.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
+import '../../../order/presentation/components/shop_info.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
+import 'product_review_page.dart';
+import 'shop_page.dart';
 
 //! this page should use to easily pop back to the previous screen
 /*
@@ -64,7 +68,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void handleTapFavoriteButton(int? favoriteProductId) async {
-    //REVIEW function
     // add to favorite
     if (favoriteProductId == null) {
       final respEither = await sl<ProductRepository>().favoriteProductAdd(_productDetail.product.productId);
@@ -150,6 +153,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    log('(ProductDetailPage) rebuild');
     return Scaffold(
       // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
       bottomSheet: _buildBottomActionBar(context),
@@ -213,44 +217,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildShopInfo() {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(_productDetail.shopAvatar),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _productDetail.shopName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+    return ShopInfo(
+      shopId: _productDetail.shopId,
+      name: _productDetail.shopName,
+      avatar: _productDetail.shopAvatar,
+      // showViewShopBtn: true,
+      showFollowBtn: true,
+      onPressed: () {
+        // GoRouter.of(context).push('${ShopPage.path}/${_productDetail.shopId}');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return ShopPage(shopId: _productDetail.shopId);
+            },
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7),
-      expandedHeight: MediaQuery.of(context).size.height * 0.4,
+      expandedHeight: 300,
       floating: false,
       pinned: true,
       leading: IconButton(
@@ -262,7 +251,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           backgroundColor: MaterialStateProperty.all(Colors.white24),
         ),
       ),
-      actions: const [CartBadge(), SizedBox(width: 8)],
+      actions: const [
+        CartBadge(),
+        SizedBox(width: 8),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         background: GestureDetector(
           onTap: () {
@@ -282,6 +274,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
+  /// Rating, sold, count-favorite, add-to-favorite btn
   IntrinsicHeight _buildMoreInfo() {
     return IntrinsicHeight(
       child: Row(
@@ -298,6 +291,32 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 endIndent: 12,
               ),
               Text('${_productDetail.product.sold} đã bán'),
+              const VerticalDivider(
+                color: Colors.grey,
+                width: 20,
+                thickness: 1,
+                indent: 12,
+                endIndent: 12,
+              ),
+              FutureBuilder(
+                future: sl<ProductRepository>().getProductCountFavorite(_productDetail.product.productId),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final resultEither = snapshot.data!;
+                    return resultEither.fold(
+                      (error) => MessageScreen.error(error.message),
+                      (ok) => Text(
+                        '${ok.data} lượt thích',
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return MessageScreen.error(snapshot.error.toString());
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ],
           ),
 
@@ -440,7 +459,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           );
         },
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: 300,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -652,59 +671,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: ok.data.reviews.length,
+                  itemCount: ok.data.reviews.length > 3 ? 3 : ok.data.reviews.length, // show only 3 reviews
                   itemBuilder: (context, index) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //# user info + rating
-                        ListTile(
-                          leading: const CircleAvatar(
-                            // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
-                            backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
-                          ),
-                          title: Text(ok.data.reviews[index].username),
-                          subtitle: Rating(rating: double.parse(ok.data.reviews[index].rating.toString())),
-                        ),
-
-                        //# review content
-                        Text(ok.data.reviews[index].content),
-
-                        //# review image
-                        if (ok.data.reviews[index].image != null)
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PhotoViewPage(imageUrl: ok.data.reviews[index].image!),
-                                ),
-                              );
-                            },
-                            child: SizedBox(
-                              height: 100,
-                              child: ImageCacheable(
-                                ok.data.reviews[index].image!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-
-                        //# date
-                        Text(
-                          StringHelper.convertDateTimeToString(
-                            ok.data.reviews[index].createdAt,
-                            pattern: 'dd-MM-yyyy HH:mm',
-                          ),
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    );
+                    return ReviewItem(ok.data.reviews[index]);
                   },
+                ),
+
+                // show all reviews button
+                // if (ok.data.reviews.length > 3)
+                TextButton(
+                  onPressed: () {
+                    context.go(ProductReviewPage.path, extra: _productDetail.product.productId);
+                  },
+                  child: const Text(
+                    'Xem tất cả đánh giá',
+                    style: TextStyle(color: Colors.blue),
+                  ),
                 ),
               ],
             ),
@@ -716,6 +698,69 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           child: CircularProgressIndicator(),
         );
       },
+    );
+  }
+}
+
+class ReviewItem extends StatelessWidget {
+  const ReviewItem(
+    this.review, {
+    super.key,
+  });
+
+  final ReviewEntity review;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //# user info + rating
+        ListTile(
+          leading: const CircleAvatar(
+            // backgroundImage: NetworkImage(ok.data.reviews[index].userAvatar),
+            backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
+          ),
+          title: Text(review.username),
+          subtitle: Rating(rating: double.parse(review.rating.toString())),
+        ),
+
+        //# review content
+        Text(review.content),
+
+        //# review image
+        if (review.image != null)
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PhotoViewPage(imageUrl: review.image!),
+                ),
+              );
+            },
+            child: SizedBox(
+              height: 100,
+              child: ImageCacheable(
+                review.image!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+        //# date
+        Text(
+          StringHelper.convertDateTimeToString(
+            review.createdAt,
+            pattern: 'dd-MM-yyyy HH:mm',
+          ),
+          style: const TextStyle(
+            color: Colors.grey,
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }

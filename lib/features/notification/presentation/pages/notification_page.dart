@@ -34,78 +34,85 @@ class NotificationPage extends StatelessWidget {
               child: Text('Vui lòng đăng nhập để xem thông báo'),
             );
           }
-          return CustomScrollView(
-            slivers: [
-              const SliverAppBar(
-                title: Text('Thông báo'),
-                pinned: true,
-                backgroundColor: Colors.transparent,
-                actions: [CartBadge(), SizedBox(width: 8)],
-                // bottom: PreferredSize(
-                //   preferredSize: const Size.fromHeight(48),
-                //   child: Container(
-                //     color: Theme.of(context).scaffoldBackgroundColor,
-                //     child: Column(
-                //       children: [
-                //         _buildReadAllAndReloadBtn(controller),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    ListView(
-                      controller: controller.scrollController,
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      children: [
-                        NestedLazyLoadBuilder(
-                          controller: controller,
-                          dataCallback: (page) => sl<NotificationRepository>().getPageNotifications(page, 20),
-                          itemBuilder: (_, __, data) {
-                            return NotificationItem(
-                              notification: data,
-                              markAsRead: (id) async {
-                                final resultEither = await sl<NotificationRepository>().markAsRead(id);
-
-                                resultEither.fold(
-                                  (error) {
-                                    Fluttertoast.showToast(msg: '${error.message}');
-                                  },
-                                  (ok) {
-                                    controller.reload(newItems: ok.data.listItem);
-                                  },
-                                );
-                              },
-                              onDismiss: (id) async {
-                                final resultEither = await sl<NotificationRepository>().deleteNotification(id);
-
-                                log('{deleteNotification} resultEither: $resultEither');
-
-                                return resultEither.fold(
-                                  (error) {
-                                    log('{deleteNotification} Error: ${error.message}');
-                                    // Fluttertoast.showToast(msg: '${error.message}');
-                                    return false;
-                                  },
-                                  (ok) {
-                                    // controller.reload(newItems: ok.data.listItem);
-                                    return true;
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          crossAxisCount: 1,
-                        )
-                      ],
-                    ),
-                  ],
+          return RefreshIndicator(
+            onRefresh: () async {
+              log('onRefresh');
+              log(controller.toString());
+              controller.reload();
+            },
+            child: CustomScrollView(
+              slivers: [
+                const SliverAppBar(
+                  title: Text('Thông báo'),
+                  pinned: true,
+                  backgroundColor: Colors.transparent,
+                  actions: [CartBadge(), SizedBox(width: 8)],
+                  // bottom: PreferredSize(
+                  //   preferredSize: const Size.fromHeight(48),
+                  //   child: Container(
+                  //     color: Theme.of(context).scaffoldBackgroundColor,
+                  //     child: Column(
+                  //       children: [
+                  //         _buildReadAllAndReloadBtn(controller),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ),
-              ),
-            ],
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      ListView(
+                        controller: controller.scrollController,
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        children: [
+                          NestedLazyLoadBuilder(
+                            controller: controller,
+                            dataCallback: (page) => sl<NotificationRepository>().getPageNotifications(page, 20),
+                            itemBuilder: (_, __, data) {
+                              return NotificationItem(
+                                notification: data,
+                                markAsRead: (id) async {
+                                  final resultEither = await sl<NotificationRepository>().markAsRead(id);
+            
+                                  resultEither.fold(
+                                    (error) {
+                                      Fluttertoast.showToast(msg: '${error.message}');
+                                    },
+                                    (ok) {
+                                      controller.reload(newItems: ok.data.items);
+                                    },
+                                  );
+                                },
+                                onDismiss: (id) async {
+                                  final resultEither = await sl<NotificationRepository>().deleteNotification(id);
+            
+                                  log('{deleteNotification} resultEither: $resultEither');
+            
+                                  return resultEither.fold(
+                                    (error) {
+                                      log('{deleteNotification} Error: ${error.message}');
+                                      // Fluttertoast.showToast(msg: '${error.message}');
+                                      return false;
+                                    },
+                                    (ok) {
+                                      // controller.reload(newItems: ok.data.items);
+                                      return true;
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                            crossAxisCount: 1,
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),

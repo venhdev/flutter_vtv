@@ -360,7 +360,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          ShopInfo(shop: _order.shop),
+          ShopInfo(
+            shopId: _order.shop.shopId,
+            name: _order.shop.name,
+            avatar: _order.shop.avatar,
+          ),
 
           //! Shop voucher
           Wrapper(

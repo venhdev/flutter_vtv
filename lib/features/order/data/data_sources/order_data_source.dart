@@ -21,7 +21,8 @@ abstract class OrderDataSource {
   Future<DataResponse<MultiOrderEntity>> getListOrders();
   Future<DataResponse<MultiOrderEntity>> getListOrdersByStatus(String status);
   Future<DataResponse<OrderDetailEntity>> getOrderDetail(String orderId);
-  Future<DataResponse<OrderDetailEntity>> getOrderCancel(String orderId);
+  Future<DataResponse<OrderDetailEntity>> cancelOrder(String orderId);
+  Future<DataResponse<OrderDetailEntity>> completeOrder(String orderId);
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
@@ -177,8 +178,23 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<DataResponse<OrderDetailEntity>> getOrderCancel(String orderId) async {
+  Future<DataResponse<OrderDetailEntity>> cancelOrder(String orderId) async {
     final url = baseUri(path: '$kAPIOrderCancelURL/$orderId');
+    final response = await _client.patch(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+  
+  @override
+  Future<DataResponse<OrderDetailEntity>> completeOrder(String orderId) async{
+    final url = baseUri(path: '$kAPIOrderCompleteURL/$orderId');
     final response = await _client.patch(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),

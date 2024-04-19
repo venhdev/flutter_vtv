@@ -71,7 +71,7 @@ class _CartPageState extends State<CartPage> {
                 },
                 child: state.cart.cartByShopDTOs.isNotEmpty
                     ? ListView.builder(
-                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1),
+                        padding: const EdgeInsets.only(bottom: 60),
                         itemCount: state.cart.cartByShopDTOs.length,
                         itemBuilder: (context, shopIndex) {
                           return CartsByShop(

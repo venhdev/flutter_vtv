@@ -103,7 +103,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
           return [];
         },
         (dataResp) {
-          final newProducts = dataResp.data.listItem;
+          final newProducts = dataResp.data.items;
           if (newProducts.isEmpty) {
             log('[LazyProductListBuilder] No more products');
             _message = 'Không còn sản phẩm nào';

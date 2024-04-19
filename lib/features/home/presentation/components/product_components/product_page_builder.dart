@@ -144,7 +144,7 @@ class ProductPageBuilder extends StatelessWidget {
               child: Text('Error: ${errorResp.message}', style: const TextStyle(color: Colors.red)),
             ),
             (dataResp) => Builder(builder: (context) {
-              if (dataResp.data.listItem.isEmpty) {
+              if (dataResp.data.items.isEmpty) {
                 return const Center(
                   child: Text(
                     'Không tìm thấy sản phẩm phù hợp',
@@ -158,7 +158,7 @@ class ProductPageBuilder extends StatelessWidget {
                     crossAxisCount: crossAxisCount,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: dataResp.data.listItem
+                    children: dataResp.data.items
                         .map(
                           (product) => ProductItem(
                             product: product,
