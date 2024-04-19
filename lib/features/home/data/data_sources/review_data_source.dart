@@ -7,9 +7,10 @@ import 'package:vtv_common/vtv_common.dart';
 import '../../../order/domain/dto/add_review_dto.dart';
 
 abstract class ReviewDataSource {
+  //# review-controller (guest)
   Future<DataResponse<ReviewResp>> getReviewProduct(int productId);
 
-  //# review-customer-controller
+  //# review-customer-controller (customer)
   Future<DataResponse<ReviewEntity>> addReview(ReviewParam params);
   Future<DataResponse<bool>> checkExistReview(String orderItemId);
   Future<SuccessResponse> deleteReview(String reviewId);

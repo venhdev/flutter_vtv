@@ -3,8 +3,9 @@ import 'package:vtv_common/vtv_common.dart';
 import '../../../order/domain/dto/add_review_dto.dart';
 
 abstract class ProductRepository {
-  //# other
+  //# product-controller
   FRespData<ProductDetailResp> getProductDetailById(int productId);
+  FRespData<int> getProductCountFavorite(int productId);
 
   //# product-suggestion-controller
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size);
@@ -41,6 +42,7 @@ abstract class ProductRepository {
 
   //# product-page-controller
   FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId);
+  FRespData<ProductPageResp> getProductPageByShop(int page, int size, int shopId);
 
   //# review-controller
   FRespData<ReviewResp> getReviewProduct(int productId);
@@ -58,4 +60,13 @@ abstract class ProductRepository {
   FRespData<ReviewEntity> getReviewDetail(String orderItemId);
   FResult<List<ReviewEntity>> getAllReviewDetailByOrder(OrderEntity order); // custom: get reviews of an order
 
+  //# shop-detail-controller
+  FRespData<int> countShopFollowed(int shopId);
+
+  //# followed-shop-controller
+  FRespData<FollowedShopEntity> followedShopAdd(int shopId);
+  FRespData<List<FollowedShopEntity>> followedShopList();
+  FRespData<FollowedShopEntity> followedShopDelete(int followedShopId);
+  /// return followedShopId if exist, null if not found
+  Future<int?> followedShopCheckExist(int shopId); // custom: get list then check contain
 }

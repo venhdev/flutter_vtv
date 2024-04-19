@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/purchase_order_item.dart';
+import 'order_detail_page.dart';
 
 const int _totalTab = 7;
 
@@ -65,7 +67,11 @@ Icon _getIcon(OrderStatus? status) {
   }
 }
 
-Widget _buildTabBarViewWithData({required int index, required List<OrderEntity> orders}) {
+Widget _buildTabBarViewWithData({
+  required int index,
+  required List<OrderEntity> orders,
+  required void Function(OrderDetailEntity completedOrder) setState,
+}) {
   if (orders.isEmpty) {
     return MessageScreen.error(
       _getEmptyMessage(_statusFromIndex(index)),
@@ -78,6 +84,7 @@ Widget _buildTabBarViewWithData({required int index, required List<OrderEntity> 
     itemBuilder: (context, index) {
       return PurchaseOrderItem(
         order: orders[index],
+        onReceived: setState,
       );
     },
   );
@@ -172,13 +179,18 @@ class _PurchasePageState extends State<PurchasePage> {
                       // child: _buildTabBarView(index: index),
                       // child: _buildTabBarViewWithData(index: index, orders: []),
                       child: _buildTabBarViewWithData(
-                          index: index,
-                          //? this [orders] is empty, so it will show empty message
-                          //? if [orders] is not empty, it will show the list of orders with the corresponding status
-                          orders: listMultiOrder[index].fold(
-                            (error) => [],
-                            (ok) => ok.data.orders,
-                          )),
+                        index: index,
+                        //? this [orders] is empty, so it will show empty message
+                        //? if [orders] is not empty, it will show the list of orders with the corresponding status
+                        orders: listMultiOrder[index].fold(
+                          (error) => [],
+                          (ok) => ok.data.orders,
+                        ),
+                        setState: (completedOrder) {
+                          setState(() {});
+                          context.go(OrderDetailPage.path, extra: completedOrder);
+                        },
+                      ),
                     ),
                   ),
                 ),

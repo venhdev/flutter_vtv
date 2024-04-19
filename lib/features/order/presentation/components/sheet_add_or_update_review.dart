@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -52,7 +51,7 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
         Align(
           alignment: Alignment.center,
           child: RatingBar.builder(
-            initialRating: 5,
+            initialRating: _param.rating.toDouble(),
             minRating: 1,
             direction: Axis.horizontal,
             itemCount: 5,
@@ -86,8 +85,9 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
               )
             : Text(_param.content),
 
+        // Image of review
         const SizedBox(height: 8),
-        Align(
+      if (widget.isAdding || _param.hasImage)  Align(
           alignment: Alignment.centerLeft,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -115,10 +115,12 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
                                 File(_param.imagePath!),
                                 fit: BoxFit.cover,
                               )
-                            : Image.network(
-                                _param.imagePath!,
-                                fit: BoxFit.cover,
-                              ),
+                            : _param.imagePath!.isNotEmpty
+                                ? Image.network(
+                                    _param.imagePath!,
+                                    fit: BoxFit.cover,
+                                  )
+                                : const SizedBox(),
                       )
                     : IconButton(
                         style: ButtonStyle(
@@ -141,7 +143,8 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
                         icon: const Icon(Icons.add_a_photo),
                       ),
               ),
-              if (_param.hasImage && widget.isAdding)...[
+              // btn delete image
+              if (_param.hasImage && widget.isAdding) ...[
                 const SizedBox(width: 8),
                 TextButton(
                   onPressed: () {
@@ -165,7 +168,7 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
         if (!widget.isAdding) ...[
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () async{
+            onPressed: () async {
               //> delete review
               final result = await sl<ProductRepository>().deleteReview(_param.reviewId!);
               result.fold(

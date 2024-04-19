@@ -44,7 +44,7 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrderDetailEntity> createByProductVariant(Map<int,int> mapParam) async {
+  FRespData<OrderDetailEntity> createByProductVariant(Map<int, int> mapParam) async {
     return handleDataResponseFromDataSource(
       dataCallback: () => _orderDataSource.createByProductVariant(mapParam),
     );
@@ -66,8 +66,8 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrderDetailEntity> getOrderCancel(String orderId) async {
-    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getOrderCancel(orderId));
+  FRespData<OrderDetailEntity> cancelOrder(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.cancelOrder(orderId));
   }
 
   @override
@@ -88,5 +88,10 @@ class OrderRepositoryImpl extends OrderRepository {
     } catch (e) {
       return Left(UnexpectedError(message: e.toString()));
     }
+  }
+
+  @override
+  FRespData<OrderDetailEntity> completeOrder(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.completeOrder(orderId));
   }
 }

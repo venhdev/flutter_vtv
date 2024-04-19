@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http show Client;
+import 'package:dio/dio.dart' as dio;
 import 'package:vtv_common/vtv_common.dart';
 
 //! Remote data source
@@ -27,15 +28,26 @@ abstract class ProductDataSource {
 
   //# product-controller
   Future<DataResponse<ProductDetailResp>> getProductDetailById(int productId);
+  Future<DataResponse<int>> getProductCountFavorite(int productId);
 
   //# product-page-controller
   Future<DataResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
+  Future<DataResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId);
+
+  //# shop-detail-controller
+  Future<DataResponse<int>> countShopFollowed(int shopId);
+
+  //# followed-shop-controller
+  Future<DataResponse<FollowedShopEntity>> followedShopAdd(int shopId);
+  Future<DataResponse<List<FollowedShopEntity>>> followedShopList();
+  Future<SuccessResponse> followedShopDelete(int followedShopId);
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
-  ProductDataSourceImpl(this._client, this._secureStorageHelper);
+  ProductDataSourceImpl(this._client, this._secureStorageHelper, this._dio);
 
   final http.Client _client;
+  final dio.Dio _dio;
   final SecureStorageHelper _secureStorageHelper;
 
   @override
@@ -239,6 +251,128 @@ class ProductDataSourceImpl implements ProductDataSource {
       response,
       url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
+    );
+  }
+
+  @override
+  Future<DataResponse<int>> getProductCountFavorite(int productId) async {
+    final url = baseUri(path: '$kAPIProductCountFavoriteURL/$productId');
+
+    final response = await _dio.getUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(),
+      ),
+    );
+
+    return handleDioResponseWithData<int, int>(
+      response,
+      url,
+      (count) => count,
+    );
+  }
+
+  @override
+  Future<DataResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId) async {
+    final url = baseUri(
+      path: '$kAPIProductPageShopURL/$shopId',
+      queryParameters: {
+        'page': page,
+        'size': size,
+      }.map((key, value) => MapEntry(key, value.toString())),
+    );
+
+    final response = await _dio.getUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(),
+      ),
+    );
+
+    return handleDioResponseWithData<ProductPageResp, Map<String, dynamic>>(
+      response,
+      url,
+      (jsonMap) => ProductPageResp.fromMap(jsonMap),
+    );
+  }
+
+  @override
+  Future<DataResponse<int>> countShopFollowed(int shopId) async {
+    final url = baseUri(path: '$kAPIShopDetailCountFollowedURL/$shopId');
+    final response = await _dio.getUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(
+          accessToken: await _secureStorageHelper.accessToken, // REVIEW why need accessToken here?
+        ),
+      ),
+    );
+
+    return handleDioResponseWithData<int, int>(
+      response,
+      url,
+      (count) => count,
+    );
+  }
+
+  @override
+  Future<DataResponse<FollowedShopEntity>> followedShopAdd(int shopId) async {
+    final url = baseUri(
+      path: kAPIFollowedShopAddURL,
+      queryParameters: {'shopId': shopId.toString()},
+    );
+
+    final response = await _dio.postUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      ),
+    );
+
+    return handleDioResponseWithData<FollowedShopEntity, Map<String, dynamic>>(
+      response,
+      url,
+      (jsonMap) => FollowedShopEntity.fromMap(jsonMap['followedShopDTO']),
+    );
+  }
+
+  @override
+  Future<SuccessResponse> followedShopDelete(int followedShopId) async {
+    final url = baseUri(path: '$kAPIFollowedShopDeleteURL/$followedShopId');
+
+    final response = await _dio.deleteUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      ),
+    );
+
+    return handleDioResponseWithData<FollowedShopEntity, Map<String, dynamic>>(
+      response,
+      url,
+      (jsonMap) => FollowedShopEntity.fromMap(jsonMap['followedShopDTO']),
+    );
+  }
+
+  @override
+  Future<DataResponse<List<FollowedShopEntity>>> followedShopList() async {
+    final url = baseUri(path: kAPIFollowedShopListURL);
+
+    final response = await _dio.getUri(
+      url,
+      options: dio.Options(
+        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      ),
+    );
+
+    return handleDioResponseWithData<List<FollowedShopEntity>, Map<String, dynamic>>(
+      response,
+      url,
+      (jsonList) => (jsonList['followedShopDTOs'] as List)
+          .map(
+            (jsonMap) => FollowedShopEntity.fromMap(jsonMap),
+          )
+          .toList(),
     );
   }
 }

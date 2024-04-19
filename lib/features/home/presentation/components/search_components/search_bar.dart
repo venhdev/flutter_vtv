@@ -6,12 +6,14 @@ class SearchBarComponent extends StatefulWidget {
     this.clearOnSubmit = false,
     this.controller,
     required this.onSubmitted,
+    this.hintText,
   });
 
   // final String? keywords;
   final bool clearOnSubmit;
   final void Function(String text)? onSubmitted;
   final TextEditingController? controller;
+  final String? hintText;
 
   @override
   State<SearchBarComponent> createState() => _SearchBarComponentState();
@@ -52,9 +54,9 @@ class _SearchBarComponentState extends State<SearchBarComponent> {
                   Expanded(
                     child: TextField(
                       controller: searchController,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                        hintText: 'Tìm kiếm sản phẩm',
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        hintText: widget.hintText ?? 'Tìm kiếm sản phẩm',
                         border: InputBorder.none,
                       ),
                       onSubmitted: (value) {

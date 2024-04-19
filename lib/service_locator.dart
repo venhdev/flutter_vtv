@@ -93,7 +93,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl()));
 
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
-  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
   sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl(), sl()));
   sl.registerSingleton<NotificationDataSource>(NotificationDataSourceImpl(sl(), sl()));

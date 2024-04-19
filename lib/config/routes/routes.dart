@@ -13,7 +13,9 @@ import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/presentation/pages/favorite_product_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/product_detail_page.dart';
+import '../../features/home/presentation/pages/product_review_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
+import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
 import '../../features/order/presentation/pages/order_detail_page.dart';
@@ -74,6 +76,10 @@ class AppRoutes {
     extraCodec: const MyExtraCodec(),
     initialLocation: '/home',
     routes: <RouteBase>[
+      GoRoute(
+        path: '/',
+        redirect: (context, state) => '/home',
+      ),
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
           // Return the widget that implements the custom shell (in this case
@@ -96,7 +102,7 @@ class AppRoutes {
                 },
                 routes: [
                   GoRoute(
-                    path: ProductDetailPage.routeName, // 'home/product'
+                    path: ProductDetailPage.routeName, // '/home/product'
                     name: ProductDetailPage.routeName, // product
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (context, state) {
@@ -105,6 +111,31 @@ class AppRoutes {
                         return ProductDetailPage(productDetail: extraData);
                       } else {
                         return ProductDetailPage(productId: extraData as int);
+                      }
+                    },
+                    routes: [
+                      GoRoute(
+                        path: ProductReviewPage.routeName,
+                        name: ProductReviewPage.routeName,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final productId = state.extra as int;
+                          return ProductReviewPage(productId: productId);
+                        },
+                      )
+                    ],
+                  ),
+                  GoRoute(
+                    path: '${ShopPage.routeName}/:shopId', // '/home/shop/:shopId'
+                    name: ShopPage.routeName, // search
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) {
+                      // final String keywords = state.extra as String;
+                      final shopId = state.pathParameters['shopId'];
+                      if (shopId != null) {
+                        return ShopPage(shopId: int.parse(shopId));
+                      } else {
+                        return MessageScreen.error('Không tìm thấy cửa hàng');
                       }
                     },
                   ),
