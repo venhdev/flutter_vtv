@@ -2,9 +2,9 @@ import 'dart:developer';
 import 'dart:math' show Random;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../service_locator.dart';
-import 'local_notification_manager.dart';
 
 // foreground message handler
 void _foregroundMessageHandler(RemoteMessage message) {
@@ -76,7 +76,7 @@ class FirebaseCloudMessagingManager {
 }
 
 void handleShowPushNotification(RemoteMessage message) {
-  sl<LocalNotificationManager>().showNotification(
+  sl<LocalNotificationUtils>().showNotification(
     id: Random().nextInt(1000),
     title: message.notification?.title ?? 'No title',
     body: message.notification?.body ?? 'No body',

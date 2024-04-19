@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/features/profile/presentation/pages/add_address_page.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
-import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import 'address_summary.dart';
 
@@ -12,7 +12,7 @@ class DialogChooseAddress extends StatefulWidget {
     required this.onAddressChanged,
   });
 
-  final void Function(AddressEntity) onAddressChanged;
+  final void Function(AddressEntity address) onAddressChanged;
 
   @override
   State<DialogChooseAddress> createState() => _DialogChooseAddressState();
@@ -34,11 +34,11 @@ class _DialogChooseAddressState extends State<DialogChooseAddress> {
                 (ok) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(
-                    ok.data.length,
+                    ok.data!.length,
                     (index) => AddressSummary(
-                      address: ok.data[index],
+                      address: ok.data![index],
                       onTap: () {
-                        widget.onAddressChanged(ok.data[index]);
+                        widget.onAddressChanged(ok.data![index]);
                         Navigator.pop(context);
                       },
                       suffixIcon: null,
@@ -66,7 +66,7 @@ class _DialogChooseAddressState extends State<DialogChooseAddress> {
           onPressed: () async {
             final newAddress = await Navigator.of(context).push<AddressEntity>(
               MaterialPageRoute(
-                builder: (context) => const AddAddressPage(),
+                builder: (context) => const AddOrUpdateAddressPage(),
               ),
             );
 

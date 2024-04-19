@@ -1,16 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/core/presentation/components/custom_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/helpers.dart';
 import '../../../../service_locator.dart';
 import '../../../order/domain/repository/order_repository.dart';
 import '../../../order/presentation/pages/checkout_page.dart';
-import '../../../profile/domain/entities/address_dto.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/address_page.dart';
 import '../bloc/cart_bloc.dart';
@@ -35,7 +31,7 @@ class _CartPageState extends State<CartPage> {
       setState(() {
         _defaultAddress = respEither.fold(
           (_) => null,
-          (ok) => ok.data.firstWhere((element) => element.status == 'ACTIVE'),
+          (ok) => ok.data!.firstWhere((element) => element.status == 'ACTIVE'),
         );
       });
     });
@@ -62,16 +58,6 @@ class _CartPageState extends State<CartPage> {
                     floating: true,
                     backgroundColor: Colors.transparent,
                     bottom: _buildAddress(context),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          // GoRouter.of(context).go(AddressPage.path);
-                          // show current go router path
-                          log(GoRouterState.of(context).uri.toString());
-                        },
-                        icon: const Icon(Icons.location_history),
-                      ),
-                    ],
                   ),
                 ];
               },
@@ -85,14 +71,11 @@ class _CartPageState extends State<CartPage> {
                 },
                 child: state.cart.cartByShopDTOs.isNotEmpty
                     ? ListView.builder(
-                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1),
+                        padding: const EdgeInsets.only(bottom: 60),
                         itemCount: state.cart.cartByShopDTOs.length,
                         itemBuilder: (context, shopIndex) {
                           return CartsByShop(
                             state.cart.cartByShopDTOs[shopIndex],
-                            // onSelected: (cartId) {
-                            //   setState(() {});
-                            // },
                             onUpdateCartCallback: (cartId, quantity, cartIndex) {
                               context.read<CartBloc>().add(UpdateCart(
                                     cartId: cartId,
@@ -187,7 +170,7 @@ class _CartPageState extends State<CartPage> {
                                 child: Text('Tổng cộng:'),
                               ),
                               Text(
-                                formatCurrency(ok.data.order.totalPrice),
+                                StringHelper.formatCurrency(ok.data!.order.totalPrice),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Padding(
@@ -197,7 +180,7 @@ class _CartPageState extends State<CartPage> {
                                     backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                                   ),
                                   onPressed: () {
-                                    GoRouter.of(context).go(CheckoutPage.path, extra: ok.data.order);
+                                    GoRouter.of(context).go(CheckoutPage.path, extra: ok.data!.order);
                                   },
                                   child: const Text('Thanh toán'),
                                 ),
@@ -237,7 +220,7 @@ class _CartPageState extends State<CartPage> {
                 return respEither.fold(
                   (error) => MessageScreen.error(error.toString()),
                   (ok) {
-                    if (ok.data.isEmpty) {
+                    if (ok.data!.isEmpty) {
                       return SizedBox(
                         height: 120,
                         child: Center(
@@ -258,14 +241,14 @@ class _CartPageState extends State<CartPage> {
                         ),
                       );
                     }
-                    final defaultAddress = ok.data.firstWhere((element) => element.status == 'ACTIVE');
+                    final defaultAddress = ok.data!.firstWhere((element) => element.status == 'ACTIVE');
                     return AddressSummary(
                       address: defaultAddress,
                       onTap: () async {
                         // GoRouter.of(context).go(AddressPage.path);
                         final isChangeSuccess = await Navigator.of(context).push<bool>(
                           MaterialPageRoute(
-                            builder: (context) => const AddressPage(),
+                            builder: (context) => const AddressPage(willPopOnChanged: true),
                           ),
                         );
 

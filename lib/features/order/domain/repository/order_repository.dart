@@ -1,30 +1,34 @@
-import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
-
-import '../../../../core/constants/typedef.dart';
-import '../../../cart/domain/dto/order_resp.dart';
-import '../dto/place_order_with_variant_param.dart';
-import '../entities/voucher_entity.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class OrderRepository {
-  //! Create Temp Order
-  //* With Cart
-  FRespData<OrderResp> createOrderByCartIds(List<String> cartIds);
-  FRespData<OrderResp> createUpdateWithCart(PlaceOrderWithCartParam params); // Use to change order status (in checkout page)
-  //* With Product Variant
-  FRespData<OrderResp> createByProductVariant(int productVariantId, int quantity);
-  FRespData<OrderResp> createUpdateWithVariant(PlaceOrderWithVariantParam params);
+  //! -------------order-controller-------------
+  //* Create Temp Order With Cart
+  FRespData<OrderDetailEntity> createOrderByCartIds(List<String> cartIds);
+  FRespData<OrderDetailEntity> createUpdateWithCart(PlaceOrderWithCartParam params);
+  //* Create Temp Order With Product Variant
+  FRespData<OrderDetailEntity> createByProductVariant(Map<int, int> mapParam); //int productVariantId, int quantity
+  FRespData<OrderDetailEntity> createUpdateWithVariant(PlaceOrderWithVariantParam params);
 
-  //! Place Order
-  FRespData<OrderResp> placeOrderWithCart(PlaceOrderWithCartParam params);
-  FRespData<OrderResp> placeOrderWithVariant(PlaceOrderWithVariantParam params);
+  //# Place Order
+  FRespData<OrderDetailEntity> placeOrderWithCart(PlaceOrderWithCartParam params);
+  FRespData<OrderDetailEntity> placeOrderWithVariant(PlaceOrderWithVariantParam params);
+
+  //# Purchase - Manage orders
+  /// Get all orders
+  FRespData<MultiOrderEntity> getListOrders();
+
+  /// Get orders by status
+  /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
+  FRespData<MultiOrderEntity> getListOrdersByStatus(String status);
+  FRespData<MultiOrderEntity>
+      getListOrdersByStatusProcessingAndPickupPending(); //custom status PROCESSING + PICKUP_PENDING
+
+  /// Get order detail by orderId
+  FRespData<OrderDetailEntity> getOrderDetail(String orderId);
+  FRespData<OrderDetailEntity> cancelOrder(String orderId);
+  FRespData<OrderDetailEntity> completeOrder(String orderId);
+  //! -------------order-controller-------------
 
   //! Voucher
   FRespData<List<VoucherEntity>> voucherListAll();
-
-  //! Purchase - Manage orders
-  /// Get all orders
-  FRespData<OrdersResp> getListOrders();
-  /// Get orders by status
-  /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
-  FRespData<OrdersResp> getListOrdersByStatus(String status);
 }

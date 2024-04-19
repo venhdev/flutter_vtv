@@ -1,5 +1,4 @@
-import '../../../../core/constants/typedef.dart';
-import '../dto/product_page_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class SearchProductRepository {
   /// Search keyword + sort + price range

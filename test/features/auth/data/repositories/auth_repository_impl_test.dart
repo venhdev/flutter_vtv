@@ -1,11 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/core/error/exceptions.dart';
-import 'package:flutter_vtv/core/error/failures.dart';
-import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:mockito/mockito.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 import '../../../../helpers/test_helper.mocks.dart';
@@ -34,7 +31,7 @@ void main() {
       when(mockAuthDataSource.loginWithUsernameAndPassword(
         tUsername,
         tPassword,
-      )).thenAnswer((_) async => DataResponse(tAuthModel));
+      )).thenAnswer((_) async => SuccessResponse(data: tAuthModel));
 
       // when(mockConnectivity.checkConnectivity()).thenAnswer((_) async => ConnectivityResult.wifi);
 
@@ -47,7 +44,7 @@ void main() {
       // Assert
       // --verify something should(not) happen/call
       // --expect something equals, isA, throwsA
-      expect(result, equals(Right(DataResponse(tAuthEntity))));
+      expect(result, equals(Right(SuccessResponse(data: tAuthEntity))));
     });
     test('should return [void] when cache success', () async {
       // Arrange (setup @mocks)
@@ -78,7 +75,8 @@ void main() {
     });
     test('should return [UnexpectedFailure] when retrieving data unsuccessfully', () async {
       // Arrange (setup @mocks)
-      when(mockSecureStorageHelper.readAuth()).thenThrow(CacheException(message: 'Không có dữ liệu người dùng được lưu!'));
+      when(mockSecureStorageHelper.readAuth())
+          .thenThrow(CacheException(message: 'Không có dữ liệu người dùng được lưu!'));
 
       // Act
       final result = await authRepositoryImpl.retrieveAuth();

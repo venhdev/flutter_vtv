@@ -1,9 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/core/error/failures.dart';
-import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/domain/usecase/check_token.dart';
 import 'package:mockito/mockito.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../helpers/test_helper.mocks.dart';
 
@@ -19,7 +18,7 @@ void main() {
   test('should return new token when get refresh token success', () async {
     // Arrange (setup @mocks)
     when(mockAuthRepository.isExpiredToken(any)).thenAnswer((_) async => const Right(true));
-    when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right(DataResponse('new_token')));
+    when(mockAuthRepository.getNewAccessToken()).thenAnswer((_) async => const Right(SuccessResponse(data:'new_token')));
     // Act
 
     final result = await checkTokenUC('any');

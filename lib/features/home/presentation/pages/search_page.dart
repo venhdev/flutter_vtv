@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/core/constants/enum.dart';
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/features/home/domain/dto/product_page_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/search_product_repository.dart';
-import '../components/product_components/product_list_builder.dart';
+import '../components/product_components/product_page_builder.dart';
 import '../components/search_components/btn_filter.dart';
 
 class SearchPage extends StatefulWidget {
@@ -58,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
       //   ),
       //   actions: [
       //     SizedBox(
-      //       width: MediaQuery.of(context).size.width * 0.7,
+      //       width: MediaQuery.of(context).size.width * 0.7, // DO NOT use in build body
       //       child: SearchBarComponent(
       //         controller: searchController,
       //         onSubmitted: (text) => {
@@ -75,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: buildAppBar(
         context,
         searchController: searchController,
-        onSubmittedCallback: (text) {
+        onSearchSubmitted: (text) {
           setState(() {
             currentSearchText = text;
             currentPage = 1; // Reset to the first page when search text changes
@@ -125,7 +123,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
           ),
           const SizedBox(height: 8),
-          ProductListBuilder(
+          ProductPageBuilder(
             future: searchMethod(),
             keywords: currentSearchText,
             crossAxisCount: 2,

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_vtv/core/presentation/components/custom_dialogs.dart';
+import 'package:provider/provider.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/helpers/helpers.dart';
-import '../../../../core/presentation/components/image_cacheable.dart';
-import '../../domain/entities/cart_entity.dart';
+import '../../../home/presentation/pages/product_detail_page.dart';
 import '../bloc/cart_bloc.dart';
 
 class CartItem extends StatelessWidget {
@@ -27,104 +26,118 @@ class CartItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                // checkbox
-                Checkbox(
-                  value: context.read<CartBloc>().state.selectedCartIds.contains(cart.cartId),
-                  onChanged: (value) {
-                    if (value!) {
-                      context.read<CartBloc>().add(SelectCart(cart.cartId));
-                    } else {
-                      context.read<CartBloc>().add(UnSelectCart(cart.cartId));
-                    }
-                  },
-                ),
-                // product info (image, name, price, quantity, total price, delete button)
-                ImageCacheable(
-                  cart.productVariant.image.isNotEmpty
-                      ? cart.productVariant.image
-                      : cart.productVariant.productImage,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-              ],
-            ),
+            // checkbox + image
+            _buildCheckBoxAndImage(context),
             const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    cart.productName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(formatCurrency(cart.productVariant.price),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () async {
-                          if (cart.quantity == 1) {
-                            final bool? isConfirm = await showMyDialogToConfirm(
-                              context: context,
-                              title: 'Xóa khỏi giỏ hàng',
-                              content: 'Hành động này không thể hoàn tác',
-                              confirmText: 'Xóa',
-                              dismissText: 'Hủy',
-                            );
-                            if (isConfirm ?? false) {
-                              onUpdateCartCallback(cart.cartId, -1);
-                            }
-                          } else {
-                            onUpdateCartCallback(cart.cartId, -1);
-                          }
-                          // context.read<CartBloc>().add(UpdateCart(cart.cartId, -1));
-                          // sl<CartRepository>().updateCart(
-                          //   widget.cart.cartId,
-                          //   -1,
-                          // );
-                        },
-                      ),
-                      Text(cart.quantity.toString()),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          onUpdateCartCallback(cart.cartId, 1);
-                          // context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, 1));
-                          // sl<CartRepository>().updateCart(
-                          //   widget.cart.cartId,
-                          //   1,
-                          // );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // product info (name, price, quantity)
+            _buildProductInfo(context),
           ],
         ),
       ),
     );
-    // return ListTile(
-    //   title: Text(widget.cartByShop.carts[cartIndex].productName),
-    //   subtitle: Text(widget.cartByShop.carts[cartIndex].quantity.toString()),
-    //   trailing: IconButton(
-    //     icon: const Icon(Icons.delete),
-    //     onPressed: () {},
-    //   ),
-    // );
+  }
+
+  Expanded _buildProductInfo(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            cart.productName,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(StringHelper.formatCurrency(cart.productVariant.price),
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.orange,
+                fontWeight: FontWeight.bold,
+              )),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: () async {
+                  if (cart.quantity == 1) {
+                    final bool? isConfirm = await showDialogToConfirm(
+                      context: context,
+                      title: 'Xóa khỏi giỏ hàng',
+                      content: 'Hành động này không thể hoàn tác',
+                      confirmText: 'Xóa',
+                      dismissText: 'Hủy',
+                    );
+                    if (isConfirm ?? false) {
+                      onUpdateCartCallback(cart.cartId, -1);
+                    }
+                  } else {
+                    onUpdateCartCallback(cart.cartId, -1);
+                  }
+                  // context.read<CartBloc>().add(UpdateCart(cart.cartId, -1));
+                  // sl<CartRepository>().updateCart(
+                  //   widget.cart.cartId,
+                  //   -1,
+                  // );
+                },
+              ),
+              Text(cart.quantity.toString()),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  onUpdateCartCallback(cart.cartId, 1);
+                  // context.read<CartBloc>().add(UpdateCart(widget.cart.cartId, 1));
+                  // sl<CartRepository>().updateCart(
+                  //   widget.cart.cartId,
+                  //   1,
+                  // );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Row _buildCheckBoxAndImage(BuildContext context) {
+    return Row(
+      children: [
+        // checkbox
+        Checkbox(
+          value: context.read<CartBloc>().state.selectedCartIds.contains(cart.cartId),
+          onChanged: (value) {
+            if (value!) {
+              context.read<CartBloc>().add(SelectCart(cart.cartId));
+            } else {
+              context.read<CartBloc>().add(UnSelectCart(cart.cartId));
+            }
+          },
+        ),
+        // image of product cart item
+        GestureDetector(
+          onTap: () async {
+            //_TODO navigate to product detail
+            // Provider.of<AppState>(context, listen: false).hideBottomNav();
+            // context.pop();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return ProductDetailPage(productId: cart.productId);
+                },
+              ),
+            );
+          },
+          child: ImageCacheable(
+            cart.productVariant.image.isNotEmpty ? cart.productVariant.image : cart.productVariant.productImage,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ],
+    );
   }
 
   ActionPane _slideEnd() {

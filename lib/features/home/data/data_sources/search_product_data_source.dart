@@ -1,14 +1,10 @@
 import 'package:http/http.dart' as http show Client;
-import '../../../../core/network/base_response.dart';
-import '../../../../core/constants/api.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/product_page_resp.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 abstract class SearchProductDataSource {
-  Future<DataResponse<ProductPageResp>> searchProductSort(
-      int page, int size, String keyword, String sort);
-
-  Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
+  //# search-product-controller
+  Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort);
+  Future<SuccessResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -24,25 +20,25 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   SearchProductDataSourceImpl(this._client);
 
   @override
-  Future<DataResponse<ProductPageResp>> searchProductSort(
-      int page, int size, String keyword, String sort) async {
+  Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
+    final url = baseUri(
+      path: kAPISearchProductSortURL,
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+        'search': keyword,
+        'sort': sort,
+      },
+    );
     // send request
     final response = await _client.get(
-      baseUri(
-        path: kAPISearchProductSortURL,
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-          'search': keyword,
-          'sort': sort,
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData(
       response,
-      kAPISearchProductSortURL,
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
@@ -53,7 +49,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     // // handle response
     // if (response.statusCode == 200) {
     //   final result = ProductDTO.fromMap(decodedBody);
-    //   return DataResponse<ProductDTO>(
+    //   return SuccessResponse<ProductDTO>(
     //     result,
     //     code: response.statusCode,
     //     message: decodedBody['message'],
@@ -68,7 +64,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
   }
 
   @override
-  Future<DataResponse<ProductPageResp>> searchProductPriceRangeSort(
+  Future<SuccessResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
     String keyword,
@@ -76,25 +72,26 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     int minPrice,
     int maxPrice,
   ) async {
+    final url = baseUri(
+      path: kAPIGetSearchProductPriceRangeSortURL,
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+        'search': keyword.toString(),
+        'sort': sort.toString(),
+        'minPrice': minPrice.toString(),
+        'maxPrice': maxPrice.toString(),
+      },
+    );
     // send request
     final response = await _client.get(
-      baseUri(
-        path: kAPIGetSearchProductPriceRangeSortURL,
-        queryParameters: {
-          'page': page.toString(),
-          'size': size.toString(),
-          'search': keyword.toString(),
-          'sort': sort.toString(),
-          'minPrice': minPrice.toString(),
-          'maxPrice': maxPrice.toString(),
-        },
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
     return handleResponseWithData(
       response,
-      kAPIGetSearchProductPriceRangeSortURL,
+      url,
       (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
@@ -105,7 +102,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     // // handle response
     // if (response.statusCode == 200) {
     //   final result = ProductDTO.fromMap(decodedBody);
-    //   return DataResponse<ProductDTO>(
+    //   return SuccessResponse<ProductDTO>(
     //     result,
     //     code: response.statusCode,
     //     message: decodedBody['message'],

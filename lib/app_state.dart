@@ -1,7 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-
-import 'core/helpers/shared_preferences_helper.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 class AppState extends ChangeNotifier {
   final SharedPreferencesHelper _prefHelper;
@@ -19,20 +18,47 @@ class AppState extends ChangeNotifier {
   Future<void> init() async {
     _isFirstRun = _prefHelper.isFirstRun;
     // hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
-    hasConnection = await _connectivity.checkConnectivity().then((connection) => connection.isNotEmpty);
+    hasConnection = await _connectivity.checkConnectivity().then((connection) {
+      return connection[0] != ConnectivityResult.none;
+    });
     subscribeConnection();
   }
 
+  //.---------------------Bottom Navigation Visibility-----------------------
+  bool _isBottomNavigationVisible = true;
+
+  bool get isBottomNavigationVisible => _isBottomNavigationVisible;
+
+  void hideBottomNav() {
+    if (_isBottomNavigationVisible == false) return;
+    _isBottomNavigationVisible = false;
+    notifyListeners();
+  }
+
+  void showBottomNav() {
+    if (_isBottomNavigationVisible == true) return;
+    _isBottomNavigationVisible = true;
+    notifyListeners();
+  }
+
+  void setBottomNavigationVisibility(bool isVisible) {
+    _isBottomNavigationVisible = isVisible;
+    notifyListeners();
+  }
+
+  //.---------------------Connectivity-----------------------
   Stream<List<ConnectivityResult>> get connectionStream => _connectivity.onConnectivityChanged;
 
   // subscribe to the connectivity stream
   void subscribeConnection() {
     _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> connection) {
-      hasConnection = connection.isNotEmpty;
+      hasConnection = connection[0] != ConnectivityResult.none;
       notifyListeners();
     });
   }
+  //.---------------------Connectivity-----------------------
 
+  //.---------------------First run-----------------------
   bool get isFirstRun => _isFirstRun;
 
   /// Sets the app as started. (Not the first run)
@@ -41,4 +67,5 @@ class AppState extends ChangeNotifier {
     await _prefHelper.setStarted(false);
     notifyListeners();
   }
+  //.---------------------First run-----------------------
 }

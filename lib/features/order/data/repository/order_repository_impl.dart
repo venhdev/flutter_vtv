@@ -1,9 +1,5 @@
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/core/network/response_handler.dart';
-import 'package:flutter_vtv/features/cart/domain/dto/order_resp.dart';
-import 'package:flutter_vtv/features/order/domain/dto/place_order_param.dart';
-import 'package:flutter_vtv/features/order/domain/dto/place_order_with_variant_param.dart';
-import 'package:flutter_vtv/features/order/domain/entities/voucher_entity.dart';
+import 'package:dartz/dartz.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../domain/repository/order_repository.dart';
 import '../data_sources/order_data_source.dart';
@@ -16,17 +12,17 @@ class OrderRepositoryImpl extends OrderRepository {
   final VoucherDataSource _voucherDataSource;
 
   @override
-  FRespData<OrderResp> createOrderByCartIds(List<String> cartIds) async {
+  FRespData<OrderDetailEntity> createOrderByCartIds(List<String> cartIds) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createByCartIds(cartIds));
   }
 
   @override
-  FRespData<OrderResp> createUpdateWithCart(PlaceOrderWithCartParam params) async {
+  FRespData<OrderDetailEntity> createUpdateWithCart(PlaceOrderWithCartParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createUpdateWithCart(params));
   }
 
   @override
-  FRespData<OrderResp> placeOrderWithCart(PlaceOrderWithCartParam params) async {
+  FRespData<OrderDetailEntity> placeOrderWithCart(PlaceOrderWithCartParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeOrderWithCart(params));
   }
 
@@ -36,31 +32,66 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrdersResp> getListOrders() async {
+  FRespData<MultiOrderEntity> getListOrders() async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getListOrders());
   }
 
   @override
-  FRespData<OrdersResp> getListOrdersByStatus(String status) async {
+  FRespData<MultiOrderEntity> getListOrdersByStatus(String status) async {
     return handleDataResponseFromDataSource(
       dataCallback: () => _orderDataSource.getListOrdersByStatus(status),
     );
   }
 
   @override
-  FRespData<OrderResp> createByProductVariant(int productVariantId, int quantity) async {
+  FRespData<OrderDetailEntity> createByProductVariant(Map<int, int> mapParam) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _orderDataSource.createByProductVariant(productVariantId, quantity),
+      dataCallback: () => _orderDataSource.createByProductVariant(mapParam),
     );
   }
 
   @override
-  FRespData<OrderResp> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
+  FRespData<OrderDetailEntity> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createUpdateWithVariant(params));
   }
 
   @override
-  FRespData<OrderResp> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
+  FRespData<OrderDetailEntity> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeOrderWithVariant(params));
+  }
+
+  @override
+  FRespData<OrderDetailEntity> getOrderDetail(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.getOrderDetail(orderId));
+  }
+
+  @override
+  FRespData<OrderDetailEntity> cancelOrder(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.cancelOrder(orderId));
+  }
+
+  @override
+  FRespData<MultiOrderEntity> getListOrdersByStatusProcessingAndPickupPending() async {
+    //> Custom status PROCESSING + PICKUP_PENDING
+    try {
+      return Future.wait([
+        _orderDataSource.getListOrdersByStatus(OrderStatus.PROCESSING.name),
+        _orderDataSource.getListOrdersByStatus(OrderStatus.PICKUP_PENDING.name),
+      ]).then((value) {
+        final processing = value[0];
+        final pickupPending = value[1];
+        final MultiOrderEntity result = MultiOrderEntity(
+          orders: processing.data!.orders + pickupPending.data!.orders,
+        );
+        return Right(SuccessResponse<MultiOrderEntity>(data: result));
+      });
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  FRespData<OrderDetailEntity> completeOrder(String orderId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.completeOrder(orderId));
   }
 }

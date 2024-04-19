@@ -1,35 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.dart';
-import 'package:flutter_vtv/features/auth/data/models/user_info_model.dart';
 import 'package:http/http.dart' as http show Client;
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/api.dart';
-import '../../../../core/helpers/secure_storage_helper.dart';
-import '../../../../core/network/base_response.dart';
-import '../../../../core/network/response_handler.dart';
-import '../../domain/dto/register_params.dart';
-import '../models/auth_model.dart';
+import '../../../../core/constants/customer_apis.dart';
 
 // <https://pub.dev/packages/jwt_decoder>
 
 abstract class AuthDataSource {
   // ======================  Auth controller ======================
-  Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(
-      String username, String password);
+  Future<SuccessResponse<AuthEntity>> loginWithUsernameAndPassword(String username, String password);
   Future<SuccessResponse> register(RegisterParams registerDTO);
-  Future<SuccessResponse> logoutAndRevokeRefreshToken(
-      String refreshToken); // use for logout
-  Future<DataResponse<String>> getNewAccessToken(
-      String refreshToken); // handing expired token
+  Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken); // use for logout
+  Future<SuccessResponse<String>> getNewAccessToken(String refreshToken); // handing expired token
   // ======================  Auth controller ======================
 
   // ======================  Customer controller ======================
   // Get user's profile
-  Future<DataResponse<AuthModel>> getUserProfile();
+  Future<SuccessResponse<AuthEntity>> getUserProfile();
   // Edit user's profile
-  Future<DataResponse<UserInfoModel>> editUserProfile(
-      {required UserInfoModel newInfo});
+  Future<SuccessResponse<UserInfoEntity>> editUserProfile({required UserInfoEntity newInfo});
 
   /// Request send OTP to the user's email
   Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username);
@@ -56,8 +47,7 @@ class AuthDataSourceImpl implements AuthDataSource {
   AuthDataSourceImpl(this._client, this._fcmManager, this._secureStorageHelper);
 
   @override
-  Future<DataResponse<AuthModel>> loginWithUsernameAndPassword(
-      String username, String password) async {
+  Future<SuccessResponse<AuthEntity>> loginWithUsernameAndPassword(String username, String password) async {
     final fcmToken = _fcmManager.currentFCMToken;
 
     final body = {
@@ -65,10 +55,11 @@ class AuthDataSourceImpl implements AuthDataSource {
       'password': password,
       'fcmToken': fcmToken,
     };
+    final url = baseUri(path: kAPIAuthLoginURL);
 
     // send request
     final response = await _client.post(
-      baseUri(path: kAPIAuthLoginURL),
+      url,
       headers: baseHttpHeaders(),
       body: jsonEncode(body),
     );
@@ -79,8 +70,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = DataResponse<AuthModel>(
-        AuthModel.fromJsonMap(decodedBody),
+      final result = SuccessResponse<AuthEntity>(
+        data: AuthEntity.fromMap(decodedBody),
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -89,32 +80,35 @@ class AuthDataSourceImpl implements AuthDataSource {
       throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
-        url: kAPIAuthLoginURL,
+        url: url,
       );
     }
   }
 
   @override
-  Future<SuccessResponse> logoutAndRevokeRefreshToken(
-      String refreshToken) async {
+  Future<SuccessResponse> logoutAndRevokeRefreshToken(String refreshToken) async {
     // body contains fcmToken
     final body = {
       'fcmToken': _fcmManager.currentFCMToken,
     };
+
+    final url = baseUri(path: kAPIAuthLogoutURL);
     // send request
     final response = await _client.post(
-      baseUri(path: kAPIAuthLogoutURL),
+      url,
       headers: baseHttpHeaders(refreshToken: refreshToken),
       body: jsonEncode(body),
     );
-    return handleResponseNoData(response, kAPIAuthLogoutURL);
+    return handleResponseNoData(response, url);
   }
 
   @override
-  Future<DataResponse<String>> getNewAccessToken(String refreshToken) async {
+  Future<SuccessResponse<String>> getNewAccessToken(String refreshToken) async {
     // send request
+    final url = baseUri(path: kAPIAuthRefreshTokenURL);
+
     final response = await _client.post(
-      baseUri(path: kAPIAuthRefreshTokenURL),
+      url,
       headers: baseHttpHeaders(refreshToken: refreshToken),
     );
 
@@ -124,8 +118,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      return DataResponse(
-        decodedBody['accessToken'],
+      return SuccessResponse(
+        data: decodedBody['accessToken'],
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -133,7 +127,7 @@ class AuthDataSourceImpl implements AuthDataSource {
       throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
-        url: kAPIAuthRegisterURL,
+        url: url,
       );
     }
   }
@@ -142,27 +136,30 @@ class AuthDataSourceImpl implements AuthDataSource {
   Future<SuccessResponse> register(RegisterParams registerParams) async {
     final body = registerParams.toJson();
 
+    final url = baseUri(path: kAPIAuthRegisterURL);
+
     // send request
     final response = await _client.post(
-      baseUri(path: kAPIAuthRegisterURL),
+      url,
       headers: baseHttpHeaders(),
       body: body,
     );
-    return handleResponseNoData(response, kAPIAuthRegisterURL);
+    return handleResponseNoData(response, url);
   }
 
   @override
-  Future<SuccessResponse> sendOTPForResetPasswordViaUsername(
-      String username) async {
+  Future<SuccessResponse> sendOTPForResetPasswordViaUsername(String username) async {
+    final url = baseUri(
+      path: kAPICustomerForgotPasswordURL,
+      queryParameters: {'username': username},
+    );
+
     final response = await _client.get(
-      baseUri(
-        path: kAPICustomerForgotPasswordURL,
-        queryParameters: {'username': username},
-      ),
+      url,
       headers: baseHttpHeaders(),
     );
 
-    return handleResponseNoData(response, kAPICustomerForgotPasswordURL);
+    return handleResponseNoData(response, url);
   }
 
   @override
@@ -177,14 +174,16 @@ class AuthDataSourceImpl implements AuthDataSource {
       'newPassword': newPassword,
     };
 
+    final url = baseUri(path: kAPICustomerResetPasswordURL);
+
     // send request
     final response = await _client.patch(
-      baseUri(path: kAPICustomerResetPasswordURL),
+      url,
       headers: baseHttpHeaders(),
       body: jsonEncode(body),
     );
 
-    return handleResponseNoData(response, kAPICustomerResetPasswordURL);
+    return handleResponseNoData(response, url);
   }
 
   @override
@@ -199,25 +198,25 @@ class AuthDataSourceImpl implements AuthDataSource {
       'newPassword': newPassword,
     };
 
+    final url = baseUri(path: kAPICustomerChangePasswordURL);
+
     // send request
     final response = await _client.patch(
-      baseUri(path: kAPICustomerChangePasswordURL),
-      headers:
-          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: jsonEncode(body),
     );
 
-    return handleResponseNoData(response, kAPICustomerChangePasswordURL);
+    return handleResponseNoData(response, url);
   }
 
   @override
-  Future<DataResponse<UserInfoModel>> editUserProfile(
-      {required UserInfoModel newInfo}) async {
+  Future<SuccessResponse<UserInfoEntity>> editUserProfile({required UserInfoEntity newInfo}) async {
+    final url = baseUri(path: kAPICustomerProfileURL);
     // send request
     final response = await _client.put(
-      baseUri(path: kAPICustomerProfileURL),
-      headers:
-          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
       body: newInfo.toJson(),
     );
 
@@ -227,8 +226,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = DataResponse<UserInfoModel>(
-        UserInfoModel.fromMap(decodedBody['customerDTO']),
+      final result = SuccessResponse<UserInfoEntity>(
+        data: UserInfoEntity.fromMap(decodedBody['customerDTO']),
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -237,7 +236,7 @@ class AuthDataSourceImpl implements AuthDataSource {
       throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
-        url: kAPIAuthLoginURL,
+        url: url,
       );
     }
 
@@ -245,12 +244,12 @@ class AuthDataSourceImpl implements AuthDataSource {
   }
 
   @override
-  Future<DataResponse<AuthModel>> getUserProfile() async {
+  Future<SuccessResponse<AuthEntity>> getUserProfile() async {
+    final url = baseUri(path: kAPICustomerProfileURL);
     // send request
     final response = await _client.get(
-      baseUri(path: kAPICustomerProfileURL),
-      headers:
-          baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
     );
 
     // decode response using utf8
@@ -259,8 +258,8 @@ class AuthDataSourceImpl implements AuthDataSource {
 
     // handle response
     if (response.statusCode == 200) {
-      final result = DataResponse<AuthModel>(
-        AuthModel.fromJsonMap(decodedBody),
+      final result = SuccessResponse<AuthEntity>(
+        data: AuthEntity.fromMap(decodedBody),
         code: response.statusCode,
         message: decodedBody['message'],
       );
@@ -269,7 +268,7 @@ class AuthDataSourceImpl implements AuthDataSource {
       throwResponseException(
         code: response.statusCode,
         message: decodedBody['message'],
-        url: kAPICustomerProfileURL,
+        url: url,
       );
     }
   }

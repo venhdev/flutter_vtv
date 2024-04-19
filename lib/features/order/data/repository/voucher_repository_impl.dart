@@ -1,8 +1,6 @@
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/typedef.dart';
-import '../../../../core/network/response_handler.dart';
 import '../../domain/repository/voucher_repository.dart';
-import '../../domain/entities/voucher_entity.dart';
 import '../data_sources/voucher_data_source.dart';
 
 class VoucherRepositoryImpl extends VoucherRepository {

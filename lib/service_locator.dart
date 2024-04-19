@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -6,11 +7,11 @@ import 'package:flutter_vtv/features/home/data/data_sources/category_data_source
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import 'core/helpers/secure_storage_helper.dart';
-import 'core/helpers/shared_preferences_helper.dart';
+import 'config/dio/auth_interceptor.dart';
+import 'config/dio/error_interceptor.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
-import 'core/notification/local_notification_manager.dart';
 import 'features/auth/data/data_sources/auth_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
@@ -22,6 +23,10 @@ import 'features/cart/data/data_sources/cart_data_source.dart';
 import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
 import 'features/home/data/data_sources/local_product_data_source.dart';
+import 'features/home/data/data_sources/review_data_source.dart';
+import 'features/notification/data/data_sources/notification_data_source.dart';
+import 'features/notification/data/repository/notification_repository_impl.dart';
+import 'features/notification/domain/repository/notification_repository.dart';
 import 'features/order/domain/repository/voucher_repository.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
@@ -50,24 +55,48 @@ Future<void> initializeLocator() async {
 
   final fMessaging = FirebaseMessaging.instance;
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 3),
+      receiveTimeout: const Duration(seconds: 3),
+    ),
+  );
+  dio.interceptors.addAll(
+    [
+      // LogInterceptor(
+      //   // request: true,
+      //   // requestBody: true,
+      //   // responseBody: true,
+      //   // requestHeader: true,
+      //   // responseHeader: true,
+      //   // error: true,
+      // ),
+      AuthInterceptor(),
+      ErrorInterceptor(),
+      LogInterceptor(requestBody: true, responseBody: true)
+    ],
+  );
 
   sl.registerSingleton<http.Client>(http.Client());
+  sl.registerSingleton<Dio>(dio);
   sl.registerSingleton<Connectivity>(connectivity);
 
   //! Core - Helpers - Managers
   sl.registerSingleton<SharedPreferencesHelper>(SharedPreferencesHelper(sharedPreferences));
   sl.registerSingleton<SecureStorageHelper>(SecureStorageHelper(secureStorage));
 
-  sl.registerSingleton<LocalNotificationManager>(LocalNotificationManager(flutterLocalNotificationsPlugin));
+  sl.registerSingleton<LocalNotificationUtils>(LocalNotificationUtils(flutterLocalNotificationsPlugin));
   sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
-  sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl(), sl()));
 
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));
-  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<ProductDataSource>(ProductDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
+  sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<NotificationDataSource>(NotificationDataSourceImpl(sl(), sl()));
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl()));
@@ -79,9 +108,10 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
 
-  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl(), sl()));
+  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl(), sl(), sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
 
+  sl.registerSingleton<NotificationRepository>(NotificationRepositoryImpl(sl()));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
   sl.registerSingleton<OrderRepository>(OrderRepositoryImpl(sl(), sl()));
   sl.registerSingleton<VoucherRepository>(VoucherRepositoryImpl(sl()));

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/helpers/helpers.dart';
 import 'btn_filter.dart';
 import 'btn_dropdown_sort_types.dart';
 
@@ -68,24 +68,25 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Column(
-        children: [
-          const Text(
-            'Lọc',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const Text(
+              'Lọc',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const Divider(thickness: 0.5, color: Colors.grey),
-          _filterByPrice(),
-          _buildSortTypes(),
-          _btnApplyCancel(context),
-        ],
+            const Divider(thickness: 0.5, color: Colors.grey),
+            _filterByPrice(),
+            _buildSortTypes(),
+            _btnApplyOrCancel(context),
+          ],
+        ),
       ),
     );
   }
@@ -113,12 +114,12 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     );
   }
 
-  Expanded _btnApplyCancel(BuildContext context) {
+  Expanded _btnApplyOrCancel(BuildContext context) {
     return Expanded(
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             InkWell(
               onTap: () {
@@ -275,31 +276,36 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
             ),
           ],
         ),
-        _buildSuggestionFilterPrice(),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Từ: ${formatCurrency(_currentRangeValues.start.round())}'),
-            Text('Đến: ${formatCurrency(_currentRangeValues.end.round())}'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        RangeSlider(
-          values: _currentRangeValues,
-          min: _minRange,
-          max: _maxRange,
-          divisions: widget.divisions,
-          labels: RangeLabels(
-            formatCurrency(_currentRangeValues.start.round()),
-            formatCurrency(_currentRangeValues.end.round()),
+        if (_filterPriceRange)
+          Column(
+            children: [
+              _buildSuggestionFilterPrice(),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Từ: ${StringHelper.formatCurrency(_currentRangeValues.start.round())}'),
+                  Text('Đến: ${StringHelper.formatCurrency(_currentRangeValues.end.round())}'),
+                ],
+              ),
+              const SizedBox(height: 10),
+              RangeSlider(
+                values: _currentRangeValues,
+                min: _minRange,
+                max: _maxRange,
+                divisions: widget.divisions,
+                labels: RangeLabels(
+                  StringHelper.formatCurrency(_currentRangeValues.start.round()),
+                  StringHelper.formatCurrency(_currentRangeValues.end.round()),
+                ),
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _currentRangeValues = values;
+                  });
+                },
+              ),
+            ],
           ),
-          onChanged: (RangeValues values) {
-            setState(() {
-              _currentRangeValues = values;
-            });
-          },
-        ),
       ],
     );
   }

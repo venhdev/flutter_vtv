@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/presentation/components/custom_widgets.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import 'add_address_page.dart';
-import '../../domain/entities/address_dto.dart';
 import '../../domain/repository/profile_repository.dart';
 
 class AddressPage extends StatefulWidget {
-  const AddressPage({super.key});
+  const AddressPage({super.key, required this.willPopOnChanged});
 
   static const routeName = 'address';
   static const path = '/user/settings/address';
+
+  final bool willPopOnChanged;
 
   @override
   State<AddressPage> createState() => _AddressPageState();
@@ -43,7 +45,7 @@ class _AddressPageState extends State<AddressPage> {
                           return MessageScreen.error(error.toString());
                         },
                         (ok) {
-                          return _buildAddressList(ok.data);
+                          return _buildAddressList(ok.data!);
                         },
                       );
                     }
@@ -57,7 +59,7 @@ class _AddressPageState extends State<AddressPage> {
                 // GoRouter.of(context).goNamed(AddAddressPage.routeName);
                 final resultAddress = await Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const AddAddressPage(),
+                    builder: (context) => const AddOrUpdateAddressPage(),
                   ),
                 );
 
@@ -90,40 +92,42 @@ class _AddressPageState extends State<AddressPage> {
           padding: const EdgeInsets.all(4.0),
           child: Row(
             children: [
-              // Checkbox(
-              //   value: address.status == "ACTIVE",
-              //   onChanged: (value) async {
-              //     final respEither = await sl<ProfileRepository>().updateAddressStatus(address.addressId!);
-              //     respEither.fold(
-              //       (error) => Fluttertoast.showToast(msg: error.message!),
-              //       (ok) {
-              //         Fluttertoast.showToast(msg: ok.message!);
-              //         setState(() {});
-              //       },
-              //     );
-              //   },
-              // ),
-              Radio(
-                value: address.status == "ACTIVE",
-                groupValue: true,
-                onChanged: (value) async {
-                  final respEither = await sl<ProfileRepository>().updateAddressStatus(address.addressId);
-                  respEither.fold(
-                    (error) => Fluttertoast.showToast(msg: error.message!),
-                    (ok) {
-                      Fluttertoast.showToast(msg: ok.message!);
-                      // setState(() {});
-                      Navigator.of(context).pop(true);
+              Column(
+                children: [
+                  Radio(
+                    value: address.status == "ACTIVE",
+                    groupValue: true,
+                    onChanged: (value) async {
+                      final respEither = await sl<ProfileRepository>().updateAddressStatus(address.addressId);
+                      respEither.fold(
+                        (error) => Fluttertoast.showToast(msg: error.message!),
+                        (ok) {
+                          Fluttertoast.showToast(msg: ok.message!);
+                          if (widget.willPopOnChanged) {
+                            Navigator.of(context).pop(true);
+                          } else {
+                            setState(() {});
+                          }
+                        },
+                      );
                     },
-                  );
-                },
+                  ),
+                  if (address.status == "ACTIVE") const Text('Mặc\nđịnh', style: TextStyle(fontSize: 12)),
+                ],
               ),
               Expanded(
                 child: AddressSummary(
                   address: address,
                   suffixIcon: Icons.edit,
-                  onTap: () {
-                    // TODO edit address
+                  onTap: () async {
+                    final rs = await GoRouter.of(context).push<bool>(
+                      AddOrUpdateAddressPage.pathUpdate,
+                      extra: address,
+                    );
+
+                    if (rs == true) {
+                      setState(() {});
+                    }
                   },
                 ),
               ),

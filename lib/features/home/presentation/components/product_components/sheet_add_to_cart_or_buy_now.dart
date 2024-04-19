@@ -1,16 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../core/helpers/helpers.dart';
-import '../../../../../core/presentation/components/image_cacheable.dart';
-import '../../../../../core/presentation/pages/photo_view.dart';
 import '../../../../../service_locator.dart';
 import '../../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../../order/domain/repository/order_repository.dart';
 import '../../../../order/presentation/pages/checkout_page.dart';
-import '../../../domain/entities/product_entity.dart';
-import '../../../domain/entities/product_variant_entity.dart';
 
 class SheetAddToCartOrBuyNow extends StatefulWidget {
   const SheetAddToCartOrBuyNow({
@@ -29,23 +28,24 @@ class SheetAddToCartOrBuyNow extends StatefulWidget {
 class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
   ProductVariantEntity? _variant;
   int _quantity = 0;
+  final Map<String, String> _selectedAttributes = {};
 
   String priceString() {
     if (_variant != null) {
-      return formatCurrency(_variant!.price);
+      return StringHelper.formatCurrency(_variant!.price);
     }
     if (widget.product.cheapestPrice == widget.product.mostExpensivePrice) {
-      return formatCurrency(widget.product.cheapestPrice);
+      return StringHelper.formatCurrency(widget.product.cheapestPrice);
     }
-    return '${formatCurrency(widget.product.cheapestPrice)} - ${formatCurrency(widget.product.mostExpensivePrice)}';
+    return '${StringHelper.formatCurrency(widget.product.cheapestPrice)} - ${StringHelper.formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
-  void handleTapAddToCartOrBuyNow() async {
+  void handlePressedAddToCartOrBuyNow() async {
     // check if variant is selected
     if (_variant != null) {
       // ? create temp order and navigate to checkout page || else just add to cart
       if (widget.isBuyNow) {
-        final respEither = await sl<OrderRepository>().createByProductVariant(_variant!.productVariantId, _quantity);
+        final respEither = await sl<OrderRepository>().createByProductVariant({_variant!.productVariantId: _quantity});
 
         respEither.fold(
           (error) {
@@ -59,17 +59,21 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
           },
           (ok) {
             // context.go('${CheckoutPage.path}?isCreateWithCart=false', extra: ok.data.order);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CheckoutPage(
-                  isCreateWithCart: false,
-                  order: ok.data.order,
-                ),
-              ),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => CheckoutPage(
+            //       isCreateWithCart: false,
+            //       order: ok.data.order,
+            //     ),
+            //   ),
+            // );
 
-            
+            context.pop(); // pop out the bottom sheet
+            context.push(
+              Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
+              extra: ok.data!.order,
+            );
           },
         );
       } else {
@@ -79,168 +83,306 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
     }
   }
 
+  bool isValidVariant(ProductVariantEntity variant) {
+    for (var selectedAttributeName in _selectedAttributes.keys) {
+      final needCheck = variant.attributes.firstWhere((attribute) => attribute.name == selectedAttributeName);
+      if (needCheck.value != _selectedAttributes[selectedAttributeName]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  List<ProductVariantEntity> getValidVariants() {
+    final validVariants = <ProductVariantEntity>[];
+    //: check if all selected attributes are matched with the variant's attributes
+    if (_selectedAttributes.isEmpty) {
+      //> there is no selected attribute > return all variants where status is ACTIVE
+      return widget.product.productVariants.where((variant) => variant.status == Status.ACTIVE.name).toList();
+    } else {
+      final activeVariants = widget.product.productVariants
+          .where(
+            (variant) => variant.status == Status.ACTIVE.name,
+          )
+          .toList();
+
+      for (var variant in activeVariants) {
+        bool isValid = isValidVariant(variant);
+        if (isValid) {
+          // && !validVariants.contains(variant)
+          validVariants.add(variant);
+        }
+      }
+    }
+
+    return validVariants;
+  }
+
+  bool isValidAttribute(String attributeName, String valueName) {
+    for (var validVariant in getValidVariants()) {
+      for (var validAttribute in validVariant.attributes) {
+        if (validAttribute.name == attributeName && validAttribute.value == valueName) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  void Function(bool)? handleSelectAttribute(String attribute, String value) {
+    if (isValidAttribute(attribute, value)) {
+      return (selected) {
+        if (!selected) {
+          setState(() {
+            _selectedAttributes.remove(attribute);
+            checkCurrentVariant();
+          });
+        } else {
+          setState(() {
+            _selectedAttributes[attribute] = value;
+            checkCurrentVariant();
+          });
+        }
+      };
+    } else {
+      return null;
+    }
+  }
+
+  void checkCurrentVariant() {
+    final validVariants = getValidVariants();
+
+    log('validVariants length: ${validVariants.length}');
+    log('validVariants: ${validVariants.map((e) => e.sku).toList()}');
+
+    if (validVariants.length == 1) {
+      // check if all variant's attributes are matched with the selected attributes
+      if (validVariants.first.attributes.length == _selectedAttributes.length) {
+        _variant = validVariants.first;
+        _quantity = 1;
+      } else {
+        _variant = null;
+        _quantity = 0;
+      }
+    } else {
+      _variant = null;
+      _quantity = 0;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // _attributes = widget.product.getAllVariantAttributes;
+
+    checkCurrentVariant();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Image, price, quantity
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PhotoViewPage(
-                        imageUrl: _variant?.image.isNotEmpty ?? false ? _variant!.image : widget.product.image,
-                      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //# Image, price, quantity
+            _buildSummaryInfo(context),
+            const Divider(color: Colors.grey),
+
+            //# variant & attribute
+            const Text('Phân loại', style: TextStyle(fontWeight: FontWeight.bold)),
+            widget.product.hasAttribute ? _buildSelectableAttributes() : _buildSelectableVariants(),
+            const Divider(color: Colors.grey),
+
+            //# quantity selector
+            _buildEditQuantityBtn(),
+
+            // Add to cart button
+            _buildAddToCartOrBuyNowBtn(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddToCartOrBuyNowBtn() {
+    return BlocListener<CartBloc, CartState>(
+      listener: (context, state) {
+        if (state.message != null) {
+          Fluttertoast.showToast(msg: state.message!);
+        }
+      },
+      child: ElevatedButton(
+        // change backgroundColor
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
+        ),
+        onPressed: handlePressedAddToCartOrBuyNow,
+        child: Text(widget.isBuyNow ? 'Mua ngay' : 'Thêm vào giỏ'),
+      ),
+    );
+  }
+
+  Widget _buildEditQuantityBtn() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: () {
+            if (_quantity > 1) {
+              setState(() {
+                _quantity--;
+              });
+            }
+          },
+          icon: const Icon(Icons.remove),
+        ),
+        Text(
+          'Số lượng: ${_variant != null ? _quantity : 0}',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            if (_variant != null) {
+              if (_quantity < _variant!.quantity) {
+                setState(() {
+                  _quantity++;
+                });
+              }
+            }
+          },
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectableAttributes() {
+    return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        for (var attribute in widget.product.getAllVariantAttributes.keys)
+          ListTile(
+            title: Text(attribute),
+            subtitle: Wrap(
+              spacing: 4,
+              children: [
+                for (var value in widget.product.getAllVariantAttributes[attribute]!.keys)
+                  ChoiceChip(
+                    label: Text(value),
+                    selected: _selectedAttributes[attribute] == value,
+                    onSelected: handleSelectAttribute(attribute, value),
+                  ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSelectableVariants() {
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children: widget.product.productVariants
+          .map(
+            (variant) => Badge(
+              isLabelVisible: variant.quantity == 0 || variant.status != Status.ACTIVE.name,
+              label: Text(variant.status),
+              backgroundColor: Colors.red.shade700,
+              offset: const Offset(-24, -8),
+              child: ChoiceChip(
+                labelPadding: EdgeInsets.zero,
+                padding: const EdgeInsets.all(4),
+                showCheckmark: false,
+                selected: _variant == variant,
+                onSelected: (variant.quantity == 0 || variant.status != Status.ACTIVE.name)
+                    ? null
+                    : (selected) {
+                        setState(() {
+                          _variant = selected ? variant : null;
+                          _quantity = 1;
+                        });
+                      },
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageCacheable(
+                      variant.image.isNotEmpty ? variant.image : widget.product.image,
+                      height: 38,
+                      width: 38,
+                      fit: BoxFit.cover,
                     ),
-                  );
-                },
-                child: ImageCacheable(
-                  (_variant?.image.isNotEmpty ?? false) ? _variant!.image : widget.product.image,
-                  width: 100,
-                  height: 100,
+                    const SizedBox(width: 4),
+                    Text(
+                      variant.sku,
+                      style: const TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildSummaryInfo(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PhotoViewPage(
+                  imageUrl: _variant?.image.isNotEmpty ?? false ? _variant!.image : widget.product.image,
+                ),
+              ),
+            );
+          },
+          child: ImageCacheable(
+            (_variant?.image.isNotEmpty ?? false) ? _variant!.image : widget.product.image,
+            width: 100,
+            height: 100,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Variant name
+            if (_variant != null)
+              Text(
+                _variant!.sku,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+
+            RichText(
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      style: DefaultTextStyle.of(context).style,
-                      children: [
-                        const TextSpan(text: 'Giá: '),
-                        TextSpan(
-                          text: priceString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
+                  const TextSpan(text: 'Giá: '),
+                  TextSpan(
+                    text: priceString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
                     ),
                   ),
-                  Text('Còn lại: ${_variant?.quantity ?? 0}'),
                 ],
-              )
-            ],
-          ),
-          const Divider(color: Colors.grey),
-
-          // variant
-          const Text('Phân loại', style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: SingleChildScrollView(
-              child: Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: widget.product.productVariants
-                    .map(
-                      (variant) => ChoiceChip(
-                        labelPadding: EdgeInsets.zero,
-                        padding: const EdgeInsets.all(4),
-                        showCheckmark: false,
-                        selected: _variant == variant,
-                        onSelected: (selected) {
-                          setState(() {
-                            _variant = selected ? variant : null;
-                            _quantity = 1;
-                          });
-                        },
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ImageCacheable(
-                              variant.image.isNotEmpty ? variant.image : widget.product.image,
-                              height: 38,
-                              width: 38,
-                              fit: BoxFit.cover,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              variant.sku,
-                              style: const TextStyle(fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
               ),
             ),
-          ),
-          const Divider(color: Colors.grey),
-
-          // attribute
-          // TODO: Attribute selector => variant
-
-          // quantity selector
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                onPressed: () {
-                  if (_quantity > 1) {
-                    setState(() {
-                      _quantity--;
-                    });
-                  }
-                },
-                icon: const Icon(Icons.remove),
-              ),
-              Text(
-                'Số lượng: ${_variant != null ? _quantity : 0}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  if (_variant != null) {
-                    if (_quantity < _variant!.quantity) {
-                      setState(() {
-                        _quantity++;
-                      });
-                    }
-                  }
-                },
-                icon: const Icon(Icons.add),
-              ),
-            ],
-          ),
-
-          // Add to cart button
-          BlocListener<CartBloc, CartState>(
-            listener: (context, state) {
-              if (state.message != null) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(state.message!),
-                    ),
-                  );
-              }
-            },
-            child: ElevatedButton(
-              // change backgroundColor
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
-              ),
-              onPressed: handleTapAddToCartOrBuyNow,
-              child: Text(widget.isBuyNow ? 'Mua ngay' : 'Thêm vào giỏ'),
-            ),
-          ),
-        ],
-      ),
+            if (_variant?.quantity != null) Text('Còn lại: ${_variant?.quantity}'),
+          ],
+        )
+      ],
     );
   }
 }

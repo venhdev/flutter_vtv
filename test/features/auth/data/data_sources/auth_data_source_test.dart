@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_vtv/core/constants/api.dart';
-import 'package:flutter_vtv/core/error/exceptions.dart';
-import 'package:flutter_vtv/core/network/base_response.dart';
 import 'package:flutter_vtv/features/auth/data/data_sources/auth_data_source.dart';
-import 'package:flutter_vtv/features/auth/domain/dto/register_params.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../helpers/dummy_data/auth_test_data.dart';
 import '../../../../helpers/test_helper.mocks.dart';
@@ -106,7 +103,7 @@ void main() {
       // --expect something equals, isA, throwsA
       expect(future, throwsA(isA<ClientException>()));
     });
-    test('should return [AuthModel] when status code is 200', () async {
+    test('should return [AuthEntity] when status code is 200', () async {
       // Arrange (setup @mocks)
 
       when(mockSecureStorageHelper.cacheAuth(any)).thenAnswer((_) async => {});
@@ -134,7 +131,7 @@ void main() {
       // --verify something should(not) happen/call
       // verify(mockSecureStorageHelper.cacheAuth(result)); // should call secure storage
       // --expect something equals, isA, throwsA
-      expect(result, isA<DataResponse>());
+      expect(result, isA<SuccessResponse>());
     });
   });
 

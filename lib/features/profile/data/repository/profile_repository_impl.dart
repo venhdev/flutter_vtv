@@ -1,11 +1,5 @@
-import 'package:flutter_vtv/core/constants/typedef.dart';
-import 'package:flutter_vtv/core/network/response_handler.dart';
-import 'package:flutter_vtv/features/profile/domain/dto/add_address_param.dart';
-import 'package:flutter_vtv/features/profile/domain/entities/address_dto.dart';
-import 'package:flutter_vtv/features/profile/domain/entities/district_entity.dart';
-import 'package:flutter_vtv/features/profile/domain/entities/province_entity.dart';
-import 'package:flutter_vtv/features/profile/domain/entities/ward_entity.dart';
 import 'package:flutter_vtv/features/profile/domain/repository/profile_repository.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../data_sources/profile_data_source.dart';
 
@@ -14,9 +8,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   final ProfileDataSource _profileDataSource;
 
   @override
-  FRespData<AddressEntity> addAddress(AddAddressParam addAddressParam) async {
+  FRespData<AddressEntity> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => await _profileDataSource.addAddress(addAddressParam),
+      dataCallback: () async => await _profileDataSource.addAddress(addOrUpdateAddressParam),
     );
   }
 
@@ -59,6 +53,20 @@ class ProfileRepositoryImpl extends ProfileRepository {
   FRespEither updateAddressStatus(int addressId) async {
     return await handleSuccessResponseFromDataSource(
       noDataCallback: () async => await _profileDataSource.updateAddressStatus(addressId),
+    );
+  }
+
+  @override
+  FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => await _profileDataSource.updateAddress(addOrUpdateAddressParam),
+    );
+  }
+
+  @override
+  FRespData<LoyaltyPointEntity> getLoyaltyPoint() async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => await _profileDataSource.getLoyaltyPoint(),
     );
   }
 }
