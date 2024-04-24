@@ -13,6 +13,7 @@ import '../../../cart/presentation/components/order_item.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/btn/review_btn.dart';
+import '../components/checkout/wrapper.dart';
 import '../components/order_status_badge.dart';
 import '../components/shop_info.dart';
 import 'checkout_page.dart';
@@ -425,6 +426,13 @@ class OrderDetailPage extends StatelessWidget {
           _totalSummaryPriceItem('Giảm giá hệ thống:', orderDetail.order.discountSystem),
           _totalSummaryPriceItem('Giảm giá cửa hàng:', orderDetail.order.discountShop),
 
+          if (orderDetail.order.loyaltyPointHistory != null) ...[
+            _totalSummaryPriceItem(
+              'Giảm giá điểm tích lũy:',
+              orderDetail.order.loyaltyPointHistory!.point,
+            ),
+          ],
+
           // total price
           const Divider(thickness: 0.2, height: 4),
           _totalSummaryPriceItem(
@@ -521,13 +529,10 @@ class OrderDetailPage extends StatelessWidget {
       child: Column(
         children: [
           //! shop info --circle shop avatar
-          ShopInfo(
-            // shop: orderDetail.order.shop,
+          ShopInfo.viewOnly(
             shopId: orderDetail.order.shop.shopId,
-            name: orderDetail.order.shop.name,
-            avatar: orderDetail.order.shop.avatar,
-            showViewShopBtn: true,
-            showFollowedCount: false,
+            shopName: orderDetail.order.shop.name,
+            shopAvatar: orderDetail.order.shop.avatar,
           ),
           SizedBox(height: 8),
 
@@ -623,45 +628,4 @@ Widget _buildBottomActionBtn(
     onPressed: onPressed,
     child: Text(label),
   );
-}
-
-class Wrapper extends StatelessWidget {
-  const Wrapper({
-    super.key,
-    required this.child,
-    this.backgroundColor = Colors.white,
-    this.padding = const EdgeInsets.all(8),
-    this.border,
-    this.useBoxShadow = true,
-  });
-
-  final Widget child;
-  final Color? backgroundColor;
-  final EdgeInsetsGeometry? padding;
-  final BoxBorder? border;
-  final bool useBoxShadow;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: padding,
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        border: border,
-        borderRadius: BorderRadius.circular(4),
-        color: backgroundColor,
-        boxShadow: useBoxShadow
-            ? [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: const Offset(0, 1), // changes position of shadow
-                ),
-              ]
-            : null,
-      ),
-      child: child,
-    );
-  }
 }

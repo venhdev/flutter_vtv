@@ -9,13 +9,17 @@ class Rating extends StatelessWidget {
     this.fontSize,
     this.showRatingBar = false,
     this.showRatingText = true,
+    this.customText,
   });
 
   final double rating;
+
+  /// default is 18.0
   final double? iconSize;
   final double? fontSize;
   final bool showRatingBar;
   final bool showRatingText;
+  final String? customText;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,7 @@ class Rating extends StatelessWidget {
             : Icon(Icons.star, color: Colors.amber, size: iconSize),
         if (showRatingText)
           Text(
-            rating.toString(),
+            customText ?? rating.toString(),
             style: TextStyle(
               fontSize: fontSize,
             ),

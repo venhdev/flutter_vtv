@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../home/presentation/pages/shop_page.dart';
 import '../../../order/presentation/components/shop_info.dart';
 import 'cart_item.dart';
 
@@ -62,9 +64,15 @@ class CartsByShop extends StatelessWidget {
   Widget _buildShopInfo(BuildContext context) {
     return ShopInfo(
       shopId: cartByShop.shopId,
-      avatar: cartByShop.avatar,
-      name: cartByShop.shopName,
+      shopAvatar: cartByShop.avatar,
+      shopName: cartByShop.shopName,
       showViewShopBtn: true,
+      onViewPressed: () {
+        context.push('${ShopPage.path}/${cartByShop.shopId}');
+      },
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+      ),
     );
     // return Row(
     //   mainAxisSize: MainAxisSize.min,

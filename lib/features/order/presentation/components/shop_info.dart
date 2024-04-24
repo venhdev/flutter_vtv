@@ -1,158 +1,102 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../service_locator.dart';
-import '../../../home/domain/repository/product_repository.dart';
-import '../../../home/presentation/pages/shop_page.dart';
+import '../../../auth/presentation/components/rating.dart';
+import 'btn/shop_info_btn.dart';
 
-class ShopInfo extends StatefulWidget {
+class ShopInfo extends StatelessWidget {
   const ShopInfo({
     super.key,
+    required this.shopId,
+    this.followedShopId,
+    this.shopDetail,
+    this.shopName,
+    this.shopAvatar,
     this.padding,
     this.decoration,
     this.onPressed,
-    required this.shopId,
     this.hideAllButton = false,
-    this.showFollowBtn = false,
+    this.showFollowBtn = false, //> followedShopId (check) + onFollowChanged (update)
     this.showChatBtn = false,
     this.showViewShopBtn = false,
     this.showFollowedCount = false,
-    required this.avatar,
-    required this.name,
     this.trailing,
-  });
+    this.showShopDetail = false,
+    this.onViewPressed,
+    this.onChatPressed,
+    this.onFollowChanged,
+  })  : assert((shopName != null && shopAvatar != null) || shopDetail != null),
+        assert(showFollowedCount && shopDetail != null || !showFollowedCount),
+        assert(showFollowBtn && onFollowChanged != null || !showFollowBtn);
 
+  factory ShopInfo.viewOnly({
+    required int shopId,
+    required String shopName,
+    required String shopAvatar,
+  }) {
+    return ShopInfo(
+      shopId: shopId,
+      shopName: shopName,
+      shopAvatar: shopAvatar,
+      hideAllButton: true,
+    );
+  }
+
+  // required data
   final int shopId;
+  final int? followedShopId;
+  final ShopDetailResp? shopDetail;
+
+  final String? shopName;
+  final String? shopAvatar;
+
+  // control which button to show
   final bool hideAllButton;
   final bool showFollowBtn;
   final bool showChatBtn;
   final bool showViewShopBtn;
   final bool showFollowedCount;
+  final bool showShopDetail;
 
-  //data to render
-  final String name;
-  final String avatar;
-  final Widget? trailing;
+  // others
+  final Widget? trailing; //REVIEW maybe delete this
 
+  final void Function()? onPressed; // GoRouter.of(context).push('${ShopPage.path}/${shop.shopId}');
+  final void Function()? onViewPressed;
+  final void Function()? onChatPressed;
+
+  // controlled by parent
+  final void Function(int? followedShopId)? onFollowChanged;
+
+  // style the widget
   final EdgeInsetsGeometry? padding;
   final Decoration? decoration;
-
-  final void Function()? onPressed; //GoRouter.of(context).push('${ShopPage.path}/${shop.shopId}');
-
-  @override
-  State<ShopInfo> createState() => _ShopInfoState();
-}
-
-class _ShopInfoState extends State<ShopInfo> {
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onPressed,
+      onTap: onPressed,
       borderRadius: BorderRadius.circular(8),
       child: Ink(
-        decoration: widget.decoration,
+        decoration: decoration,
         child: Padding(
-          padding: widget.padding ?? const EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: padding ?? const EdgeInsets.all(8),
+          child: Column(
             children: [
-              // shop avatar, name, followed
-              Expanded(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(widget.avatar),
-                      backgroundColor: Colors.transparent,
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // shop name
-                        Text(
-                          widget.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        // shop followed
-                        if (widget.showFollowedCount)
-                          FutureBuilder(
-                              future: sl<ProductRepository>().countShopFollowed(widget.shopId),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return snapshot.data!.fold(
-                                    (error) {
-                                      log('Error: $error');
-                                      return const SizedBox();
-                                    },
-                                    (ok) => Text(
-                                      '${ok.data} người theo dõi',
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  );
-                                }
-                                return const SizedBox();
-                              }),
-                      ],
-                    ),
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //# avatar - [name - count followed]
+                  _shopBaseInfo(),
+                  //# trailing buttons: follow, chat, view shop
+                  if (!hideAllButton) _actionButtons(context)
+                ],
               ),
-              // trailing widget: follow, chat, view shop
-              if (!widget.hideAllButton)
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          if (widget.trailing != null ||
-                              widget.showFollowBtn ||
-                              widget.showChatBtn ||
-                              widget.showViewShopBtn) ...[
-                            if (widget.showViewShopBtn) _buildViewShopBtn(context),
-                            if (widget.showChatBtn) _buildChatBtn(),
-                            if (widget.showFollowBtn) ...[
-                              const SizedBox(width: 4),
-                              _isLoading
-                                  ? _buildLoadingBtn()
-                                  : FutureBuilder(
-                                      future: sl<ProductRepository>().followedShopCheckExist(widget.shopId),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          final respEither = snapshot.data!;
-                                          return respEither.fold(
-                                            (error) => const SizedBox.shrink(),
-                                            (id) => id == null ? _buildFollowBtn(widget.shopId) : _buildUnFollowBtn(id),
-                                          );
 
-                                          // if (followShopId != null) {
-                                          //   return _buildUnFollowBtn(followShopId);
-                                          // } else {
-                                          //   return _buildFollowBtn(widget.shopId);
-                                          // }
-                                        } else if (snapshot.hasError) {
-                                          return const SizedBox.shrink();
-                                        } else {
-                                          return _buildLoadingBtn();
-                                        }
-                                      },
-                                    ),
-                            ],
-                            if (widget.trailing != null) ...[const SizedBox(width: 4), widget.trailing!],
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                )
+              //# more info (only available when ShopDetail is provided)
+              if (showShopDetail && shopDetail != null) ...[
+                _shopMoreInfo(),
+              ]
             ],
           ),
         ),
@@ -160,98 +104,105 @@ class _ShopInfoState extends State<ShopInfo> {
     );
   }
 
-  Widget _buildViewShopBtn(BuildContext context) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+  Widget _shopMoreInfo() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(2),
+          child: Rating(
+            rating: shopDetail!.averageRatingShop,
+            iconSize: 14,
+            customText: '${shopDetail!.averageRatingShop.toString()}/5.0',
+          ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        backgroundColor: Colors.blue.shade100,
-        side: BorderSide.none,
-      ),
-      onPressed: () {
-        context.push('${ShopPage.path}/${widget.shopId}');
-      },
-      child: const Text('Xem Shop'),
+        const VerticalDivider(indent: 4, endIndent: 4),
+        Text('${shopDetail!.countProduct} sản phẩm', style: const TextStyle(fontSize: 12)),
+        const VerticalDivider(indent: 4, endIndent: 4),
+        Text('${shopDetail!.countCategoryShop} danh mục', style: const TextStyle(fontSize: 12)),
+      ],
     );
   }
 
-  Widget _buildFollowBtn(int shopId) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        backgroundColor: Colors.green.shade100,
-      ),
-      onPressed: () async {
-        setState(() {
-          _isLoading = true;
-        });
-        final rsEither = await sl<ProductRepository>().followedShopAdd(shopId);
-
-        rsEither.fold(
-          (error) => null,
-          (ok) {
-            setState(() {
-              _isLoading = false;
-            });
-          },
-        );
-      },
-      child: const Text('+ Theo dõi'),
-    );
-  }
-
-  Widget _buildUnFollowBtn(int followedShopId) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        backgroundColor: Colors.red.shade100,
-      ),
-      onPressed: () async {
-        setState(() {
-          _isLoading = true;
-        });
-        final rsEither = await sl<ProductRepository>().followedShopDelete(followedShopId);
-
-        rsEither.fold(
-          (error) => null,
-          (ok) {
-            setState(() {
-              _isLoading = false;
-            });
-          },
-        );
-      },
-      child: const Text('Bỏ theo dõi'),
-    );
-  }
-
-  Widget _buildChatBtn() {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-      ),
-      onPressed: null,
-      child: const Text('Chat'),
-    );
-  }
-
-  Widget _buildLoadingBtn() {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+  Widget _actionButtons(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            if (trailing != null || showFollowBtn || showChatBtn || showViewShopBtn) ...[
+              if (showViewShopBtn) ShopInfoButton.view(onViewPressed),
+              if (showChatBtn) ShopInfoButton.chat(onChatPressed),
+              if (showFollowBtn && onFollowChanged != null) ...[
+                const SizedBox(width: 4),
+                followedShopId == null
+                    ? ShopInfoButton.follow(shopId, onFollowChanged!)
+                    : ShopInfoButton.unFollow(followedShopId!, onFollowChanged!),
+              ],
+              if (trailing != null) ...[const SizedBox(width: 4), trailing!],
+            ],
+          ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        // backgroundColor: Colors.blue.shade100,
-        side: BorderSide.none,
       ),
-      onPressed: null,
-      child: const Text('Đang tải...'),
+    );
+  }
+
+  /// avatar - [name - count followed]
+  Widget _shopBaseInfo() {
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(shopDetail != null ? shopDetail!.shop.avatar : shopAvatar!),
+                backgroundColor: Colors.transparent,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      shopDetail != null ? shopDetail!.shop.name : shopName!,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (showFollowedCount && shopDetail != null) ...[
+                      Text(
+                        '${shopDetail!.countFollowed} người theo dõi',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
+
+//**// FutureBuilder(
+                      //     future: sl<ProductRepository>().countShopFollowed(widget.shopId),
+                      //     builder: (context, snapshot) {
+                      //       if (snapshot.hasData) {
+                      //         return snapshot.data!.fold(
+                      //           (error) {
+                      //             log('Error: $error');
+                      //             return const SizedBox();
+                      //           },
+                      //           (ok) => Text(
+                      //             '${ok.data} người theo dõi',
+                      //             style: const TextStyle(fontSize: 12),
+                      //           ),
+                      //         );
+                      //       }
+                      //       return const SizedBox();
+                      //     }), */

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:vtv_common/vtv_common.dart';
 
@@ -12,6 +14,8 @@ class AuthInterceptor extends QueuedInterceptor {
     if (options.path.contains('/customer')) {
       final token = await sl<SecureStorageHelper>().accessToken;
       options.headers.addAll(baseHttpHeaders(accessToken: token));
+    } else {
+      options.headers.addAll(baseHttpHeaders());
     }
 
     return handler.next(options);
@@ -27,7 +31,10 @@ class AuthInterceptor extends QueuedInterceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     //> handle expired token
     //? check if the response is 401 >> get new token - save - retry
-    if (err.response?.statusCode == 401 && err.type == DioExceptionType.badResponse) {
+    log('got error: ${err.response?.statusCode} - ${err.response?.data} - ${err.type}');
+    if (err.response?.statusCode == 401 &&
+        err.response?.data['message'] == 'Thông báo: Phiên đăng nhập đã hết hạn.' &&
+        err.type == DioExceptionType.badResponse) {
       try {
         final refreshToken = await sl<SecureStorageHelper>().refreshToken;
         if (refreshToken == null) {

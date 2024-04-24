@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,8 +11,10 @@ import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../../cart/presentation/components/order_item.dart';
+import '../../../profile/domain/repository/profile_repository.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
+import '../components/checkout/wrapper.dart';
 import '../components/shop_info.dart';
 import 'order_detail_page.dart';
 import 'voucher_page.dart';
@@ -25,7 +29,9 @@ class CheckoutPage extends StatefulWidget {
 
   final OrderEntity order;
 
-  // ?: check if this [OrderEntity] create with cart (in cart with cartId) or with product variant (buy now --not in cart)
+  //? check if this [OrderEntity]
+  //- create with cart (in cart with cartId) or
+  //- with product variant (buy now --not in cart)
   final bool isCreateWithCart;
 
   @override
@@ -153,7 +159,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         addressId: widget.order.address.addressId,
         systemVoucherCode: null,
         shopVoucherCode: null,
-        useLoyaltyPoint: false,
+        useLoyaltyPoint: true,
         paymentMethod: widget.order.paymentMethod,
         shippingMethod: widget.order.shippingMethod,
         note: '',
@@ -164,7 +170,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         addressId: widget.order.address.addressId,
         systemVoucherCode: null,
         shopVoucherCode: null,
-        useLoyaltyPoint: false,
+        useLoyaltyPoint: true,
         paymentMethod: widget.order.paymentMethod,
         shippingMethod: widget.order.shippingMethod,
         note: '',
@@ -182,7 +188,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.pop(),
           )),
-      bottomSheet: _buildPlaceOrderBtn(),
+      bottomSheet: _buildPlaceOrderBottomSheet(),
       body: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 64),
         child: SingleChildScrollView(
@@ -209,7 +215,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const SizedBox(height: 8),
 
               //! loyalty point
-              // _buildLoyaltyPoint(), //TODO implement this feature
+              _buildLoyaltyPoint(),
+              const SizedBox(height: 8),
 
               //! total price
               _buildTotalPrice(),
@@ -221,6 +228,55 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoyaltyPoint() {
+    return Wrapper(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Sử dụng điểm tích lũy', style: TextStyle(fontWeight: FontWeight.bold)),
+              FutureBuilder(
+                  future: sl<ProfileRepository>().getLoyaltyPoint(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return snapshot.data!.fold(
+                        (error) => const SizedBox.shrink(),
+                        (ok) => Text(
+                          'Điểm hiện có: ${ok.data!.totalPoint}',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+            ],
+          ),
+          Switch(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            value: widget.isCreateWithCart
+                ? _placeOrderWithCartParam.useLoyaltyPoint
+                : _placeOrderWithVariantParam.useLoyaltyPoint,
+            onChanged: (value) {
+              setState(() {
+                if (widget.isCreateWithCart) {
+                  updateOrderWithCart(
+                    _placeOrderWithCartParam.copyWith(useLoyaltyPoint: value),
+                  );
+                } else {
+                  updateOrderWithVariant(
+                    _placeOrderWithVariantParam.copyWith(useLoyaltyPoint: value),
+                  );
+                }
+              });
+            },
+          ),
+        ],
       ),
     );
   }
@@ -275,6 +331,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
               _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
             if (_placeOrderWithVariantParam.shopVoucherCode != null)
               _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
+          ],
+
+          //? not null >> use loyalty point
+          if (_order.loyaltyPointHistory != null) ...[
+            //? maybe negative point >> no need to add '-' sign
+            // BUG: server side
+            _totalSummaryPriceItem('Sử dụng điểm tích lũy:', _order.loyaltyPointHistory!.point),
           ],
 
           // total price
@@ -362,12 +425,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
           //! shop info --circle shop avatar
           ShopInfo(
             shopId: _order.shop.shopId,
-            name: _order.shop.name,
-            avatar: _order.shop.avatar,
+            shopName: _order.shop.name,
+            shopAvatar: _order.shop.avatar,
+            hideAllButton: true,
           ),
 
           //! Shop voucher
           Wrapper(
+            useBoxShadow: false,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -507,16 +572,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildPlaceOrderBtn() {
+  Widget _buildPlaceOrderBottomSheet() {
     return Container(
       color: Colors.white,
-      width: double.infinity,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Text(
-            'Tổng thanh toán: ',
-          ),
+          const Text('Tổng thanh toán: '),
           Text(
             StringHelper.formatCurrency(_order.paymentTotal),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
@@ -531,40 +593,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class Wrapper extends StatelessWidget {
-  const Wrapper({
-    super.key,
-    required this.child,
-    this.backgroundColor = Colors.white,
-    this.padding = const EdgeInsets.all(8),
-  });
-
-  final Widget child;
-  final Color? backgroundColor;
-  final EdgeInsetsGeometry? padding;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: padding,
-      decoration: BoxDecoration(
-        // border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8),
-        color: backgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: const Offset(0, 2), // changes position of shadow
-          ),
-        ],
-      ),
-      child: child,
     );
   }
 }

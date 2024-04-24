@@ -7,8 +7,9 @@ import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';
 import 'product_detail_page.dart';
 
-class FavoriteProductPage extends StatelessWidget {
-  const FavoriteProductPage({super.key});
+//! Show all customer's favorite products
+class FavoriteProductsPage extends StatelessWidget {
+  const FavoriteProductsPage({super.key});
 
   static const String routeName = 'favorite-product';
   static const String path = '/user/favorite-product';
@@ -40,14 +41,7 @@ class FavoriteProductPage extends StatelessWidget {
                                 (error) => MessageScreen.error(error.message),
                                 (ok) {
                                   final productDetail = ok.data;
-                                  context.go(ProductDetailPage.path, extra: productDetail);
-                                  // Navigator.of(context).push(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) {
-                                  //       return ProductDetailPage(productDetail: productDetail);
-                                  //     },
-                                  //   ),
-                                  // );
+                                  context.push(ProductDetailPage.path, extra: productDetail);
                                 },
                               );
                             },

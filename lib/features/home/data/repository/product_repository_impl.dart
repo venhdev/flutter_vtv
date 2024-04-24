@@ -10,19 +10,22 @@ import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
 import '../data_sources/product_data_source.dart';
 import '../data_sources/review_data_source.dart';
+import '../data_sources/shop_data_source.dart';
 
-class ProductRepositoryImpl extends ProductRepository {
+class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl(
     this._productDataSource,
     this._categoryDataSource,
     this._localProductDataSource,
     this._reviewDataSource,
+    this._shopDataSource,
   );
 
   final ProductDataSource _productDataSource;
   final CategoryDataSource _categoryDataSource;
   final LocalProductDataSource _localProductDataSource;
   final ReviewDataSource _reviewDataSource;
+  final ShopDataSource _shopDataSource;
 
   @override
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size) async {
@@ -169,9 +172,9 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  FRespData<ReviewResp> getReviewProduct(int productId) async {
+  FRespData<ReviewResp> getProductReviews(int productId) async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => _reviewDataSource.getReviewProduct(productId),
+      dataCallback: () async => _reviewDataSource.getProductReviews(productId),
     );
   }
 
@@ -192,7 +195,8 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   FRespData<ReviewEntity> getReviewDetail(String orderItemId) async {
-    return handleDataResponseFromDataSource(dataCallback: () => _reviewDataSource.getReviewDetail(orderItemId));
+    return handleDataResponseFromDataSource(
+        dataCallback: () => _reviewDataSource.getReviewDetailByOrderItemId(orderItemId));
   }
 
   Future<bool> isReviewedItem(OrderItemEntity orderItem) async {
@@ -233,7 +237,7 @@ class ProductRepositoryImpl extends ProductRepository {
   FResult<List<ReviewEntity>> getAllReviewDetailByOrder(OrderEntity order) async {
     try {
       final rs = await Future.wait(order.orderItems.map((item) async {
-        final review = await _reviewDataSource.getReviewDetail(item.orderItemId!);
+        final review = await _reviewDataSource.getReviewDetailByOrderItemId(item.orderItemId!);
         return review.data!;
       }));
       return Right(rs);
@@ -259,35 +263,35 @@ class ProductRepositoryImpl extends ProductRepository {
   @override
   FRespData<int> countShopFollowed(int shopId) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _productDataSource.countShopFollowed(shopId),
+      dataCallback: () => _shopDataSource.countShopFollowed(shopId),
     );
   }
 
   @override
   FRespData<FollowedShopEntity> followedShopAdd(int shopId) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _productDataSource.followedShopAdd(shopId),
+      dataCallback: () => _shopDataSource.followedShopAdd(shopId),
     );
   }
 
   @override
   FRespEither followedShopDelete(int followedShopId) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _productDataSource.followedShopDelete(followedShopId),
+      dataCallback: () => _shopDataSource.followedShopDelete(followedShopId),
     );
   }
 
   @override
   FRespData<List<FollowedShopEntity>> followedShopList() async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _productDataSource.followedShopList(),
+      dataCallback: () => _shopDataSource.followedShopList(),
     );
   }
 
   @override
   FResult<int?> followedShopCheckExist(int shopId) async {
     try {
-      final listResp = await _productDataSource.followedShopList();
+      final listResp = await _shopDataSource.followedShopList();
       // final FollowedShopEntity rs = list.data!.firstWhere((e) => e.shopId == shopId);
       for (var e in listResp.data!) {
         if (e.shopId == shopId) {
@@ -303,14 +307,35 @@ class ProductRepositoryImpl extends ProductRepository {
   @override
   FRespData<CommentEntity> addCustomerComment(CommentParam param) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _productDataSource.addCustomerComment(param),
+      dataCallback: () => _reviewDataSource.addCustomerComment(param),
     );
   }
 
   @override
   FRespEither deleteCustomerComment(String commentId) async {
     return handleDataResponseFromDataSource(
-      dataCallback: () => _productDataSource.deleteCustomerComment(commentId),
+      dataCallback: () => _reviewDataSource.deleteCustomerComment(commentId),
+    );
+  }
+
+  @override
+  FRespData<List<CommentEntity>> getReviewComments(String reviewId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _reviewDataSource.getReviewComments(reviewId),
+    );
+  }
+
+  @override
+  FRespData<ReviewEntity> getReviewDetailByReviewId(String reviewId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _reviewDataSource.getReviewDetailByReviewId(reviewId),
+    );
+  }
+
+  @override
+  FRespData<ShopDetailResp> getShopDetailById(int shopId) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _shopDataSource.getShopDetailById(shopId),
     );
   }
 }

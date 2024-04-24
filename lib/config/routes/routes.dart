@@ -10,10 +10,10 @@ import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
-import '../../features/home/presentation/pages/favorite_product_page.dart';
+import '../../features/home/presentation/pages/favorite_products_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/home/presentation/pages/product_detail_page.dart';
-import '../../features/home/presentation/pages/product_review_page.dart';
+import '../../features/home/presentation/pages/product_reviews_page.dart';
 import '../../features/home/presentation/pages/review_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
 import '../../features/home/presentation/pages/shop_page.dart';
@@ -116,24 +116,28 @@ class AppRoutes {
                     },
                     routes: [
                       GoRoute(
-                        path: ProductReviewPage.routeName, // '/home/product/review'
-                        name: ProductReviewPage.routeName, // review
+                        path: ProductReviewsPage.routeName, // '/home/product/review'
+                        name: ProductReviewsPage.routeName, // review
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: (context, state) {
                           final productId = state.extra as int;
-                          return ProductReviewPage(productId: productId);
+                          return ProductReviewsPage(productId: productId);
                         },
                         routes: [
                           GoRoute(
-                            path: ReviewDetailPage.routeName, // '/home/product/review/review-detail'
+                            // '/home/product/review/review-detail/:reviewId'
+                            path: '${ReviewDetailPage.routeName}/:reviewId',
                             name: ReviewDetailPage.routeName, // review-detail
                             parentNavigatorKey: _rootNavigatorKey,
                             builder: (context, state) {
-                              final reviewId = state.extra as String;
-                              return ReviewDetailPage(reviewId: reviewId);
+                              // final reviewId = state.extra as String;
+                              final reviewId = state.pathParameters['reviewId']!;
+                              // final comments = state.extra as List<CommentEntity>?;
+                              final review = state.extra as ReviewEntity?;
+                              return ReviewDetailPage(reviewId: reviewId, review: review);
                             },
                           ),
-                        ]
+                        ],
                       )
                     ],
                   ),
@@ -256,10 +260,10 @@ class AppRoutes {
                     builder: (context, state) => const VoucherPage(),
                   ),
                   GoRoute(
-                    path: FavoriteProductPage.routeName, // '/user/favorite-product'
-                    name: FavoriteProductPage.routeName, // voucher
+                    path: FavoriteProductsPage.routeName, // '/user/favorite-product'
+                    name: FavoriteProductsPage.routeName, // voucher
                     parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) => const FavoriteProductPage(),
+                    builder: (context, state) => const FavoriteProductsPage(),
                   ),
                   GoRoute(
                     path: PurchasePage.routeName, // '/user/purchase'

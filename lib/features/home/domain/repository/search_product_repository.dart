@@ -18,4 +18,24 @@ abstract class SearchProductRepository {
     String keyword,
     String sort,
   );
+
+  /// Search keyword + sort + shopId + price range
+  FRespData<ProductPageResp> searchProductShopPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+    int shopId,
+  );
+
+  /// Search keyword + sort + shopId (no price range)
+  FRespData<ProductPageResp> searchProductShopSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int shopId,
+  );
 }

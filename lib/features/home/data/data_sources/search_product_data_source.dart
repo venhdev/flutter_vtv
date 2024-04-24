@@ -1,9 +1,15 @@
-import 'package:http/http.dart' as http show Client;
+import 'package:dio/dio.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 abstract class SearchProductDataSource {
   //# search-product-controller
-  Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort);
+  //* search in home page
+  Future<SuccessResponse<ProductPageResp>> searchProductSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+  );
   Future<SuccessResponse<ProductPageResp>> searchProductPriceRangeSort(
     int page,
     int size,
@@ -12,12 +18,30 @@ abstract class SearchProductDataSource {
     int minPrice,
     int maxPrice,
   );
+
+  //* search in shop
+  Future<SuccessResponse<ProductPageResp>> searchProductShopSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int shopId,
+  );
+  Future<SuccessResponse<ProductPageResp>> searchProductShopPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+    int shopId,
+  );
 }
 
 class SearchProductDataSourceImpl implements SearchProductDataSource {
-  final http.Client _client;
+  final Dio _dio;
 
-  SearchProductDataSourceImpl(this._client);
+  SearchProductDataSourceImpl(this._dio);
 
   @override
   Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
@@ -31,15 +55,12 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
       },
     );
     // send request
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(),
-    );
+    final response = await _dio.getUri(url);
 
-    return handleResponseWithData(
+    return handleDioResponse<ProductPageResp, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => ProductPageResp.fromMap(jsonMap),
+      parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8
@@ -73,26 +94,23 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     int maxPrice,
   ) async {
     final url = baseUri(
-      path: kAPIGetSearchProductPriceRangeSortURL,
+      path: kAPISearchProductPriceRangeSortURL,
       queryParameters: {
-        'page': page.toString(),
-        'size': size.toString(),
-        'search': keyword.toString(),
-        'sort': sort.toString(),
-        'minPrice': minPrice.toString(),
-        'maxPrice': maxPrice.toString(),
-      },
+        'page': page,
+        'size': size,
+        'search': keyword,
+        'sort': sort,
+        'minPrice': minPrice,
+        'maxPrice': maxPrice,
+      }.map((key, value) => MapEntry(key, value.toString())),
     );
     // send request
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(),
-    );
+    final response = await _dio.getUri(url);
 
-    return handleResponseWithData(
+    return handleDioResponse<ProductPageResp, Map<String, dynamic>>(
       response,
       url,
-      (jsonMap) => ProductPageResp.fromMap(jsonMap),
+      parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
 
     // // decode response using utf8
@@ -114,5 +132,71 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     //     url: kAPIGetSearchProductPriceRangeSortURL,
     //   );
     // }
+  }
+
+  @override
+  Future<SuccessResponse<ProductPageResp>> searchProductShopPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+    int shopId,
+  ) async {
+    final url = baseUri(
+      path: kAPISearchProductShopPriceRangeSortURL,
+      queryParameters: {
+        'page': page,
+        'size': size,
+        'search': keyword,
+        'sort': sort,
+        'minPrice': minPrice,
+        'maxPrice': maxPrice,
+      }.map((key, value) => MapEntry(key, value.toString())),
+      pathVariables: {
+        'shopId': shopId.toString(),
+      },
+    );
+
+    // send request
+    final response = await _dio.getUri(url);
+
+    return handleDioResponse<ProductPageResp, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<ProductPageResp>> searchProductShopSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int shopId,
+  ) async {
+    final url = baseUri(
+      path: kAPISearchProductShopSortURL,
+      queryParameters: {
+        'page': page.toString(),
+        'size': size.toString(),
+        'search': keyword,
+        'sort': sort,
+      },
+      pathVariables: {
+        'shopId': shopId.toString(),
+      },
+    );
+
+    // send request
+    final response = await _dio.getUri(url);
+
+    return handleDioResponse<ProductPageResp, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
+    );
   }
 }

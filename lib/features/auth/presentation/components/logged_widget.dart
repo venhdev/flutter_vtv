@@ -11,7 +11,7 @@ import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../../home/domain/repository/product_repository.dart';
 import '../../../home/presentation/components/product_components/product_page_builder.dart';
-import '../../../home/presentation/pages/favorite_product_page.dart';
+import '../../../home/presentation/pages/favorite_products_page.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/followed_shop_page.dart';
@@ -105,7 +105,7 @@ class _LoggedViewState extends State<LoggedView> {
         //   ),
         // ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
 
-        context.push(FavoriteProductPage.path);
+        context.push(FavoriteProductsPage.path);
       },
     );
   }
@@ -136,9 +136,12 @@ class _LoggedViewState extends State<LoggedView> {
             // delete all recent product
             TextButton(
               onPressed: () {
-                sl<LocalProductDataSource>()
-                    .removeAllRecentProduct()
-                    .then((value) => Fluttertoast.showToast(msg: 'Đã xóa lịch sử xem gần đây'));
+                sl<LocalProductDataSource>().removeAllRecentProduct().then((value) {
+                  Fluttertoast.showToast(msg: 'Đã xóa lịch sử xem gần đây');
+                  setState(() {
+                    _recentViewedProduct = [];
+                  });
+                });
               },
               child: const Text('Xóa lịch sử', style: TextStyle(color: Colors.grey)),
             ),
@@ -155,7 +158,7 @@ class _LoggedViewState extends State<LoggedView> {
                 emptyMessage: 'Không có sản phẩm nào được xem gần đây',
                 scrollDirection: Axis.horizontal,
                 onTap: (index) async {
-                  context.go(
+                  context.push(
                     ProductDetailPage.path,
                     extra: _recentViewedProduct[index],
                   );

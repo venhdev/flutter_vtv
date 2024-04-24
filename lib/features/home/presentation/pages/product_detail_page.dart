@@ -15,17 +15,10 @@ import '../../domain/repository/product_repository.dart';
 import '../components/product_components/product_item.dart';
 import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
 import '../components/review/review_item.dart';
-import 'product_review_page.dart';
+import 'product_reviews_page.dart';
 import 'shop_page.dart';
 
-//! this page should use to easily pop back to the previous screen
-/*
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => ProductDetailPage(product: product),
-    ),
-  );
-*/
+//! ProductDetailPage is the page showing all information of a product
 class ProductDetailPage extends StatefulWidget {
   const ProductDetailPage({
     super.key,
@@ -46,13 +39,15 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   late LazyLoadController<ProductEntity> _lazyController;
-  // bool _showBottomSheet = true;
-  // int? _favoriteProductId;
   bool _isShowMoreDescription = false;
   bool _isShowMoreInformation = false;
 
-  bool isInitializing = true;
+  bool _isInitializing = true;
   late ProductDetailResp _productDetail;
+
+  // others state
+  // int? _favoriteProductId;
+  int? _followedShopId;
 
   void fetchProductDetail(int id) async {
     final respEither = await sl<ProductRepository>().getProductDetailById(id);
@@ -62,8 +57,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       (ok) {
         setState(() {
           _productDetail = ok.data!;
-          isInitializing = false;
+          _isInitializing = false;
         });
+
+        checkFollowedShop(ok.data!.shopId);
       },
     );
   }
@@ -77,9 +74,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
         (ok) {
           Fluttertoast.showToast(msg: ok.message ?? 'Đã thêm vào yêu thích');
-          setState(() {
-            favoriteProductId = ok.data!.favoriteProductId;
-          });
+          setState(() {});
         },
       );
       // return;
@@ -98,20 +93,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
   }
 
-  // void checkIsFavorite() async {
-  //   // final isFavorite = await sl<ProductRepository>().isFavoriteProduct(widget.product.productId);
-  //   final checkEither = await sl<ProductRepository>().favoriteProductCheckExist(
-  //     widget.productId ?? widget.productDetail!.product.productId,
-  //   );
-
-  //   setState(() {
-  //     _favoriteProductId = checkEither.fold(
-  //       (error) => null,
-  //       (ok) => ok.data?.favoriteProductId,
-  //     );
-  //   });
-  // }
-
   void cacheRecentView() async {
     final respEither = await sl<ProductRepository>().cacheRecentViewedProductId(
       // _productDetail.product.productId.toString(),
@@ -126,6 +107,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
+  void checkFollowedShop(int shopId) async {
+    final respEither = await sl<ProductRepository>().followedShopCheckExist(shopId);
+
+    log('respEither checkFollowedShop: $respEither');
+    respEither.fold(
+      (error) => log('Error: ${error.message}'),
+      (ok) {
+        if (mounted) {
+          setState(() {
+            _followedShopId = ok;
+          });
+        }
+      },
+    );
+  }
+
   @override
   void dispose() {
     _lazyController.scrollController.dispose();
@@ -135,7 +132,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void initState() {
     super.initState();
-    // _scrollController = ScrollController();
     _lazyController = LazyLoadController(
       scrollController: ScrollController(),
       items: [],
@@ -146,7 +142,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       fetchProductDetail(widget.productId!);
     } else {
       _productDetail = widget.productDetail!;
-      isInitializing = false;
+      checkFollowedShop(_productDetail.shopId);
+      _isInitializing = false;
     }
     // checkIsFavorite();
     cacheRecentView();
@@ -158,7 +155,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Scaffold(
       // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
       bottomSheet: _buildBottomActionBar(context),
-      body: isInitializing
+      body: _isInitializing
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -218,21 +215,35 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildShopInfo() {
-    return ShopInfo(
-      shopId: _productDetail.shopId,
-      name: _productDetail.shopName,
-      avatar: _productDetail.shopAvatar,
-      showViewShopBtn: true,
-      showFollowBtn: true,
-      onPressed: () {
-        // GoRouter.of(context).push('${ShopPage.path}/${_productDetail.shopId}');
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ShopPage(shopId: _productDetail.shopId);
-            },
-          ),
-        );
+    return FutureBuilder(
+      future: sl<ProductRepository>().getShopDetailById(_productDetail.shopId),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return snapshot.data!.fold(
+            (error) => MessageScreen.error(error.message),
+            (ok) => ShopInfo(
+              shopId: _productDetail.shopId,
+              shopDetail: ok.data!,
+              showViewShopBtn: true,
+              onViewPressed: () => context.push('${ShopPage.path}/${_productDetail.shopId}'),
+              showFollowBtn: true,
+              followedShopId: _followedShopId,
+              onFollowChanged: (followedShopId) {
+                setState(() {
+                  _followedShopId = followedShopId;
+                });
+              },
+              showFollowedCount: true,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.grey.shade200,
+              ),
+              onPressed: () => context.push('${ShopPage.path}/${_productDetail.shopId}'),
+            ),
+          );
+        }
+
+        return const SizedBox.shrink();
       },
     );
   }
@@ -306,9 +317,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     final resultEither = snapshot.data!;
                     return resultEither.fold(
                       (error) => MessageScreen.error(error.message),
-                      (ok) => Text(
-                        '${ok.data} lượt thích',
-                      ),
+                      (ok) => Text('${ok.data} lượt thích'),
                     );
                   } else if (snapshot.hasError) {
                     return MessageScreen.error(snapshot.error.toString());
@@ -638,7 +647,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Widget _buildProductReview() {
     return FutureBuilder(
-      future: sl<ProductRepository>().getReviewProduct(_productDetail.product.productId),
+      future: sl<ProductRepository>().getProductReviews(_productDetail.product.productId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final resultEither = snapshot.data!;
@@ -688,7 +697,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 if (ok.data!.reviews.length > 3)
                   TextButton(
                     onPressed: () {
-                      context.go(ProductReviewPage.path, extra: _productDetail.product.productId);
+                      context.go(ProductReviewsPage.path, extra: _productDetail.product.productId);
                     },
                     child: const Text(
                       'Xem tất cả đánh giá',

@@ -7,6 +7,7 @@ import '../../domain/repository/search_product_repository.dart';
 import '../components/product_components/product_page_builder.dart';
 import '../components/search_components/btn_filter.dart';
 
+//! SearchPage show search result of products
 class SearchPage extends StatefulWidget {
   static const String routeName = 'search';
   static const String path = '/home/search';
@@ -21,7 +22,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchController = TextEditingController();
-  final pageSize = 6;
+  final pageSize = 2; //! Number of products per page
 
   // search & filter & sort
   late String currentSearchText;
@@ -29,11 +30,36 @@ class _SearchPageState extends State<SearchPage> {
     isFiltering: false,
     minPrice: 0,
     maxPrice: 10000000,
-    sortType: 'newest',
-    filterPriceRange: true,
+    sortType: SortTypes.newest,
+    isFilterWithPriceRange: true,
   );
 
   int currentPage = 1; // Track the current page
+
+  FRespData<ProductPageResp> searchMethod() {
+    return currentFilter.isFiltering
+        ? currentFilter.isFilterWithPriceRange
+            ? sl<SearchProductRepository>().getSearchProductPriceRangeSort(
+                currentPage,
+                pageSize,
+                currentSearchText,
+                currentFilter.sortType,
+                currentFilter.minPrice,
+                currentFilter.maxPrice,
+              )
+            : sl<SearchProductRepository>().searchProductSort(
+                currentPage,
+                pageSize,
+                currentSearchText,
+                currentFilter.sortType,
+              )
+        : sl<SearchProductRepository>().searchProductSort(
+            currentPage,
+            pageSize,
+            currentSearchText,
+            SortTypes.random,
+          );
+  }
 
   @override
   void initState() {
@@ -45,31 +71,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     "VTV",
-      //     style: GoogleFonts.ribeye(
-      //       fontSize: 36,
-      //       fontWeight: FontWeight.w400,
-      //       color: Colors.black87,
-      //     ),
-      //   ),
-      //   actions: [
-      //     SizedBox(
-      //       width: MediaQuery.of(context).size.width * 0.7, // DO NOT use in build body
-      //       child: SearchBarComponent(
-      //         controller: searchController,
-      //         onSubmitted: (text) => {
-      //           // context.go(SearchProductsPage.route, extra: text),
-      //           setState(() {
-      //             currentSearchText = text;
-      //             currentPage = 1; // Reset to the first page when search text changes
-      //           }),
-      //         },
-      //       ),
-      //     ),
-      //   ],
-      // ),
       appBar: buildAppBar(
         context,
         searchController: searchController,
@@ -84,9 +85,9 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8),
-            // filter & sort
             child: Column(
               children: [
+                // Control filter (button filter & search text)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -96,7 +97,7 @@ class _SearchPageState extends State<SearchPage> {
                       minPrice: currentFilter.minPrice,
                       maxPrice: currentFilter.maxPrice,
                       sortType: currentFilter.sortType,
-                      filterPriceRange: currentFilter.filterPriceRange,
+                      filterPriceRange: currentFilter.isFilterWithPriceRange,
                       onFilterChanged: (filterParams) {
                         if (filterParams != null) {
                           setState(() {
@@ -107,7 +108,7 @@ class _SearchPageState extends State<SearchPage> {
                         // do nothing if filterResult is null (user cancels the filter by tapping outside the bottom sheet)
                       },
                     ),
-                    // show search text
+                    // search text
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Text(
@@ -138,30 +139,5 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
     );
-  }
-
-  FRespData<ProductPageResp> searchMethod() {
-    return currentFilter.isFiltering
-        ? currentFilter.filterPriceRange
-            ? sl<SearchProductRepository>().getSearchProductPriceRangeSort(
-                currentPage,
-                pageSize,
-                currentSearchText,
-                currentFilter.sortType,
-                currentFilter.minPrice,
-                currentFilter.maxPrice,
-              )
-            : sl<SearchProductRepository>().searchProductSort(
-                currentPage,
-                pageSize,
-                currentSearchText,
-                currentFilter.sortType,
-              )
-        : sl<SearchProductRepository>().searchProductSort(
-            currentPage,
-            pageSize,
-            currentSearchText,
-            SortTypes.random,
-          );
   }
 }

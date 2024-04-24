@@ -4,7 +4,7 @@ import 'package:flutter_vtv/core/notification/firebase_cloud_messaging_manager.d
 import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/customer_apis.dart';
+import '../../../../core/constants/customer_api.dart';
 
 // <https://pub.dev/packages/jwt_decoder>
 

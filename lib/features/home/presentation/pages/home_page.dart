@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/features/home/presentation/components/search_components/btn_filter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
@@ -12,8 +11,10 @@ import '../../domain/repository/product_repository.dart';
 import '../components/product_components/best_selling_product_list.dart';
 import '../components/product_components/category_list.dart';
 import '../components/product_components/product_item.dart';
+import '../components/search_components/btn_filter.dart';
 import 'product_detail_page.dart';
 
+//! HomePage is the main page of the app, showing all products, categories, and best-selling products...
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -30,13 +31,13 @@ class _HomePageState extends State<HomePage> {
     scrollController: ScrollController(),
     items: [],
     useGrid: true,
-    showIndicator: true,
+    // showIndicator: true,
   );
 
   // filter & sort
   FilterParams currentFilter = FilterParams(
     isFiltering: false,
-    filterPriceRange: true,
+    isFilterWithPriceRange: true,
     minPrice: 0,
     maxPrice: 10000000,
     sortType: 'newest',
@@ -117,7 +118,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisCount: 2,
         dataCallback: (page) async {
           if (currentFilter.isFiltering) {
-            if (currentFilter.filterPriceRange) {
+            if (currentFilter.isFilterWithPriceRange) {
               return sl<ProductRepository>().getProductFilterByPriceRange(
                 page,
                 _productPerPage,
@@ -215,7 +216,7 @@ class _HomePageState extends State<HomePage> {
           minPrice: currentFilter.minPrice,
           maxPrice: currentFilter.maxPrice,
           sortType: currentFilter.sortType,
-          filterPriceRange: currentFilter.filterPriceRange,
+          filterPriceRange: currentFilter.isFilterWithPriceRange,
           onFilterChanged: (filterParams) {
             if (filterParams != null) {
               setState(() {

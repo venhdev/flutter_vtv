@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dio;
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/customer_apis.dart';
+import '../../../../core/constants/customer_api.dart';
 
 abstract class ProfileDataSource {
   //! location: ward-controller, province-controller, district-controller, ward-controller
@@ -172,12 +172,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   Future<SuccessResponse<LoyaltyPointEntity>> getLoyaltyPoint() async {
     final url = baseUri(path: kAPILoyaltyPointGetURL);
 
-    final response = await _dio.getUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      ),
-    );
+    final response = await _dio.getUri(url);
 
     return handleDioResponse<LoyaltyPointEntity, Map<String, dynamic>>(
       response,

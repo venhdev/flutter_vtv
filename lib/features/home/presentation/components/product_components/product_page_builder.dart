@@ -163,15 +163,6 @@ class ProductPageBuilder extends StatelessWidget {
                           (product) => ProductItem(
                             product: product,
                             onPressed: () {
-                              // context.go(ProductDetailPage.path, extra: product.productId);
-                              // Navigator.of(context).push(
-                              //   MaterialPageRoute(
-                              //     builder: (context) {
-                              //       return ProductDetailPage(productId: product.productId);
-                              //     },
-                              //   ),
-                              // );
-
                               context.push(
                                 ProductDetailPage.path,
                                 extra: product.productId,

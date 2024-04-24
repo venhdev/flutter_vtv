@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### [v0.0.7-pre] - 20/04/2024
+### Added
+
+- Comment (on owner review)
+- Use loyalty point to discount
+- View Shop Detail
+- Update: ShopInfo UI
+
+## [v0.0.7-pre] - 20/04/2024
 
 ### Added
 
@@ -17,7 +24,7 @@ All notable changes to this project will be documented in this file.
 
 - Use vtv_common package to keep all common file (entity, theme,...)
 
-### [v0.0.5-pre] - 31/03/2024
+## [v0.0.5-pre] - 31/03/2024
 
 - Notification
 - Place order (cart, buy now)

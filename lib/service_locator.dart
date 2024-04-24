@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import 'config/dio/auth_interceptor.dart';
+import 'config/dio/dio_options.dart';
 import 'config/dio/error_interceptor.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
 import 'features/auth/data/data_sources/auth_data_source.dart';
@@ -24,6 +25,7 @@ import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
 import 'features/home/data/data_sources/local_product_data_source.dart';
 import 'features/home/data/data_sources/review_data_source.dart';
+import 'features/home/data/data_sources/shop_data_source.dart';
 import 'features/notification/data/data_sources/notification_data_source.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
 import 'features/notification/domain/repository/notification_repository.dart';
@@ -55,12 +57,7 @@ Future<void> initializeLocator() async {
 
   final fMessaging = FirebaseMessaging.instance;
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final dio = Dio(
-    BaseOptions(
-      connectTimeout: const Duration(seconds: 3),
-      receiveTimeout: const Duration(seconds: 3),
-    ),
-  );
+  final dio = Dio(dioOptions);
   dio.interceptors.addAll(
     [
       // LogInterceptor(
@@ -73,7 +70,6 @@ Future<void> initializeLocator() async {
       // ),
       AuthInterceptor(),
       ErrorInterceptor(),
-      LogInterceptor(requestBody: true, responseBody: true)
     ],
   );
 
@@ -97,6 +93,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
   sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl(), sl()));
   sl.registerSingleton<NotificationDataSource>(NotificationDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<ShopDataSource>(ShopDataSourceImpl(sl()));
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl()));
@@ -108,7 +105,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
 
-  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl(), sl(), sl()));
+  sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl(), sl(), sl(), sl(), sl()));
   sl.registerSingleton<SearchProductRepository>(SearchProductRepositoryImpl(sl()));
 
   sl.registerSingleton<NotificationRepository>(NotificationRepositoryImpl(sl()));
