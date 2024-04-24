@@ -57,8 +57,7 @@ class CategoryList extends StatelessWidget {
                             title: category.name,
                             image: category.image,
                             onTap: () async {
-                              Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
-
+                              // TODO: implement category page
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) {
@@ -79,10 +78,7 @@ class CategoryList extends StatelessWidget {
                                     );
                                   },
                                 ),
-                              ).then((_) => Provider.of<AppState>(
-                                    context,
-                                    listen: false,
-                                  ).setBottomNavigationVisibility(true));
+                              );
                             },
                           ),
                         )

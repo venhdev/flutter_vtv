@@ -5,6 +5,7 @@ import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/order_item.dart';
+import '../../../home/presentation/pages/shop_page.dart';
 import '../../domain/repository/order_repository.dart';
 import '../pages/order_detail_page.dart';
 import 'btn/review_btn.dart';
@@ -47,10 +48,9 @@ class PurchaseOrderItem extends StatelessWidget {
                 Expanded(
                   child: ShopInfo(
                     shopId: order.shop.shopId,
-                    name: order.shop.name,
-                    avatar: order.shop.avatar,
-                    // onPressed: () => GoRouter.of(context).push('${ShopPage.path}/${order.shop.shopId}'),
-                    hideAllButton: true,
+                    shopName: order.shop.name,
+                    shopAvatar: order.shop.avatar,
+                    onPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
                   ),
                 ),
                 OrderStatusBadge(status: order.status),

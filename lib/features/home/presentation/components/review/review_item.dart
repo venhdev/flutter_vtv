@@ -61,13 +61,13 @@ class ReviewItem extends StatelessWidget {
         //   ),
         // ),
 
-        //#  comment, date
+        //#  date, comment
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               StringHelper.convertDateTimeToString(
-                review.createdAt,
+                (review.createdAt).toLocal(),
                 pattern: 'dd-MM-yyyy hh:mm aa',
               ),
               style: const TextStyle(
@@ -86,7 +86,10 @@ class ReviewItem extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 onPressed: () {
-                  context.push(ReviewDetailPage.path, extra: review.reviewId);
+                  context.push(
+                    '${ReviewDetailPage.path}/${review.reviewId}',
+                    extra: review.comments,
+                  );
                 },
               ),
             ),

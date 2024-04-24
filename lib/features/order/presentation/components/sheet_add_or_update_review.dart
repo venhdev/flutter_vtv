@@ -25,6 +25,7 @@ class SheetAddOrUpdateReview extends StatefulWidget {
   ///
   /// isAdding is false => view only sheet
   final bool isAdding;
+
   final ReviewParam initParam;
   final void Function(ReviewParam value)? onChange;
 
@@ -178,22 +179,24 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
         if (!widget.isAdding && _param.reviewId != null) ...[
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () async {
-              //> delete review
-              final result = await sl<ProductRepository>().deleteReview(_param.reviewId!);
-              result.fold(
-                (error) => Fluttertoast.showToast(msg: error.message ?? error.toString()),
-                (ok) {
-                  Fluttertoast.showToast(msg: 'Xóa đánh giá thành công');
-                  Navigator.of(context).pop();
-                },
-              );
-            },
+            onPressed: widget.initParam.isDeleted
+                ? null
+                : () async {
+                    //> delete review
+                    final result = await sl<ProductRepository>().deleteReview(_param.reviewId!);
+                    result.fold(
+                      (error) => Fluttertoast.showToast(msg: error.message ?? error.toString()),
+                      (ok) {
+                        Fluttertoast.showToast(msg: 'Xóa đánh giá thành công');
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
             style: TextButton.styleFrom(
-              backgroundColor: Colors.red.shade100,
+              backgroundColor: widget.initParam.isDeleted ? Colors.grey.shade300 : Colors.red.shade100,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            child: const Text('Xóa đánh giá'),
+            child: widget.initParam.isDeleted ? const Text('Đã xóa đánh giá') : const Text('Xóa đánh giá'),
           ),
         ],
         // ElevatedButton(

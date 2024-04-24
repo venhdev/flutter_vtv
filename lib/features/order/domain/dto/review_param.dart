@@ -9,6 +9,7 @@ class ReviewParam {
 
   // review exist
   String? reviewId;
+  bool isDeleted;
 
   ReviewParam({
     required this.content,
@@ -18,6 +19,7 @@ class ReviewParam {
     required this.hasImage,
     // review exist
     this.reviewId,
+    this.isDeleted = false,
   });
 
   @override

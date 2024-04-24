@@ -3,7 +3,7 @@ import 'package:vtv_common/vtv_common.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../data_sources/search_product_data_source.dart';
 
-class SearchProductRepositoryImpl extends SearchProductRepository {
+class SearchProductRepositoryImpl implements SearchProductRepository {
   SearchProductRepositoryImpl(this._searchProductDataSource);
 
   final SearchProductDataSource _searchProductDataSource;
@@ -57,5 +57,41 @@ class SearchProductRepositoryImpl extends SearchProductRepository {
     // } catch (e) {
     //   return Left(UnexpectedError(message: e.toString()));
     // }
+  }
+
+  @override
+  FRespData<ProductPageResp> searchProductShopPriceRangeSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int minPrice,
+    int maxPrice,
+    int shopId,
+  ) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _searchProductDataSource.searchProductShopPriceRangeSort(
+        page,
+        size,
+        keyword,
+        sort,
+        minPrice,
+        maxPrice,
+        shopId,
+      ),
+    );
+  }
+
+  @override
+  FRespData<ProductPageResp> searchProductShopSort(
+    int page,
+    int size,
+    String keyword,
+    String sort,
+    int shopId,
+  ) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _searchProductDataSource.searchProductShopSort(page, size, keyword, sort, shopId),
+    );
   }
 }

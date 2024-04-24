@@ -5,11 +5,11 @@ import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/review/review_item.dart';
 
-// Show all reviews of a product, customer can:
+//! Show all reviews of a product, customer can:
 // - View all reviews
-// - Navigate to review detail page to add their comment
-class ProductReviewPage extends StatefulWidget {
-  const ProductReviewPage({
+// - Navigate to (ReviewDetailPage) to add their comment
+class ProductReviewsPage extends StatefulWidget {
+  const ProductReviewsPage({
     super.key,
     required this.productId,
   });
@@ -20,10 +20,10 @@ class ProductReviewPage extends StatefulWidget {
   final int productId;
 
   @override
-  State<ProductReviewPage> createState() => _ProductReviewPageState();
+  State<ProductReviewsPage> createState() => _ProductReviewsPageState();
 }
 
-class _ProductReviewPageState extends State<ProductReviewPage> {
+class _ProductReviewsPageState extends State<ProductReviewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +31,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
         title: const Text('Xem Đánh giá'),
       ),
       body: FutureBuilder(
-        future: sl<ProductRepository>().getReviewProduct(widget.productId),
+        future: sl<ProductRepository>().getProductReviews(widget.productId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final resultEither = snapshot.data!;
@@ -46,6 +46,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
                 itemCount: ok.data!.reviews.length,
                 itemBuilder: (context, index) {
                   final review = ok.data!.reviews[index];
+                  //> All review is ACTIVE (handled by backend)
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ReviewItem(review),

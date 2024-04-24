@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -76,21 +77,39 @@ class BtnFilter extends StatelessWidget {
 
 class FilterParams {
   FilterParams({
-    required this.isFiltering,
+    this.isFiltering = false,
     required this.minPrice,
     required this.maxPrice,
     required this.sortType,
-    required this.filterPriceRange,
+    required this.isFilterWithPriceRange,
   });
 
-  final bool isFiltering;
+  /// default is false
+  bool isFiltering;
+
   final int minPrice;
   final int maxPrice;
   final String sortType;
-  final bool filterPriceRange;
+  final bool isFilterWithPriceRange;
 
   @override
   String toString() {
-    return 'FilterParams(isFiltering: $isFiltering, minPrice: $minPrice, maxPrice: $maxPrice, sortType: $sortType, filterPriceRange: $filterPriceRange)';
+    return 'FilterParams(isFiltering: $isFiltering, minPrice: $minPrice, maxPrice: $maxPrice, sortType: $sortType, filterPriceRange: $isFilterWithPriceRange)';
+  }
+
+  FilterParams copyWith({
+    bool? isFiltering,
+    int? minPrice,
+    int? maxPrice,
+    String? sortType,
+    bool? isFilterWithPriceRange,
+  }) {
+    return FilterParams(
+      isFiltering: isFiltering ?? this.isFiltering,
+      minPrice: minPrice ?? this.minPrice,
+      maxPrice: maxPrice ?? this.maxPrice,
+      sortType: sortType ?? this.sortType,
+      isFilterWithPriceRange: isFilterWithPriceRange ?? this.isFilterWithPriceRange,
+    );
   }
 }

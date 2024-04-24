@@ -3,8 +3,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:http/http.dart' as http show Client;
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/customer_apis.dart';
-import '../../domain/dto/comment_param.dart';
+import '../../../../core/constants/customer_api.dart';
 
 //! Remote data source
 abstract class ProductDataSource {
@@ -38,20 +37,7 @@ abstract class ProductDataSource {
   Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
   Future<SuccessResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId);
 
-  //# shop-detail-controller
-  Future<SuccessResponse<int>> countShopFollowed(int shopId);
-
-  //# followed-shop-controller
-  Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId);
-  Future<SuccessResponse<List<FollowedShopEntity>>> followedShopList();
-  Future<SuccessResponse> followedShopDelete(int followedShopId);
-
-  //# comment-controller
-  Future<SuccessResponse<List<CommentEntity>>> getReviewComments(String reviewId); //uuid
-
-  //# comment-customer-controller
-  Future<SuccessResponse<CommentEntity>> addCustomerComment(CommentParam param);
-  Future<SuccessResponse> deleteCustomerComment(String commentId); //uuid
+  
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
@@ -271,9 +257,6 @@ class ProductDataSourceImpl implements ProductDataSource {
 
     final response = await _dio.getUri(
       url,
-      options: dio.Options(
-        headers: baseHttpHeaders(),
-      ),
     );
 
     return handleDioResponse<int, int>(
@@ -293,12 +276,7 @@ class ProductDataSourceImpl implements ProductDataSource {
       }.map((key, value) => MapEntry(key, value.toString())),
     );
 
-    final response = await _dio.getUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(),
-      ),
-    );
+    final response = await _dio.getUri(url);
 
     return handleDioResponse<ProductPageResp, Map<String, dynamic>>(
       response,
@@ -307,124 +285,4 @@ class ProductDataSourceImpl implements ProductDataSource {
     );
   }
 
-  @override
-  Future<SuccessResponse<int>> countShopFollowed(int shopId) async {
-    final url = baseUri(path: '$kAPIShopDetailCountFollowedURL/$shopId');
-    final response = await _dio.getUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(
-          accessToken: await _secureStorageHelper.accessToken, // REVIEW why need accessToken here?
-        ),
-      ),
-    );
-
-    return handleDioResponse<int, int>(
-      response,
-      url,
-      parse: (count) => count,
-    );
-  }
-
-  @override
-  Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId) async {
-    final url = baseUri(
-      path: kAPIFollowedShopAddURL,
-      queryParameters: {'shopId': shopId.toString()},
-    );
-
-    final response = await _dio.postUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      ),
-    );
-
-    return handleDioResponse<FollowedShopEntity, Map<String, dynamic>>(
-      response,
-      url,
-      parse: (jsonMap) => FollowedShopEntity.fromMap(jsonMap['followedShopDTO']),
-    );
-  }
-
-  @override
-  Future<SuccessResponse> followedShopDelete(int followedShopId) async {
-    final url = baseUri(path: '$kAPIFollowedShopDeleteURL/$followedShopId');
-
-    final response = await _dio.deleteUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      ),
-    );
-
-    return handleDioResponse<Object?, Map<String, dynamic>>(
-      response,
-      url,
-      hasData: false,
-    );
-  }
-
-  @override
-  Future<SuccessResponse<List<FollowedShopEntity>>> followedShopList() async {
-    final url = baseUri(path: kAPIFollowedShopListURL);
-
-    final response = await _dio.getUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      ),
-    );
-
-    return handleDioResponse<List<FollowedShopEntity>, Map<String, dynamic>>(
-      response,
-      url,
-      parse: (jsonList) => (jsonList['followedShopDTOs'] as List)
-          .map(
-            (jsonMap) => FollowedShopEntity.fromMap(jsonMap),
-          )
-          .toList(),
-    );
-  }
-
-  @override
-  Future<SuccessResponse<CommentEntity>> addCustomerComment(CommentParam param) async {
-    final url = baseUri(path: kAPICommentAddURL);
-    final response = await _dio.postUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      ),
-      data: param.toMap(),
-    );
-
-    return handleDioResponse<CommentEntity, Map<String, dynamic>>(
-      response,
-      url,
-      parse: (jsonMap) => CommentEntity.fromMap(jsonMap['commentDTO']),
-    );
-  }
-
-  @override
-  Future<SuccessResponse<Object?>> deleteCustomerComment(String commentId) async {
-    final url = baseUri(path: '$kAPICommentDeleteURL/$commentId');
-    final response = await _dio.deleteUri(
-      url,
-      options: dio.Options(
-        headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      ),
-    );
-
-    return handleDioResponse<Object?, Map<String, dynamic>>(
-      response,
-      url,
-      hasData: false,
-    );
-  }
-
-  @override
-  Future<SuccessResponse<List<CommentEntity>>> getReviewComments(String reviewId) {
-    throw UnimplementedError();
-    //! TODO: implement getReviewComments (API not available)
-  }
 }

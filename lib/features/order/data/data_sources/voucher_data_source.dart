@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../core/constants/customer_apis.dart';
+import '../../../../core/constants/customer_api.dart';
 
 abstract class VoucherDataSource {
   Future<SuccessResponse<List<VoucherEntity>>> listAll();

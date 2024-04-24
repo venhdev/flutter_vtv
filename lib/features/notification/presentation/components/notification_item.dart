@@ -43,9 +43,10 @@ class _NotificationItemState extends State<NotificationItem> {
         return widget.onDismiss(widget.notification.notificationId);
       },
       child: Badge(
-        offset: const Offset(-18, 0),
+        offset: const Offset(8, 8),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
-        isLabelVisible: !widget.notification.seen, //REVIEW: notification.seen default = true???
+        isLabelVisible: !widget.notification.seen, //_REVIEW: notification.seen default = false
+        alignment: Alignment.topLeft,
         label: const Text(
           'Mới',
           style: TextStyle(
@@ -94,8 +95,8 @@ class _NotificationItemState extends State<NotificationItem> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            if (!widget.notification.seen) const SizedBox(width: 32),
                             Text(
                               // notification.title,
                               widget.notification.title,
@@ -103,6 +104,8 @@ class _NotificationItemState extends State<NotificationItem> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+
+                            const Spacer(),
 
                             // # expand button
                             // if (widget.notification.body.length > 200)

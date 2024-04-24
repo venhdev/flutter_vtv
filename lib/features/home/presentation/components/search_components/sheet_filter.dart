@@ -130,7 +130,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                     minPrice: _currentRangeValues.start.round(),
                     maxPrice: _currentRangeValues.end.round(),
                     sortType: _sortType,
-                    filterPriceRange: _filterPriceRange,
+                    isFilterWithPriceRange: _filterPriceRange,
                   ),
                 );
               },
@@ -154,7 +154,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                       minPrice: _currentRangeValues.start.round(),
                       maxPrice: _currentRangeValues.end.round(),
                       sortType: _sortType,
-                      filterPriceRange: _filterPriceRange,
+                      isFilterWithPriceRange: _filterPriceRange,
                     ));
               },
               child: Container(
