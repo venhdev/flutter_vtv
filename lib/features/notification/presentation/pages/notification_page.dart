@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
-import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../domain/repository/notification_repository.dart';
 import '../components/notification_item.dart';

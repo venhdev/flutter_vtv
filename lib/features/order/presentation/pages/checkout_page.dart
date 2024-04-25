@@ -13,7 +13,6 @@ import '../../../profile/domain/repository/profile_repository.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
 import '../components/checkout/wrapper.dart';
-import '../components/shop_info.dart';
 import 'order_detail_page.dart';
 import 'voucher_page.dart';
 

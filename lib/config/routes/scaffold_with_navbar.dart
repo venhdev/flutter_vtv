@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../app_state.dart';
+import '../../core/presentation/pages/intro_page.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
@@ -15,35 +19,40 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        // Here, the items of BottomNavigationBar are hard coded. In a real
-        // world scenario, the items would most likely be generated from the
-        // branches of the shell route, which can be fetched using
-        // `navigationShell.route.branches`.
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            tooltip: 'Trang chủ',
-            label: 'Trang chủ', // index => 0
+    return Consumer<AppState>(
+      builder: (context, appState, _) {
+        // the first run of the app
+        if (appState.isFirstRun == true) {
+          return const IntroPage();
+        }
+
+        return Scaffold(
+          body: navigationShell,
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_cart),
+                tooltip: 'Trang chủ',
+                label: 'Trang chủ', // index => 0
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications),
+                tooltip: 'Thông báo',
+                label: 'Thông báo', // index => 1
+                backgroundColor: Colors.blue,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                tooltip: 'Tài khoản',
+                label: 'Tài khoản', // index => 2
+                backgroundColor: Colors.blue,
+              ),
+            ],
+            currentIndex: navigationShell.currentIndex,
+            onTap: (int index) => _onTap(context, index),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            tooltip: 'Thông báo',
-            label: 'Thông báo', // index => 1
-            backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            tooltip: 'Tài khoản',
-            label: 'Tài khoản', // index => 2
-            backgroundColor: Colors.blue,
-          ),
-        ],
-        currentIndex: navigationShell.currentIndex,
-        onTap: (int index) => _onTap(context, index),
-      ),
+        );
+      },
     );
   }
 

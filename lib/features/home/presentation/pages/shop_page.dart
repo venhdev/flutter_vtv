@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
-import '../../../order/presentation/components/shop_info.dart';
 import '../../domain/repository/product_repository.dart';
 import '../../domain/repository/search_product_repository.dart';
 import '../components/product/product_item.dart';
@@ -134,6 +134,8 @@ class _ShopPageState extends State<ShopPage> {
             showChatBtn: true,
             showFollowBtn: true,
             followedShopId: _followedShopId,
+            onFollowPressed: (shopId) async => await CustomerHandler.handleFollowShop(shopId),
+            onUnFollowPressed: (followedShopId) async => await CustomerHandler.handleUnFollowShop(followedShopId),
             onFollowChanged: (followedShopId) {
               setState(() {
                 _followedShopId = followedShopId;

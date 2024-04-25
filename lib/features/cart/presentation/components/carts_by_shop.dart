@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
 import '../../../home/presentation/pages/shop_page.dart';
-import '../../../order/presentation/components/shop_info.dart';
 import 'cart_item.dart';
 
 class CartsByShop extends StatelessWidget {

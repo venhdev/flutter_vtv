@@ -10,7 +10,6 @@ import '../../domain/repository/order_repository.dart';
 import '../pages/order_detail_page.dart';
 import 'btn/review_btn.dart';
 import 'order_status_badge.dart';
-import 'shop_info.dart';
 
 class PurchaseOrderItem extends StatelessWidget {
   const PurchaseOrderItem({

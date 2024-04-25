@@ -5,7 +5,6 @@ import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
-import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product/best_selling_product_list.dart';

@@ -1,13 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
 import '../../../home/domain/repository/product_repository.dart';
 import '../../../home/presentation/pages/shop_page.dart';
-import '../../../order/presentation/components/shop_info.dart';
 
 class FollowedShopPage extends StatefulWidget {
   const FollowedShopPage({super.key});
@@ -71,8 +69,10 @@ class _FollowedShopPageState extends State<FollowedShopPage> {
                       shopName: shop.shopName,
                       showFollowBtn: true,
                       followedShopId: followedShopIds[index],
+                      onFollowPressed: (shopId) async => await CustomerHandler.handleFollowShop(shopId),
+                      onUnFollowPressed: (followedShopId) async =>
+                          await CustomerHandler.handleUnFollowShop(followedShopId),
                       onFollowChanged: (followedShopId) {
-                        log('followedShopId: $followedShopId');
                         setState(() {
                           followedShopIds[index] = followedShopId;
                         });

@@ -5,8 +5,10 @@ import 'package:flutter_vtv/features/home/data/data_sources/local_product_data_s
 import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../app_state.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../../home/domain/repository/product_repository.dart';
@@ -16,7 +18,6 @@ import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/followed_shop_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
-import 'catalog_item.dart';
 
 class LoggedView extends StatefulWidget {
   const LoggedView({
@@ -31,7 +32,6 @@ class LoggedView extends StatefulWidget {
 }
 
 class _LoggedViewState extends State<LoggedView> {
-  // appBar: buildAppBar(context, showSettingButton: true, showSearchBar: false, title: 'User'),
   bool _loading = true;
   late List<ProductDetailResp> _recentViewedProduct;
 
@@ -96,15 +96,6 @@ class _LoggedViewState extends State<LoggedView> {
       catalogDescription: 'Xem tất cả sản phẩm yêu thích',
       icon: const Icon(Icons.favorite, color: Colors.red),
       onPressed: () async {
-        // Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) {
-        //       return const FavoriteProductPage();
-        //     },
-        //   ),
-        // ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
-
         context.push(FavoriteProductsPage.path);
       },
     );
@@ -162,15 +153,6 @@ class _LoggedViewState extends State<LoggedView> {
                     ProductDetailPage.path,
                     extra: _recentViewedProduct[index],
                   );
-                  // Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(false);
-
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) {
-                  //       return ProductDetailPage(productDetail: data[index]);
-                  //     },
-                  //   ),
-                  // ).then((_) => Provider.of<AppState>(context, listen: false).setBottomNavigationVisibility(true));
                 },
               ),
       ],

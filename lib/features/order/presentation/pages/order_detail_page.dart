@@ -15,7 +15,6 @@ import '../../domain/repository/order_repository.dart';
 import '../components/btn/review_btn.dart';
 import '../components/checkout/wrapper.dart';
 import '../components/order_status_badge.dart';
-import '../components/shop_info.dart';
 import 'checkout_page.dart';
 
 // const String _noVoucherMsg = 'Không áp dụng';

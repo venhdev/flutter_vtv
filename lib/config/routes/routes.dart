@@ -3,12 +3,9 @@ import 'package:flutter_vtv/config/routes/extra_codec.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../core/handler/customer_handler.dart';
 import '../../core/presentation/pages/dev_page.dart';
 import '../../core/presentation/pages/intro_page.dart';
-import '../../features/auth/presentation/pages/change_password_page.dart';
-import '../../features/auth/presentation/pages/forgot_password_page.dart';
-import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/presentation/pages/category_page.dart';
 import '../../features/home/presentation/pages/favorite_products_page.dart';
@@ -94,8 +91,10 @@ class AppRoutes {
           },
           routes: [
             GoRoute(
-                path: LoginPage.routeName, // '/user/login'
-                name: LoginPage.routeName, // login
+                // path: LoginPage.routeName, // '/user/login'
+                // name: LoginPage.routeName, // login
+                path: 'login',
+                name: 'login',
                 parentNavigatorKey: _rootNavigatorKey,
                 builder: (context, state) => const LoginPage(),
                 routes: [
@@ -103,14 +102,19 @@ class AppRoutes {
                     path: ForgotPasswordPage.routeName, // '/user/login/forgot-password'
                     parentNavigatorKey: _rootNavigatorKey,
                     name: ForgotPasswordPage.routeName, // forgot-password
-                    builder: (context, state) => const ForgotPasswordPage(),
+                    builder: (context, state) => const ForgotPasswordPage(
+                      onSendCode: CustomerHandler.sendCodeForResetPassword,
+                      handleResetPassword: CustomerHandler.resetPassword,
+                    ),
                   ),
                 ]),
             GoRoute(
               path: RegisterPage.routeName, // '/user/register'
               name: RegisterPage.routeName, // register
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const RegisterPage(),
+              builder: (context, state) => const RegisterPage(
+                onRegister: CustomerHandler.registerCustomer,
+              ),
             ),
 
             GoRoute(
@@ -190,7 +194,9 @@ class AppRoutes {
                 GoRoute(
                   path: ChangePasswordPage.routeName, // '/user/settings/change-password'
                   name: ChangePasswordPage.routeName, // change-password
-                  builder: (context, state) => const ChangePasswordPage(),
+                  builder: (context, state) => const ChangePasswordPage(
+                    onChangePassword: CustomerHandler.changePassword,
+                  ),
                 ),
                 GoRoute(
                   path: AddressPage.routeName, // 'user/settings/address'

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:vtv_common/vtv_common.dart';
@@ -24,27 +26,27 @@ class AppState extends ChangeNotifier {
     subscribeConnection();
   }
 
-  //.---------------------Bottom Navigation Visibility-----------------------
-  bool _isBottomNavigationVisible = true;
+  // //.---------------------Bottom Navigation Visibility-----------------------
+  // bool _isBottomNavigationVisible = true;
 
-  bool get isBottomNavigationVisible => _isBottomNavigationVisible;
+  // bool get isBottomNavigationVisible => _isBottomNavigationVisible;
 
-  void hideBottomNav() {
-    if (_isBottomNavigationVisible == false) return;
-    _isBottomNavigationVisible = false;
-    notifyListeners();
-  }
+  // void hideBottomNav() {
+  //   if (_isBottomNavigationVisible == false) return;
+  //   _isBottomNavigationVisible = false;
+  //   notifyListeners();
+  // }
 
-  void showBottomNav() {
-    if (_isBottomNavigationVisible == true) return;
-    _isBottomNavigationVisible = true;
-    notifyListeners();
-  }
+  // void showBottomNav() {
+  //   if (_isBottomNavigationVisible == true) return;
+  //   _isBottomNavigationVisible = true;
+  //   notifyListeners();
+  // }
 
-  void setBottomNavigationVisibility(bool isVisible) {
-    _isBottomNavigationVisible = isVisible;
-    notifyListeners();
-  }
+  // void setBottomNavigationVisibility(bool isVisible) {
+  //   _isBottomNavigationVisible = isVisible;
+  //   notifyListeners();
+  // }
 
   //.---------------------Connectivity-----------------------
   Stream<List<ConnectivityResult>> get connectionStream => _connectivity.onConnectivityChanged;
@@ -55,6 +57,8 @@ class AppState extends ChangeNotifier {
       hasConnection = connection[0] != ConnectivityResult.none;
       notifyListeners();
     });
+
+    log('done subscribeConnection: $hasConnection');
   }
   //.---------------------Connectivity-----------------------
 

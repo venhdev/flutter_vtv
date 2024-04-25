@@ -6,11 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
+import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
-import '../../../auth/presentation/bloc/auth_cubit.dart';
-import '../../../auth/presentation/components/rating.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
-import '../../../order/presentation/components/shop_info.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/product/product_item.dart';
 import '../components/product/sheet_add_to_cart_or_buy_now.dart';
@@ -228,6 +226,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onViewPressed: () => context.push('${ShopPage.path}/${_productDetail.shopId}'),
               showFollowBtn: true,
               followedShopId: _followedShopId,
+              onFollowPressed: (shopId) async => await CustomerHandler.handleFollowShop(shopId),
+              onUnFollowPressed: (followedShopId) async => await CustomerHandler.handleUnFollowShop(followedShopId),
               onFollowChanged: (followedShopId) {
                 setState(() {
                   _followedShopId = followedShopId;

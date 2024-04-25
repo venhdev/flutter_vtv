@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../auth/presentation/components/rating.dart';
 import '../../pages/review_detail_page.dart';
 
 class ReviewItem extends StatelessWidget {

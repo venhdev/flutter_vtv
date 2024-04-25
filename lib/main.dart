@@ -10,8 +10,6 @@ import 'app.dart';
 import 'app_state.dart';
 import 'config/bloc_config.dart';
 import 'config/themes/theme_provider.dart';
-import 'core/notification/firebase_cloud_messaging_manager.dart';
-import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'config/firebase_options.dart';
 import 'service_locator.dart';

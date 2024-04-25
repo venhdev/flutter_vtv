@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/vtv_common.dart';
 
 import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../../../auth/presentation/bloc/auth_cubit.dart';
-import '../../../auth/presentation/components/logged_widget.dart';
-import '../../../auth/presentation/components/not_logged_widget.dart';
+import '../components/logged_widget.dart';
+import '../components/not_logged_widget.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({super.key});

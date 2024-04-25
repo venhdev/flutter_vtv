@@ -5,7 +5,6 @@ import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../config/themes/theme_provider.dart';
 import 'address_page.dart';
-import '../../../auth/presentation/bloc/auth_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
