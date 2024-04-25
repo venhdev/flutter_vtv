@@ -74,7 +74,6 @@ class CartBadge extends StatelessWidget {
                       icon: Icon(Icons.shopping_cart),
                     );
                   }
-                  // REVIEW: there may be some other states/errors that need to be handled
                   return const Center(
                     child: CircularProgressIndicator(),
                   );

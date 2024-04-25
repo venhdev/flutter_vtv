@@ -12,7 +12,7 @@ class VTVApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'VTV Shop',
-      routerConfig: AppRoutes.router2,
+      routerConfig: AppRoutes.router,
       theme: Provider.of<ThemeProvider>(context).themeData,
     );
   }

@@ -4,7 +4,7 @@ import 'package:vtv_common/vtv_common.dart';
 
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product_components/product_item.dart';
+import '../components/product/product_item.dart';
 import 'product_detail_page.dart';
 
 //! Show all customer's favorite products

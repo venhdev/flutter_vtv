@@ -8,9 +8,9 @@ import '../../../../service_locator.dart';
 import '../../../order/presentation/components/shop_info.dart';
 import '../../domain/repository/product_repository.dart';
 import '../../domain/repository/search_product_repository.dart';
-import '../components/product_components/product_item.dart';
-import '../components/search_components/btn_filter.dart';
-import '../components/search_components/search_bar.dart';
+import '../components/product/product_item.dart';
+import '../components/search/btn_filter.dart';
+import '../components/search/search_bar.dart';
 import 'product_detail_page.dart';
 
 //! ShopPage show all products of a shop, customer can:

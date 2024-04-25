@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -83,7 +81,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         },
         (ok) {
           // FetchCart to BLoC to update cart
-          context.read<CartBloc>().add(const FetchCart()); //TODO this make show unwanted toast
+          context.read<CartBloc>().add(const FetchCart()); //OK_TODO this make show unwanted toast
 
           // navigate to order detail page
           context.go(OrderDetailPage.path, extra: ok.data);
@@ -336,7 +334,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           //? not null >> use loyalty point
           if (_order.loyaltyPointHistory != null) ...[
             //? maybe negative point >> no need to add '-' sign
-            // BUG: server side
             _totalSummaryPriceItem('Sử dụng điểm tích lũy:', _order.loyaltyPointHistory!.point),
           ],
 

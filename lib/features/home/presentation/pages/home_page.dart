@@ -8,10 +8,10 @@ import '../../../../service_locator.dart';
 import '../../../auth/presentation/bloc/auth_cubit.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product_components/best_selling_product_list.dart';
-import '../components/product_components/category_list.dart';
-import '../components/product_components/product_item.dart';
-import '../components/search_components/btn_filter.dart';
+import '../components/product/best_selling_product_list.dart';
+import '../components/category/category_list.dart';
+import '../components/product/product_item.dart';
+import '../components/search/btn_filter.dart';
 import 'product_detail_page.dart';
 
 //! HomePage is the main page of the app, showing all products, categories, and best-selling products...

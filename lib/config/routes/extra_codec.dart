@@ -49,6 +49,9 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'AddressEntity') {
       return AddressEntity.fromJson(inputAsList[1] as String);
     }
+    if (inputAsList[0] == 'ReviewEntity') {
+      return ReviewEntity.fromJson(inputAsList[1] as String);
+    }
     throw FormatException('Unable to parse input: $input');
   }
 }
@@ -91,6 +94,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case AddressEntity _:
         return <Object?>[
           'AddressEntity',
+          (input).toJson(),
+        ];
+      case ReviewEntity _:
+        return <Object?>[
+          'ReviewEntity',
           (input).toJson(),
         ];
       default:

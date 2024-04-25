@@ -2,10 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../app_state.dart';
 import '../../pages/product_detail_page.dart';
 import 'product_item.dart';
 
@@ -67,7 +66,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
       _scrollController.removeListener(() {});
       _scrollController.addListener(() {
         // log('[LazyProductListBuilder] Add listener to parent\'s scrollController $count times');
-        log('position: ${_scrollController.position.pixels}');
+        // log('position: ${_scrollController.position.pixels}');
         if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
           _loadData(_currentPage);
         }
@@ -75,7 +74,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
     } else {
       _scrollController = ScrollController()
         ..addListener(() {
-          log('position: ${_scrollController.position.pixels}');
+          // log('position: ${_scrollController.position.pixels}');
           if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading) {
             _loadData(_currentPage);
           }
@@ -164,19 +163,21 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
           return ProductItem(
             product: _products[index],
             onPressed: () {
+              context.push(ProductDetailPage.path, extra: _products[index].productId);
               // context.go(ProductDetailPage.path, extra: _products[index].productId);
-              context.read<AppState>().hideBottomNav();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return ProductDetailPage(productId: _products[index].productId);
-                  },
-                ),
-              ).then(
-                (_) {
-                  context.read<AppState>().showBottomNav();
-                },
-              );
+              // context.read<AppState>().hideBottomNav();
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return ProductDetailPage(productId: _products[index].productId);
+              //     },
+              //   ),
+              // );
+              // .then(
+              //   (_) {
+              //     context.read<AppState>().showBottomNav();
+              //   },
+              // );
             },
           );
         }

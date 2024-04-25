@@ -143,7 +143,6 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
   }
 
   void handleDeleteComment(String commentId) async {
-    
     final respEither = await sl<ProductRepository>().deleteCustomerComment(commentId);
     respEither.fold(
       (error) {
@@ -160,7 +159,11 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
   @override
   void initState() {
     super.initState();
-    sl<SecureStorageHelper>().username.then((value) => _username = value);
+    sl<SecureStorageHelper>().username.then((value) {
+      if (mounted) {
+        setState(() => _username = value);
+      }
+    });
 
     if (widget.review == null) {
       fetchData(widget.reviewId);
@@ -168,6 +171,12 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
       // reverse list to archive UX
       // _comments = widget.comments!.reversed.toList();
       _review = widget.review!;
+      _comments = widget.review!.comments!.reversed.toList();
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
 
     // //.?? add delay to scroll to bottom because the list is not ready yet
@@ -180,9 +189,7 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: const Text('Bình luận'),
-      ),
+      appBar: AppBar(title: const Text('Bình luận')),
       body: _loading
           ? const Center(
               child: CircularProgressIndicator(),
