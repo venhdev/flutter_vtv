@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../features/cart/presentation/components/cart_badge.dart';
-import '../../../features/home/presentation/components/search_components/search_bar.dart';
+import '../../../features/home/presentation/components/search/search_bar.dart';
 import '../../../features/home/presentation/pages/search_page.dart';
 
 AppBar buildAppBar(

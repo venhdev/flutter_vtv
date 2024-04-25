@@ -1,9 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'dart:developer';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vtv_common/vtv_common.dart';
 
 void main() {
   // test('t_test.dart', () {

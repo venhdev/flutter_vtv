@@ -12,8 +12,8 @@ import '../../../auth/presentation/components/rating.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../../order/presentation/components/shop_info.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product_components/product_item.dart';
-import '../components/product_components/sheet_add_to_cart_or_buy_now.dart';
+import '../components/product/product_item.dart';
+import '../components/product/sheet_add_to_cart_or_buy_now.dart';
 import '../components/review/review_item.dart';
 import 'product_reviews_page.dart';
 import 'shop_page.dart';
@@ -529,7 +529,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             flex: 2,
             child: IconTextButton(
               onPressed: () {
-                // TODO: open chat
+                // open chat
               },
               style: IconButton.styleFrom(
                 backgroundColor: Colors.grey[200],

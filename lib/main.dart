@@ -13,7 +13,7 @@ import 'config/themes/theme_provider.dart';
 import 'core/notification/firebase_cloud_messaging_manager.dart';
 import 'features/auth/presentation/bloc/auth_cubit.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
-import 'firebase_options.dart';
+import 'config/firebase_options.dart';
 import 'service_locator.dart';
 
 void main() async {

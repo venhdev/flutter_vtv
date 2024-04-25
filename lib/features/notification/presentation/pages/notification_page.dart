@@ -143,21 +143,21 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Row _buildReadAllAndReloadBtn(LazyLoadController<NotificationEntity> controller) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        TextButton(
-          onPressed: null, //TODO: implement mark all as read
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.green.shade100,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text('Đánh dấu tất cả đã đọc'),
-        ),
-      ],
-    );
-  }
+  // Row _buildReadAllAndReloadBtn(LazyLoadController<NotificationEntity> controller) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       TextButton(
+  //         onPressed: null,
+  //         style: TextButton.styleFrom(
+  //           backgroundColor: Colors.green.shade100,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(8),
+  //           ),
+  //         ),
+  //         child: const Text('Đánh dấu tất cả đã đọc'),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

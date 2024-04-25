@@ -4,8 +4,8 @@ import 'package:vtv_common/vtv_common.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/search_product_repository.dart';
-import '../components/product_components/product_page_builder.dart';
-import '../components/search_components/btn_filter.dart';
+import '../components/product/product_page_builder.dart';
+import '../components/search/btn_filter.dart';
 
 //! SearchPage show search result of products
 class SearchPage extends StatefulWidget {

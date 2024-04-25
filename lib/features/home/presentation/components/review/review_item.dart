@@ -88,7 +88,7 @@ class ReviewItem extends StatelessWidget {
                 onPressed: () {
                   context.push(
                     '${ReviewDetailPage.path}/${review.reviewId}',
-                    extra: review.comments,
+                    extra: review,
                   );
                 },
               ),
