@@ -8,6 +8,8 @@ import '../components/product/product_page_builder.dart';
 import '../components/search/btn_filter.dart';
 
 //! SearchPage show search result of products
+const int _pageSize = 4; //! Number of products per page
+
 class SearchPage extends StatefulWidget {
   static const String routeName = 'search';
   static const String path = '/home/search';
@@ -22,7 +24,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchController = TextEditingController();
-  final pageSize = 2; //! Number of products per page
 
   // search & filter & sort
   late String currentSearchText;
@@ -41,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
         ? currentFilter.isFilterWithPriceRange
             ? sl<SearchProductRepository>().getSearchProductPriceRangeSort(
                 currentPage,
-                pageSize,
+                _pageSize,
                 currentSearchText,
                 currentFilter.sortType,
                 currentFilter.minPrice,
@@ -49,13 +50,13 @@ class _SearchPageState extends State<SearchPage> {
               )
             : sl<SearchProductRepository>().searchProductSort(
                 currentPage,
-                pageSize,
+                _pageSize,
                 currentSearchText,
                 currentFilter.sortType,
               )
         : sl<SearchProductRepository>().searchProductSort(
             currentPage,
-            pageSize,
+            _pageSize,
             currentSearchText,
             SortTypes.random,
           );

@@ -2,13 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/local_product_data_source.dart';
-import 'package:flutter_vtv/features/order/presentation/pages/purchase_page.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/order_purchase_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../app_state.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../../home/domain/repository/product_repository.dart';
@@ -107,7 +105,7 @@ class _LoggedViewState extends State<LoggedView> {
       catalogDescription: 'Xem tất cả đơn hàng',
       icon: const Icon(Icons.shopping_cart, color: Colors.green),
       onPressed: () {
-        context.go(PurchasePage.path);
+        context.go(OrderPurchasePage.path);
       },
     );
   }

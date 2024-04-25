@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/home/domain/repository/product_repository.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vtv_common/vtv_common.dart';
@@ -159,11 +160,7 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
   @override
   void initState() {
     super.initState();
-    sl<SecureStorageHelper>().username.then((value) {
-      if (mounted) {
-        setState(() => _username = value);
-      }
-    });
+    _username = context.read<AuthCubit>().state.auth?.userInfo.username;
 
     if (widget.review == null) {
       fetchData(widget.reviewId);
@@ -197,7 +194,7 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
           : Column(
               children: [
                 //# List of comments
-                _username != null ? _buildComments(_username!) : const SizedBox.shrink(),
+                _buildComments(_username),
                 //# Add comment text field
                 _username == _review.username ? _buildTextField() : const SizedBox.shrink(),
               ],
@@ -205,7 +202,7 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
     );
   }
 
-  Widget _buildComments(String username) {
+  Widget _buildComments(String? username) {
     return Expanded(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),

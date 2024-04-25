@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../../service_locator.dart';
 import 'cascading_menu_btn.dart';
 
 class CommentItem extends StatelessWidget {
@@ -29,7 +29,10 @@ class CommentItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           //# user info & more_vert button if owner
-          _buildUserInfo(),
+          Builder(builder: (context) {
+            final currentUsername = context.read<AuthCubit>().state.auth?.userInfo.username;
+            return _buildUserInfo(currentUsername);
+          }),
 
           // content
           Text(comment.content),
@@ -47,7 +50,7 @@ class CommentItem extends StatelessWidget {
     );
   }
 
-  Row _buildUserInfo() {
+  Row _buildUserInfo(String? currentUsername) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -57,8 +60,8 @@ class CommentItem extends StatelessWidget {
               backgroundImage: AssetImage('assets/images/placeholders/a1.png'),
             ),
             const SizedBox(width: 8),
-            if (comment.username.isNotEmpty) _username(comment.username),
-            if (comment.shopName.isNotEmpty) _username(comment.shopName),
+            if (comment.username.isNotEmpty) _username(comment.username, currentUsername),
+            if (comment.shopName.isNotEmpty) _username(comment.shopName, currentUsername),
             // Text(comment.shopName, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
@@ -85,15 +88,8 @@ class CommentItem extends StatelessWidget {
     );
   }
 
-  Widget _username(String username) => FutureBuilder(
-      future: sl<SecureStorageHelper>().username,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(
-            snapshot.data == comment.username ? 'Bạn' : comment.username,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          );
-        }
-        return const SizedBox();
-      });
+  Widget _username(String username, String? curUsername) => Text(
+        curUsername == comment.username ? 'Bạn' : comment.username,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
 }

@@ -1,31 +1,38 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timelines/timelines.dart';
 import 'package:vtv_common/vtv_common.dart';
 
-import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/order_item.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
-import '../../domain/repository/order_repository.dart';
 import '../components/btn/review_btn.dart';
 import '../components/checkout/wrapper.dart';
 import '../components/order_status_badge.dart';
-import 'checkout_page.dart';
 
 // const String _noVoucherMsg = 'Không áp dụng';
 
 class OrderDetailPage extends StatelessWidget {
-  const OrderDetailPage({super.key, required this.orderDetail});
+  const OrderDetailPage({
+    super.key,
+    required this.orderDetail,
+    required this.onCompleteOrderPressed,
+    required this.onCancelOrderPressed,
+    required this.onRePurchasePressed,
+  });
 
   static const String routeName = 'order-detail';
   static const String path = '/user/purchase/order-detail';
 
   final OrderDetailEntity orderDetail;
+
+  //! Customer view
+  final Future<void> Function(String orderId) onCompleteOrderPressed;
+  final Future<void> Function(String orderId) onCancelOrderPressed;
+  final Future<void> Function(List<OrderItemEntity> orderItems) onRePurchasePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -139,130 +146,6 @@ class OrderDetailPage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget? _buildBottomActionByOrderStatus(BuildContext context, OrderStatus status) {
-    Widget buildStatus(BuildContext context, OrderStatus status) {
-      switch (status) {
-        case OrderStatus.PENDING || OrderStatus.PROCESSING:
-          return _buildCancelButton(context);
-        case OrderStatus.COMPLETED:
-          return ReviewBtn(order: orderDetail.order);
-        case OrderStatus.CANCEL:
-          return _buildRePurchaseBtn(context);
-        case OrderStatus.PICKUP_PENDING || OrderStatus.SHIPPING:
-          return _buildBottomActionBtn(
-            context,
-            label: 'Quay lại',
-            onPressed: () => context.pop(),
-            backgroundColor: Colors.grey.shade400,
-          );
-        case OrderStatus.DELIVERED:
-          return _buildBottomActionBtn(
-            context,
-            label: 'Đã nhận được hàng',
-            onPressed: () async {
-              final isConfirm = await showDialogToConfirm<bool>(
-                context: context,
-                title: 'Bạn đã nhận được hàng?',
-                titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                content:
-                    'Hành động này không thể hoàn tác. Sau khi xác nhận, bạn sẽ không thể yêu cầu hoàn trả tiền hoặc đổi trả hàng. Và chúng tôi sẽ chuyển tiền cho người bán.',
-                confirmText: 'Xác nhận',
-                confirmBackgroundColor: Colors.green.shade300,
-                dismissText: 'Thoát',
-              );
-
-              if (isConfirm ?? false) {
-                final respEither = await sl<OrderRepository>().completeOrder(orderDetail.order.orderId!);
-                respEither.fold(
-                  (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
-                  (ok) {
-                    context.pop<OrderDetailEntity>(ok.data);
-                    // context.go(OrderDetailPage.path, extra: ok.data);
-                  },
-                );
-              }
-            },
-            backgroundColor: Colors.green.shade300,
-          );
-
-        default:
-          throw UnimplementedError('Not implement for status: $status');
-      }
-    }
-
-    return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Row(
-        children: [
-          //# chat
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(flex: 1, child: _buildChatBtn()),
-                if (status == OrderStatus.COMPLETED) Expanded(flex: 2, child: _buildRePurchaseBtn(context)),
-              ],
-            ),
-          ),
-
-          //# cancel - add review - view review
-          Expanded(
-            child: buildStatus(context, status),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChatBtn([String text = 'Chat']) {
-    return ElevatedButton(
-      onPressed: null,
-      style: ElevatedButton.styleFrom(
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shape: const RoundedRectangleBorder(),
-        backgroundColor: Colors.blue.shade300,
-        padding: EdgeInsets.zero,
-        disabledBackgroundColor: Colors.blue.shade300,
-      ),
-      child: Text(text),
-    );
-  }
-
-  Widget _buildRePurchaseBtn(BuildContext context) {
-    return _buildBottomActionBtn(
-      context,
-      label: 'Mua lại',
-      onPressed: () async {
-        final Map<int, int> rePurchaseItems = {}; // cre a list to store productVariantId and quantity for re-purchase
-
-        for (var item in orderDetail.order.orderItems) {
-          rePurchaseItems.addAll({item.productVariant.productVariantId: item.quantity});
-        }
-
-        final respEither = await sl<OrderRepository>().createByProductVariant(rePurchaseItems);
-
-        respEither.fold(
-          (error) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(error.message!),
-                ),
-              );
-          },
-          (ok) {
-            // context.pop(); // pop out the bottom sheet
-            context.push(
-              Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
-              extra: ok.data!.order,
-            );
-          },
-        );
-      },
-      backgroundColor: Colors.green.shade300,
     );
   }
 
@@ -484,21 +367,6 @@ class OrderDetailPage extends StatelessWidget {
       address: orderDetail.order.address,
       color: Colors.white,
       suffixIcon: null,
-
-      // margin: const EdgeInsets.all(2),
-      // decoration: BoxDecoration(
-      //   // border: Border.all(color: Colors.grey),
-      //   borderRadius: BorderRadius.circular(8),
-      //   color: Colors.white,
-      //   boxShadow: [
-      //     BoxShadow(
-      //       color: Colors.grey.withOpacity(0.5),
-      //       spreadRadius: 1,
-      //       blurRadius: 2,
-      //       offset: const Offset(0, 1), // changes position of shadow
-      //     ),
-      //   ],
-      // ),
     );
   }
 
@@ -533,7 +401,7 @@ class OrderDetailPage extends StatelessWidget {
             shopName: orderDetail.order.shop.name,
             shopAvatar: orderDetail.order.shop.avatar,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
 
           //! list of items
           ListView.separated(
@@ -566,65 +434,107 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCancelButton(BuildContext context) {
-    return ElevatedButton(
-      //color red
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red.shade200,
-        shape: const RoundedRectangleBorder(),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-      onPressed: () async {
-        final isConfirm = await showDialogToConfirm(
-          context: context,
-          title: 'Hủy đơn hàng',
-          content: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
-          confirmText: 'Hủy đơn hàng',
-          confirmBackgroundColor: Colors.red.shade300,
-        );
+  Widget? _buildBottomActionByOrderStatus(BuildContext context, OrderStatus status) {
+    final isVender = context.read<AuthCubit>().state.auth!.userInfo.roles!.contains(Role.VENDOR);
 
-        if (isConfirm) {
-          final resp = await sl<OrderRepository>().cancelOrder(orderDetail.order.orderId!);
+    Widget buildByStatus(BuildContext context, OrderStatus status) {
+      switch (status) {
+        case OrderStatus.PENDING || OrderStatus.PROCESSING:
+          return ActionButton.cancelOrder(() => onCancelOrderPressed(orderDetail.order.orderId!));
+        case OrderStatus.COMPLETED:
+          return ReviewBtn(order: orderDetail.order);
+        case OrderStatus.CANCEL:
+          return ActionButton.rePurchase(() => onRePurchasePressed(orderDetail.order.orderItems));
+        case OrderStatus.PICKUP_PENDING || OrderStatus.SHIPPING:
+          return ActionButton.back(context);
+        case OrderStatus.DELIVERED:
+          return ActionButton.completeOrder(() => onCompleteOrderPressed(orderDetail.order.orderId!));
 
-          resp.fold(
-            (error) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message!)));
-            },
-            (ok) {
-              showDialogToAlert(
-                context,
-                title: const Text('Hủy đơn hàng thành công!'),
-                titleTextStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+        default:
+          throw UnimplementedError('Not implement for status: $status');
+      }
+    }
+
+    return Container(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: !isVender
+          //! Customer view
+          ? Row(
+              children: [
+                //# chat
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(flex: 1, child: ActionButton.chat(null)),
+                      if (status == OrderStatus.COMPLETED)
+                        Expanded(
+                            flex: 2,
+                            child: ActionButton.rePurchase(() => onRePurchasePressed(orderDetail.order.orderItems))),
+                    ],
+                  ),
                 ),
-                children: [],
-              );
-              context.go(path, extra: ok.data);
-            },
-          );
-        }
-      },
-      child: const Text('Hủy đơn hàng'),
+
+                //# cancel - add review - view review
+                Expanded(
+                  child: buildByStatus(context, status),
+                ),
+              ],
+            )
+          //! Vendor view
+          : ActionButton.back(context),
     );
   }
 }
 
-Widget _buildBottomActionBtn(
-  BuildContext context, {
-  required String label,
-  required void Function() onPressed,
-  required Color backgroundColor,
-}) {
-  return ElevatedButton(
-    //color red
-    style: ElevatedButton.styleFrom(
-      backgroundColor: backgroundColor,
-      shape: const RoundedRectangleBorder(),
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    ),
-    onPressed: onPressed,
-    child: Text(label),
-  );
+class ActionButton extends StatelessWidget {
+  const ActionButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    required this.backgroundColor,
+  });
+
+  factory ActionButton.back(BuildContext context) => ActionButton(
+        label: 'Quay lại',
+        onPressed: () => context.pop(),
+        backgroundColor: Colors.grey.shade400,
+      );
+  factory ActionButton.completeOrder(void Function()? onCompleteOrderPressed) => ActionButton(
+        label: 'Đã nhận được hàng',
+        onPressed: onCompleteOrderPressed,
+        backgroundColor: Colors.green.shade300,
+      );
+  factory ActionButton.cancelOrder(void Function()? onCancelOrderPressed) => ActionButton(
+        label: 'Hủy đơn hàng',
+        onPressed: onCancelOrderPressed,
+        backgroundColor: Colors.red.shade300,
+      );
+  factory ActionButton.rePurchase(void Function()? onRePurchasePressed) => ActionButton(
+        label: 'Mua lại',
+        onPressed: onRePurchasePressed,
+        backgroundColor: Colors.green.shade300,
+      );
+  factory ActionButton.chat(void Function()? onChatPressed) => ActionButton(
+        label: 'Chat',
+        onPressed: onChatPressed,
+        backgroundColor: Colors.blue.shade300,
+      );
+
+  final String label;
+  final void Function()? onPressed;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        shape: const RoundedRectangleBorder(),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: EdgeInsets.zero,
+      ),
+      onPressed: onPressed,
+      child: Text(label),
+    );
+  }
 }

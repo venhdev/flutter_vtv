@@ -106,9 +106,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void checkFollowedShop(int shopId) async {
-    final respEither = await sl<ProductRepository>().followedShopCheckExist(shopId);
+    if (context.read<AuthCubit>().state.status != AuthStatus.authenticated) return;
 
-    log('respEither checkFollowedShop: $respEither');
+    final respEither = await sl<ProductRepository>().followedShopCheckExist(shopId);
     respEither.fold(
       (error) => log('Error: ${error.message}'),
       (ok) {
