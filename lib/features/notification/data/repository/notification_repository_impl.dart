@@ -1,4 +1,5 @@
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/notification.dart';
 
 import '../../domain/repository/notification_repository.dart';
 import '../data_sources/notification_data_source.dart';

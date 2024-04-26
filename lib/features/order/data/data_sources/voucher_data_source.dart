@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../../../core/constants/customer_api.dart';
 

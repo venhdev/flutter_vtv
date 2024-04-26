@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
 
 import '../../../../../service_locator.dart';
 import '../../../../cart/presentation/bloc/cart_bloc.dart';

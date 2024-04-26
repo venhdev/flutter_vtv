@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../../../service_locator.dart';
 import '../../../home/domain/repository/product_repository.dart';
@@ -58,15 +59,15 @@ class _OrderReviewsPageState extends State<OrderReviewsPage> {
 
           for (var review in reviews) {
             // if (review.status == Status.ACTIVE) {
-              listParam.add(ReviewParam(
-                content: review.content,
-                rating: review.rating,
-                orderItemId: review.orderItemId,
-                imagePath: review.image,
-                hasImage: review.image?.isNotEmpty ?? false,
-                reviewId: review.reviewId,
-                isDeleted: review.status == Status.DELETED,
-              ));
+            listParam.add(ReviewParam(
+              content: review.content,
+              rating: review.rating,
+              orderItemId: review.orderItemId,
+              imagePath: review.image,
+              hasImage: review.image?.isNotEmpty ?? false,
+              reviewId: review.reviewId,
+              isDeleted: review.status == Status.DELETED,
+            ));
             // }
           }
         },

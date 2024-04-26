@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/cart.dart';
+import 'package:vtv_common/core.dart';
 
 import '../../domain/repository/cart_repository.dart';
 
@@ -113,7 +114,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     //UnSelectCart cartId in selectedCartIds if it exists
     if (prevState.selectedCartIds.contains(event.cartId)) {
-      add(UnSelectCart(event.cartId));
+      // add(UnSelectCart(event.cartId)); >> _BUG emit unexpected new state
+      prevState.selectedCartIds.remove(event.cartId);
     }
 
     resp.fold(

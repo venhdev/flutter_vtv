@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http show Client;
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/cart.dart';
+import 'package:vtv_common/core.dart';
 
 import '../../../../core/constants/customer_api.dart';
 

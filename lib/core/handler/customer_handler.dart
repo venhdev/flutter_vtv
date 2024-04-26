@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
 
+import '../../features/cart/presentation/bloc/cart_bloc.dart';
 import '../../features/home/domain/repository/product_repository.dart';
 import '../../features/order/domain/repository/order_repository.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
-import '../../features/order/presentation/pages/order_detail_page.dart';
 import '../../service_locator.dart';
 
 /// Quick Handler for customer actions
@@ -73,11 +78,15 @@ class CustomerHandler {
 
   /// - in [OrderDetailPage] >> pop with [OrderDetailEntity] means order is completed >> then update by [onReceived]
   /// - in [OrderPurchasePage] >> update & navigate to [OrderDetailPage] by [onReceived]
-  static Future<OrderDetailEntity?> completeOrder(
+  static Future<void> completeOrder(
     BuildContext context,
     String orderId, {
-    bool popWithData = false,
+    bool inOrderDetailPage = false,
+    void Function(OrderDetailEntity)? onReceived,
   }) async {
+    assert(inOrderDetailPage || (onReceived != null && !inOrderDetailPage),
+        'When in [OrderPurchasePage], [onReceived] must be provided!');
+
     final isConfirm = await showDialogToConfirm<bool?>(
       context: context,
       title: 'Bạn đã nhận được hàng?',
@@ -91,23 +100,23 @@ class CustomerHandler {
 
     if (isConfirm ?? false) {
       final respEither = await sl<OrderRepository>().completeOrder(orderId);
-      return respEither.fold(
+      respEither.fold(
         (error) {
           Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra');
-          return null;
         },
         (ok) {
-          if (!popWithData) {
-            return ok.data;
+          if (inOrderDetailPage) {
+            // navigate to [OrderDetailPage] with new [OrderDetailEntity]
+            context.go(OrderDetailPage.path, extra: ok.data!);
           } else {
-            // in [OrderDetailPage] pop with [OrderDetailEntity] data
-            context.pop<OrderDetailEntity>(ok.data!); // pop out [OrderDetailEntity]
-            return null;
+            // [onReceived]:
+            // - 1. update order list in [OrderPurchasePage]
+            // - 2. navigate to [OrderDetailPage] with new [OrderDetailEntity]
+            onReceived?.call(ok.data!);
           }
         },
       );
     }
-    return null;
   }
 
   static Future<void> cancelOrder(BuildContext context, String orderId) async {
@@ -158,6 +167,88 @@ class CustomerHandler {
           Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
           extra: ok.data!.order,
         );
+      },
+    );
+  }
+
+  static FutureOr<void> placeOrder(
+    BuildContext context,
+    FRespData<OrderDetailEntity> Function() placeOrderFunc,
+    // bool isCreateWithCart, {
+    // OrderRequestWithCartParam? placeOrderWithCartParam,
+    // OrderRequestWithVariantParam? placeOrderWithVariantParam,
+    // }
+  ) async {
+    Future<T?> showConfirmationDialog<T>() async {
+      return await showDialogToConfirm(
+        context: context,
+        title: 'Xác nhận đặt hàng',
+        content: 'Bạn có chắc chắn muốn đặt hàng?',
+        titleTextStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+        confirmText: 'Xác nhận',
+        dismissText: 'Hủy',
+        confirmBackgroundColor: Colors.green.shade200,
+        dismissBackgroundColor: Colors.grey.shade400,
+      );
+    }
+
+    final isConfirmed = await showConfirmationDialog<bool>();
+
+    if (isConfirmed ?? false) {
+      final respEither = await placeOrderFunc();
+      // final respEither = isCreateWithCart
+      //     ? await sl<OrderRepository>().placeOrderWithCart(placeOrderWithCartParam!)
+      //     : await sl<OrderRepository>().placeOrderWithVariant(placeOrderWithVariantParam!);
+
+      respEither.fold(
+        (error) {
+          // Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
+          showDialogToAlert(
+            context,
+            title: const Text('Đặt hàng thất bại', textAlign: TextAlign.center),
+            titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
+            children: [
+              Text(error.message ?? 'Đã có lỗi xảy ra'),
+            ],
+          );
+        },
+        (ok) {
+          // FetchCart to BLoC to update cart
+          context.read<CartBloc>().add(const FetchCart()); //OK_TODO this make show unwanted toast
+
+          // navigate to order detail page
+          context.go(OrderDetailPage.path, extra: ok.data);
+        },
+      );
+    }
+  }
+
+  //! Navigation & Data Involved
+
+  static FRespData<MultiOrderEntity> dataCallOrderPurchasePage(OrderStatus? status) {
+    if (status == null) {
+      return sl<OrderRepository>().getListOrders();
+    } else if (status == OrderStatus.PROCESSING) {
+      // combine 2 lists of orders with status PROCESSING and PICKUP_PENDING
+      return sl<OrderRepository>().getListOrdersByStatusProcessingAndPickupPending();
+    }
+    return sl<OrderRepository>().getListOrdersByStatus(status.name);
+  }
+
+  static Future<void> navigateToOrderDetailPage(
+    BuildContext context,
+    OrderEntity order,
+    void Function(OrderDetailEntity) onReceived,
+  ) async {
+    final respEither = await sl<OrderRepository>().getOrderDetail(order.orderId!);
+    respEither.fold(
+      (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
+      (ok) async {
+        final completedOrder = await context.push<OrderDetailEntity>(OrderDetailPage.path, extra: ok.data);
+        if (completedOrder != null) onReceived(completedOrder);
       },
     );
   }

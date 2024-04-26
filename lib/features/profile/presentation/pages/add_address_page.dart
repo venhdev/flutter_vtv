@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../../../../service_locator.dart';
 import '../../data/data_sources/profile_data_source.dart';
@@ -9,11 +9,13 @@ import '../../domain/repository/profile_repository.dart';
 class AddOrUpdateAddressPage extends StatefulWidget {
   const AddOrUpdateAddressPage({super.key, this.address});
 
-  static const routeNameAdd = 'add-address';
-  static const pathAdd = '/user/settings/address/add-address';
+  // static const routeNameAdd = 'add-address';
+  // static const pathAdd = '/user/settings/address/add-address';
 
-  static const routeNameUpdate = 'update-address';
-  static const pathUpdate = '/user/settings/address/update-address';
+  // static const routeNameUpdate = 'update-address';
+  // static const pathUpdate = '/user/settings/address/update-address';
+
+  // using Navigator to push this page
 
   final AddressEntity? address;
 
@@ -256,7 +258,8 @@ class _AddOrUpdateAddressPageState extends State<AddOrUpdateAddressPage> {
           },
           (ok) {
             Fluttertoast.showToast(msg: ok.message!);
-            Navigator.of(context).pop<bool>(true); // true => flag to refresh address list on AddressPage (previous page)
+            Navigator.of(context)
+                .pop<bool>(true); // true => flag to refresh address list on AddressPage (previous page)
           },
         );
 

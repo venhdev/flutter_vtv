@@ -1,8 +1,9 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/features/home/domain/dto/comment_param.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
+import 'package:vtv_common/order.dart';
+import 'package:vtv_common/shop.dart';
 
 import '../../../order/domain/dto/review_param.dart';
 import '../../domain/repository/product_repository.dart';
@@ -210,10 +211,7 @@ class ProductRepositoryImpl implements ProductRepository {
     try {
       final multiCheck = await Future.wait(order.orderItems.map((item) async => isReviewedItem(item)));
 
-      log('{isOrderReviewed} multiCheck: $multiCheck');
-
       final rs = multiCheck.every((check) => check == true); // true means the item is reviewed
-      log('{isOrderReviewed} isOrderReviewed: $rs');
 
       return Right(rs);
     } catch (e) {

@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
+import 'package:vtv_common/shop.dart';
 
 import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';

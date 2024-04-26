@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/cart.dart';
+import 'package:vtv_common/core.dart';
 
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../bloc/cart_bloc.dart';

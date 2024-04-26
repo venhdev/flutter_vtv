@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:flutter_vtv/features/order/domain/dto/multiple_order_request_param.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../domain/repository/order_repository.dart';
 import '../data_sources/order_data_source.dart';
@@ -17,12 +19,12 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrderDetailEntity> createUpdateWithCart(PlaceOrderWithCartParam params) async {
+  FRespData<OrderDetailEntity> createUpdateWithCart(OrderRequestWithCartParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createUpdateWithCart(params));
   }
 
   @override
-  FRespData<OrderDetailEntity> placeOrderWithCart(PlaceOrderWithCartParam params) async {
+  FRespData<OrderDetailEntity> placeOrderWithCart(OrderRequestWithCartParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeOrderWithCart(params));
   }
 
@@ -51,12 +53,12 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<OrderDetailEntity> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
+  FRespData<OrderDetailEntity> createUpdateWithVariant(OrderRequestWithVariantParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createUpdateWithVariant(params));
   }
 
   @override
-  FRespData<OrderDetailEntity> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
+  FRespData<OrderDetailEntity> placeOrderWithVariant(OrderRequestWithVariantParam params) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeOrderWithVariant(params));
   }
 
@@ -93,5 +95,20 @@ class OrderRepositoryImpl extends OrderRepository {
   @override
   FRespData<OrderDetailEntity> completeOrder(String orderId) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.completeOrder(orderId));
+  }
+
+  @override
+  FRespData<List<OrderDetailEntity>> createMultiOrderByCartIds(List<String> cartIds) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createMultiOrderByCartIds(cartIds));
+  }
+
+  @override
+  FRespData<List<OrderDetailEntity>> createMultiOrderByRequest(MultipleOrderRequestParam params) {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createMultiOrderByRequest(params));
+  }
+
+  @override
+  FRespData<List<OrderDetailEntity>> placeMultiOrderByRequest(MultipleOrderRequestParam params) {
+    return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeMultiOrderByRequest(params));
   }
 }

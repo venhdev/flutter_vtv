@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
 
 class AppState extends ChangeNotifier {
   final SharedPreferencesHelper _prefHelper;

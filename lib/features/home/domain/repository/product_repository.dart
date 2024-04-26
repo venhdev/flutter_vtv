@@ -1,4 +1,7 @@
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
+import 'package:vtv_common/order.dart';
+import 'package:vtv_common/shop.dart';
 
 import '../../../order/domain/dto/review_param.dart';
 import '../dto/comment_param.dart';

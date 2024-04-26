@@ -1,4 +1,5 @@
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/cart.dart';
+import 'package:vtv_common/core.dart';
 
 abstract class CartRepository {
   FRespData<CartResp> getCarts();

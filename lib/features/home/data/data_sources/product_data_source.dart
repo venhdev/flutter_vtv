@@ -1,7 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart' as dio;
 import 'package:http/http.dart' as http show Client;
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
 
 import '../../../../core/constants/customer_api.dart';
 
@@ -36,8 +37,6 @@ abstract class ProductDataSource {
   //# product-page-controller
   Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
   Future<SuccessResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId);
-
-  
 }
 
 class ProductDataSourceImpl implements ProductDataSource {
@@ -284,5 +283,4 @@ class ProductDataSourceImpl implements ProductDataSource {
       parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
     );
   }
-
 }

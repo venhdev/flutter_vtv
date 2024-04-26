@@ -1,6 +1,9 @@
 import 'dart:convert';
 
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/home.dart';
+import 'package:vtv_common/order.dart';
+import 'package:vtv_common/profile.dart';
 
 // <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
 
@@ -52,6 +55,11 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'ReviewEntity') {
       return ReviewEntity.fromJson(inputAsList[1] as String);
     }
+    if (inputAsList[0] == 'List<OrderDetailEntity>') {
+      return (jsonDecode(inputAsList[1] as String) as List<dynamic>)
+          .map((dynamic e) => OrderDetailEntity.fromJson(e as String))
+          .toList();
+    }
     throw FormatException('Unable to parse input: $input');
   }
 }
@@ -100,6 +108,12 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
         return <Object?>[
           'ReviewEntity',
           (input).toJson(),
+        ];
+      case List<OrderDetailEntity> _:
+        return <Object?>[
+          'List<OrderDetailEntity>',
+          // (input).toJson(),
+          jsonEncode(input),
         ];
       default:
         throw FormatException('Cannot encode type ${input.runtimeType}');

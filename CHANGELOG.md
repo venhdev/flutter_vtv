@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## Added
+
+- Use loyalty point
+- Place order from multi shop
+
 ## [v0.0.8-pre] - 25/04/2024
 
 ### Added

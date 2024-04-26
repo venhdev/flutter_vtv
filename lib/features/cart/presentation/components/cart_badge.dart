@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
 
 import '../bloc/cart_bloc.dart';
 import '../pages/cart_page.dart';
@@ -79,7 +79,6 @@ class CartBadge extends StatelessWidget {
                   );
                 },
               ),
-              // TODO chat
               // icon chat
               // const IconButton.outlined(
               //   onPressed: null,

@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_shop_page.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../../../../service_locator.dart';
 import '../../../order/domain/repository/order_repository.dart';
@@ -10,8 +14,8 @@ import '../../../order/presentation/pages/checkout_page.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/address_page.dart';
 import '../bloc/cart_bloc.dart';
-import '../components/address_summary.dart';
 import '../components/carts_by_shop.dart';
+import 'package:vtv_common/src/order/domain/entities/order_detail_entity.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -57,6 +61,7 @@ class _CartPageState extends State<CartPage> {
                     title: Text('Giỏ hàng (${state.cart.count})'),
                     floating: true,
                     backgroundColor: Colors.transparent,
+                    // BUG: rebuild Address when scroll
                     bottom: _buildAddress(context),
                   ),
                 ];
@@ -140,6 +145,8 @@ class _CartPageState extends State<CartPage> {
           if (state.selectedCartIds.isEmpty) {
             return const SizedBox();
           }
+
+          log('[CartPage] build with selectedCartIds: ${state.selectedCartIds}');
           return Container(
             height: 52,
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -153,50 +160,102 @@ class _CartPageState extends State<CartPage> {
               ],
             ),
             child: _defaultAddress != null
-                ? FutureBuilder(
-                    future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final respEither = snapshot.data!;
-                        return respEither.fold(
-                          (error) {
-                            return SingleChildScrollView(child: MessageScreen.error(error.message));
-                          },
-                          (ok) => Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text('Tổng cộng:'),
-                              ),
-                              Text(
-                                StringHelper.formatCurrency(ok.data!.order.totalPrice),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                                  ),
-                                  onPressed: () {
-                                    GoRouter.of(context).go(CheckoutPage.path, extra: ok.data!.order);
-                                  },
-                                  child: const Text('Thanh toán'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  )
+                // ? _singleShop(state)
+                ? _multiShop(state)
                 : const Center(
                     child: CircularProgressIndicator(),
                   ),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  Widget _multiShop(CartLoaded state) {
+    return FutureBuilder(
+      future: sl<OrderRepository>().createMultiOrderByCartIds(state.selectedCartIds),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final respEither = snapshot.data!;
+          return respEither.fold(
+            (error) {
+              return SingleChildScrollView(child: MessageScreen.error(error.message));
+            },
+            (ok) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Tổng cộng:'),
+                ),
+                Text(
+                  // StringHelper.formatCurrency(ok.data!.order.totalPrice),
+                  StringHelper.formatCurrency(
+                    ok.data!.fold(0, (previousValue, element) => previousValue + element.order.totalPrice),
+                  ),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                    onPressed: () {
+                      GoRouter.of(context).go(CheckoutMultipleShopPage.path, extra: ok.data!);
+                    },
+                    child: const Text('Thanh toán'),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  FutureBuilder<RespData<OrderDetailEntity>> _singleShop(CartLoaded state) {
+    return FutureBuilder(
+      future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final respEither = snapshot.data!;
+          return respEither.fold(
+            (error) {
+              return SingleChildScrollView(child: MessageScreen.error(error.message));
+            },
+            (ok) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Tổng cộng:'),
+                ),
+                Text(
+                  StringHelper.formatCurrency(ok.data!.order.totalPrice),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                    onPressed: () {
+                      GoRouter.of(context).go(CheckoutPage.path, extra: ok.data!.order);
+                    },
+                    child: const Text('Thanh toán'),
+                  ),
+                ),
+              ],
+            ),
           );
         }
         return const Center(

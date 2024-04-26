@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/cart.dart';
+import 'package:vtv_common/shop.dart';
 
 import '../../../home/presentation/pages/shop_page.dart';
 import 'cart_item.dart';

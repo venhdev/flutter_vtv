@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
+import 'package:vtv_common/profile.dart';
+import 'package:vtv_common/shop.dart';
 
+import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../../../cart/presentation/components/address_summary.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
-import '../../../cart/presentation/components/order_item.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
-import '../components/checkout/wrapper.dart';
-import 'order_detail_page.dart';
 import 'voucher_page.dart';
 
 const String _noVoucherMsg = 'Chọn hoặc nhập mã';
@@ -39,55 +37,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late AddressEntity _address; // just ID
   late OrderEntity _order;
   // Properties sent to the server
-  late PlaceOrderWithCartParam _placeOrderWithCartParam;
-  late PlaceOrderWithVariantParam _placeOrderWithVariantParam;
-
-  Future<T?> showConfirmationDialog<T>() async {
-    return await showDialogToConfirm(
-      context: context,
-      title: 'Xác nhận đặt hàng',
-      content: 'Bạn có chắc chắn muốn đặt hàng?',
-      titleTextStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-      ),
-      confirmText: 'Xác nhận',
-      dismissText: 'Hủy',
-      confirmBackgroundColor: Colors.green.shade200,
-      dismissBackgroundColor: Colors.grey.shade400,
-    );
-  }
-
-  handlePlaceOrder() async {
-    final isConfirmed = await showConfirmationDialog<bool>();
-
-    if (isConfirmed ?? false) {
-      final respEither = widget.isCreateWithCart
-          ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
-          : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
-
-      respEither.fold(
-        (error) {
-          // Fluttertoast.showToast(msg: 'Đặt hàng thất bại. Lỗi: ${error.message}');
-          showDialogToAlert(
-            context,
-            title: const Text('Đặt hàng thất bại', textAlign: TextAlign.center),
-            titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
-            children: [
-              Text(error.message ?? 'Đã có lỗi xảy ra'),
-            ],
-          );
-        },
-        (ok) {
-          // FetchCart to BLoC to update cart
-          context.read<CartBloc>().add(const FetchCart()); //OK_TODO this make show unwanted toast
-
-          // navigate to order detail page
-          context.go(OrderDetailPage.path, extra: ok.data);
-        },
-      );
-    }
-  }
+  late OrderRequestWithCartParam _placeOrderWithCartParam;
+  late OrderRequestWithVariantParam _placeOrderWithVariantParam;
 
   Future<T?> showDialogToChangeAddress<T>(BuildContext context) {
     return showDialog(
@@ -96,10 +47,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
         return DialogChooseAddress(
           onAddressChanged: (address) {
             if (widget.isCreateWithCart) {
-              updateOrderWithCart(_placeOrderWithCartParam.copyWith(addressId: address.addressId), newAddress: address);
+              updateOrderWithCart(
+                _placeOrderWithCartParam.copyWith(addressId: address.addressId),
+                newAddress: address,
+              );
             } else {
-              updateOrderWithVariant(_placeOrderWithVariantParam.copyWith(addressId: address.addressId),
-                  newAddress: address);
+              updateOrderWithVariant(
+                _placeOrderWithVariantParam.copyWith(addressId: address.addressId),
+                newAddress: address,
+              );
             }
           },
         );
@@ -107,7 +63,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Future<void> updateOrderWithCart(PlaceOrderWithCartParam newOrderParam, {AddressEntity? newAddress}) async {
+  Future<void> updateOrderWithCart(OrderRequestWithCartParam newOrderParam, {AddressEntity? newAddress}) async {
     final respEither = await sl<OrderRepository>().createUpdateWithCart(newOrderParam);
 
     respEither.fold(
@@ -126,7 +82,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Future<void> updateOrderWithVariant(PlaceOrderWithVariantParam newOrderParam, {AddressEntity? newAddress}) async {
+  Future<void> updateOrderWithVariant(OrderRequestWithVariantParam newOrderParam, {AddressEntity? newAddress}) async {
     final respEither = await sl<OrderRepository>().createUpdateWithVariant(newOrderParam);
 
     respEither.fold(
@@ -152,7 +108,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _order = widget.order;
 
     if (widget.isCreateWithCart) {
-      _placeOrderWithCartParam = PlaceOrderWithCartParam(
+      _placeOrderWithCartParam = OrderRequestWithCartParam(
         addressId: widget.order.address.addressId,
         systemVoucherCode: null,
         shopVoucherCode: null,
@@ -163,7 +119,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         cartIds: widget.order.orderItems.map((e) => e.cartId).toList(),
       );
     } else {
-      _placeOrderWithVariantParam = PlaceOrderWithVariantParam(
+      _placeOrderWithVariantParam = OrderRequestWithVariantParam(
         addressId: widget.order.address.addressId,
         systemVoucherCode: null,
         shopVoucherCode: null,
@@ -584,7 +540,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             ),
-            onPressed: handlePlaceOrder,
+            onPressed: () => CustomerHandler.placeOrder(
+              context,
+              widget.isCreateWithCart
+                  ? () => sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
+                  : () => sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam),
+            ),
             child: const Text('Đặt hàng'),
           ),
         ],

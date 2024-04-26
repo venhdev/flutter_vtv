@@ -1,17 +1,25 @@
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
+
+import '../dto/multiple_order_request_param.dart';
 
 abstract class OrderRepository {
   //! -------------order-controller-------------
   //* Create Temp Order With Cart
   FRespData<OrderDetailEntity> createOrderByCartIds(List<String> cartIds);
-  FRespData<OrderDetailEntity> createUpdateWithCart(PlaceOrderWithCartParam params);
+  FRespData<OrderDetailEntity> createUpdateWithCart(OrderRequestWithCartParam params);
   //* Create Temp Order With Product Variant
   FRespData<OrderDetailEntity> createByProductVariant(Map<int, int> mapParam); //int productVariantId, int quantity
-  FRespData<OrderDetailEntity> createUpdateWithVariant(PlaceOrderWithVariantParam params);
+  FRespData<OrderDetailEntity> createUpdateWithVariant(OrderRequestWithVariantParam params);
 
   //# Place Order
-  FRespData<OrderDetailEntity> placeOrderWithCart(PlaceOrderWithCartParam params);
-  FRespData<OrderDetailEntity> placeOrderWithVariant(PlaceOrderWithVariantParam params);
+  FRespData<OrderDetailEntity> placeOrderWithCart(OrderRequestWithCartParam params);
+  FRespData<OrderDetailEntity> placeOrderWithVariant(OrderRequestWithVariantParam params);
+
+  //# Multi Order
+  FRespData<List<OrderDetailEntity>> createMultiOrderByCartIds(List<String> cartIds);
+  FRespData<List<OrderDetailEntity>> createMultiOrderByRequest(MultipleOrderRequestParam params);
+  FRespData<List<OrderDetailEntity>> placeMultiOrderByRequest(MultipleOrderRequestParam params);
 
   //# Purchase - Manage orders
   /// Get all orders

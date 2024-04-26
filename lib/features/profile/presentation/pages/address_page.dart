@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../../../../service_locator.dart';
-import '../../../cart/presentation/components/address_summary.dart';
 import 'add_address_page.dart';
 import '../../domain/repository/profile_repository.dart';
 
@@ -120,9 +119,17 @@ class _AddressPageState extends State<AddressPage> {
                   address: address,
                   suffixIcon: Icons.edit,
                   onTap: () async {
-                    final rs = await GoRouter.of(context).push<bool>(
-                      AddOrUpdateAddressPage.pathUpdate,
-                      extra: address,
+                    // final rs = await GoRouter.of(context).push<bool>(
+                    //   AddOrUpdateAddressPage.pathUpdate,
+                    //   extra: address,
+                    // );
+
+                    final rs = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return AddOrUpdateAddressPage(address: address);
+                        },
+                      ),
                     );
 
                     if (rs == true) {

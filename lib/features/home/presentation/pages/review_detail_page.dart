@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/home/domain/repository/product_repository.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/home.dart';
 
 import '../../../../service_locator.dart';
 import '../../domain/dto/comment_param.dart';

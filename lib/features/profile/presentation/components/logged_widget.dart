@@ -1,11 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/features/home/data/data_sources/local_product_data_source.dart';
-import 'package:flutter_vtv/features/order/presentation/pages/order_purchase_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
@@ -262,7 +262,6 @@ class _LoggedViewState extends State<LoggedView> {
                   FutureBuilder(
                     future: sl<ProfileRepository>().getLoyaltyPoint(),
                     builder: (context, snapshot) {
-                      log('{getLoyaltyPoint} snapshot: $snapshot');
                       if (snapshot.hasData) {
                         return snapshot.data!.fold(
                           (error) {

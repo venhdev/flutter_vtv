@@ -1,6 +1,6 @@
 import 'package:flutter_vtv/features/home/data/models/category_model.dart';
 import 'package:http/http.dart' as http show Client;
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
 
 abstract class CategoryDataSource {
   Future<SuccessResponse<List<CategoryModel>>> getAllParentCategories();

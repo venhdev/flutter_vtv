@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
 
 abstract class SearchProductDataSource {
   //# search-product-controller

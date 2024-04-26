@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/home.dart';
 
 class CategoryModel extends CategoryEntity {
   const CategoryModel({

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vtv/features/profile/presentation/pages/add_address_page.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../../../../service_locator.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
-import 'address_summary.dart';
 
 class DialogChooseAddress extends StatefulWidget {
   const DialogChooseAddress({

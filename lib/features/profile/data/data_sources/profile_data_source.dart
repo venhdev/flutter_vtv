@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as dio;
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../../../../core/constants/customer_api.dart';
 

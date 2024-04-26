@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter_vtv/features/order/domain/dto/multiple_order_request_param.dart';
 import 'package:http/http.dart' as http;
-import 'package:vtv_common/vtv_common.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../../../core/constants/customer_api.dart';
 
@@ -9,15 +12,20 @@ abstract class OrderDataSource {
   //# Create Temp Order
   // * With Cart
   Future<SuccessResponse<OrderDetailEntity>> createByCartIds(List<String> cartIds);
-  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(PlaceOrderWithCartParam params);
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(OrderRequestWithCartParam params);
   // * With Product Variant
   Future<SuccessResponse<OrderDetailEntity>> createByProductVariant(
       Map<int, int> mapParam); //int productVariantId, int quantity
-  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(PlaceOrderWithVariantParam params);
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(OrderRequestWithVariantParam params);
 
   //# Place order
-  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(PlaceOrderWithCartParam params);
-  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(PlaceOrderWithVariantParam params);
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(OrderRequestWithCartParam params);
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(OrderRequestWithVariantParam params);
+
+  //# Multi Order
+  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByCartIds(List<String> cartIds);
+  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByRequest(MultipleOrderRequestParam params);
+  Future<SuccessResponse<List<OrderDetailEntity>>> placeMultiOrderByRequest(MultipleOrderRequestParam params);
 
   //# Manage orders
   Future<SuccessResponse<MultiOrderEntity>> getListOrders();
@@ -28,9 +36,14 @@ abstract class OrderDataSource {
 }
 
 class OrderDataSourceImpl extends OrderDataSource {
-  OrderDataSourceImpl(this._client, this._secureStorageHelper);
+  OrderDataSourceImpl(
+    this._dio,
+    this._client,
+    this._secureStorageHelper,
+  );
 
   final http.Client _client;
+  final dio.Dio _dio;
   final SecureStorageHelper _secureStorageHelper;
 
   @override
@@ -50,7 +63,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(PlaceOrderWithCartParam params) async {
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(OrderRequestWithCartParam params) async {
     final url = baseUri(path: kAPIOrderCreateUpdateWithCartURL);
     final response = await _client.post(
       url,
@@ -66,7 +79,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(PlaceOrderWithCartParam params) async {
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(OrderRequestWithCartParam params) async {
     final url = baseUri(path: kAPIOrderAddWithCartURL);
     final response = await _client.post(
       url,
@@ -133,7 +146,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(PlaceOrderWithVariantParam params) async {
+  Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(OrderRequestWithVariantParam params) async {
     final url = baseUri(path: kAPIOrderCreateUpdateWithProductVariantURL);
     final response = await _client.post(
       url,
@@ -149,7 +162,7 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(PlaceOrderWithVariantParam params) async {
+  Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(OrderRequestWithVariantParam params) async {
     final url = baseUri(path: kAPIOrderAddWithProductVariantURL);
     final response = await _client.post(
       url,
@@ -193,9 +206,9 @@ class OrderDataSourceImpl extends OrderDataSource {
       (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
-  
+
   @override
-  Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId) async{
+  Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId) async {
     final url = baseUri(path: '$kAPIOrderCompleteURL/$orderId');
     final response = await _client.patch(
       url,
@@ -206,6 +219,51 @@ class OrderDataSourceImpl extends OrderDataSource {
       response,
       url,
       (dataMap) => OrderDetailEntity.fromMap(dataMap),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByCartIds(List<String> cartIds) async {
+    final url = baseUri(path: kAPIOrderCreateMultipleByCartIdsURL);
+    final response = await _dio.postUri(
+      url,
+      data: cartIds,
+    );
+
+    return handleDioResponse<List<OrderDetailEntity>, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => (jsonMap['orderResponses'] as List).map((e) => OrderDetailEntity.fromMap(e)).toList(),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByRequest(MultipleOrderRequestParam params) async {
+    final url = baseUri(path: kAPIOrderCreateMultipleByRequestURL);
+    final response = await _dio.postUri(
+      url,
+      data: params.toMap(),
+    );
+
+    return handleDioResponse<List<OrderDetailEntity>, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (dataMap) => (dataMap['orderResponses'] as List).map((e) => OrderDetailEntity.fromMap(e)).toList(),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<List<OrderDetailEntity>>> placeMultiOrderByRequest(MultipleOrderRequestParam params) async {
+    final url = baseUri(path: kAPIOrderAddMultipleByRequestURL);
+    final response = await _dio.postUri(
+      url,
+      data: params.toMap(),
+    );
+
+    return handleDioResponse<List<OrderDetailEntity>, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (dataMap) => (dataMap['orderResponses'] as List).map((e) => OrderDetailEntity.fromMap(e)).toList(),
     );
   }
 }

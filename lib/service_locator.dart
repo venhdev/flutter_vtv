@@ -7,7 +7,8 @@ import 'package:flutter_vtv/features/home/data/data_sources/category_data_source
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/core.dart';
 
 import 'config/dio/auth_interceptor.dart';
 import 'config/dio/dio_options.dart';
@@ -88,7 +89,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<ShopDataSource>(ShopDataSourceImpl(sl()));
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
-  sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<VoucherDataSource>(VoucherDataSourceImpl(sl()));
 
   sl.registerSingleton<LocalProductDataSource>(LocalProductDataSourceImpl(sl()));

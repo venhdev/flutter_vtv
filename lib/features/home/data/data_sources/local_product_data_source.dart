@@ -1,4 +1,4 @@
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
 
 String _keyRecentProduct = 'RECENT_PRODUCT';
 int _maxRecentProduct = 10;

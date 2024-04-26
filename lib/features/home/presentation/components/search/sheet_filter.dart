@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
 
 import 'btn_filter.dart';
 import 'btn_dropdown_sort_types.dart';

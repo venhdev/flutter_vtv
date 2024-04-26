@@ -1,5 +1,6 @@
 import 'package:flutter_vtv/features/cart/domain/repository/cart_repository.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/cart.dart';
+import 'package:vtv_common/core.dart';
 
 import '../data_sources/cart_data_source.dart';
 

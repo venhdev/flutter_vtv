@@ -1,5 +1,6 @@
 import 'package:flutter_vtv/features/profile/domain/repository/profile_repository.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../data_sources/profile_data_source.dart';
 

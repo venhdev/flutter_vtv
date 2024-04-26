@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/config/routes/extra_codec.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_shop_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../core/handler/customer_handler.dart';
 import '../../core/presentation/pages/dev_page.dart';
@@ -18,13 +22,11 @@ import '../../features/home/presentation/pages/review_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
 import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
+import '../../features/order/presentation/components/btn/review_btn.dart';
 import '../../features/order/presentation/pages/add_review_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
-import '../../features/order/presentation/pages/order_detail_page.dart';
-import '../../features/order/presentation/pages/order_purchase_page.dart';
 import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
-import '../../features/profile/presentation/pages/add_address_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
@@ -163,20 +165,39 @@ class AppRoutes {
               path: OrderPurchasePage.routeName, // '/user/purchase'
               name: OrderPurchasePage.routeName, // purchase
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => const OrderPurchasePage(),
+              builder: (context, state) => OrderPurchasePage(
+                dataCallBack: CustomerHandler.dataCallOrderPurchasePage,
+                itemBuilder: (order, onReceivedCallback) => OrderPurchaseItem(
+                  order: order,
+                  onReceivedPressed: () => CustomerHandler.completeOrder(
+                    context,
+                    order.orderId!,
+                    inOrderDetailPage: false,
+                    onReceived: onReceivedCallback,
+                  ),
+                  onPressed: () => CustomerHandler.navigateToOrderDetailPage(context, order, onReceivedCallback),
+                  onShopPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
+                  buildOnCompleted: ReviewBtn(order: order),
+                ),
+              ),
               routes: [
                 GoRoute(
                   path: OrderDetailPage.routeName, // '/user/purchase/order-detail'
                   name: OrderDetailPage.routeName, // order-detail
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
-                    final OrderDetailEntity order = state.extra as OrderDetailEntity;
+                    final OrderDetailEntity orderDetail = state.extra as OrderDetailEntity;
                     return OrderDetailPage(
-                      orderDetail: order,
+                      orderDetail: orderDetail,
                       onRePurchasePressed: (orderItems) => CustomerHandler.rePurchaseOrder(context, orderItems),
                       onCancelOrderPressed: (orderId) => CustomerHandler.cancelOrder(context, orderId),
-                      onCompleteOrderPressed: (orderId) =>
-                          CustomerHandler.completeOrder(context, orderId, popWithData: true),
+                      onCompleteOrderPressed: (orderId) => CustomerHandler.completeOrder(
+                        context,
+                        orderId,
+                        inOrderDetailPage: true,
+                      ),
+                      customerReviewBtn: (order) => ReviewBtn(order: order),
+                      onOrderItemPressed: (orderItem) => context.push(ProductDetailPage.path, extra: orderItem.productVariant.productId),
                     );
                   },
                   routes: [
@@ -230,23 +251,23 @@ class AppRoutes {
                     final bool? willPopOnChanged = state.extra as bool?;
                     return AddressPage(willPopOnChanged: willPopOnChanged ?? true);
                   },
-                  routes: [
-                    GoRoute(
-                      path: AddOrUpdateAddressPage.routeNameAdd, // 'user/settings/address/add-address'
-                      name: AddOrUpdateAddressPage.routeNameAdd,
-                      builder: (context, state) {
-                        return const AddOrUpdateAddressPage();
-                      },
-                    ),
-                    GoRoute(
-                      path: AddOrUpdateAddressPage.routeNameUpdate, // 'user/settings/address/update-address'
-                      name: AddOrUpdateAddressPage.routeNameUpdate,
-                      builder: (context, state) {
-                        final address = state.extra as AddressEntity;
-                        return AddOrUpdateAddressPage(address: address);
-                      },
-                    ),
-                  ],
+                  // routes: [
+                  //   GoRoute(
+                  //     path: AddOrUpdateAddressPage.routeNameAdd, // 'user/settings/address/add-address'
+                  //     name: AddOrUpdateAddressPage.routeNameAdd,
+                  //     builder: (context, state) {
+                  //       return const AddOrUpdateAddressPage();
+                  //     },
+                  //   ),
+                  //   GoRoute(
+                  //     path: AddOrUpdateAddressPage.routeNameUpdate, // 'user/settings/address/update-address'
+                  //     name: AddOrUpdateAddressPage.routeNameUpdate,
+                  //     builder: (context, state) {
+                  //       final address = state.extra as AddressEntity;
+                  //       return AddOrUpdateAddressPage(address: address);
+                  //     },
+                  //   ),
+                  // ],
                 ),
               ],
             ),
@@ -367,6 +388,15 @@ class AppRoutes {
                   return const CartPage();
                 },
                 routes: [
+                  GoRoute(
+                    path: CheckoutMultipleShopPage.routeName, // '/home/cart/multi-checkout'
+                    name: CheckoutMultipleShopPage.routeName,
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) {
+                      final orderDetails = state.extra as List<OrderDetailEntity>;
+                      return CheckoutMultipleShopPage(orderDetails: orderDetails);
+                    },
+                  ),
                   GoRoute(
                     path: CheckoutPage.routeName, // '/home/cart/checkout' ?isCreateWithCart=true|false
                     name: CheckoutPage.routeName,

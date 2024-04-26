@@ -1,4 +1,5 @@
-import 'package:vtv_common/vtv_common.dart';
+import 'package:vtv_common/core.dart';
+import 'package:vtv_common/home.dart';
 
 import '../../domain/repository/search_product_repository.dart';
 import '../data_sources/search_product_data_source.dart';
