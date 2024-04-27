@@ -2,6 +2,7 @@ import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
 import '../dto/multiple_order_request_param.dart';
+import '../entities/multiple_order_resp.dart';
 
 abstract class OrderRepository {
   //! -------------order-controller-------------
@@ -17,9 +18,9 @@ abstract class OrderRepository {
   FRespData<OrderDetailEntity> placeOrderWithVariant(OrderRequestWithVariantParam params);
 
   //# Multi Order
-  FRespData<List<OrderDetailEntity>> createMultiOrderByCartIds(List<String> cartIds);
-  FRespData<List<OrderDetailEntity>> createMultiOrderByRequest(MultipleOrderRequestParam params);
-  FRespData<List<OrderDetailEntity>> placeMultiOrderByRequest(MultipleOrderRequestParam params);
+  FRespData<MultipleOrderResp> createMultiOrderByCartIds(List<String> cartIds);
+  FRespData<MultipleOrderResp> createMultiOrderByRequest(MultipleOrderRequestParam params);
+  FRespData<MultipleOrderResp> placeMultiOrderByRequest(MultipleOrderRequestParam params);
 
   //# Purchase - Manage orders
   /// Get all orders

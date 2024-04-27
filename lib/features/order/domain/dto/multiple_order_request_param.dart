@@ -1,20 +1,19 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vtv_common/order.dart';
 
-typedef MultiOrderDetail = List<OrderDetailEntity>;
+import '../entities/multiple_order_resp.dart';
 
-class MultipleOrderRequestParam extends Equatable {
+class MultipleOrderRequestParam {
   final List<OrderRequestWithCartParam> orderRequestWithCarts;
 
-  const MultipleOrderRequestParam({
+  MultipleOrderRequestParam._({
     required this.orderRequestWithCarts,
   });
 
-  factory MultipleOrderRequestParam.fromOrderDetails(MultiOrderDetail orderDetails) {
-    final orderRequestWithCarts = orderDetails.map((orderDetail) {
+  factory MultipleOrderRequestParam.fromOrderDetails(MultipleOrderResp multipleOrderResp) {
+    final orderRequestWithCarts = multipleOrderResp.orderDetails.map((orderDetail) {
       return OrderRequestWithCartParam(
         addressId: orderDetail.order.address.addressId,
         cartIds: orderDetail.order.orderItems.map((orderItem) => orderItem.cartId).toList(),
@@ -27,10 +26,49 @@ class MultipleOrderRequestParam extends Equatable {
       );
     }).toList();
 
-    return MultipleOrderRequestParam(
+    return MultipleOrderRequestParam._(
       orderRequestWithCarts: orderRequestWithCarts,
     );
   }
+
+  // control systemVoucherCode
+  String? systemVoucherCode;
+  set setSystemVoucherCode(String? value) {
+    if (value == null) {
+      systemVoucherCode = null;
+      for (var i = 0; i < orderRequestWithCarts.length; i++) {
+        orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(systemVoucherCode: null);
+      }
+    } else {
+      systemVoucherCode = value;
+      for (var i = 0; i < orderRequestWithCarts.length; i++) {
+        orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(systemVoucherCode: value);
+      }
+    }
+  }
+
+  // control address
+  int get addressId => orderRequestWithCarts.first.addressId;
+  void setAddressId(int addressId) {
+    for (var i = 0; i < orderRequestWithCarts.length; i++) {
+      orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(addressId: addressId);
+    }
+  }
+
+  int? loyaltyPointIndex;
+  // control useLoyaltyPoint
+  void setUseLoyaltyPoint(bool value, int index) {
+    // set use loyalty point for only one orderRequestWithCarts, other will be false
+    for (var i = 0; i < orderRequestWithCarts.length; i++) {
+      orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(useLoyaltyPoint: i == index ? value : false);
+    }
+    loyaltyPointIndex = value ? index : null;
+  }
+
+  // check exist system voucher code
+  bool get hasSystemVoucherCode => orderRequestWithCarts.any((element) => element.systemVoucherCode != null);
+  // check use loyalty point
+  bool get useLoyaltyPoint => orderRequestWithCarts.any((element) => element.useLoyaltyPoint);
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -53,17 +91,32 @@ class MultipleOrderRequestParam extends Equatable {
   // factory MultipleOrderRequestParam.fromJson(String source) =>
   //     MultipleOrderRequestParam.fromMap(json.decode(source) as Map<String, dynamic>);
 
-  @override
-  List<Object> get props => [orderRequestWithCarts];
-
   MultipleOrderRequestParam copyWithIndex({
-   required OrderRequestWithCartParam param,
-   required int index,
+    required OrderRequestWithCartParam param,
+    required int index,
   }) {
     final newOrderRequestWithCarts = List<OrderRequestWithCartParam>.from(orderRequestWithCarts);
     newOrderRequestWithCarts[index] = param;
-    return MultipleOrderRequestParam(
+    return MultipleOrderRequestParam._(
       orderRequestWithCarts: newOrderRequestWithCarts,
     );
   }
+
+  void changeNote({
+    required int index,
+    required String note,
+  }) {
+    orderRequestWithCarts[index].note = note;
+  }
+
+  @override
+  bool operator ==(covariant MultipleOrderRequestParam other) {
+    if (identical(this, other)) return true;
+
+    return listEquals(other.orderRequestWithCarts, orderRequestWithCarts) &&
+        other.systemVoucherCode == systemVoucherCode;
+  }
+
+  @override
+  int get hashCode => orderRequestWithCarts.hashCode ^ systemVoucherCode.hashCode;
 }

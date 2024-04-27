@@ -5,6 +5,8 @@ import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
 
+import '../../features/order/domain/entities/multiple_order_resp.dart';
+
 // <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
 
 class MyExtraCodec extends Codec<Object?, Object?> {
@@ -55,10 +57,8 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'ReviewEntity') {
       return ReviewEntity.fromJson(inputAsList[1] as String);
     }
-    if (inputAsList[0] == 'List<OrderDetailEntity>') {
-      return (jsonDecode(inputAsList[1] as String) as List<dynamic>)
-          .map((dynamic e) => OrderDetailEntity.fromJson(e as String))
-          .toList();
+    if (inputAsList[0] == 'MultipleOrderResp') {
+      return MultipleOrderResp.fromJson(inputAsList[1] as String);
     }
     throw FormatException('Unable to parse input: $input');
   }
@@ -109,11 +109,10 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
           'ReviewEntity',
           (input).toJson(),
         ];
-      case List<OrderDetailEntity> _:
+      case MultipleOrderResp _:
         return <Object?>[
-          'List<OrderDetailEntity>',
-          // (input).toJson(),
-          jsonEncode(input),
+          'MultipleOrderResp',
+          (input).toJson(),
         ];
       default:
         throw FormatException('Cannot encode type ${input.runtimeType}');

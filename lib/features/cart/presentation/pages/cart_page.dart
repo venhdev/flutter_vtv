@@ -3,19 +3,17 @@ import 'dart:developer';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_shop_page.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/profile.dart';
 
 import '../../../../service_locator.dart';
 import '../../../order/domain/repository/order_repository.dart';
-import '../../../order/presentation/pages/checkout_page.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/address_page.dart';
 import '../bloc/cart_bloc.dart';
 import '../components/carts_by_shop.dart';
-import 'package:vtv_common/src/order/domain/entities/order_detail_entity.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -193,9 +191,10 @@ class _CartPageState extends State<CartPage> {
                 ),
                 Text(
                   // StringHelper.formatCurrency(ok.data!.order.totalPrice),
-                  StringHelper.formatCurrency(
-                    ok.data!.fold(0, (previousValue, element) => previousValue + element.order.totalPrice),
-                  ),
+                  // StringHelper.formatCurrency(
+                  //   ok.data!.fold(0, (previousValue, element) => previousValue + element.order.totalPrice),
+                  // ),
+                  StringHelper.formatCurrency(ok.data!.totalPayment),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Padding(
@@ -205,7 +204,7 @@ class _CartPageState extends State<CartPage> {
                       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                     ),
                     onPressed: () {
-                      GoRouter.of(context).go(CheckoutMultipleShopPage.path, extra: ok.data!);
+                      GoRouter.of(context).go(CheckoutMultipleOrderPage.path, extra: ok.data!);
                     },
                     child: const Text('Thanh toán'),
                   ),
@@ -221,49 +220,49 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  FutureBuilder<RespData<OrderDetailEntity>> _singleShop(CartLoaded state) {
-    return FutureBuilder(
-      future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final respEither = snapshot.data!;
-          return respEither.fold(
-            (error) {
-              return SingleChildScrollView(child: MessageScreen.error(error.message));
-            },
-            (ok) => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Tổng cộng:'),
-                ),
-                Text(
-                  StringHelper.formatCurrency(ok.data!.order.totalPrice),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    onPressed: () {
-                      GoRouter.of(context).go(CheckoutPage.path, extra: ok.data!.order);
-                    },
-                    child: const Text('Thanh toán'),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
+  // FutureBuilder<RespData<OrderDetailEntity>> _singleShop(CartLoaded state) {
+  //   return FutureBuilder(
+  //     future: sl<OrderRepository>().createOrderByCartIds(state.selectedCartIds),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasData) {
+  //         final respEither = snapshot.data!;
+  //         return respEither.fold(
+  //           (error) {
+  //             return SingleChildScrollView(child: MessageScreen.error(error.message));
+  //           },
+  //           (ok) => Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               const Padding(
+  //                 padding: EdgeInsets.all(8.0),
+  //                 child: Text('Tổng cộng:'),
+  //               ),
+  //               Text(
+  //                 StringHelper.formatCurrency(ok.data!.order.totalPrice),
+  //                 style: const TextStyle(fontWeight: FontWeight.bold),
+  //               ),
+  //               Padding(
+  //                 padding: const EdgeInsets.all(8.0),
+  //                 child: ElevatedButton(
+  //                   style: ElevatedButton.styleFrom(
+  //                     backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+  //                   ),
+  //                   onPressed: () {
+  //                     GoRouter.of(context).go(CheckoutPage.path, extra: ok.data!.order);
+  //                   },
+  //                   child: const Text('Thanh toán'),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+  //       return const Center(
+  //         child: CircularProgressIndicator(),
+  //       );
+  //     },
+  //   );
+  // }
 
   PreferredSize? _buildAddress(BuildContext context) {
     return PreferredSize(

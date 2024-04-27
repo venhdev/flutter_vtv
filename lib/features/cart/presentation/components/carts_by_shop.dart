@@ -18,7 +18,6 @@ class CartsByShop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[CartsByShop] render length: ${cartByShop.carts.length}');
     return Container(
       padding: const EdgeInsets.only(bottom: 12.0),
       decoration: BoxDecoration(

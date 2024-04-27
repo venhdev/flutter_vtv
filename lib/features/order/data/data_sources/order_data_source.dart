@@ -7,6 +7,7 @@ import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
 import '../../../../core/constants/customer_api.dart';
+import '../../domain/entities/multiple_order_resp.dart';
 
 abstract class OrderDataSource {
   //# Create Temp Order
@@ -23,9 +24,9 @@ abstract class OrderDataSource {
   Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(OrderRequestWithVariantParam params);
 
   //# Multi Order
-  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByCartIds(List<String> cartIds);
-  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByRequest(MultipleOrderRequestParam params);
-  Future<SuccessResponse<List<OrderDetailEntity>>> placeMultiOrderByRequest(MultipleOrderRequestParam params);
+  Future<SuccessResponse<MultipleOrderResp>> createMultiOrderByCartIds(List<String> cartIds);
+  Future<SuccessResponse<MultipleOrderResp>> createMultiOrderByRequest(MultipleOrderRequestParam params);
+  Future<SuccessResponse<MultipleOrderResp>> placeMultiOrderByRequest(MultipleOrderRequestParam params);
 
   //# Manage orders
   Future<SuccessResponse<MultiOrderEntity>> getListOrders();
@@ -223,47 +224,47 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
 
   @override
-  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByCartIds(List<String> cartIds) async {
+  Future<SuccessResponse<MultipleOrderResp>> createMultiOrderByCartIds(List<String> cartIds) async {
     final url = baseUri(path: kAPIOrderCreateMultipleByCartIdsURL);
     final response = await _dio.postUri(
       url,
       data: cartIds,
     );
 
-    return handleDioResponse<List<OrderDetailEntity>, Map<String, dynamic>>(
+    return handleDioResponse<MultipleOrderResp, Map<String, dynamic>>(
       response,
       url,
-      parse: (jsonMap) => (jsonMap['orderResponses'] as List).map((e) => OrderDetailEntity.fromMap(e)).toList(),
+      parse: (jsonMap) => MultipleOrderResp.fromMap(jsonMap),
     );
   }
 
   @override
-  Future<SuccessResponse<List<OrderDetailEntity>>> createMultiOrderByRequest(MultipleOrderRequestParam params) async {
+  Future<SuccessResponse<MultipleOrderResp>> createMultiOrderByRequest(MultipleOrderRequestParam params) async {
     final url = baseUri(path: kAPIOrderCreateMultipleByRequestURL);
     final response = await _dio.postUri(
       url,
       data: params.toMap(),
     );
 
-    return handleDioResponse<List<OrderDetailEntity>, Map<String, dynamic>>(
+    return handleDioResponse<MultipleOrderResp, Map<String, dynamic>>(
       response,
       url,
-      parse: (dataMap) => (dataMap['orderResponses'] as List).map((e) => OrderDetailEntity.fromMap(e)).toList(),
+      parse: (dataMap) => MultipleOrderResp.fromMap(dataMap),
     );
   }
 
   @override
-  Future<SuccessResponse<List<OrderDetailEntity>>> placeMultiOrderByRequest(MultipleOrderRequestParam params) async {
+  Future<SuccessResponse<MultipleOrderResp>> placeMultiOrderByRequest(MultipleOrderRequestParam params) async {
     final url = baseUri(path: kAPIOrderAddMultipleByRequestURL);
     final response = await _dio.postUri(
       url,
       data: params.toMap(),
     );
 
-    return handleDioResponse<List<OrderDetailEntity>, Map<String, dynamic>>(
+    return handleDioResponse<MultipleOrderResp, Map<String, dynamic>>(
       response,
       url,
-      parse: (dataMap) => (dataMap['orderResponses'] as List).map((e) => OrderDetailEntity.fromMap(e)).toList(),
+      parse: (dataMap) => MultipleOrderResp.fromMap(dataMap),
     );
   }
 }

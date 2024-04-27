@@ -27,7 +27,6 @@ const String kAPIAddressUpdateURL = '/customer/address/update'; // PUT
 const String kAPIOrderCreateMultipleByCartIdsURL = '/customer/order/create/multiple/by-cartIds'; // POST
 const String kAPIOrderCreateMultipleByRequestURL = '/customer/order/create/multiple/by-request'; // POST
 const String kAPIOrderAddMultipleByRequestURL = '/customer/order/add/multiple/by-request'; // POST
-//TODO: check in sheet
 
 // order in cart
 const String kAPIOrderCreateByCartIdsURL = '/customer/order/create/by-cartIds'; // POST

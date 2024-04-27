@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/config/routes/extra_codec.dart';
-import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_shop_page.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
@@ -22,6 +22,7 @@ import '../../features/home/presentation/pages/review_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
 import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
+import '../../features/order/domain/entities/multiple_order_resp.dart';
 import '../../features/order/presentation/components/btn/review_btn.dart';
 import '../../features/order/presentation/pages/add_review_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
@@ -197,7 +198,8 @@ class AppRoutes {
                         inOrderDetailPage: true,
                       ),
                       customerReviewBtn: (order) => ReviewBtn(order: order),
-                      onOrderItemPressed: (orderItem) => context.push(ProductDetailPage.path, extra: orderItem.productVariant.productId),
+                      onOrderItemPressed: (orderItem) =>
+                          context.push(ProductDetailPage.path, extra: orderItem.productVariant.productId),
                     );
                   },
                   routes: [
@@ -389,12 +391,12 @@ class AppRoutes {
                 },
                 routes: [
                   GoRoute(
-                    path: CheckoutMultipleShopPage.routeName, // '/home/cart/multi-checkout'
-                    name: CheckoutMultipleShopPage.routeName,
+                    path: CheckoutMultipleOrderPage.routeName, // '/home/cart/multi-checkout'
+                    name: CheckoutMultipleOrderPage.routeName,
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (context, state) {
-                      final orderDetails = state.extra as List<OrderDetailEntity>;
-                      return CheckoutMultipleShopPage(orderDetails: orderDetails);
+                      final multiOrder = state.extra as MultipleOrderResp;
+                      return CheckoutMultipleOrderPage(multiOrderResp: multiOrder);
                     },
                   ),
                   GoRoute(

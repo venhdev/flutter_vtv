@@ -3,6 +3,7 @@ import 'package:flutter_vtv/features/order/domain/dto/multiple_order_request_par
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
+import '../../domain/entities/multiple_order_resp.dart';
 import '../../domain/repository/order_repository.dart';
 import '../data_sources/order_data_source.dart';
 import '../data_sources/voucher_data_source.dart';
@@ -98,17 +99,17 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  FRespData<List<OrderDetailEntity>> createMultiOrderByCartIds(List<String> cartIds) async {
+  FRespData<MultipleOrderResp> createMultiOrderByCartIds(List<String> cartIds) async {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createMultiOrderByCartIds(cartIds));
   }
 
   @override
-  FRespData<List<OrderDetailEntity>> createMultiOrderByRequest(MultipleOrderRequestParam params) {
+  FRespData<MultipleOrderResp> createMultiOrderByRequest(MultipleOrderRequestParam params) {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.createMultiOrderByRequest(params));
   }
 
   @override
-  FRespData<List<OrderDetailEntity>> placeMultiOrderByRequest(MultipleOrderRequestParam params) {
+  FRespData<MultipleOrderResp> placeMultiOrderByRequest(MultipleOrderRequestParam params) {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeMultiOrderByRequest(params));
   }
 }

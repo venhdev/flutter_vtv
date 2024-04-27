@@ -34,11 +34,12 @@ class IntroPage extends StatelessWidget {
                     ),
                   ),
                   const Text(
-                    'VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng',
+                    'VTV là nền tảng trực tuyến kết nối người mua và người bán, tập trung vào việc giao dịch các sản phẩm và dịch vụ từ các nhà cung cấp đa dạng.',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w400,
                     ),
+                    textAlign: TextAlign.justify,
                   ),
                   const SizedBox(height: 16),
                   _buildStartButton(context)
@@ -64,9 +65,9 @@ class IntroPage extends StatelessWidget {
         height: 52,
         alignment: Alignment.center,
         child: const Text(
-          'Bắt đầu',
+          'Bắt đầu mua sắm',
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 18,
             fontWeight: FontWeight.w500,
           ),
         ),
