@@ -1,7 +1,6 @@
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
-import 'package:vtv_common/shop.dart';
 
 import '../../../order/domain/dto/review_param.dart';
 import '../dto/comment_param.dart';
@@ -77,9 +76,9 @@ abstract class ProductRepository {
 
   //*---------------------START SHOP-----------------------*//
 
-  //# shop-detail-controller
-  FRespData<int> countShopFollowed(int shopId);
-  FRespData<ShopDetailResp> getShopDetailById(int shopId);
+  // //# shop-detail-controller
+  // FRespData<int> countShopFollowed(int shopId);
+  // FRespData<ShopDetailResp> getShopDetailById(int shopId);
 
   //# followed-shop-controller
   FRespData<FollowedShopEntity> followedShopAdd(int shopId);

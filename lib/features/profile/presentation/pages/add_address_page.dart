@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/profile.dart';
 
 import '../../../../service_locator.dart';
-import '../../data/data_sources/profile_data_source.dart';
 import '../../domain/repository/profile_repository.dart';
 
 class AddOrUpdateAddressPage extends StatefulWidget {
@@ -119,10 +119,10 @@ class _AddOrUpdateAddressPageState extends State<AddOrUpdateAddressPage> {
               Expanded(
                 child: FutureBuilder<dynamic>(
                     future: _provinceName == null
-                        ? sl<ProfileDataSource>().getProvinces()
+                        ? sl<GuestDataSource>().getProvinces()
                         : _districtName == null
-                            ? sl<ProfileDataSource>().getDistrictsByProvinceCode(_provinceCode!)
-                            : sl<ProfileDataSource>().getWardsByDistrictCode(_districtCode!),
+                            ? sl<GuestDataSource>().getDistrictsByProvinceCode(_provinceCode!)
+                            : sl<GuestDataSource>().getWardsByDistrictCode(_districtCode!),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return ListView.builder(

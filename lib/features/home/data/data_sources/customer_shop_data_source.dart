@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
-import 'package:vtv_common/shop.dart';
 
 import '../../../../core/constants/customer_api.dart';
 
-abstract class ShopDataSource {
-  //# shop-detail-controller
-  Future<SuccessResponse<int>> countShopFollowed(int shopId);
-  Future<SuccessResponse<ShopDetailResp>> getShopDetailById(int shopId);
+abstract class CustomerShopDataSource {
+  // //# shop-detail-controller
+  // Future<SuccessResponse<int>> countShopFollowed(int shopId);
+  // Future<SuccessResponse<ShopDetailResp>> getShopDetailById(int shopId);
 
   //# followed-shop-controller
   Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId);
@@ -16,25 +15,25 @@ abstract class ShopDataSource {
   Future<SuccessResponse> followedShopDelete(int followedShopId);
 }
 
-class ShopDataSourceImpl implements ShopDataSource {
+class ShopDataSourceImpl implements CustomerShopDataSource {
   final Dio _dio;
 
   ShopDataSourceImpl(this._dio);
 
-  @override
-  Future<SuccessResponse<int>> countShopFollowed(int shopId) async {
-    // OK:REVIEW why need accessToken here?
-    final url = baseUri(path: '$kAPIShopCountFollowedURL/$shopId');
-    final response = await _dio.getUri(
-      url,
-    );
+  // @override
+  // Future<SuccessResponse<int>> countShopFollowed(int shopId) async {
+  //   // OK:REVIEW why need accessToken here?
+  //   final url = baseUri(path: '$kAPIShopCountFollowedURL/$shopId');
+  //   final response = await _dio.getUri(
+  //     url,
+  //   );
 
-    return handleDioResponse<int, int>(
-      response,
-      url,
-      parse: (count) => count,
-    );
-  }
+  //   return handleDioResponse<int, int>(
+  //     response,
+  //     url,
+  //     parse: (count) => count,
+  //   );
+  // }
 
   @override
   Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId) async {
@@ -86,16 +85,16 @@ class ShopDataSourceImpl implements ShopDataSource {
     );
   }
 
-  @override
-  Future<SuccessResponse<ShopDetailResp>> getShopDetailById(int shopId) async {
-    final url = baseUri(path: '$kAPIShopURL/$shopId');
+  // @override
+  // Future<SuccessResponse<ShopDetailResp>> getShopDetailById(int shopId) async {
+  //   final url = baseUri(path: '$kAPIShopURL/$shopId');
 
-    final response = await _dio.getUri(url);
+  //   final response = await _dio.getUri(url);
 
-    return handleDioResponse<ShopDetailResp, Map<String, dynamic>>(
-      response,
-      url,
-      parse: (jsonMap) => ShopDetailResp.fromMap(jsonMap),
-    );
-  }
+  //   return handleDioResponse<ShopDetailResp, Map<String, dynamic>>(
+  //     response,
+  //     url,
+  //     parse: (jsonMap) => ShopDetailResp.fromMap(jsonMap),
+  //   );
+  // }
 }

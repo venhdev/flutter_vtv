@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
@@ -52,9 +51,9 @@ class SingleCheckoutView extends StatelessWidget {
         _buildShippingMethod(),
         const SizedBox(height: 8),
 
-        //! payment method
-        _buildPaymentMethod(),
-        const SizedBox(height: 8),
+        // //! payment method
+        // _buildPaymentMethod(),
+        // const SizedBox(height: 8),
 
         // voucher
         // _buildSystemVoucherBtn(context),
@@ -326,51 +325,51 @@ class SingleCheckoutView extends StatelessWidget {
     );
   }
 
-  Widget _buildSystemVoucherBtn(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        // show dialog to choose voucher
-        final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
-          builder: (context) {
-            // return const VoucherPage(returnValue: true);
-            return VoucherPage(
-              returnValue: true,
-              future: sl<VoucherRepository>().listOnSystem(),
-            );
-          },
-        ));
+  // Widget _buildSystemVoucherBtn(BuildContext context) {
+  //   return InkWell(
+  //     onTap: () async {
+  //       // show dialog to choose voucher
+  //       final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
+  //         builder: (context) {
+  //           // return const VoucherPage(returnValue: true);
+  //           return VoucherPage(
+  //             returnValue: true,
+  //             future: sl<VoucherRepository>().listOnSystem(),
+  //           );
+  //         },
+  //       ));
 
-        if (voucher != null) {
-          onOrderRequestChangedAtIndex(
-            _placeOrderWithCartParam.copyWith(systemVoucherCode: voucher.code),
-          );
-        }
-      },
-      overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
-      child: Wrapper(
-        useBoxShadow: false,
-        border: Border.all(color: Colors.grey.shade300),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Mã giảm giá',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              _placeOrderWithCartParam.systemVoucherCode ?? _noVoucherMsg,
-              style: TextStyle(
-                color: _placeOrderWithCartParam.systemVoucherCode == null ? Colors.grey : Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //       if (voucher != null) {
+  //         onOrderRequestChangedAtIndex(
+  //           _placeOrderWithCartParam.copyWith(systemVoucherCode: voucher.code),
+  //         );
+  //       }
+  //     },
+  //     overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
+  //     child: Wrapper(
+  //       useBoxShadow: false,
+  //       border: Border.all(color: Colors.grey.shade300),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           const Text(
+  //             'Mã giảm giá',
+  //             style: TextStyle(
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           Text(
+  //             _placeOrderWithCartParam.systemVoucherCode ?? _noVoucherMsg,
+  //             style: TextStyle(
+  //               color: _placeOrderWithCartParam.systemVoucherCode == null ? Colors.grey : Colors.green,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 Future<T?> showDialogToChangeAddress<T>(BuildContext context, void Function(AddressEntity) onAddressChanged) {

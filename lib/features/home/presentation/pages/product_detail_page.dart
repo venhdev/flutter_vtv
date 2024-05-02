@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/shop.dart';
 
@@ -217,7 +218,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Widget _buildShopInfo() {
     return FutureBuilder(
-      future: sl<ProductRepository>().getShopDetailById(_productDetail.shopId),
+      future: sl<GuestRepository>().getShopDetailById(_productDetail.shopId),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return snapshot.data!.fold(

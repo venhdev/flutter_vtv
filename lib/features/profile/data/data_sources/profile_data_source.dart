@@ -8,12 +8,6 @@ import 'package:vtv_common/profile.dart';
 import '../../../../core/constants/customer_api.dart';
 
 abstract class ProfileDataSource {
-  //! location: ward-controller, province-controller, district-controller, ward-controller
-  Future<SuccessResponse<List<ProvinceEntity>>> getProvinces();
-  Future<SuccessResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode);
-  Future<SuccessResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode);
-  Future<SuccessResponse<String>> getFullAddressByWardCode(String wardCode);
-
   //! address-controller
   Future<SuccessResponse> updateAddressStatus(int addressId);
   Future<SuccessResponse<List<AddressEntity>>> getAllAddress();
@@ -44,68 +38,6 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       (data) => (data['addressDTOs'] as List<dynamic>)
           .map(
             (address) => AddressEntity.fromMap(address),
-          )
-          .toList(),
-    );
-  }
-
-  @override
-  Future<SuccessResponse<List<DistrictEntity>>> getDistrictsByProvinceCode(String provinceCode) async {
-    final url = baseUri(path: '$kAPILocationDistrictGetAllByProvinceCodeURL/$provinceCode');
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-    );
-
-    return handleResponseWithData<List<DistrictEntity>>(
-      response,
-      url,
-      (data) => (data['districtDTOs'] as List<dynamic>)
-          .map(
-            (district) => DistrictEntity.fromMap(district),
-          )
-          .toList(),
-    );
-  }
-
-  @override
-  Future<SuccessResponse<String>> getFullAddressByWardCode(String wardCode) async {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<SuccessResponse<List<ProvinceEntity>>> getProvinces() async {
-    final url = baseUri(path: kAPILocationProvinceGetAllURL);
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-    );
-
-    return handleResponseWithData<List<ProvinceEntity>>(
-      response,
-      url,
-      (data) => (data['provinceDTOs'] as List<dynamic>)
-          .map(
-            (province) => ProvinceEntity.fromMap(province),
-          )
-          .toList(),
-    );
-  }
-
-  @override
-  Future<SuccessResponse<List<WardEntity>>> getWardsByDistrictCode(String districtCode) async {
-    final url = baseUri(path: '$kAPILocationWardGetAllByDistrictCodeURL/$districtCode');
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-    );
-
-    return handleResponseWithData<List<WardEntity>>(
-      response,
-      url,
-      (data) => (data['wardDTOs'] as List<dynamic>)
-          .map(
-            (ward) => WardEntity.fromMap(ward),
           )
           .toList(),
     );

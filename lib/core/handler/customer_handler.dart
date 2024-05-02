@@ -226,7 +226,23 @@ class CustomerHandler {
     }
   }
 
-  //! Navigation & Data Involved
+  static Widget buildOrderStatusAction(
+    BuildContext context, {
+    required OrderEntity order,
+    required Function(OrderDetailEntity completedOrder) onReceivedPressed,
+  }) {
+    if (order.status == OrderStatus.DELIVERED) {
+      return OrderPurchaseItemAction(
+        label: 'Bạn đã nhận được hàng chưa?',
+        buttonLabel: 'Đã nhận',
+        onPressed: () {
+          completeOrder(context, order.orderId!, inOrderDetailPage: false, onReceived: onReceivedPressed);
+        },
+      );
+    }
+    return const SizedBox.shrink();
+  }
+  //! Navigation & Data Involved (OrderPurchasePage)
 
   static FRespData<MultiOrderEntity> dataCallOrderPurchasePage(OrderStatus? status) {
     if (status == null) {
@@ -241,14 +257,14 @@ class CustomerHandler {
   static Future<void> navigateToOrderDetailPage(
     BuildContext context,
     OrderEntity order,
-    void Function(OrderDetailEntity) onReceived,
+    void Function(OrderDetailEntity) onReceivedCallback, //use when user tap completed order in OrderDetailPage
   ) async {
     final respEither = await sl<OrderRepository>().getOrderDetail(order.orderId!);
     respEither.fold(
       (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
       (ok) async {
         final completedOrder = await context.push<OrderDetailEntity>(OrderDetailPage.path, extra: ok.data);
-        if (completedOrder != null) onReceived(completedOrder);
+        if (completedOrder != null) onReceivedCallback(completedOrder);
       },
     );
   }

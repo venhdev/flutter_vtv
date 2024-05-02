@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/shop.dart';
 
@@ -69,7 +70,7 @@ class _ShopPageState extends State<ShopPage> {
       _loadingShopDetail = true;
     });
 
-    await sl<ProductRepository>().getShopDetailById(widget.shopId).then((respEither) {
+    await sl<GuestRepository>().getShopDetailById(widget.shopId).then((respEither) {
       respEither.fold(
         (error) {
           errMsg = error.message ?? 'Lỗi khi lấy thông tin shop';

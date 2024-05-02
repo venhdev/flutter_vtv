@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 
 import 'config/dio/auth_interceptor.dart';
 import 'config/dio/dio_options.dart';
@@ -18,7 +19,7 @@ import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
 import 'features/home/data/data_sources/local_product_data_source.dart';
 import 'features/home/data/data_sources/review_data_source.dart';
-import 'features/home/data/data_sources/shop_data_source.dart';
+import 'features/home/data/data_sources/customer_shop_data_source.dart';
 import 'features/notification/data/data_sources/notification_data_source.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
 import 'features/notification/domain/repository/notification_repository.dart';
@@ -78,6 +79,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<FirebaseCloudMessagingManager>(FirebaseCloudMessagingManager(fMessaging));
 
   //! Data source
+  sl.registerSingleton<GuestDataSource>(GuestDataSourceImpl(sl()));
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl(), sl()));
 
@@ -86,7 +88,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<SearchProductDataSource>(SearchProductDataSourceImpl(sl()));
   sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl(), sl()));
   sl.registerSingleton<NotificationDataSource>(NotificationDataSourceImpl(sl(), sl()));
-  sl.registerSingleton<ShopDataSource>(ShopDataSourceImpl(sl()));
+  sl.registerSingleton<CustomerShopDataSource>(ShopDataSourceImpl(sl()));
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl(), sl()));
@@ -95,6 +97,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<LocalProductDataSource>(LocalProductDataSourceImpl(sl()));
 
   //! Repository
+  sl.registerSingleton<GuestRepository>(GuestRepositoryImpl(sl())); // vtv_common
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
 

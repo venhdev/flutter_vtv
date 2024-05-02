@@ -55,7 +55,7 @@ class _NotificationListState extends State<NotificationList> {
         }
         return RefreshIndicator(
           onRefresh: () async {
-            // controller.reload();
+            controller.reload();
           },
           child: CustomScrollView(
             slivers: [

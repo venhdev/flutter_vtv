@@ -156,7 +156,26 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
                     ),
                   ),
 
-                //
+                // payment method
+                Wrapper(
+                  label: const WrapperLabel(icon: Icons.payment, labelText: 'Phương thức thanh toán'),
+                  useBoxShadow: false,
+                  border: Border.all(color: Colors.grey.shade300),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(_multipleOrderRequestParam.paymentMethod),
+                          Text(StringHelper.getPaymentName(_multipleOrderRequestParam.paymentMethod)),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+
+                // system voucher code
                 Wrapper(
                   onPressed: () async {
                     // show dialog to choose voucher

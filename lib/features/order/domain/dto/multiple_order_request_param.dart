@@ -31,6 +31,9 @@ class MultipleOrderRequestParam {
     );
   }
 
+  // payment method
+  String get paymentMethod => orderRequestWithCarts.first.paymentMethod;
+
   // control systemVoucherCode
   String? systemVoucherCode;
   set setSystemVoucherCode(String? value) {

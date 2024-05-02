@@ -23,34 +23,6 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
-  FRespData<List<DistrictEntity>> getDistrictsByProvinceCode(String provinceCode) async {
-    return await handleDataResponseFromDataSource(
-      dataCallback: () async => await _profileDataSource.getDistrictsByProvinceCode(provinceCode),
-    );
-  }
-
-  @override
-  FRespData<String> getFullAddressByWardCode(String wardCode) async {
-    return await handleDataResponseFromDataSource(
-      dataCallback: () async => await _profileDataSource.getFullAddressByWardCode(wardCode),
-    );
-  }
-
-  @override
-  FRespData<List<ProvinceEntity>> getProvinces() async {
-    return await handleDataResponseFromDataSource(
-      dataCallback: () async => await _profileDataSource.getProvinces(),
-    );
-  }
-
-  @override
-  FRespData<List<WardEntity>> getWardsByDistrictCode(String districtCode) async {
-    return await handleDataResponseFromDataSource(
-      dataCallback: () async => await _profileDataSource.getWardsByDistrictCode(districtCode),
-    );
-  }
-
-  @override
   FRespEither updateAddressStatus(int addressId) async {
     return await handleSuccessResponseFromDataSource(
       noDataCallback: () async => await _profileDataSource.updateAddressStatus(addressId),

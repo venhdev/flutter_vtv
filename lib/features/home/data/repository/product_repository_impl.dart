@@ -3,7 +3,6 @@ import 'package:flutter_vtv/features/home/domain/dto/comment_param.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
-import 'package:vtv_common/shop.dart';
 
 import '../../../order/domain/dto/review_param.dart';
 import '../../domain/repository/product_repository.dart';
@@ -11,7 +10,7 @@ import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
 import '../data_sources/product_data_source.dart';
 import '../data_sources/review_data_source.dart';
-import '../data_sources/shop_data_source.dart';
+import '../data_sources/customer_shop_data_source.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl(
@@ -26,7 +25,7 @@ class ProductRepositoryImpl implements ProductRepository {
   final CategoryDataSource _categoryDataSource;
   final LocalProductDataSource _localProductDataSource;
   final ReviewDataSource _reviewDataSource;
-  final ShopDataSource _shopDataSource;
+  final CustomerShopDataSource _shopDataSource;
 
   @override
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size) async {
@@ -258,13 +257,13 @@ class ProductRepositoryImpl implements ProductRepository {
     );
   }
 
-  @override
-  FRespData<int> countShopFollowed(int shopId) async {
-    return handleDataResponseFromDataSource(
-      dataCallback: () => _shopDataSource.countShopFollowed(shopId),
-    );
-  }
-
+  // @override
+  // FRespData<int> countShopFollowed(int shopId) async {
+  //   return handleDataResponseFromDataSource(
+  //     dataCallback: () => _shopDataSource.countShopFollowed(shopId),
+  //   );
+  // }
+//
   @override
   FRespData<FollowedShopEntity> followedShopAdd(int shopId) async {
     return handleDataResponseFromDataSource(
@@ -330,10 +329,10 @@ class ProductRepositoryImpl implements ProductRepository {
     );
   }
 
-  @override
-  FRespData<ShopDetailResp> getShopDetailById(int shopId) async {
-    return handleDataResponseFromDataSource(
-      dataCallback: () => _shopDataSource.getShopDetailById(shopId),
-    );
-  }
+  // @override
+  // FRespData<ShopDetailResp> getShopDetailById(int shopId) async {
+  //   return handleDataResponseFromDataSource(
+  //     dataCallback: () => _shopDataSource.getShopDetailById(shopId),
+  //   );
+  // }
 }

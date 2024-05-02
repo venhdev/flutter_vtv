@@ -26,6 +26,7 @@ import '../../features/order/domain/entities/multiple_order_resp.dart';
 import '../../features/order/presentation/components/btn/review_btn.dart';
 import '../../features/order/presentation/pages/add_review_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
+import '../../features/order/presentation/pages/customer_order_purchase_page.dart';
 import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
@@ -166,21 +167,7 @@ class AppRoutes {
               path: OrderPurchasePage.routeName, // '/user/purchase'
               name: OrderPurchasePage.routeName, // purchase
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => OrderPurchasePage(
-                dataCallBack: CustomerHandler.dataCallOrderPurchasePage,
-                itemBuilder: (order, onReceivedCallback) => OrderPurchaseItem(
-                  order: order,
-                  onReceivedPressed: () => CustomerHandler.completeOrder(
-                    context,
-                    order.orderId!,
-                    inOrderDetailPage: false,
-                    onReceived: onReceivedCallback,
-                  ),
-                  onPressed: () => CustomerHandler.navigateToOrderDetailPage(context, order, onReceivedCallback),
-                  onShopPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
-                  buildOnCompleted: ReviewBtn(order: order),
-                ),
-              ),
+              builder: (context, state) => const CustomerOrderPurchasePage(),
               routes: [
                 GoRoute(
                   path: OrderDetailPage.routeName, // '/user/purchase/order-detail'
