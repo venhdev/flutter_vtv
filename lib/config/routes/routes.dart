@@ -6,11 +6,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/dev.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 
 import '../../core/handler/customer_handler.dart';
-import '../../core/presentation/pages/dev_page.dart';
 import '../../core/presentation/pages/intro_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/presentation/pages/category_page.dart';
@@ -23,9 +23,9 @@ import '../../features/home/presentation/pages/search_page.dart';
 import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/order/domain/entities/multiple_order_resp.dart';
-import '../../features/order/presentation/components/btn/review_btn.dart';
 import '../../features/order/presentation/pages/add_review_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
+import '../../features/order/presentation/pages/customer_order_detail_page.dart';
 import '../../features/order/presentation/pages/customer_order_purchase_page.dart';
 import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
@@ -34,6 +34,7 @@ import '../../features/profile/presentation/pages/followed_shop_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/user_detail_page.dart';
 import '../../features/profile/presentation/pages/user_page.dart';
+import '../../service_locator.dart';
 import 'scaffold_with_navbar.dart';
 
 //! config bottom navigation bar in '/lib/config/routes/scaffold_with_navbar.dart'
@@ -80,8 +81,8 @@ class AppRoutes {
         },
       ),
       GoRoute(
-        path: DevPage.routeName, // '/dev'
-        builder: (context, state) => const DevPage(),
+        path: '/dev', // DevPage.routeName, // '/dev'
+        builder: (context, state) => DevPage(sl: sl, onBackPressed: () => context.go('/home')),
       ),
     ],
   );
@@ -170,24 +171,12 @@ class AppRoutes {
               builder: (context, state) => const CustomerOrderPurchasePage(),
               routes: [
                 GoRoute(
-                  path: OrderDetailPage.routeName, // '/user/purchase/order-detail'
-                  name: OrderDetailPage.routeName, // order-detail
+                  path: CustomerOrderDetailPage.routeName, // '/user/purchase/order-detail'
+                  name: CustomerOrderDetailPage.routeName, // order-detail
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
                     final OrderDetailEntity orderDetail = state.extra as OrderDetailEntity;
-                    return OrderDetailPage(
-                      orderDetail: orderDetail,
-                      onRePurchasePressed: (orderItems) => CustomerHandler.rePurchaseOrder(context, orderItems),
-                      onCancelOrderPressed: (orderId) => CustomerHandler.cancelOrder(context, orderId),
-                      onCompleteOrderPressed: (orderId) => CustomerHandler.completeOrder(
-                        context,
-                        orderId,
-                        inOrderDetailPage: true,
-                      ),
-                      customerReviewBtn: (order) => ReviewBtn(order: order),
-                      onOrderItemPressed: (orderItem) =>
-                          context.push(ProductDetailPage.path, extra: orderItem.productVariant.productId),
-                    );
+                    return CustomerOrderDetailPage(orderDetail: orderDetail);
                   },
                   routes: [
                     GoRoute(

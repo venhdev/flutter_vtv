@@ -1,3 +1,4 @@
+import 'package:flutter_vtv/features/home/domain/entities/search_history_resp.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
 
@@ -93,6 +94,27 @@ class SearchProductRepositoryImpl implements SearchProductRepository {
   ) async {
     return handleDataResponseFromDataSource(
       dataCallback: () => _searchProductDataSource.searchProductShopSort(page, size, keyword, sort, shopId),
+    );
+  }
+
+  @override
+  FRespEither searchHistoryAdd(String query) async {
+    return handleSuccessResponseFromDataSource(
+      noDataCallback: () => _searchProductDataSource.searchHistoryAdd(query),
+    );
+  }
+
+  @override
+  FRespEither searchHistoryDelete(String searchHistoryId) async {
+    return handleSuccessResponseFromDataSource(
+      noDataCallback: () => _searchProductDataSource.searchHistoryDelete(searchHistoryId),
+    );
+  }
+
+  @override
+  FRespData<SearchHistoryResp> searchHistoryGetPage(int page, int size) async {
+    return handleDataResponseFromDataSource(
+      dataCallback: () => _searchProductDataSource.searchHistoryGetPage(page, size),
     );
   }
 }

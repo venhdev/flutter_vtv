@@ -12,6 +12,7 @@ import '../../features/cart/presentation/bloc/cart_bloc.dart';
 import '../../features/home/domain/repository/product_repository.dart';
 import '../../features/order/domain/repository/order_repository.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
+import '../../features/order/presentation/pages/customer_order_detail_page.dart';
 import '../../service_locator.dart';
 
 /// Quick Handler for customer actions
@@ -59,8 +60,14 @@ class CustomerHandler {
   static Future<bool> registerCustomer(RegisterParams params) async {
     return sl<AuthRepository>().register(params).then((resultEither) {
       return resultEither.fold(
-        (error) => false,
-        (ok) => true,
+        (error) {
+          Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi đăng ký tài khoản!');
+          return false;
+        },
+        (ok) {
+          Fluttertoast.showToast(msg: ok.message ?? 'Đăng ký tài khoản thành công!');
+          return true;
+        },
       );
     });
   }
@@ -107,7 +114,7 @@ class CustomerHandler {
         (ok) {
           if (inOrderDetailPage) {
             // navigate to [OrderDetailPage] with new [OrderDetailEntity]
-            context.go(OrderDetailPage.path, extra: ok.data!);
+            context.go(CustomerOrderDetailPage.path, extra: ok.data!);
           } else {
             // [onReceived]:
             // - 1. update order list in [OrderPurchasePage]
@@ -137,7 +144,7 @@ class CustomerHandler {
         (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi hủy đơn hàng!'),
         (ok) {
           showDialogToAlert(context, title: const Text('Hủy đơn hàng thành công!'));
-          context.go(OrderDetailPage.path, extra: ok.data!);
+          context.go(CustomerOrderDetailPage.path, extra: ok.data!);
         },
       );
     }
@@ -220,7 +227,7 @@ class CustomerHandler {
           context.read<CartBloc>().add(const FetchCart()); //OK_TODO this make show unwanted toast
 
           // navigate to order detail page
-          context.go(OrderDetailPage.path, extra: ok.data);
+          context.go(CustomerOrderDetailPage.path, extra: ok.data);
         },
       );
     }
@@ -263,7 +270,7 @@ class CustomerHandler {
     respEither.fold(
       (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
       (ok) async {
-        final completedOrder = await context.push<OrderDetailEntity>(OrderDetailPage.path, extra: ok.data);
+        final completedOrder = await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: ok.data);
         if (completedOrder != null) onReceivedCallback(completedOrder);
       },
     );

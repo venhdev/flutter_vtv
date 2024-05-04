@@ -80,3 +80,8 @@ const String kAPILoyaltyPointGetURL = '/customer/loyalty-point/get'; // GET
 //# comment-customer-controller
 const String kAPICommentAddURL = '/customer/comment/add'; // POST
 const String kAPICommentDeleteURL = '/customer/comment/delete'; // PATCH /{commentId}
+
+//# search-history-controller
+const String kAPISearchHistoryAddURL = '/customer/search-history/add'; // POST
+const String kAPISearchHistoryGetPageURL = '/customer/search-history/get/page/:page/size/:size'; // GET
+const String kAPISearchHistoryDeleteURL = '/customer/search-history/delete'; // DELETE

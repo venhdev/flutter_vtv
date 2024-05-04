@@ -78,6 +78,7 @@ class _SearchPageState extends State<SearchPage> {
         searchController: searchController,
         onSearchSubmitted: (text) {
           setState(() {
+            searchController.text = text;
             currentSearchText = text;
             currentPage = 1; // Reset to the first page when search text changes
           });
@@ -93,6 +94,17 @@ class _SearchPageState extends State<SearchPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // search text
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        'Từ khóa tìm kiếm: $currentSearchText',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        softWrap: false,
+                      ),
+                    ),
+                    // button filter
                     BtnFilter(
                       context,
                       isFiltering: currentFilter.isFiltering,
@@ -109,16 +121,6 @@ class _SearchPageState extends State<SearchPage> {
                         }
                         // do nothing if filterResult is null (user cancels the filter by tapping outside the bottom sheet)
                       },
-                    ),
-                    // search text
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        'Từ khóa tìm kiếm: $currentSearchText',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        softWrap: false,
-                      ),
                     ),
                   ],
                 ),

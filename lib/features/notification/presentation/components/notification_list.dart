@@ -39,31 +39,26 @@ class _NotificationListState extends State<NotificationList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
-      listener: (context, state) {
-        // if (state.status == AuthStatus.authenticated) {
-        //   controller.reload();
-        // } else if (state.status == AuthStatus.unauthenticated) {
-        //   controller.clearItemsNoReload();
-        // }
-      },
+    return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         if (state.status == AuthStatus.unauthenticated) {
           return const Center(
             child: Text('Vui lòng đăng nhập để xem thông báo'),
           );
+        } else if (state.status == AuthStatus.authenticated) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              controller.reload();
+            },
+            child: CustomScrollView(
+              slivers: [
+                _buildSliverAppBar(context),
+                _buildBody(controller),
+              ],
+            ),
+          );
         }
-        return RefreshIndicator(
-          onRefresh: () async {
-            controller.reload();
-          },
-          child: CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(context),
-              _buildBody(controller),
-            ],
-          ),
-        );
+        return const SizedBox.shrink();
       },
     );
   }
@@ -81,7 +76,7 @@ class _NotificationListState extends State<NotificationList> {
                 controller: controller,
                 // dataCallback: (page) => sl<NotificationRepository>().getPageNotifications(page, 20),
                 dataCallback: widget.dataCallback,
-                itemBuilder: (_, __, data) {
+                itemBuilder: (_, index, data) {
                   return NotificationItem(
                     notification: data,
                     markAsRead: (id) async {
@@ -109,6 +104,7 @@ class _NotificationListState extends State<NotificationList> {
                         },
                         (ok) {
                           // controller.reload(newItems: ok.data.items);
+                          controller.removeAt(index);
                           return true;
                         },
                       );

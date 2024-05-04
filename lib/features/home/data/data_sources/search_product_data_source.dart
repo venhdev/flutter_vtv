@@ -2,41 +2,26 @@ import 'package:dio/dio.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
 
+import '../../../../core/constants/customer_api.dart';
+import '../../domain/entities/search_history_resp.dart';
+
 abstract class SearchProductDataSource {
   //# search-product-controller
   //* search in home page
-  Future<SuccessResponse<ProductPageResp>> searchProductSort(
-    int page,
-    int size,
-    String keyword,
-    String sort,
-  );
+  Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort);
   Future<SuccessResponse<ProductPageResp>> searchProductPriceRangeSort(
-    int page,
-    int size,
-    String keyword,
-    String sort,
-    int minPrice,
-    int maxPrice,
-  );
+      int page, int size, String keyword, String sort, int minPrice, int maxPrice);
 
   //* search in shop
   Future<SuccessResponse<ProductPageResp>> searchProductShopSort(
-    int page,
-    int size,
-    String keyword,
-    String sort,
-    int shopId,
-  );
+      int page, int size, String keyword, String sort, int shopId);
   Future<SuccessResponse<ProductPageResp>> searchProductShopPriceRangeSort(
-    int page,
-    int size,
-    String keyword,
-    String sort,
-    int minPrice,
-    int maxPrice,
-    int shopId,
-  );
+      int page, int size, String keyword, String sort, int minPrice, int maxPrice, int shopId);
+
+  //# search-history-controller
+  Future<SuccessResponse> searchHistoryAdd(String query);
+  Future<SuccessResponse<SearchHistoryResp>> searchHistoryGetPage(int page, int size);
+  Future<SuccessResponse> searchHistoryDelete(String searchHistoryId);
 }
 
 class SearchProductDataSourceImpl implements SearchProductDataSource {
@@ -198,6 +183,39 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
       response,
       url,
       parse: (jsonMap) => ProductPageResp.fromMap(jsonMap),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<Object?>> searchHistoryAdd(String query) async {
+    final url = baseUri(path: kAPISearchHistoryAddURL);
+    final response = await _dio.postUri(url, data: query);
+
+    return handleDioResponse<Object?, Map<String, dynamic>>(response, url, hasData: false);
+  }
+
+  @override
+  Future<SuccessResponse<Object?>> searchHistoryDelete(String searchHistoryId) async {
+    final url = baseUri(path: kAPISearchHistoryDeleteURL);
+
+    final response = await _dio.deleteUri(url, data: searchHistoryId);
+
+    return handleDioResponse<Object?, Map<String, dynamic>>(response, url, hasData: false);
+  }
+
+  @override
+  Future<SuccessResponse<SearchHistoryResp>> searchHistoryGetPage(int page, int size) async {
+    final url = baseUri(path: kAPISearchHistoryGetPageURL, pathVariables: {
+      'page': page.toString(),
+      'size': size.toString(),
+    });
+
+    final response = await _dio.getUri(url);
+
+    return handleDioResponse<SearchHistoryResp, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => SearchHistoryResp.fromMap(jsonMap),
     );
   }
 }

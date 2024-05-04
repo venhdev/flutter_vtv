@@ -6,6 +6,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/dev.dart';
 
 import 'app.dart';
 import 'app_state.dart';
@@ -31,9 +32,15 @@ void main() async {
   final authCubit = sl<AuthCubit>()..onStarted();
 
   // NOTE: dev
-  final domain = sl<SharedPreferencesHelper>().I.getString('devDomain');
-  if (domain != null) {
-    devDOMAIN = domain;
+  final savedHost = sl<SharedPreferencesHelper>().I.getString('host');
+  if (savedHost != null) {
+    host = savedHost;
+  } else {
+    final curHost = await DevUtils.initHostWithCurrentIPv4();
+    if (curHost != null) {
+      host = curHost;
+      sl<SharedPreferencesHelper>().I.setString('host', curHost);
+    }
   }
 
   FlutterNativeSplash.remove();

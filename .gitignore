@@ -45,3 +45,4 @@ app.*.map.json
 # Other
 .markdownlint.json
 PRIVATE.txt
+GIT.txt
