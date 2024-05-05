@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/config/routes/extra_codec.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
@@ -10,8 +8,11 @@ import 'package:vtv_common/dev.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 
-import '../../core/handler/customer_handler.dart';
 import '../../core/presentation/pages/intro_page.dart';
+import '../../features/auth/presentation/customer_change_password_page.dart';
+import '../../features/auth/presentation/customer_forgot_password_page.dart';
+import '../../features/auth/presentation/customer_login_page.dart';
+import '../../features/auth/presentation/customer_register_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/home/presentation/pages/category_page.dart';
 import '../../features/home/presentation/pages/favorite_products_page.dart';
@@ -100,37 +101,23 @@ class AppRoutes {
             GoRoute(
                 // path: LoginPage.routeName, // '/user/login'
                 // name: LoginPage.routeName, // login
-                path: 'login',
-                name: 'login',
+                path: CustomerLoginPage.routeName,
+                name: CustomerLoginPage.routeName,
                 parentNavigatorKey: _rootNavigatorKey,
-                builder: (context, state) => LoginPage(
-                      onLoginPressed: (username, password) async {
-                        await context
-                            .read<AuthCubit>()
-                            .loginWithUsernameAndPassword(username: username, password: password);
-                      },
-                      onNavRegister: () => context.go(RegisterPage.path),
-                      onNavForgotPassword: () => context.go(ForgotPasswordPage.path),
-                    ),
+                builder: (context, state) => const CustomerLoginPage(),
                 routes: [
                   GoRoute(
-                    path: ForgotPasswordPage.routeName, // '/user/login/forgot-password'
+                    path: CustomerForgotPasswordPage.routeName, // '/user/login/forgot-password'
+                    name: CustomerForgotPasswordPage.routeName, // forgot-password
                     parentNavigatorKey: _rootNavigatorKey,
-                    name: ForgotPasswordPage.routeName, // forgot-password
-                    builder: (context, state) => const ForgotPasswordPage(
-                      onSendCode: CustomerHandler.sendCodeForResetPassword,
-                      handleResetPassword: CustomerHandler.resetPassword,
-                    ),
+                    builder: (context, state) => const CustomerForgotPasswordPage(),
                   ),
                 ]),
             GoRoute(
-              path: RegisterPage.routeName, // '/user/register'
-              name: RegisterPage.routeName, // register
+              path: CustomerRegisterPage.routeName, // '/user/register'
+              name: CustomerRegisterPage.routeName, // register
               parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => RegisterPage(
-                onRegister: CustomerHandler.registerCustomer,
-                onNavLogin: () => context.go('/user/login'),
-              ),
+              builder: (context, state) => const CustomerRegisterPage(),
             ),
 
             GoRoute(
@@ -208,19 +195,9 @@ class AppRoutes {
               builder: (context, state) => const SettingsPage(),
               routes: [
                 GoRoute(
-                  path: ChangePasswordPage.routeName, // '/user/settings/change-password'
-                  name: ChangePasswordPage.routeName, // change-password
-                  builder: (context, state) => ChangePasswordPage(
-                    onChangePassword: (old, newPass) {
-                      CustomerHandler.changePassword(old, newPass).then((value) {
-                        if (value) {
-                          Fluttertoast.showToast(msg: 'Đổi mật khẩu thành công');
-                        } else {
-                          Fluttertoast.showToast(msg: 'Đổi mật khẩu thất bại');
-                        }
-                      });
-                    },
-                  ),
+                  path: CustomerChangePasswordPage.routeName, // '/user/settings/change-password'
+                  name: CustomerChangePasswordPage.routeName, // change-password
+                  builder: (context, state) => const CustomerChangePasswordPage(),
                 ),
                 GoRoute(
                   path: AddressPage.routeName, // 'user/settings/address'

@@ -22,6 +22,7 @@ dependencies:
   flutter_slidable: ^3.1.0
   timelines: ^0.1.0
   flutter_rating_bar: ^4.0.1
+  pin_code_fields: any
   # awesome_snackbar_content
 
   # navigation + state management

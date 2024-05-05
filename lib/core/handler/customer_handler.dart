@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vtv_common/auth.dart';
+// import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
@@ -39,47 +39,47 @@ class CustomerHandler {
 
   //# Auth
 
-  static Future<bool> sendCodeForResetPassword(String username) async {
-    return sl<AuthRepository>().sendOTPForResetPassword(username).then((resultEither) {
-      return resultEither.fold(
-        (error) => false,
-        (ok) => true,
-      );
-    });
-  }
+  // static Future<bool> sendCodeForResetPassword(String username) async {
+  //   return sl<AuthRepository>().sendOTPForResetPassword(username).then((resultEither) {
+  //     return resultEither.fold(
+  //       (error) => false,
+  //       (ok) => true,
+  //     );
+  //   });
+  // }
 
-  static Future<bool> resetPassword(String username, String otp, String newPass) async {
-    return sl<AuthRepository>().resetPasswordViaOTP(username, otp, newPass).then((resultEither) {
-      return resultEither.fold(
-        (error) => false,
-        (ok) => true,
-      );
-    });
-  }
+  // static Future<bool> resetPassword(String username, String otp, String newPass) async {
+  //   return sl<AuthRepository>().resetPasswordViaOTP(username, otp, newPass).then((resultEither) {
+  //     return resultEither.fold(
+  //       (error) => false,
+  //       (ok) => true,
+  //     );
+  //   });
+  // }
 
-  static Future<bool> registerCustomer(RegisterParams params) async {
-    return sl<AuthRepository>().register(params).then((resultEither) {
-      return resultEither.fold(
-        (error) {
-          Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi đăng ký tài khoản!');
-          return false;
-        },
-        (ok) {
-          Fluttertoast.showToast(msg: ok.message ?? 'Đăng ký tài khoản thành công!');
-          return true;
-        },
-      );
-    });
-  }
+  // static Future<bool> registerCustomer(RegisterParams params) async {
+  //   return sl<AuthRepository>().register(params).then((resultEither) {
+  //     return resultEither.fold(
+  //       (error) {
+  //         Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi đăng ký tài khoản!');
+  //         return false;
+  //       },
+  //       (ok) {
+  //         Fluttertoast.showToast(msg: ok.message ?? 'Đăng ký tài khoản thành công!');
+  //         return true;
+  //       },
+  //     );
+  //   });
+  // }
 
-  static Future<bool> changePassword(String oldPass, String newPass) async {
-    return sl<AuthRepository>().changePassword(oldPass, newPass).then((resultEither) {
-      return resultEither.fold(
-        (error) => false,
-        (ok) => true,
-      );
-    });
-  }
+  // static Future<bool> changePassword(String oldPass, String newPass) async {
+  //   return sl<AuthRepository>().changePassword(oldPass, newPass).then((resultEither) {
+  //     return resultEither.fold(
+  //       (error) => false,
+  //       (ok) => true,
+  //     );
+  //   });
+  // }
 
   //# Order
 

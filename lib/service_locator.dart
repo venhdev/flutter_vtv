@@ -80,7 +80,7 @@ Future<void> initializeLocator() async {
 
   //! Data source
   sl.registerSingleton<GuestDataSource>(GuestDataSourceImpl(sl()));
-  sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl()));
+  sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl(), sl()));
   sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl(), sl()));
 
   sl.registerSingleton<CategoryDataSource>(CategoryDataSourceImpl(sl()));

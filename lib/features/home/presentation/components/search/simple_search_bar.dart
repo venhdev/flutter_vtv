@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/home/domain/entities/search_history_entity.dart';
 import 'package:flutter_vtv/features/home/domain/repository/search_product_repository.dart';
 import 'package:vtv_common/auth.dart';
-import 'package:vtv_common/core.dart';
 
 import '../../../../../service_locator.dart';
 import 'customer_search_delegate.dart';

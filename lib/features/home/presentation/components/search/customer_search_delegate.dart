@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:vtv_common/core.dart';
 
 import '../../../../../service_locator.dart';
 import '../../../domain/entities/search_history_entity.dart';
