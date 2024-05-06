@@ -23,12 +23,13 @@ import '../../features/home/presentation/pages/review_detail_page.dart';
 import '../../features/home/presentation/pages/search_page.dart';
 import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
-import '../../features/order/domain/entities/multiple_order_resp.dart';
+import '../../features/order/domain/dto/webview_payment_param.dart';
 import '../../features/order/presentation/pages/add_review_page.dart';
 import '../../features/order/presentation/pages/checkout_page.dart';
 import '../../features/order/presentation/pages/customer_order_detail_page.dart';
 import '../../features/order/presentation/pages/customer_order_purchase_page.dart';
 import '../../features/order/presentation/pages/order_reviews_page.dart';
+import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';
@@ -351,18 +352,38 @@ class AppRoutes {
                       final multiOrder = state.extra as MultipleOrderResp;
                       return CheckoutMultipleOrderPage(multiOrderResp: multiOrder);
                     },
+                    routes: [
+                      GoRoute(
+                        path: VNPayWebView.routeName, // '/home/cart/multi-checkout/payment-vnpay'
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final extra = state.extra as WebViewPaymentExtra;
+                          return VNPayWebView(extra: extra);
+                        },
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: CheckoutPage.routeName, // '/home/cart/checkout' ?isCreateWithCart=true|false
                     name: CheckoutPage.routeName,
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (context, state) {
-                      final order = state.extra as OrderEntity;
+                      final orderDetail = state.extra as OrderDetailEntity;
                       final String? type = state.uri.queryParameters['isCreateWithCart'];
                       //! if isCreateWithCart is null => true
                       final bool isCreateWithCart = type == null ? true : type == 'true';
-                      return CheckoutPage(order: order, isCreateWithCart: isCreateWithCart);
+                      return CheckoutPage(orderDetail: orderDetail, isCreateWithCart: isCreateWithCart);
                     },
+                    routes: [
+                      GoRoute(
+                        path: VNPayWebView.routeName, // '/home/cart/checkout/payment-vnpay'
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final extra = state.extra as WebViewPaymentExtra;
+                          return VNPayWebView(extra: extra);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -153,7 +153,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    log('(ProductDetailPage) rebuild');
+    log('(ProductDetailPage) build with productId: ${widget.productId}');
     return Scaffold(
       // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
       bottomSheet: _buildBottomActionBar(context),

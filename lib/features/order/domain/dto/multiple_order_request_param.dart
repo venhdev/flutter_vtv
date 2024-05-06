@@ -1,16 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
-
-import '../entities/multiple_order_resp.dart';
 
 class MultipleOrderRequestParam {
   final List<OrderRequestWithCartParam> orderRequestWithCarts;
 
   MultipleOrderRequestParam._({
     required this.orderRequestWithCarts,
-  });
+    String? systemVoucherCode,
+    int? loyaltyPointIndex,
+    required PaymentTypes paymentMethod,
+  })  : _systemVoucherCode = systemVoucherCode,
+        _loyaltyPointIndex = loyaltyPointIndex,
+        _paymentMethod = paymentMethod;
 
   factory MultipleOrderRequestParam.fromOrderDetails(MultipleOrderResp multipleOrderResp) {
     final orderRequestWithCarts = multipleOrderResp.orderDetails.map((orderDetail) {
@@ -28,22 +32,33 @@ class MultipleOrderRequestParam {
 
     return MultipleOrderRequestParam._(
       orderRequestWithCarts: orderRequestWithCarts,
+      systemVoucherCode: null,
+      loyaltyPointIndex: null,
+      paymentMethod: multipleOrderResp.orderDetails.first.order.paymentMethod,
     );
   }
 
-  // payment method
-  String get paymentMethod => orderRequestWithCarts.first.paymentMethod;
+  // control payment method
+  PaymentTypes _paymentMethod;
+  PaymentTypes get paymentMethod => _paymentMethod;
+  set paymentMethod(PaymentTypes method) {
+    _paymentMethod = method;
+    for (var i = 0; i < orderRequestWithCarts.length; i++) {
+      orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(paymentMethod: method);
+    }
+  }
 
   // control systemVoucherCode
-  String? systemVoucherCode;
-  set setSystemVoucherCode(String? value) {
+  String? _systemVoucherCode;
+  String? get systemVoucherCode => _systemVoucherCode;
+  set systemVoucherCode(String? value) {
     if (value == null) {
-      systemVoucherCode = null;
+      _systemVoucherCode = null;
       for (var i = 0; i < orderRequestWithCarts.length; i++) {
         orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(systemVoucherCode: null);
       }
     } else {
-      systemVoucherCode = value;
+      _systemVoucherCode = value;
       for (var i = 0; i < orderRequestWithCarts.length; i++) {
         orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(systemVoucherCode: value);
       }
@@ -58,14 +73,15 @@ class MultipleOrderRequestParam {
     }
   }
 
-  int? loyaltyPointIndex;
   // control useLoyaltyPoint
+  int? _loyaltyPointIndex;
+  int? get loyaltyPointIndex => _loyaltyPointIndex; // null means not use loyalty point
   void setUseLoyaltyPoint(bool value, int index) {
     // set use loyalty point for only one orderRequestWithCarts, other will be false
     for (var i = 0; i < orderRequestWithCarts.length; i++) {
       orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(useLoyaltyPoint: i == index ? value : false);
     }
-    loyaltyPointIndex = value ? index : null;
+    _loyaltyPointIndex = value ? index : null;
   }
 
   // check exist system voucher code
@@ -102,6 +118,9 @@ class MultipleOrderRequestParam {
     newOrderRequestWithCarts[index] = param;
     return MultipleOrderRequestParam._(
       orderRequestWithCarts: newOrderRequestWithCarts,
+      systemVoucherCode: systemVoucherCode, // copy old value
+      loyaltyPointIndex: loyaltyPointIndex, // copy old value
+      paymentMethod: paymentMethod, // copy old value
     );
   }
 

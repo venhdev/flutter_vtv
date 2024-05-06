@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,18 +20,6 @@ class ProductShopList extends StatefulWidget {
 }
 
 class _ProductShopListState extends State<ProductShopList> {
-  @override
-  void initState() {
-    super.initState();
-    log('[SliverShopProducts] initState()');
-  }
-
-  @override
-  void dispose() {
-    log('[SliverShopProducts] dispose()');
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView(

@@ -11,7 +11,7 @@ import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/guest.dart';
 
-import 'config/dio/auth_interceptor.dart';
+import 'config/dio/customer_auth_interceptor.dart';
 import 'config/dio/dio_options.dart';
 import 'config/dio/error_interceptor.dart';
 import 'features/cart/data/data_sources/cart_data_source.dart';
@@ -23,6 +23,7 @@ import 'features/home/data/data_sources/customer_shop_data_source.dart';
 import 'features/notification/data/data_sources/notification_data_source.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
 import 'features/notification/domain/repository/notification_repository.dart';
+import 'features/order/data/data_sources/payment_data_source.dart';
 import 'features/order/domain/repository/voucher_repository.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
 import 'features/home/data/data_sources/product_data_source.dart';
@@ -62,7 +63,7 @@ Future<void> initializeLocator() async {
       //   // responseHeader: true,
       //   // error: true,
       // ),
-      AuthInterceptor(),
+      CustomerAuthInterceptor(),
       ErrorInterceptor(),
     ],
   );
@@ -89,6 +90,7 @@ Future<void> initializeLocator() async {
   sl.registerSingleton<ReviewDataSource>(ReviewDataSourceImpl(sl(), sl()));
   sl.registerSingleton<NotificationDataSource>(NotificationDataSourceImpl(sl(), sl()));
   sl.registerSingleton<CustomerShopDataSource>(ShopDataSourceImpl(sl()));
+  sl.registerSingleton<PaymentDataSource>(PaymentDataSourceImpl(sl()));
 
   sl.registerSingleton<CartDataSource>(CartDataSourceImpl(sl(), sl()));
   sl.registerSingleton<OrderDataSource>(OrderDataSourceImpl(sl(), sl(), sl()));
@@ -106,7 +108,7 @@ Future<void> initializeLocator() async {
 
   sl.registerSingleton<NotificationRepository>(NotificationRepositoryImpl(sl()));
   sl.registerSingleton<CartRepository>(CartRepositoryImpl(sl()));
-  sl.registerSingleton<OrderRepository>(OrderRepositoryImpl(sl(), sl()));
+  sl.registerSingleton<OrderRepository>(OrderRepositoryImpl(sl(), sl(), sl()));
   sl.registerSingleton<VoucherRepository>(VoucherRepositoryImpl(sl()));
 
   //! UseCase

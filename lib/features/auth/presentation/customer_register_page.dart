@@ -158,41 +158,4 @@ class _CustomerRegisterPageState extends State<CustomerRegisterPage> {
       ],
     );
   }
-
-  // Widget confirmEmailForm(BuildContext context) {
-  //   final confirmKey = GlobalKey<FormState>();
-  //   final confirmController = TextEditingController();
-  //   return Form(
-  //     key: confirmKey,
-  //     child: Column(
-  //       children: <Widget>[
-  //         const Text('Một email xác nhận đã được gửi đến hòm thư của bạn. Vui lòng kiểm tra và nhập mã xác nhận.'),
-
-  //         // text field for confirm code
-  //         TextFormField(
-  //           controller: confirmController,
-  //           decoration: const InputDecoration(labelText: 'Mã xác nhận'),
-  //           validator: (value) {
-  //             if (value == null || value.isEmpty) {
-  //               return 'Vui lòng nhập mã xác nhận';
-  //             }
-  //             return null;
-  //           },
-  //           onSaved: (value) {
-  //             // save confirm code
-  //             log('confirm code: $value');
-  //           },
-  //         ),
-  //         ElevatedButton(
-  //           onPressed: () {
-  //             if (confirmKey.currentState!.validate()) {
-  //               confirmKey.currentState!.save();
-  //             }
-  //           },
-  //           child: const Text('Xác nhận'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

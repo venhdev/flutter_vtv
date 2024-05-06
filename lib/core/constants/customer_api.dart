@@ -86,3 +86,6 @@ const String kAPISearchHistoryAddURL = '/customer/search-history/add'; // POST
 const String kAPISearchHistoryGetPageURL = '/customer/search-history/get/page/:page/size/:size'; // GET
 const String kAPISearchHistoryDeleteURL = '/customer/search-history/delete'; // DELETE
 
+//# vn-pay-controller
+const String kAPIVnPayCreatePaymentURL = '/vnpay/create-payment'; // POST /{orderId}
+const String kAPIVnPayCreatePaymentMultipleOrderURL = '/vnpay/create-payment/multiple-order'; // POST

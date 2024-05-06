@@ -5,13 +5,13 @@ import 'package:vtv_common/core.dart';
 
 import '../../service_locator.dart';
 
-class AuthInterceptor extends QueuedInterceptor {
+class CustomerAuthInterceptor extends QueuedInterceptor {
   final _innerDio = Dio();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     //> add accessToken if needed
-    if (options.path.contains('/customer')) {
+    if (options.path.contains('/customer') || options.path.contains('/vnpay')) {
       final token = await sl<SecureStorageHelper>().accessToken;
       options.headers.addAll(baseHttpHeaders(accessToken: token));
     } else {
@@ -47,7 +47,7 @@ class AuthInterceptor extends QueuedInterceptor {
           return handler.resolve(await _retry(err.requestOptions));
         }
       } catch (e) {
-        // log('got error when _retry: $e');
+        log('got error when _retry: $e');
         // rethrow;
         // handler.next(err);
         handler.reject(err);

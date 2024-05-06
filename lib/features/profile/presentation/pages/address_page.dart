@@ -115,7 +115,7 @@ class _AddressPageState extends State<AddressPage> {
                 ],
               ),
               Expanded(
-                child: AddressSummary(
+                child: Address(
                   address: address,
                   suffixIcon: Icons.edit,
                   onTap: () async {

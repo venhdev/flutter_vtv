@@ -7,7 +7,7 @@ import '../../../../core/constants/customer_api.dart';
 abstract class VoucherDataSource {
   Future<SuccessResponse<List<VoucherEntity>>> listAll();
   Future<SuccessResponse<List<VoucherEntity>>> listOnSystem();
-  Future<SuccessResponse<List<VoucherEntity>>> listOnShop(String shopId);
+  Future<SuccessResponse<List<VoucherEntity>>> listOnShop(int shopId);
 }
 
 class VoucherDataSourceImpl extends VoucherDataSource {
@@ -35,7 +35,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   }
 
   @override
-  Future<SuccessResponse<List<VoucherEntity>>> listOnShop(String shopId) async {
+  Future<SuccessResponse<List<VoucherEntity>>> listOnShop(int shopId) async {
     final url = baseUri(path: '$kAPIVoucherListOnShopURL/$shopId');
     final response = await _client.get(
       url,

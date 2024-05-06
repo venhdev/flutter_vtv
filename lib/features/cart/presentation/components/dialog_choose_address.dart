@@ -34,7 +34,7 @@ class _DialogChooseAddressState extends State<DialogChooseAddress> {
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(
                     ok.data!.length,
-                    (index) => AddressSummary(
+                    (index) => Address(
                       address: ok.data![index],
                       onTap: () {
                         widget.onAddressChanged(ok.data![index]);

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:vtv_common/order.dart';
 
@@ -58,7 +56,6 @@ class ReviewAddPage extends StatelessWidget {
                     orderItemId: order.orderItems[index].orderItemId!,
                     initParam: listParam[index],
                     onChange: (value) {
-                      log('value: ${value.toString()}');
                       listParam[index] = value;
                     },
                   ),

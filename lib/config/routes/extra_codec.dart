@@ -5,7 +5,7 @@ import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
 
-import '../../features/order/domain/entities/multiple_order_resp.dart';
+import '../../features/order/domain/dto/webview_payment_param.dart';
 
 // <https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart>
 
@@ -60,6 +60,9 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'MultipleOrderResp') {
       return MultipleOrderResp.fromJson(inputAsList[1] as String);
     }
+    if (inputAsList[0] == 'WebViewPaymentExtra') {
+      return WebViewPaymentExtra.fromJson(inputAsList[1] as String);
+    }
     throw FormatException('Unable to parse input: $input');
   }
 }
@@ -112,6 +115,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case MultipleOrderResp _:
         return <Object?>[
           'MultipleOrderResp',
+          (input).toJson(),
+        ];
+      case WebViewPaymentExtra _:
+        return <Object?>[
+          'WebViewPaymentExtra',
           (input).toJson(),
         ];
       default:

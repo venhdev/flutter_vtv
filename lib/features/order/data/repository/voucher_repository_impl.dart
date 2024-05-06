@@ -15,7 +15,7 @@ class VoucherRepositoryImpl extends VoucherRepository {
   }
 
   @override
-  FRespData<List<VoucherEntity>> listOnShop(String shopId) async {
+  FRespData<List<VoucherEntity>> listOnShop(int shopId) async {
     return handleDataResponseFromDataSource(dataCallback: () => _voucherDataSource.listOnShop(shopId));
   }
 

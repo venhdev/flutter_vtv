@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/features/order/presentation/pages/customer_order_detail_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
-import 'package:vtv_common/shop.dart';
 
 import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
-import '../../../profile/domain/repository/profile_repository.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
+import '../components/dialog_to_confirm_checkout.dart';
 import 'voucher_page.dart';
 
-const String _noVoucherMsg = 'Chọn hoặc nhập mã';
-
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({super.key, required this.order, this.isCreateWithCart = true});
+  const CheckoutPage({super.key, required this.orderDetail, this.isCreateWithCart = true});
 
   static const String routeName = 'checkout';
   static const String path = '/home/cart/checkout';
 
-  final OrderEntity order;
+  final OrderDetailEntity orderDetail;
 
   //? check if this [OrderEntity]
   //- create with cart (in cart with cartId) or
@@ -35,7 +35,7 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   late AddressEntity _address; // just ID
-  late OrderEntity _order;
+  late OrderDetailEntity _orderDetail;
   // Properties sent to the server
   late OrderRequestWithCartParam _placeOrderWithCartParam;
   late OrderRequestWithVariantParam _placeOrderWithVariantParam;
@@ -76,7 +76,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (newAddress != null) {
             _address = newAddress;
           }
-          _order = ok.data!.order;
+          _orderDetail = ok.data!;
         });
       },
     );
@@ -95,7 +95,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (newAddress != null) {
             _address = newAddress;
           }
-          _order = ok.data!.order;
+          _orderDetail = ok.data!;
         });
       },
     );
@@ -104,30 +104,30 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-    _address = widget.order.address;
-    _order = widget.order;
+    _address = widget.orderDetail.order.address;
+    _orderDetail = widget.orderDetail;
 
     if (widget.isCreateWithCart) {
       _placeOrderWithCartParam = OrderRequestWithCartParam(
-        addressId: widget.order.address.addressId,
+        addressId: widget.orderDetail.order.address.addressId,
         systemVoucherCode: null,
         shopVoucherCode: null,
-        useLoyaltyPoint: true,
-        paymentMethod: widget.order.paymentMethod,
-        shippingMethod: widget.order.shippingMethod,
+        useLoyaltyPoint: false,
+        paymentMethod: widget.orderDetail.order.paymentMethod,
+        shippingMethod: widget.orderDetail.order.shippingMethod,
         note: '',
-        cartIds: widget.order.orderItems.map((e) => e.cartId).toList(),
+        cartIds: widget.orderDetail.order.orderItems.map((e) => e.cartId).toList(),
       );
     } else {
       _placeOrderWithVariantParam = OrderRequestWithVariantParam(
-        addressId: widget.order.address.addressId,
+        addressId: widget.orderDetail.order.address.addressId,
         systemVoucherCode: null,
         shopVoucherCode: null,
-        useLoyaltyPoint: true,
-        paymentMethod: widget.order.paymentMethod,
-        shippingMethod: widget.order.shippingMethod,
+        useLoyaltyPoint: false,
+        paymentMethod: widget.orderDetail.order.paymentMethod,
+        shippingMethod: widget.orderDetail.order.shippingMethod,
         note: '',
-        variantIds: widget.order.getVariantIdsAndQuantityMap,
+        variantIds: widget.orderDetail.order.getVariantIdsAndQuantityMap,
       );
     }
   }
@@ -144,380 +144,138 @@ class _CheckoutPageState extends State<CheckoutPage> {
       bottomSheet: _buildPlaceOrderBottomSheet(),
       body: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 64),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              //! address
-              _buildDeliveryAddress(context),
-              const SizedBox(height: 8),
+        child: ListView(
+          children: [
+            //# address
+            Address(
+              address: _address,
+              onTap: () => showDialogToChangeAddress(context),
+            ),
+            const SizedBox(height: 8),
 
-              //! order summary
-              _buildShopInfoAndItems(), // shop info, list of items
-              const SizedBox(height: 8),
-
-              //! shipping method
-              _buildShippingMethod(),
-              const SizedBox(height: 8),
-
-              //! payment method
-              _buildPaymentMethod(),
-              const SizedBox(height: 8),
-
-              //! voucher
-              _buildSystemVoucherBtn(),
-              const SizedBox(height: 8),
-
-              //! loyalty point
-              _buildLoyaltyPoint(),
-              const SizedBox(height: 8),
-
-              //! total price
-              _buildTotalPrice(),
-              const SizedBox(height: 8),
-
-              //! note
-              _buildNote(),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoyaltyPoint() {
-    return Wrapper(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Sử dụng điểm tích lũy', style: TextStyle(fontWeight: FontWeight.bold)),
-              FutureBuilder(
-                  future: sl<ProfileRepository>().getLoyaltyPoint(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return snapshot.data!.fold(
-                        (error) => const SizedBox.shrink(),
-                        (ok) => Text(
-                          'Điểm hiện có: ${ok.data!.totalPoint}',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
+            //# shop info, list of items, shop voucher picker
+            OrderSectionShopItems(
+              order: _orderDetail.order,
+              shopVoucherCode: widget.isCreateWithCart
+                  ? _placeOrderWithCartParam.shopVoucherCode
+                  : _placeOrderWithVariantParam.shopVoucherCode,
+              onShopVoucherPressed: () async {
+                // show dialog to choose voucher
+                await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
+                  builder: (context) {
+                    return VoucherPage(
+                      returnValue: true,
+                      future: sl<VoucherRepository>().listOnShop(_orderDetail.order.shop.shopId),
+                    );
+                  },
+                )).then((voucher) {
+                  if (voucher != null) {
+                    if (widget.isCreateWithCart) {
+                      updateOrderWithCart(
+                        _placeOrderWithCartParam.copyWith(shopVoucherCode: voucher.code),
+                      );
+                    } else {
+                      updateOrderWithVariant(
+                        _placeOrderWithVariantParam.copyWith(shopVoucherCode: voucher.code),
                       );
                     }
-                    return const SizedBox.shrink();
-                  }),
-            ],
-          ),
-          Switch(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            value: widget.isCreateWithCart
-                ? _placeOrderWithCartParam.useLoyaltyPoint
-                : _placeOrderWithVariantParam.useLoyaltyPoint,
-            onChanged: (value) {
-              setState(() {
-                if (widget.isCreateWithCart) {
-                  updateOrderWithCart(
-                    _placeOrderWithCartParam.copyWith(useLoyaltyPoint: value),
-                  );
-                } else {
-                  updateOrderWithVariant(
-                    _placeOrderWithVariantParam.copyWith(useLoyaltyPoint: value),
-                  );
+                  }
+                });
+              },
+            ),
+            const SizedBox(height: 8),
+
+            //# shipping method
+            OrderSectionShippingMethod(order: _orderDetail.order),
+            const SizedBox(height: 8),
+
+            //# payment method
+            OrderSectionPaymentMethod(
+                paymentMethod: widget.isCreateWithCart
+                    ? _placeOrderWithCartParam.paymentMethod
+                    : _placeOrderWithVariantParam.paymentMethod,
+                balance: widget.orderDetail.balance,
+                onChanged: (value) {
+                  if (widget.isCreateWithCart) {
+                    updateOrderWithCart(
+                      _placeOrderWithCartParam.copyWith(paymentMethod: value),
+                    );
+                  } else {
+                    updateOrderWithVariant(
+                      _placeOrderWithVariantParam.copyWith(paymentMethod: value),
+                    );
+                  }
+                }),
+
+            const SizedBox(height: 8),
+
+            //# sys voucher
+            OrderSectionSystemVoucher(
+              systemVoucherCode: widget.isCreateWithCart
+                  ? _placeOrderWithCartParam.systemVoucherCode
+                  : _placeOrderWithVariantParam.systemVoucherCode,
+              onPressed: () async {
+                // show dialog to choose voucher
+                final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
+                  builder: (context) {
+                    return VoucherPage(
+                      returnValue: true,
+                      future: sl<VoucherRepository>().listOnSystem(),
+                    );
+                  },
+                ));
+
+                if (voucher != null) {
+                  if (widget.isCreateWithCart) {
+                    updateOrderWithCart(
+                      _placeOrderWithCartParam.copyWith(systemVoucherCode: voucher.code),
+                    );
+                  } else {
+                    updateOrderWithVariant(
+                      _placeOrderWithVariantParam.copyWith(systemVoucherCode: voucher.code),
+                    );
+                  }
                 }
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNote() {
-    return TextField(
-      style: const TextStyle(fontSize: 14),
-      decoration: const InputDecoration(
-        hintText: 'Ghi chú',
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-      ),
-      onChanged: (value) {
-        setState(() {
-          if (widget.isCreateWithCart) {
-            _placeOrderWithCartParam = _placeOrderWithCartParam.copyWith(note: value);
-          } else {
-            _placeOrderWithVariantParam = _placeOrderWithVariantParam.copyWith(note: value);
-          }
-        });
-      },
-    );
-  }
-
-  Widget _buildTotalPrice() {
-    return Wrapper(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Tổng cộng',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+              },
             ),
-          ),
-          _totalSummaryPriceItem('Tổng tiền hàng:', _order.totalPrice),
-          _totalSummaryPriceItem('Phí vận chuyển:', _order.shippingFee),
+            const SizedBox(height: 8),
 
-          if (widget.isCreateWithCart) ...[
-            if (_placeOrderWithCartParam.systemVoucherCode != null)
-              _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
-            if (_placeOrderWithCartParam.shopVoucherCode != null)
-              _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
-          ] else ...[
-            if (_placeOrderWithVariantParam.systemVoucherCode != null)
-              _totalSummaryPriceItem('Giảm giá hệ thống:', _order.discountSystem),
-            if (_placeOrderWithVariantParam.shopVoucherCode != null)
-              _totalSummaryPriceItem('Giảm giá cửa hàng:', _order.discountShop),
-          ],
+            //! loyalty point
+            // _buildLoyaltyPoint(),
+            OrderSectionLoyaltyPoint(
+                totalPoint: _orderDetail.totalPoint!,
+                isUsingLoyaltyPoint: widget.isCreateWithCart,
+                onChanged: (value) {
+                  if (widget.isCreateWithCart) {
+                    updateOrderWithCart(
+                      _placeOrderWithCartParam.copyWith(useLoyaltyPoint: value),
+                    );
+                  } else {
+                    updateOrderWithVariant(
+                      _placeOrderWithVariantParam.copyWith(useLoyaltyPoint: value),
+                    );
+                  }
+                }),
+            const SizedBox(height: 8),
 
-          //? not null >> use loyalty point
-          if (_order.loyaltyPointHistory != null) ...[
-            //? maybe negative point >> no need to add '-' sign
-            _totalSummaryPriceItem('Sử dụng điểm tích lũy:', _order.loyaltyPointHistory!.point),
-          ],
+            //! total price
+            // _singleOrderTotalPrice(),
+            OrderSectionSingleOrderPayment(order: _orderDetail.order),
+            const SizedBox(height: 8),
 
-          // total price
-          const Divider(thickness: 0.2, height: 4),
-          _totalSummaryPriceItem('Tổng thanh toán:', _order.paymentTotal),
-        ],
-      ),
-    );
-  }
-
-  Widget _totalSummaryPriceItem(String title, int price) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title),
-        Text(StringHelper.formatCurrency(price)),
-      ],
-    );
-  }
-
-  Widget _buildPaymentMethod() {
-    return Wrapper(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Phương thức thanh toán',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+            //! note
+            // _buildNote(),
+            OrderSectionNote(
+              note: widget.isCreateWithCart ? _placeOrderWithCartParam.note : _placeOrderWithVariantParam.note,
+              onChanged: (value) {
+                if (widget.isCreateWithCart) {
+                  _placeOrderWithCartParam = _placeOrderWithCartParam.copyWith(note: value);
+                } else {
+                  _placeOrderWithVariantParam = _placeOrderWithVariantParam.copyWith(note: value);
+                }
+              },
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_order.paymentMethod),
-              Text(StringHelper.getPaymentName(_order.paymentMethod)),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeliveryAddress(BuildContext context) {
-    return AddressSummary(
-      address: _address,
-      onTap: () => showDialogToChangeAddress(context),
-    );
-  }
-
-  Widget _buildShippingMethod() {
-    return Wrapper(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Phương thức vận chuyển',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // method name
-              Text(_order.shippingMethod),
-
-              // shipping fee
-              Text(
-                'Phí vận chuyển: ${_order.shippingFee}',
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShopInfoAndItems() {
-    return Wrapper(
-      child: Column(
-        children: [
-          //! shop info --circle shop avatar
-          ShopInfo(
-            shopId: _order.shop.shopId,
-            shopName: _order.shop.name,
-            shopAvatar: _order.shop.avatar,
-            hideAllButton: true,
-          ),
-
-          //! Shop voucher
-          Wrapper(
-            useBoxShadow: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Expanded(
-                  child: Text(
-                    'Mã giảm giá cửa hàng',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: _buildShopVoucherBtn(),
-                ),
-              ],
-            ),
-          ),
-          // const Divider(thickness: 0.4, height: 8),
-          const SizedBox(height: 8),
-
-          //! list of items
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _order.orderItems.length,
-            separatorBuilder: (context, index) => const Divider(thickness: 0.4, height: 8),
-            itemBuilder: (context, index) {
-              final item = _order.orderItems[index];
-              return OrderItem(item);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShopVoucherBtn() {
-    return GestureDetector(
-      onTap: () async {
-        final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
-          builder: (context) {
-            return VoucherPage(
-              returnValue: true,
-              future: sl<VoucherRepository>().listOnShop(_order.shop.shopId.toString()),
-            );
-          },
-        ));
-
-        if (voucher != null) {
-          if (widget.isCreateWithCart) {
-            updateOrderWithCart(
-              _placeOrderWithCartParam.copyWith(shopVoucherCode: voucher.code),
-            );
-          } else {
-            updateOrderWithVariant(
-              _placeOrderWithVariantParam.copyWith(shopVoucherCode: voucher.code),
-            );
-          }
-        }
-      },
-      child: Text(
-        widget.isCreateWithCart
-            ? _placeOrderWithCartParam.shopVoucherCode ?? _noVoucherMsg
-            : _placeOrderWithVariantParam.shopVoucherCode ?? _noVoucherMsg,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.end,
-        style: TextStyle(
-          color: widget.isCreateWithCart
-              ? _placeOrderWithCartParam.shopVoucherCode == null
-                  ? Colors.grey
-                  : Colors.green
-              : _placeOrderWithVariantParam.shopVoucherCode == null
-                  ? Colors.grey
-                  : Colors.green,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSystemVoucherBtn() {
-    return InkWell(
-      onTap: () async {
-        // show dialog to choose voucher
-        final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
-          builder: (context) {
-            // return const VoucherPage(returnValue: true);
-            return VoucherPage(
-              returnValue: true,
-              future: sl<VoucherRepository>().listOnSystem(),
-            );
-          },
-        ));
-
-        if (voucher != null) {
-          if (widget.isCreateWithCart) {
-            updateOrderWithCart(
-              _placeOrderWithCartParam.copyWith(systemVoucherCode: voucher.code),
-            );
-          } else {
-            updateOrderWithVariant(
-              _placeOrderWithVariantParam.copyWith(systemVoucherCode: voucher.code),
-            );
-          }
-        }
-      },
-      overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)),
-      child: Wrapper(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Mã giảm giá',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              widget.isCreateWithCart
-                  ? _placeOrderWithCartParam.systemVoucherCode ?? _noVoucherMsg
-                  : _placeOrderWithVariantParam.systemVoucherCode ?? _noVoucherMsg,
-              style: TextStyle(
-                color: widget.isCreateWithCart
-                    ? _placeOrderWithCartParam.systemVoucherCode == null
-                        ? Colors.grey
-                        : Colors.green
-                    : _placeOrderWithVariantParam.systemVoucherCode == null
-                        ? Colors.grey
-                        : Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -532,7 +290,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         children: [
           const Text('Tổng thanh toán: '),
           Text(
-            StringHelper.formatCurrency(_order.paymentTotal),
+            StringHelper.formatCurrency(_orderDetail.order.paymentTotal),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
           ),
           const SizedBox(width: 8),
@@ -540,12 +298,41 @@ class _CheckoutPageState extends State<CheckoutPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             ),
-            onPressed: () => CustomerHandler.placeOrder(
-              context,
-              widget.isCreateWithCart
-                  ? () => sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
-                  : () => sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam),
-            ),
+            onPressed: () async {
+              final isConfirmed = await showDialogToConfirmCheckout<bool>(context);
+
+              if (isConfirmed ?? false) {
+                final respEither = widget.isCreateWithCart
+                    ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
+                    : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
+
+                respEither.fold(
+                  (error) {
+                    showDialogToAlert(
+                      context,
+                      title: const Text('Đặt hàng thất bại', textAlign: TextAlign.center),
+                      titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
+                      children: [
+                        Text(error.message ?? 'Đã có lỗi xảy ra khi đặt hàng, vui lòng thử lại sau.'),
+                      ],
+                    );
+                  },
+                  (ok) async {
+                    //! Online payment
+                    if (ok.data!.order.status == OrderStatus.UNPAID) {
+                      // get uri payment
+                      await CustomerHandler.processSingleOrderPaymentByVNPay(context, ok.data!.order.orderId!);
+                    } else {
+                      //! COD
+                      // FetchCart to BLoC to update cart
+                      context.read<CartBloc>().add(const FetchCart()); //OK_TODO this make show unwanted toast
+                      // navigate to order detail page
+                      context.go(CustomerOrderDetailPage.path, extra: ok.data);
+                    }
+                  },
+                );
+              }
+            },
             child: const Text('Đặt hàng'),
           ),
         ],

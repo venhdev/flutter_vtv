@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/home/domain/entities/search_history_entity.dart';
@@ -85,8 +83,6 @@ class _SimpleSearchBarState extends State<SimpleSearchBar> {
                         } else {
                           searchHistories = [];
                         }
-
-                        log('searchHistories: $searchHistories');
 
                         final searchResult = await showSearch<SearchHistoryEntity>(
                           context: context,

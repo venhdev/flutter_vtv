@@ -59,21 +59,10 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
               );
           },
           (ok) {
-            // context.go('${CheckoutPage.path}?isCreateWithCart=false', extra: ok.data.order);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => CheckoutPage(
-            //       isCreateWithCart: false,
-            //       order: ok.data.order,
-            //     ),
-            //   ),
-            // );
-
             context.pop(); // pop out the bottom sheet
             context.push(
               Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
-              extra: ok.data!.order,
+              extra: ok.data!,
             );
           },
         );
@@ -174,8 +163,6 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
   @override
   void initState() {
     super.initState();
-    // _attributes = widget.product.getAllVariantAttributes;
-
     checkCurrentVariant();
   }
 

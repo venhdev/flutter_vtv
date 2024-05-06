@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,16 +93,11 @@ class _NotificationListState extends State<NotificationList> {
                     onDismiss: (id) async {
                       final resultEither = await sl<NotificationRepository>().deleteNotification(id);
 
-                      log('{deleteNotification} resultEither: $resultEither');
-
                       return resultEither.fold(
                         (error) {
-                          log('{deleteNotification} Error: ${error.message}');
-                          // Fluttertoast.showToast(msg: '${error.message}');
                           return false;
                         },
                         (ok) {
-                          // controller.reload(newItems: ok.data.items);
                           controller.removeAt(index);
                           return true;
                         },

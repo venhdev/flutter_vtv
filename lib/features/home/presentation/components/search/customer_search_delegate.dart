@@ -130,8 +130,6 @@ class CustomerSearchDelegate extends SearchDelegate<SearchHistoryEntity> {
                   actions: [
                     TextButton(
                       onPressed: () {
-                        log('Xóa: ${suggestionList[index].search}');
-                        log('Xóa: ${suggestionList[index].searchHistoryId}');
                         searchList
                             .removeWhere((element) => element.searchHistoryId == suggestionList[index].searchHistoryId);
                         sl<SearchProductRepository>().searchHistoryDelete(suggestionList[index].searchHistoryId);

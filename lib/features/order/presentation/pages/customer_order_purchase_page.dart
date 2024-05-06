@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
-import '../../../../core/handler/customer_handler.dart';
+import '../../../../service_locator.dart';
 import '../../../home/presentation/pages/shop_page.dart';
+import '../../domain/repository/order_repository.dart';
+import 'customer_order_detail_page.dart';
 
 class CustomerOrderPurchasePage extends StatelessWidget {
   const CustomerOrderPurchasePage({super.key});
@@ -24,12 +27,23 @@ class CustomerOrderPurchasePage extends StatelessWidget {
         OrderStatus.WAITING,
         OrderStatus.CANCEL,
       ]),
-      dataCallback: CustomerHandler.dataCallOrderPurchasePage,
+      // dataCallback: CustomerHandler.dataCallOrderPurchasePage,
+      dataCallback: (status) {
+        if (status == null) {
+          return sl<OrderRepository>().getListOrders();
+        } else if (status == OrderStatus.PROCESSING) {
+          // combine 2 lists of orders with status PROCESSING and PICKUP_PENDING
+          return sl<OrderRepository>().getListOrdersByStatusProcessingAndPickupPending();
+        } else if (status == OrderStatus.WAITING) {
+          return sl<OrderRepository>().getListOrdersByMultiStatus([OrderStatus.UNPAID, OrderStatus.WAITING]);
+        }
+        return sl<OrderRepository>().getListOrdersByStatus(status.name);
+      },
       customerItemBuilder: (order, onReceivedCallback) => OrderPurchaseItem(
         order: order,
-        onPressed: () => CustomerHandler.navigateToOrderDetailPage(context, order, onReceivedCallback),
+        onPressed: () => navigateToOrderDetailPage(context, order, onReceivedCallback),
         onShopPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
-        actionBuilder: (status) => CustomerHandler.buildOrderStatusAction(
+        actionBuilder: (status) => _buildOrderStatusAction(
           context,
           order: order,
           onReceivedPressed: onReceivedCallback,
@@ -37,4 +51,36 @@ class CustomerOrderPurchasePage extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildOrderStatusAction(
+  BuildContext context, {
+  required OrderEntity order,
+  required Function(OrderDetailEntity completedOrder) onReceivedPressed,
+}) {
+  if (order.status == OrderStatus.DELIVERED) {
+    return OrderPurchaseItemAction(
+      label: 'Bạn đã nhận được hàng chưa?',
+      buttonLabel: 'Đã nhận',
+      onPressed: () {
+        completeOrder(context, order.orderId!, inOrderDetailPage: false, onReceived: onReceivedPressed);
+      },
+    );
+  }
+  return const SizedBox.shrink();
+}
+
+Future<void> navigateToOrderDetailPage(
+  BuildContext context,
+  OrderEntity order,
+  void Function(OrderDetailEntity) onReceivedCallback, //use when user tap completed order in OrderDetailPage
+) async {
+  final respEither = await sl<OrderRepository>().getOrderDetail(order.orderId!);
+  respEither.fold(
+    (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
+    (ok) async {
+      final completedOrder = await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: ok.data);
+      if (completedOrder != null) onReceivedCallback(completedOrder);
+    },
+  );
 }

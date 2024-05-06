@@ -3,16 +3,17 @@ import 'package:flutter_vtv/features/order/domain/dto/multiple_order_request_par
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
-import '../../domain/entities/multiple_order_resp.dart';
 import '../../domain/repository/order_repository.dart';
 import '../data_sources/order_data_source.dart';
+import '../data_sources/payment_data_source.dart';
 import '../data_sources/voucher_data_source.dart';
 
 class OrderRepositoryImpl extends OrderRepository {
-  OrderRepositoryImpl(this._orderDataSource, this._voucherDataSource);
+  OrderRepositoryImpl(this._orderDataSource, this._voucherDataSource, this._paymentDataSource);
 
   final OrderDataSource _orderDataSource;
   final VoucherDataSource _voucherDataSource;
+  final PaymentDataSource _paymentDataSource;
 
   @override
   FRespData<OrderDetailEntity> createOrderByCartIds(List<String> cartIds) async {
@@ -114,5 +115,46 @@ class OrderRepositoryImpl extends OrderRepository {
   @override
   FRespData<MultipleOrderResp> placeMultiOrderByRequest(MultipleOrderRequestParam params) {
     return handleDataResponseFromDataSource(dataCallback: () => _orderDataSource.placeMultiOrderByRequest(params));
+  }
+
+  @override
+  FRespData<MultiOrderEntity> getListOrdersByMultiStatus(List<OrderStatus> statuses) async {
+    try {
+      return Future.wait(statuses.map((status) => _orderDataSource.getListOrdersByStatus(status.name))).then((value) {
+        final List<OrderEntity> orders = [];
+        int count = 0;
+        int totalPayment = 0;
+        int totalPrice = 0;
+
+        for (var multiOrder in value) {
+          orders.addAll(multiOrder.data!.orders);
+          count += multiOrder.data!.count;
+          totalPayment += multiOrder.data!.totalPayment;
+          totalPrice += multiOrder.data!.totalPrice;
+        }
+
+        final MultiOrderEntity result = MultiOrderEntity(
+          orders: orders,
+          count: count,
+          totalPayment: totalPayment,
+          totalPrice: totalPrice,
+        );
+        return Right(SuccessResponse<MultiOrderEntity>(data: result));
+      });
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
+
+  @override
+  FRespData<String> createPaymentForMultiOrder(List<String> orderIds) async {
+    return handleDataResponseFromDataSource(
+        dataCallback: () => _paymentDataSource.createPaymentForMultiOrder(orderIds));
+  }
+
+  @override
+  FRespData<String> createPaymentForSingleOrder(String orderId) async {
+    return handleDataResponseFromDataSource(
+        dataCallback: () => _paymentDataSource.createPaymentForSingleOrder(orderId));
   }
 }

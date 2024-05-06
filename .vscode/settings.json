@@ -1,7 +1,9 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "cSpell.words": [
+        "APIVN",
         "autovalidate",
+        "giftcard",
         "hcmute",
         "khóa",
         "kltn",
@@ -11,6 +13,7 @@
         "ribeye",
         "Schyler",
         "Unfollow",
+        "vnpay",
         "zalopay"
     ],
     "java.configuration.updateBuildConfiguration": "automatic"

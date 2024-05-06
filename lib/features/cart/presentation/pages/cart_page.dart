@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -144,7 +142,6 @@ class _CartPageState extends State<CartPage> {
             return const SizedBox();
           }
 
-          log('[CartPage] build with selectedCartIds: ${state.selectedCartIds}');
           return Container(
             height: 52,
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -300,7 +297,7 @@ class _CartPageState extends State<CartPage> {
                       );
                     }
                     final defaultAddress = ok.data!.firstWhere((element) => element.status == 'ACTIVE');
-                    return AddressSummary(
+                    return Address(
                       address: defaultAddress,
                       onTap: () async {
                         // GoRouter.of(context).go(AddressPage.path);

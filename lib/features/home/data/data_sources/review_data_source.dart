@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:vtv_common/core.dart';
@@ -77,8 +75,6 @@ class ReviewDataSourceImpl implements ReviewDataSource {
         },
       ),
     );
-
-    log('response: ${response.data}');
 
     return handleDioResponse<ReviewEntity, Map<String, dynamic>>(
       response,

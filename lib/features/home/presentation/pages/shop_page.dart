@@ -100,6 +100,11 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
         (error) {
           //> if error, the state always is loading
           log('Error: ${error.message}');
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(content: Text(error.message ?? 'Xảy ra lỗi khi lấy thông tin Shop')),
+            );
         },
         (ok) {
           if (mounted) {

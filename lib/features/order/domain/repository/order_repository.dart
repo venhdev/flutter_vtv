@@ -2,7 +2,6 @@ import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
 import '../dto/multiple_order_request_param.dart';
-import '../entities/multiple_order_resp.dart';
 
 abstract class OrderRepository {
   //! -------------order-controller-------------
@@ -29,14 +28,20 @@ abstract class OrderRepository {
   /// Get orders by status
   /// - [status] is enum OrderStatus string name (e.g. 'PENDING')
   FRespData<MultiOrderEntity> getListOrdersByStatus(String status);
-  FRespData<MultiOrderEntity>
-      getListOrdersByStatusProcessingAndPickupPending(); //custom status PROCESSING + PICKUP_PENDING
+  //custom status PROCESSING + PICKUP_PENDING
+  FRespData<MultiOrderEntity> getListOrdersByStatusProcessingAndPickupPending();
+  FRespData<MultiOrderEntity> getListOrdersByMultiStatus(List<OrderStatus> statuses);
 
   /// Get order detail by orderId
   FRespData<OrderDetailEntity> getOrderDetail(String orderId);
   FRespData<OrderDetailEntity> cancelOrder(String orderId);
   FRespData<OrderDetailEntity> completeOrder(String orderId);
   //! -------------order-controller-------------
+
+  //*-------------------------------------------------vn-pay-controller---------------------------------------------------*//
+  //# vn-pay-controller
+  FRespData<String> createPaymentForSingleOrder(String orderId);
+  FRespData<String> createPaymentForMultiOrder(List<String> orderIds);
 
   //! Voucher
   FRespData<List<VoucherEntity>> voucherListAll();
