@@ -12,7 +12,7 @@ import '../../domain/dto/webview_payment_param.dart';
 import '../../domain/repository/order_repository.dart';
 import 'customer_order_detail_page.dart';
 
-const String _serverHost = '192.168.233.1';
+const String _serverConfigHost = '192.168.233.1';
 
 class VNPayWebView extends StatelessWidget {
   const VNPayWebView({super.key, required this.extra});
@@ -24,13 +24,14 @@ class VNPayWebView extends StatelessWidget {
   final WebViewPaymentExtra extra;
 
   Future<void> onPageFinished(BuildContext context, String url) async {
-    // log('onPageFinished: $url');
-    if (url.contains('$_serverHost:$kPORT/api/vnpay/return')) {
+    log('onPageFinished: $url');
+    // if (url.contains('$_serverHost:$kPORT/api/vnpay/return')) {
+    if (url.contains('/api/vnpay/return')) {
       // log('here url: $url');
       //> if payment success
       if (extra.orderIds.length == 1) {
         final respEither = await sl<OrderRepository>().getOrderDetail(extra.orderIds.first);
-        // log('here: single order: ${extra.orderIds.first} -isRight(): ${respEither.isRight()}');
+        log('here: single order: ${extra.orderIds.first} -isRight(): ${respEither.isRight()}');
         respEither.fold(
           (error) {
             Fluttertoast.showToast(msg: error.message ?? 'Xảy ra lỗi khi lấy thông tin đơn hàng');
@@ -38,8 +39,8 @@ class VNPayWebView extends StatelessWidget {
           },
           (ok) async {
             if (ok.data!.order.status == OrderStatus.PENDING) {
-              // log('here: OrderStatus == PENDING');
-              // log('here after show dialog success payment: mounted=${context.mounted}');
+              log('here: OrderStatus == PENDING');
+              log('here after show dialog success payment: mounted=${context.mounted}');
               // await showDialogToAlert(context, title: const Text('Thanh toán thành công'), children: [
               //   Text('Đơn hàng ${ok.data!.order.orderId} đã được thanh toán thành công'),
               // ]);
@@ -122,9 +123,19 @@ class VNPayWebView extends StatelessWidget {
         context.pop();
       },
       onNavigationRequest: (NavigationRequest request) {
-        if (request.url.contains('localhost:$kPORT/api/vnpay/return')) {
+        log('onNavigationRequest: ${request.url}');
+        // if (request.url.contains('$_serverHost:$kPORT/api/vnpay/return')) {
+        if (request.url.contains('/api/vnpay/return')) {
           // change localhost to real host
-          final realHostUrl = request.url.replaceFirst('localhost', _serverHost);
+          final String realHostUrl;
+          if (request.url.contains('localhost')) {
+            realHostUrl = request.url.replaceFirst('localhost', host);
+          } else if (request.url.contains(_serverConfigHost)) {
+            realHostUrl = request.url.replaceFirst(_serverConfigHost, host);
+          } else {
+            realHostUrl = request.url;
+          }
+
           webViewController.loadRequest(Uri.parse(realHostUrl));
           return NavigationDecision.prevent;
         }
