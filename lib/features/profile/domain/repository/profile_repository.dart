@@ -10,4 +10,7 @@ abstract class ProfileRepository {
 
   //# loyalty-point-controller
   FRespData<LoyaltyPointEntity> getLoyaltyPoint();
+
+  //# loyalty-point-history-controller
+  FRespData<List<LoyaltyPointHistoryEntity>> getLoyaltyPointHistory(int loyaltyPointId);
 }

@@ -16,6 +16,7 @@ import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/followed_shop_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
+import '../pages/loyalty_point_history_page.dart';
 
 class LoggedView extends StatefulWidget {
   const LoggedView({
@@ -215,78 +216,80 @@ class _LoggedViewState extends State<LoggedView> {
 
           //# followed count + loyalty point
           IntrinsicHeight(
-            child: SizedBox(
-              height: 24,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // followed count
-                  FutureBuilder(
-                    future: sl<ProductRepository>().followedShopList(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!.fold(
-                          (error) {
-                            return const SizedBox();
-                          },
-                          (ok) => TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                            ),
-                            child: Text(
-                              'Đang theo dõi ${ok.data!.length}',
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            onPressed: () {
-                              context.go(FollowedShopPage.path);
-                            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // followed count
+                FutureBuilder(
+                  future: sl<ProductRepository>().followedShopList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return snapshot.data!.fold(
+                        (error) {
+                          return const SizedBox();
+                        },
+                        (ok) => TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                           ),
-                        );
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-
-                  const VerticalDivider(
-                    color: Colors.grey,
-                    thickness: 1,
-                    width: 14,
-                    indent: 4,
-                    endIndent: 4,
-                  ),
-
-                  // loyalty point
-                  FutureBuilder(
-                    future: sl<ProfileRepository>().getLoyaltyPoint(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data!.fold(
-                          (error) {
-                            return const SizedBox();
+                          child: Text(
+                            'Đang theo dõi ${ok.data!.length}',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          onPressed: () {
+                            context.go(FollowedShopPage.path);
                           },
-                          (ok) => TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-                            ),
-                            onPressed: null,
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                ),
+
+                const VerticalDivider(
+                  color: Colors.grey,
+                  thickness: 1,
+                  width: 14,
+                  indent: 4,
+                  endIndent: 4,
+                ),
+
+                // loyalty point
+                FutureBuilder(
+                  future: sl<ProfileRepository>().getLoyaltyPoint(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return snapshot.data!.fold(
+                        (error) {
+                          return const SizedBox();
+                        },
+                        (ok) => TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                          ),
+                          onPressed: null,
+                          child: InkWell(
+                            onTap: () {
+                              context.push(LoyaltyPointHistoryPage.path, extra: ok.data!.loyaltyPointId);
+                            },
                             child: Text(
                               'Điểm thưởng ${ok.data!.totalPoint}',
                               style: const TextStyle(fontSize: 12),
                             ),
                           ),
-                        );
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                ],
-              ),
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ],
             ),
           ),
         ],

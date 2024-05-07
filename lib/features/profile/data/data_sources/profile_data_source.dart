@@ -16,6 +16,9 @@ abstract class ProfileDataSource {
 
   //# loyalty-point-controller
   Future<SuccessResponse<LoyaltyPointEntity>> getLoyaltyPoint();
+
+  //# loyalty-point-history-controller
+  Future<SuccessResponse<List<LoyaltyPointHistoryEntity>>> getLoyaltyPointHistory(int loyaltyPointId);
 }
 
 class ProfileDataSourceImpl extends ProfileDataSource {
@@ -111,6 +114,23 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       response,
       url,
       parse: (jsonMap) => LoyaltyPointEntity.fromMap(jsonMap['loyaltyPointDTO']),
+    );
+  }
+
+  @override
+  Future<SuccessResponse<List<LoyaltyPointHistoryEntity>>> getLoyaltyPointHistory(int loyaltyPointId) async {
+    final url = baseUri(path: '$kAPILoyaltyPointHistoryGetListURL/$loyaltyPointId');
+
+    final response = await _dio.getUri(url);
+
+    return handleDioResponse<List<LoyaltyPointHistoryEntity>, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => (jsonMap['loyaltyPointHistoryDTOs'] as List<dynamic>)
+          .map(
+            (loyaltyPointHistory) => LoyaltyPointHistoryEntity.fromMap(loyaltyPointHistory),
+          )
+          .toList(),
     );
   }
 }

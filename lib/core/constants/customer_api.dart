@@ -77,6 +77,9 @@ const String kAPIFollowedShopDeleteURL = '/customer/followed-shop/delete'; // DE
 //# loyalty-point-controller
 const String kAPILoyaltyPointGetURL = '/customer/loyalty-point/get'; // GET
 
+//# loyalty-point-history-controller
+const String kAPILoyaltyPointHistoryGetListURL = '/customer/loyalty-point-history/get-list'; // GET /{loyaltyPointId}
+
 //# comment-customer-controller
 const String kAPICommentAddURL = '/customer/comment/add'; // POST
 const String kAPICommentDeleteURL = '/customer/comment/delete'; // PATCH /{commentId}
@@ -89,3 +92,4 @@ const String kAPISearchHistoryDeleteURL = '/customer/search-history/delete'; // 
 //# vn-pay-controller
 const String kAPIVnPayCreatePaymentURL = '/vnpay/create-payment'; // POST /{orderId}
 const String kAPIVnPayCreatePaymentMultipleOrderURL = '/vnpay/create-payment/multiple-order'; // POST
+

@@ -33,6 +33,7 @@ import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';
+import '../../features/profile/presentation/pages/loyalty_point_history_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/user_detail_page.dart';
 import '../../features/profile/presentation/pages/user_page.dart';
@@ -99,6 +100,7 @@ class AppRoutes {
             return const UserPage(); // contain login page
           },
           routes: [
+            // login
             GoRoute(
                 // path: LoginPage.routeName, // '/user/login'
                 // name: LoginPage.routeName, // login
@@ -114,13 +116,14 @@ class AppRoutes {
                     builder: (context, state) => const CustomerForgotPasswordPage(),
                   ),
                 ]),
+            // register
             GoRoute(
               path: CustomerRegisterPage.routeName, // '/user/register'
               name: CustomerRegisterPage.routeName, // register
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) => const CustomerRegisterPage(),
             ),
-
+            // user detail
             GoRoute(
               // get extra from state
               path: UserDetailPage.routeName, // '/user/detail'
@@ -131,6 +134,17 @@ class AppRoutes {
                 return UserDetailPage(userInfo: userInfo);
               },
             ),
+            // loyalty point history
+            GoRoute(
+              path: LoyaltyPointHistoryPage.routeName, // '/user/loyalty-point-history'
+              name: LoyaltyPointHistoryPage.routeName, // loyalty-point-history
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                final loyaltyPointId = state.extra as int;
+                return LoyaltyPointHistoryPage(loyaltyPointId: loyaltyPointId);
+              },
+            ),
+            // followed shop
             GoRoute(
               // get extra from state
               path: FollowedShopPage.routeName, // '/user/followed'
@@ -140,18 +154,21 @@ class AppRoutes {
                 return const FollowedShopPage();
               },
             ),
+            // voucher
             GoRoute(
               path: VoucherPage.routeName, // '/user/voucher'
               name: VoucherPage.routeName, // voucher
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) => const VoucherPage(),
             ),
+            // favorite product
             GoRoute(
               path: FavoriteProductsPage.routeName, // '/user/favorite-product'
               name: FavoriteProductsPage.routeName, // voucher
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) => const FavoriteProductsPage(),
             ),
+            // customer purchase order
             GoRoute(
               path: OrderPurchasePage.routeName, // '/user/purchase'
               name: OrderPurchasePage.routeName, // purchase
@@ -189,7 +206,8 @@ class AppRoutes {
                 ),
               ],
             ),
-            //! Setting
+
+            //# Setting
             GoRoute(
               path: SettingsPage.routeName, // '/user/settings'
               name: SettingsPage.routeName, // settings

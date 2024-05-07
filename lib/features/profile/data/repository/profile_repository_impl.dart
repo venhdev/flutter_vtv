@@ -42,4 +42,11 @@ class ProfileRepositoryImpl extends ProfileRepository {
       dataCallback: () async => await _profileDataSource.getLoyaltyPoint(),
     );
   }
+
+  @override
+  FRespData<List<LoyaltyPointHistoryEntity>> getLoyaltyPointHistory(int loyaltyPointId) async {
+    return await handleDataResponseFromDataSource(
+      dataCallback: () async => await _profileDataSource.getLoyaltyPointHistory(loyaltyPointId),
+    );
+  }
 }
