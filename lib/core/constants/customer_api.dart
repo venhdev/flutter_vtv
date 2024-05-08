@@ -97,3 +97,7 @@ const String kAPIVnPayCreatePaymentMultipleOrderURL = '/vnpay/create-payment/mul
 const String kAPICustomerVoucherSaveURL = '/customer/voucher/save'; // POST /{voucherId}
 const String kAPICustomerVoucherListURL = '/customer/voucher/list'; // GET
 const String kAPICustomerVoucherDeleteURL = '/customer/voucher/delete'; // DELETE /{voucherId}
+
+//# wallet-controller
+// /api/customer/wallet/get
+const String kAPIWalletGetURL = '/customer/wallet/get'; // GET

@@ -16,6 +16,7 @@ import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/followed_shop_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
+import '../pages/customer_wallet_history_page.dart';
 import '../pages/loyalty_point_history_page.dart';
 import '../pages/my_voucher_page.dart';
 
@@ -73,7 +74,7 @@ class _LoggedViewState extends State<LoggedView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //# My voucher
-              _buildMyVoucher(context),
+              _customerWidgets(context),
 
               //# My Purchase
               _buildMyPurchase(context),
@@ -277,15 +278,12 @@ class _LoggedViewState extends State<LoggedView> {
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                           ),
-                          onPressed: null,
-                          child: InkWell(
-                            onTap: () {
-                              context.push(LoyaltyPointHistoryPage.path, extra: ok.data!.loyaltyPointId);
-                            },
-                            child: Text(
-                              'Điểm thưởng ${ok.data!.totalPoint}',
-                              style: const TextStyle(fontSize: 12),
-                            ),
+                          onPressed: () {
+                            context.push(LoyaltyPointHistoryPage.path, extra: ok.data!.loyaltyPointId);
+                          },
+                          child: Text(
+                            'Điểm thưởng ${ok.data!.totalPoint}',
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ),
                       );
@@ -301,22 +299,42 @@ class _LoggedViewState extends State<LoggedView> {
     );
   }
 
-  Widget _buildMyVoucher(BuildContext context) {
-    return IconTextButton(
-      onPressed: () {
-        context.go(MyVoucherPage.path);
-      },
-      reverseDirection: true,
-      label: 'Kho Voucher',
-      fontSize: 13,
-      iconSize: 32,
-      leadingIcon: Icons.card_giftcard,
-      iconColor: Colors.orange,
-      style: ButtonStyle(
-        padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-        backgroundColor: MaterialStateProperty.all(Colors.white),
-        shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-      ),
+  Widget _customerWidgets(BuildContext context) {
+    return Row(
+      children: [
+        IconTextButton(
+          onPressed: () {
+            context.go(MyVoucherPage.path);
+          },
+          reverseDirection: true,
+          label: 'Kho Voucher',
+          fontSize: 13,
+          iconSize: 32,
+          leadingIcon: Icons.card_giftcard,
+          iconColor: Colors.orange,
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+            shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+          ),
+        ),
+        IconTextButton(
+          onPressed: () {
+            context.go(CustomerWalletHistoryPage.path);
+          },
+          reverseDirection: true,
+          label: 'Ví VTV',
+          fontSize: 13,
+          iconSize: 32,
+          leadingIcon: Icons.account_balance_wallet,
+          iconColor: Colors.green,
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+            shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+          ),
+        ),
+      ],
     );
   }
 }

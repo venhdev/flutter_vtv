@@ -1,11 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_vtv/core/constants/customer_api.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/wallet.dart';
 
 abstract class PaymentDataSource {
   //# vn-pay-controller
   Future<SuccessResponse<String>> createPaymentForSingleOrder(String orderId);
   Future<SuccessResponse<String>> createPaymentForMultiOrder(List<String> orderIds);
+
+  //# wallet-controller
+  // /api/customer/wallet/get
+  Future<SuccessResponse<WalletEntity>> getWalletTransactionHistory();
 }
 
 class PaymentDataSourceImpl implements PaymentDataSource {
@@ -35,6 +40,19 @@ class PaymentDataSourceImpl implements PaymentDataSource {
       response,
       url,
       parse: (jsonMap) => jsonMap['url'] as String,
+    );
+  }
+
+  @override
+  Future<SuccessResponse<WalletEntity>> getWalletTransactionHistory() async {
+    final url = baseUri(path: kAPIWalletGetURL);
+
+    final response = await _dio.getUri(url);
+
+    return handleDioResponse<WalletEntity, Map<String, dynamic>>(
+      response,
+      url,
+      parse: (jsonMap) => WalletEntity.fromMap(jsonMap['walletDTO']),
     );
   }
 }

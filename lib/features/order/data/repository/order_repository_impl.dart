@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/features/order/domain/dto/multiple_order_request_param.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
+import 'package:vtv_common/wallet.dart';
 
 import '../../domain/repository/order_repository.dart';
 import '../data_sources/order_data_source.dart';
@@ -172,5 +173,10 @@ class OrderRepositoryImpl extends OrderRepository {
     } catch (e) {
       return Left(UnexpectedError(message: e.toString()));
     }
+  }
+
+  @override
+  FRespData<WalletEntity> getWalletTransactionHistory() async {
+    return handleDataResponseFromDataSource(dataCallback: () => _paymentDataSource.getWalletTransactionHistory());
   }
 }

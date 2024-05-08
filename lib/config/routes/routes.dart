@@ -33,6 +33,7 @@ import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../features/order/presentation/pages/voucher_collection_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
+import '../../features/profile/presentation/pages/customer_wallet_history_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';
 import '../../features/profile/presentation/pages/loyalty_point_history_page.dart';
 import '../../features/profile/presentation/pages/my_voucher_page.dart';
@@ -155,6 +156,14 @@ class AppRoutes {
               builder: (context, state) {
                 return const FollowedShopPage();
               },
+            ),
+
+            // wallet history
+            GoRoute(
+              path: CustomerWalletHistoryPage.routeName, // '/user/transaction-history'
+              name: CustomerWalletHistoryPage.routeName, // transaction-history
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) => const CustomerWalletHistoryPage(),
             ),
             // voucher
             GoRoute(

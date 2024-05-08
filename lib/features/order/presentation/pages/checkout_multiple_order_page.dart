@@ -92,40 +92,28 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
           context.read<CartBloc>().add(const FetchCart()); // refresh cart
           //! Online Payment
           if (_multipleOrderRequestParam.paymentMethod != PaymentTypes.COD) {
-            final String? uriPayment = await sl<OrderRepository>().createPaymentForMultiOrder(ok.data!.cardIds).then(
-                  (respEither) => respEither.fold((error) => null, (ok) => ok.data),
-                );
-
-            if (uriPayment != null && mounted) {
-              await showDialogToAlert(
-                context,
-                title: const Text('Đặt hàng thành công', textAlign: TextAlign.center),
-                titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87),
-                children: [
-                  Text(
-                      'Các đơn hàng của bạn đã được đặt thành công với phương thức thanh toán ${_multipleOrderRequestParam.paymentMethod.name}\n'),
-                  const Text('Bạn sẽ được chuyển đến trang thanh toán'),
-                ],
-              );
-
-              if (mounted) {
-                await context.push(
-                  VNPayWebView.pathSingleOrder,
-                  extra: WebViewPaymentExtra(ok.data!.cardIds, uriPayment),
-                );
+            //# VNPay
+            if (_multipleOrderRequestParam.paymentMethod == PaymentTypes.VNPay) {
+              await handleVNPay(ok);
+            } else if (_multipleOrderRequestParam.paymentMethod == PaymentTypes.Wallet) {
+              if (ok.data!.orderDetails.every((orderDetail) => (orderDetail.order.status == OrderStatus.PENDING &&
+                  orderDetail.order.paymentMethod == PaymentTypes.Wallet))) {
+                showDialogToAlert(
+                  context,
+                  title: Text('Bạn đã đặt thành công ${_multiOrderResp.count} đơn hàng'),
+                  children: [
+                    const Text('Vui lòng chờ xác nhận từ cửa hàng'),
+                  ],
+                ).then((_) => context.go(OrderPurchasePage.path));
+              } else {
+                showDialogToAlert(
+                  context,
+                  title: const Text('Đặt hàng không thành công từ ví VTV'),
+                  children: [
+                    const Text('Vui lòng xem chi tiết trong mục "Đơn hàng đang chờ"'),
+                  ],
+                ).then((_) => context.go(OrderPurchasePage.path));
               }
-            } else if (uriPayment == null && mounted) {
-              showDialogToAlert(
-                context,
-                title: const Text('Đặt hàng thành công (chưa thanh toán)', textAlign: TextAlign.center),
-                titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
-                confirmText: 'Xác nhận',
-                children: [
-                  const Text('Các đơn hàng của bạn đã được đặt thành công'),
-                  const Text(
-                      'Trong quá trình thanh toán đã xảy ra lỗi, quý khách hãy vào mục "Đơn hàng đang chờ" để thanh toán lại'),
-                ],
-              );
             }
           } else {
             //! COD
@@ -138,6 +126,44 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
             ).then((_) => context.go(OrderPurchasePage.path));
           }
         },
+      );
+    }
+  }
+
+  Future<void> handleVNPay(SuccessResponse<MultipleOrderResp> ok) async {
+    final String? uriPayment = await sl<OrderRepository>().createPaymentForMultiOrder(ok.data!.cardIds).then(
+          (respEither) => respEither.fold((error) => null, (ok) => ok.data),
+        );
+
+    if (uriPayment != null && mounted) {
+      await showDialogToAlert(
+        context,
+        title: const Text('Đặt hàng thành công', textAlign: TextAlign.center),
+        titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87),
+        children: [
+          Text(
+              'Các đơn hàng của bạn đã được đặt thành công với phương thức thanh toán ${_multipleOrderRequestParam.paymentMethod.name}\n'),
+          const Text('Bạn sẽ được chuyển đến trang thanh toán'),
+        ],
+      );
+
+      if (mounted) {
+        await context.push(
+          VNPayWebView.pathSingleOrder,
+          extra: WebViewPaymentExtra(ok.data!.cardIds, uriPayment),
+        );
+      }
+    } else if (uriPayment == null && mounted) {
+      showDialogToAlert(
+        context,
+        title: const Text('Đặt hàng thành công (chưa thanh toán)', textAlign: TextAlign.center),
+        titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
+        confirmText: 'Xác nhận',
+        children: [
+          const Text('Các đơn hàng của bạn đã được đặt thành công'),
+          const Text(
+              'Trong quá trình thanh toán đã xảy ra lỗi, quý khách hãy vào mục "Đơn hàng đang chờ" để thanh toán lại'),
+        ],
       );
     }
   }

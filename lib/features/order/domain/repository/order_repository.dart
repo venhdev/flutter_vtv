@@ -1,5 +1,6 @@
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
+import 'package:vtv_common/wallet.dart';
 
 import '../dto/multiple_order_request_param.dart';
 
@@ -45,6 +46,9 @@ abstract class OrderRepository {
   //# vn-pay-controller
   FRespData<String> createPaymentForSingleOrder(String orderId);
   FRespData<String> createPaymentForMultiOrder(List<String> orderIds);
+
+  //*-------------------------------------------------wallet---------------------------------------------------*//
+  FRespData<WalletEntity> getWalletTransactionHistory();
 
   //! Voucher
   FRespData<List<VoucherEntity>> voucherListAll();
