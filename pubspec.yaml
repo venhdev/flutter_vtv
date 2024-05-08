@@ -23,6 +23,7 @@ dependencies:
   timelines: ^0.1.0
   flutter_rating_bar: ^4.0.1
   pin_code_fields: any
+  carousel_slider: ^4.2.1
   # awesome_snackbar_content
 
   # navigation + state management

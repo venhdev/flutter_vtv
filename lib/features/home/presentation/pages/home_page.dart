@@ -1,5 +1,7 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/features/order/domain/repository/voucher_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
@@ -8,9 +10,11 @@ import 'package:vtv_common/home.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../order/presentation/components/voucher_item.dart';
+import '../../../order/presentation/pages/voucher_collection_page.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product/best_selling_product_list.dart';
 import '../components/category/category_list.dart';
+import '../components/product/best_selling_product_list.dart';
 import '../components/product/product_item.dart';
 import '../components/search/btn_filter.dart';
 import 'product_detail_page.dart';
@@ -45,22 +49,9 @@ class _HomePageState extends State<HomePage> {
   );
 
   bool isRefreshing = false;
-  bool isShowing = true;
   int crossAxisCount = 2;
 
   Future<void> _refresh() async {
-    // setState(() {
-    //   isRefreshing = true;
-    //   lazyController.reload();
-    //   if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
-    //     context.read<CartBloc>().add(InitialCart());
-    //   }
-    // });
-    // await Future.delayed(const Duration(milliseconds: 300));
-    // setState(() {
-    //   isRefreshing = false;
-    // });
-
     setState(() {
       lazyController.reload();
       if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
@@ -101,9 +92,9 @@ class _HomePageState extends State<HomePage> {
               BestSellingProductListBuilder(
                 future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
               ),
+              // const GlobalSystemVoucherPageView(),
               //# Product list with filter
-              // BUG turn off filter by price --> ERROR
-              _buildProductActionBar(context),
+              _buildProductListActionBar(context), // BUG turn off filter by price --> ERROR
               _buildLazyProducts(),
             ],
           ),
@@ -113,94 +104,44 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildLazyProducts() {
-    if (isShowing) {
-      return NestedLazyLoadBuilder<ProductEntity>(
-        controller: lazyController,
-        crossAxisCount: 2,
-        dataCallback: (page) async {
-          if (currentFilter.isFiltering) {
-            if (currentFilter.isFilterWithPriceRange) {
-              return sl<ProductRepository>().getProductFilterByPriceRange(
-                page,
-                _productPerPage,
-                currentFilter.minPrice,
-                currentFilter.maxPrice,
-                currentFilter.sortType,
-              );
-            } else {
-              return sl<ProductRepository>().getProductFilter(
-                page,
-                _productPerPage,
-                currentFilter.sortType,
-              );
-            }
+    return NestedLazyLoadBuilder<ProductEntity>(
+      controller: lazyController,
+      crossAxisCount: 2,
+      dataCallback: (page) async {
+        if (currentFilter.isFiltering) {
+          if (currentFilter.isFilterWithPriceRange) {
+            return sl<ProductRepository>().getProductFilterByPriceRange(
+              page,
+              _productPerPage,
+              currentFilter.minPrice,
+              currentFilter.maxPrice,
+              currentFilter.sortType,
+            );
+          } else {
+            return sl<ProductRepository>().getProductFilter(
+              page,
+              _productPerPage,
+              currentFilter.sortType,
+            );
           }
-          return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
-        },
-        itemBuilder: (context, index, data) {
-          return ProductItem(
-            product: lazyController.items[index],
-            onPressed: () {
-              // context.go(ProductDetailPage.path, extra: _products[index].productId);
-              // context.read<AppState>().hideBottomNav();
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return ProductDetailPage(productId: lazyController.items[index].productId);
-              //     },
-              //   ),
-              // ).then(
-              //   (_) {
-              //     context.read<AppState>().showBottomNav();
-              //   },
-              // );
-
-              context.push(
-                ProductDetailPage.path,
-                extra: lazyController.items[index].productId,
-              );
-            },
-          );
-        },
-      );
-      // return LazyProductListBuilder(
-      //   crossAxisCount: crossAxisCount,
-      //   // scrollController: (execute) {
-      //   //   _scrollController.addListener(() {
-      //   //     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      //   //       execute();
-      //   //     }
-      //   //   });
-      //   //   return _scrollController;
-      //   // },
-      //   scrollController: _scrollController,
-      //   dataCallback: (page) async {
-      //     if (currentFilter.isFiltering) {
-      //       if (currentFilter.filterPriceRange) {
-      //         return sl<ProductRepository>().getProductFilterByPriceRange(
-      //           page,
-      //           _productPerPage,
-      //           currentFilter.minPrice,
-      //           currentFilter.maxPrice,
-      //           currentFilter.sortType,
-      //         );
-      //       } else {
-      //         return sl<ProductRepository>().getProductFilter(
-      //           page,
-      //           _productPerPage,
-      //           currentFilter.sortType,
-      //         );
-      //       }
-      //     }
-      //     return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
-      //   },
-      // );
-    } else {
-      return const SizedBox();
-    }
+        }
+        return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
+      },
+      itemBuilder: (context, index, data) {
+        return ProductItem(
+          product: lazyController.items[index],
+          onPressed: () {
+            context.push(
+              ProductDetailPage.path,
+              extra: lazyController.items[index].productId,
+            );
+          },
+        );
+      },
+    );
   }
 
-  Row _buildProductActionBar(BuildContext context) {
+  Widget _buildProductListActionBar(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -221,63 +162,75 @@ class _HomePageState extends State<HomePage> {
           onFilterChanged: (filterParams) {
             if (filterParams != null) {
               setState(() {
-                // isShowing = false; //> no longer need this >> controlled by [LazyProductListBuilder]
                 currentFilter = filterParams;
                 lazyController.reload();
-
-                // isFiltering = filterParams.isFiltering;
-                // minPrice = filterParams.minPrice;
-                // maxPrice = filterParams.maxPrice;
-                // currentSortType = filterParams.sortType;
-                // filterPriceRange = filterParams.filterPriceRange;
               });
             }
-            //> no longer need this >> controlled by [LazyProductListBuilder]
-            // use [isSortTypeChanged] to completed remove [LazyProductListBuilder]
-            // out of the widget tree before re-render
-            // Future.delayed(const Duration(milliseconds: 300), () {
-            //   setState(() {
-            //     isShowing = true;
-            //   });
-            // });
           },
         ),
       ],
     );
   }
+}
 
-  // Widget _buildBestSelling() {
-  //   return BestSellingProductList(
-  //     future: () => sl<ProductRepository>().getProductFilter(1, 10),
-  //   );
-  //   // return SizedBox(
-  //   //   height: 200,
-  //   //   child: FutureBuilder<RespData<ProductDTO>>(
-  //   //     future: sl<ProductRepository>().getProductFilter(1, 10),
-  //   //     builder: (context, snapshot) {
-  //   //       if (snapshot.connectionState != ConnectionState.done) {
-  //   //         return const Center(
-  //   //           child: CircularProgressIndicator(),
-  //   //         );
-  //   //       }
-  //   //       if (snapshot.hasError) {
-  //   //         return Center(
-  //   //           child: Text('Error: ${snapshot.error}'),
-  //   //         );
-  //   //       }
-  //   //       return snapshot.data!.fold(
-  //   //         (errorResp) => Center(
-  //   //           child: Text('Error: $errorResp', style: const TextStyle(color: Colors.red)),
-  //   //         ),
-  //   //         (dataResp) {
-  //   //           return BestSelling(
-  //   //             bestSellingProductImages: dataResp.data.products.map((e) => e.image).toList(),
-  //   //             bestSellingProductNames: dataResp.data.products.map((e) => e.name).toList(),
-  //   //           );
-  //   //         },
-  //   //       );
-  //   //     },
-  //   //   ),
-  //   // );
-  // }
+class GlobalSystemVoucherPageView extends StatefulWidget {
+  const GlobalSystemVoucherPageView({super.key});
+
+  @override
+  State<GlobalSystemVoucherPageView> createState() => _GlobalSystemVoucherPageViewState();
+}
+
+class _GlobalSystemVoucherPageViewState extends State<GlobalSystemVoucherPageView> {
+  // late PageController _pageViewController;
+
+  @override
+  void initState() {
+    super.initState();
+    // _pageViewController = PageController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        if (state.status == AuthStatus.authenticated) {
+          return FutureBuilder(
+            future: sl<VoucherRepository>().listOnSystem(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!.fold(
+                  (error) => MessageScreen.error(error.message),
+                  (ok) {
+                    if (ok.data!.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return CarouselSlider.builder(
+                      options: CarouselOptions(height: 150, enableInfiniteScroll: false),
+                      itemCount: ok.data!.length,
+                      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => VoucherItemV2(
+                        voucher: ok.data![itemIndex],
+                        onPressed: (_) {
+                          context.go(VoucherCollectionPage.path);
+                        },
+                        actionLabel: 'Sử\ndụng',
+                      ),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return MessageScreen.error(snapshot.error.toString());
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
 }

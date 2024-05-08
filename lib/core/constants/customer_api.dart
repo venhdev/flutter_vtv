@@ -93,3 +93,7 @@ const String kAPISearchHistoryDeleteURL = '/customer/search-history/delete'; // 
 const String kAPIVnPayCreatePaymentURL = '/vnpay/create-payment'; // POST /{orderId}
 const String kAPIVnPayCreatePaymentMultipleOrderURL = '/vnpay/create-payment/multiple-order'; // POST
 
+//# customer-voucher-controller
+const String kAPICustomerVoucherSaveURL = '/customer/voucher/save'; // POST /{voucherId}
+const String kAPICustomerVoucherListURL = '/customer/voucher/list'; // GET
+const String kAPICustomerVoucherDeleteURL = '/customer/voucher/delete'; // DELETE /{voucherId}

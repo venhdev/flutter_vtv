@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
@@ -23,90 +22,104 @@ class VNPayWebView extends StatelessWidget {
 
   final WebViewPaymentExtra extra;
 
-  Future<void> onPageFinished(BuildContext context, String url) async {
-    log('onPageFinished: $url');
-    // if (url.contains('$_serverHost:$kPORT/api/vnpay/return')) {
-    if (url.contains('/api/vnpay/return')) {
-      // log('here url: $url');
-      //> if payment success
-      if (extra.orderIds.length == 1) {
-        final respEither = await sl<OrderRepository>().getOrderDetail(extra.orderIds.first);
-        log('here: single order: ${extra.orderIds.first} -isRight(): ${respEither.isRight()}');
-        respEither.fold(
-          (error) {
-            Fluttertoast.showToast(msg: error.message ?? 'Xảy ra lỗi khi lấy thông tin đơn hàng');
-            context.go(OrderPurchasePage.path);
-          },
-          (ok) async {
-            if (ok.data!.order.status == OrderStatus.PENDING) {
-              log('here: OrderStatus == PENDING');
-              log('here after show dialog success payment: mounted=${context.mounted}');
-              // await showDialogToAlert(context, title: const Text('Thanh toán thành công'), children: [
-              //   Text('Đơn hàng ${ok.data!.order.orderId} đã được thanh toán thành công'),
-              // ]);
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return FullScreenDialog(
-                      body: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 20),
-                            const Text('Thanh toán thành công', style: TextStyle(fontSize: 20)),
-                            const SizedBox(height: 20),
-                            Text('Đơn hàng ${ok.data!.order.orderId} đã được thanh toán thành công'),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                context.go(CustomerOrderDetailPage.path, extra: ok.data!);
-                              },
-                              child: const Text('Xem chi tiết đơn hàng'),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-              // if (context.mounted) context.go(CustomerOrderDetailPage.path, extra: ok.data!);
-            }
-          },
-        );
-      } else {
-        //> if payment success for multi orders
-        log('here: multi orders');
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return FullScreenDialog(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 20),
-                      const Text('Thanh toán thành công', style: TextStyle(fontSize: 20)),
-                      const SizedBox(height: 20),
-                      Text('${extra.orderIds.length} Đơn hàng của bạn đã được thanh toán thành công'),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.go(OrderPurchasePage.path);
-                        },
-                        child: const Text('Xem chi tiết đơn hàng'),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+  //! OrderStatus.PENDING means payment success (prev status is UNPAID)
+  Future<void> handleRedirectOnReturnUrl(BuildContext context) async {
+    //! if payment success for multi orders
+    log('{handleRedirectOnReturnUrl} START');
+
+    //> show dialog to inform user that order is being processed
+    _showFullScreenDialog(context, const Text('Đơn hàng đang được xử lý', textAlign: TextAlign.center), []);
+
+    await Future.delayed(const Duration(seconds: 1)); //> await for server to update order status
+    //> use custom repository method to get multi order detail from ids
+    final respEither = await sl<OrderRepository>().getMultiOrderDetailForCheckPayment(extra.orderIds);
+
+    respEither.fold(
+      (error) async => await _showFullScreenDialog(context, const Text('Lỗi lấy thông tin đơn hàng'), [
+        const Text('Bạn có thể xem chi tiết đơn hàng trong lịch sử đơn hàng', textAlign: TextAlign.center),
+        _backToOrderPurchasePageBtn(context),
+      ]),
+      (ok) async {
+        final isAllSuccess = ok.data!.every((element) => element.order.status == OrderStatus.PENDING);
+        await _showFullScreenDialog(
+          context,
+          const Text('Chi tiết thanh toán', style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+          [
+            if (isAllSuccess) ...[
+              const Icon(Icons.check_circle, color: Colors.green, size: 50), // icon check
+              Text('${extra.orderIds.length} Đơn hàng của bạn đã được thanh toán thành công'),
+            ] else ...[
+              const Icon(Icons.access_time, color: Colors.orangeAccent, size: 50), // icon time
+              const Text('Đơn hàng của bạn đang được xử lý'),
+            ],
+            const SizedBox(height: 20),
+
+            //# list of row with 2 columns (order id and status)
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Mã đơn hàng', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Trạng thái', style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            ...ok.data!.map((orderDetail) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('${orderDetail.order.orderId}'),
+                  Text(
+                    orderDetail.order.status == OrderStatus.PENDING ? 'Thành công' : 'Đang xử lý',
+                    style: TextStyle(
+                      color: orderDetail.order.status == OrderStatus.PENDING ? Colors.green : Colors.orangeAccent,
+                    ),
                   ),
-                ),
+                ],
               );
-            },
-          ),
+            }),
+
+            _backToOrderPurchasePageBtn(context),
+          ],
         );
-      }
-    }
+      },
+    );
+  }
+
+  Future<void> showProgressingSingleOrder(BuildContext context, String? orderId) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return FullScreenDialog(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text('Đang xử lý thanh toán', style: TextStyle(fontSize: 20)),
+                  const SizedBox(height: 20),
+                  const Text('Đơn thanh toán của bạn đang được xử lý'),
+                  const SizedBox(height: 20),
+                  if (orderId != null)
+                    ElevatedButton(
+                      onPressed: () async {
+                        final respEither = await sl<OrderRepository>().getOrderDetail(orderId);
+                        respEither.fold(
+                          // (error) => _showFullScreenDialog(context, error.message ?? 'Lỗi lấy thông tin đơn hàng', []),
+                          (error) => _showFullScreenDialog(context, const Text('Lỗi lấy thông tin đơn hàng'), []),
+                          (ok) {
+                            context.go(CustomerOrderDetailPage.path, extra: ok.data!);
+                          },
+                        );
+                      },
+                      child: const Text('Xem chi tiết đơn hàng'),
+                    ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -117,7 +130,13 @@ class VNPayWebView extends StatelessWidget {
       ..loadRequest(Uri.parse(extra.uri));
 
     final NavigationDelegate navigationDelegate = NavigationDelegate(
-      onPageFinished: (String url) async => await onPageFinished(context, url),
+      onPageFinished: (String url) async {
+        log('onPageFinished: $url');
+        //> if payment success, the webview will redirect to this url
+        if (url.contains('/api/vnpay/return')) {
+          await handleRedirectOnReturnUrl(context);
+        }
+      },
       onWebResourceError: (WebResourceError error) {
         log('WebResourceError: ${error.errorCode} - ${error.description}');
         context.pop();
@@ -152,3 +171,138 @@ class VNPayWebView extends StatelessWidget {
     );
   }
 }
+
+Future<void> _showFullScreenDialog(BuildContext context, Widget title, List<Widget>? children) async {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return FullScreenDialog(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                title,
+                if (children?.isNotEmpty ?? false) ...children!,
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Widget _backToOrderPurchasePageBtn(BuildContext context, {String btnLabel = 'Đơn hàng của bạn'}) {
+  return ElevatedButton(
+    onPressed: () {
+      context.go(OrderPurchasePage.path);
+    },
+    child: Text(btnLabel),
+  );
+}
+
+
+// final respEither = await sl<OrderRepository>().getOrderDetail(extra.orderIds.first);
+      // respEither.fold(
+      //   (error) {
+      //     Fluttertoast.showToast(msg: error.message ?? 'Xảy ra lỗi khi lấy thông tin đơn hàng');
+      //     context.go(OrderPurchasePage.path);
+      //   },
+      //   (ok) async {
+      //     if (ok.data!.order.status == OrderStatus.PENDING) {
+      //       log('OrderStatus == PENDING, mounted=${context.mounted}');
+      //       await _showFullScreenDialog(
+      //         context,
+      //         const Text('Thanh toán thành công', style: TextStyle(fontSize: 20)),
+      //         [
+      //           const SizedBox(height: 20),
+      //           ElevatedButton(
+      //             onPressed: () {
+      //               context.go(CustomerOrderDetailPage.path, extra: ok.data!);
+      //             },
+      //             child: const Text('Xem chi tiết đơn hàng'),
+      //           ),
+      //           const SizedBox(height: 20),
+      //         ],
+      //       );
+      //     } else {
+      //       log('here: OrderStatus != PENDING');
+      //       _showFullScreenDialog(context, const Text('Đơn hàng đang được xử lý', textAlign: TextAlign.center), []);
+      //     }
+      //   },
+      // );
+
+      // log('handleRedirectOnReturnUrl: multi orders');
+
+      // final respEither = await sl<OrderRepository>().getOrderDetail(extra.orderIds.first);
+
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) {
+      //       return FullScreenDialog(
+      //         body: Center(
+      //           child: Column(
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             children: [
+      //               const SizedBox(height: 20),
+      //               const Text('Thanh toán thành công', style: TextStyle(fontSize: 20)),
+      //               const SizedBox(height: 20),
+      //               Text('${extra.orderIds.length} Đơn hàng của bạn đã được thanh toán thành công'),
+      //               const SizedBox(height: 20),
+      //               ElevatedButton(
+      //                 onPressed: () {
+      //                   context.go(OrderPurchasePage.path);
+      //                 },
+      //                 child: const Text('Xem chi tiết đơn hàng'),
+      //               ),
+      //               const SizedBox(height: 20),
+      //             ],
+      //           ),
+      //         ),
+      //       );
+      //     },
+      //   ),
+      // );
+
+
+
+      // =========
+      
+    // if (extra.orderIds.length == 1) {
+    //   log('handleRedirectOnReturnUrl: single order');
+    //   //> show dialog to inform user that order is being processed
+    //   _showFullScreenDialog(context, const Text('Đơn hàng đang được xử lý', textAlign: TextAlign.center), []);
+
+    //   await Future.delayed(const Duration(seconds: 1)); //> await for server to update order status
+    //   final respEither = await sl<OrderRepository>().getOrderDetail(extra.orderIds.first);
+    //   respEither.fold(
+    //     (error) {
+    //       Fluttertoast.showToast(msg: error.message ?? 'Xảy ra lỗi khi lấy thông tin đơn hàng');
+    //       context.go(OrderPurchasePage.path);
+    //     },
+    //     (ok) async {
+    //       if (ok.data!.order.status == OrderStatus.PENDING) {
+    //         log('OrderStatus == PENDING, mounted=${context.mounted}');
+    //         await _showFullScreenDialog(
+    //           context,
+    //           const Text('Thanh toán thành công', style: TextStyle(fontSize: 20)),
+    //           [
+    //             const SizedBox(height: 20),
+    //             ElevatedButton(
+    //               onPressed: () {
+    //                 context.go(CustomerOrderDetailPage.path, extra: ok.data!);
+    //               },
+    //               child: const Text('Xem chi tiết đơn hàng'),
+    //             ),
+    //             const SizedBox(height: 20),
+    //           ],
+    //         );
+    //       } else {
+    //         log('here: OrderStatus != PENDING');
+    //         _showFullScreenDialog(context, const Text('Đơn hàng đang được xử lý', textAlign: TextAlign.center), []);
+    //       }
+    //     },
+    //   );
+    // } else {}

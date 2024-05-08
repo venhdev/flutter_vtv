@@ -137,7 +137,6 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
     _lazyController = LazyController<ProductEntity>(
       paginatedData: _paginatedData,
       items: [],
-      scrollController: ScrollController(),
     );
     fetchShopDetailData();
     checkFollowedShop(widget.shopId);
@@ -159,7 +158,6 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
     return Scaffold(
       body: SafeArea(
         child: NestedScrollView(
-          controller: _lazyController.scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             if (!_loadingShopDetail) _sliverAppBar(context, innerBoxIsScrolled),
           ],
@@ -171,12 +169,12 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
                   : Column(
                       children: [
                         if (_keywords.isNotEmpty) ...[_actionBar()],
-                        Expanded(child: ProductShopList(lazyController: _lazyController)),
+                        Expanded(
+                          child: ProductShopList(lazyController: _lazyController),
+                        ),
                       ],
                     ),
-              CategoryShopList(
-                shopId: widget.shopId,
-              ),
+              ShopCategoryList(shopId: widget.shopId),
             ],
           ),
         ),
@@ -267,11 +265,12 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
       floating: true,
       surfaceTintColor: Colors.transparent,
       title: SimpleSearchBar(
-        controller: _searchController,
+        searchController: _searchController,
         clearOnSubmit: false,
-        hintText: 'Tìm kiếm sản phẩm trong Shop',
-        hintStyle: const TextStyle(fontSize: 14),
+        hintText: 'Tìm sản phẩm trong Shop',
+        // hintStyle: const TextStyle(fontSize: 14),
         onSubmitted: (text) {
+          log('Search: ${_searchController.text}');
           setState(() {
             _keywords = text;
             _filterParams.isFiltering = true;

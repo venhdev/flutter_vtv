@@ -157,4 +157,20 @@ class OrderRepositoryImpl extends OrderRepository {
     return handleDataResponseFromDataSource(
         dataCallback: () => _paymentDataSource.createPaymentForSingleOrder(orderId));
   }
+
+  @override
+  FRespData<List<OrderDetailEntity>> getMultiOrderDetailForCheckPayment(List<String> orderIds) async {
+    try {
+      return Future.wait(orderIds.map((orderId) => _orderDataSource.getOrderDetail(orderId))).then((value) {
+        return Right(SuccessResponse<List<OrderDetailEntity>>(
+          data: value.map((e) => e.data!).toList(),
+          code: value.first.code,
+          message: value.first.message,
+          status: value.first.status,
+        ));
+      });
+    } catch (e) {
+      return Left(UnexpectedError(message: e.toString()));
+    }
+  }
 }

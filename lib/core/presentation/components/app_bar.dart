@@ -37,7 +37,7 @@ AppBar buildAppBar(
       if (showSearchBar)
         Expanded(
           child: SimpleSearchBar(
-            controller: searchController,
+            searchController: searchController,
             clearOnSubmit: clearOnSubmit,
             onSubmitted: (text) {
               if (onSearchSubmitted != null) {

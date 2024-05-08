@@ -7,8 +7,12 @@ import '../../../domain/entities/search_history_entity.dart';
 import '../../../domain/repository/search_product_repository.dart';
 
 class CustomerSearchDelegate extends SearchDelegate<SearchHistoryEntity> {
+  CustomerSearchDelegate({this.initialQuery, required this.searchList});
+
   final List<SearchHistoryEntity> searchList;
-  CustomerSearchDelegate({required this.searchList});
+  final String? initialQuery;
+
+  // initialQuery: initial query to show in search bar
 
   // This method is responsible for building actions in the AppBar, such as a clear button.
   @override

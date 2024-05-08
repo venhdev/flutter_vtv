@@ -30,10 +30,12 @@ import '../../features/order/presentation/pages/customer_order_detail_page.dart'
 import '../../features/order/presentation/pages/customer_order_purchase_page.dart';
 import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/vnpay_webview.dart';
+import '../../features/order/presentation/pages/voucher_collection_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';
 import '../../features/profile/presentation/pages/loyalty_point_history_page.dart';
+import '../../features/profile/presentation/pages/my_voucher_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/user_detail_page.dart';
 import '../../features/profile/presentation/pages/user_page.dart';
@@ -160,6 +162,13 @@ class AppRoutes {
               name: VoucherPage.routeName, // voucher
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) => const VoucherPage(),
+            ),
+            GoRoute(
+              path: MyVoucherPage.routeName, // '/user/voucher-collection';
+              name: MyVoucherPage.routeName, // voucher-collection
+              builder: (context, state) {
+                return const MyVoucherPage();
+              },
             ),
             // favorite product
             GoRoute(
@@ -353,6 +362,15 @@ class AppRoutes {
                   return SearchPage(keywords: keywords);
                 },
               ),
+              //# voucher
+              GoRoute(
+                path: VoucherCollectionPage.routeName, // '/home/voucher-collection';
+                name: VoucherCollectionPage.routeName, // voucher-collection
+                builder: (context, state) {
+                  return const VoucherCollectionPage();
+                },
+              ),
+
               //# cart
               GoRoute(
                 path: CartPage.routeName, // '/home/cart'

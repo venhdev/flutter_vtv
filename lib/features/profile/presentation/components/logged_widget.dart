@@ -17,6 +17,7 @@ import '../../../profile/domain/repository/profile_repository.dart';
 import '../../../profile/presentation/pages/followed_shop_page.dart';
 import '../../../profile/presentation/pages/user_detail_page.dart';
 import '../pages/loyalty_point_history_page.dart';
+import '../pages/my_voucher_page.dart';
 
 class LoggedView extends StatefulWidget {
   const LoggedView({
@@ -71,6 +72,9 @@ class _LoggedViewState extends State<LoggedView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              //# My voucher
+              _buildMyVoucher(context),
+
               //# My Purchase
               _buildMyPurchase(context),
 
@@ -293,6 +297,25 @@ class _LoggedViewState extends State<LoggedView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMyVoucher(BuildContext context) {
+    return IconTextButton(
+      onPressed: () {
+        context.go(MyVoucherPage.path);
+      },
+      reverseDirection: true,
+      label: 'Kho Voucher',
+      fontSize: 13,
+      iconSize: 32,
+      leadingIcon: Icons.card_giftcard,
+      iconColor: Colors.orange,
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
       ),
     );
   }

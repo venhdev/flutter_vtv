@@ -8,6 +8,7 @@ import '../components/voucher_item.dart';
 
 class VoucherPage extends StatelessWidget {
   const VoucherPage({
+    this.title = 'Danh sách voucher',
     super.key,
     this.returnValue = false,
     this.future,
@@ -16,6 +17,7 @@ class VoucherPage extends StatelessWidget {
   static const String routeName = 'voucher';
   static const String path = '/user/voucher';
 
+  final String title;
   final bool returnValue;
   final FRespData<List<VoucherEntity>>? future;
 
@@ -24,6 +26,7 @@ class VoucherPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        title: Text(title),
       ),
       body: FutureBuilder(
           future: future != null ? future! : sl<OrderRepository>().voucherListAll(),
@@ -46,11 +49,15 @@ class VoucherPage extends StatelessWidget {
                   return ListView.builder(
                     itemCount: ok.data!.length,
                     itemBuilder: (context, index) {
-                      return VoucherItem(
+                      return VoucherItemV2(
                         voucher: ok.data![index],
-                        onSelected: (voucher) {
+                        onPressed: (voucher) {
                           if (returnValue) Navigator.of(context).pop(voucher);
                         },
+                        actionLabel: 'Sử dụng',
+                        // onActionPressed: (voucher) {
+                        //   if (returnValue) Navigator.of(context).pop(voucher);
+                        // },
                       );
                     },
                   );

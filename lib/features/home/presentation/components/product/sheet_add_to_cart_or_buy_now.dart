@@ -83,22 +83,23 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
     return true;
   }
 
+  /// get current valid variants
   List<ProductVariantEntity> getValidVariants() {
     final validVariants = <ProductVariantEntity>[];
+
     //: check if all selected attributes are matched with the variant's attributes
     if (_selectedAttributes.isEmpty) {
-      //> there is no selected attribute > return all variants where status is ACTIVE
-      return widget.product.productVariants.where((variant) => variant.status == Status.ACTIVE.name).toList();
+      //> there is no selected attribute > return all variants where status is ACTIVE & quantity > 0
+      return widget.product.productVariants
+          .where((variant) => (variant.status == Status.ACTIVE.name && variant.quantity > 0))
+          .toList();
     } else {
       final activeVariants = widget.product.productVariants
-          .where(
-            (variant) => variant.status == Status.ACTIVE.name,
-          )
+          .where((variant) => (variant.status == Status.ACTIVE.name && variant.quantity > 0))
           .toList();
 
       for (var variant in activeVariants) {
-        bool isValid = isValidVariant(variant);
-        if (isValid) {
+        if (isValidVariant(variant)) {
           // && !validVariants.contains(variant)
           validVariants.add(variant);
         }
@@ -120,6 +121,10 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
   }
 
   void Function(bool)? handleSelectAttribute(String attribute, String value) {
+    //? this return a function that will be assigned to the onSelected property of the ChoiceChip
+    // if valid > the function will not null >> make UI available to select/deselect
+    // else the function will be null and the UI will be disabled
+
     if (isValidAttribute(attribute, value)) {
       return (selected) {
         if (!selected) {
@@ -141,12 +146,12 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
 
   void checkCurrentVariant() {
     final validVariants = getValidVariants();
+    log('has ${validVariants.length} validVariants: ${validVariants.map((e) => e.sku).toList()}');
 
-    log('validVariants length: ${validVariants.length}');
-    log('validVariants: ${validVariants.map((e) => e.sku).toList()}');
-
+    // when there is only one valid variant
     if (validVariants.length == 1) {
       // check if all variant's attributes are matched with the selected attributes
+      //> e.g. if there are only 1 valid variant with 3 attributes, but only 2 attributes are selected >> not valid
       if (validVariants.first.attributes.length == _selectedAttributes.length) {
         _variant = validVariants.first;
         _quantity = 1;
@@ -158,12 +163,6 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
       _variant = null;
       _quantity = 0;
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    checkCurrentVariant();
   }
 
   @override
@@ -203,45 +202,43 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
       },
       child: ElevatedButton(
         // change backgroundColor
-        style: ElevatedButton.styleFrom(
-          backgroundColor: _variant != null ? Colors.orange[300] : Colors.grey[300],
-        ),
-        onPressed: handlePressedAddToCartOrBuyNow,
+        style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+        // onPressed: handlePressedAddToCartOrBuyNow,
+        onPressed: (_variant != null && (_variant!.quantity > 0)) ? handlePressedAddToCartOrBuyNow : null,
         child: Text(widget.isBuyNow ? 'Mua ngay' : 'Thêm vào giỏ'),
       ),
     );
   }
 
   Widget _buildEditQuantityBtn() {
+    final canEditQuantity = _variant != null && _variant!.quantity > 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
-          onPressed: () {
-            if (_quantity > 1) {
-              setState(() {
-                _quantity--;
-              });
-            }
-          },
+          onPressed: canEditQuantity && _quantity > 1
+              ? () {
+                  setState(() {
+                    _quantity--;
+                  });
+                }
+              : null,
           icon: const Icon(Icons.remove),
         ),
         Text(
-          'Số lượng: ${_variant != null ? _quantity : 0}',
+          'Số lượng: ${(_variant != null && _variant!.quantity > 0) ? _quantity : 0}',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
         IconButton(
-          onPressed: () {
-            if (_variant != null) {
-              if (_quantity < _variant!.quantity) {
-                setState(() {
-                  _quantity++;
-                });
-              }
-            }
-          },
+          onPressed: canEditQuantity && _quantity < _variant!.quantity
+              ? () {
+                  setState(() {
+                    _quantity++;
+                  });
+                }
+              : null,
           icon: const Icon(Icons.add),
         ),
       ],
@@ -350,6 +347,15 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
               Text(
                 _variant!.sku,
                 style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+
+            if (!widget.product.inStock)
+              const Text(
+                'Hết hàng',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
             RichText(

@@ -11,7 +11,7 @@ class SimpleSearchBar extends StatefulWidget {
   const SimpleSearchBar({
     super.key,
     this.clearOnSubmit = false,
-    this.controller,
+    this.searchController,
     required this.onSubmitted,
     this.hintText,
     this.hintStyle = const TextStyle(color: Colors.grey),
@@ -19,7 +19,7 @@ class SimpleSearchBar extends StatefulWidget {
 
   final bool clearOnSubmit;
   final void Function(String text)? onSubmitted;
-  final TextEditingController? controller;
+  final TextEditingController? searchController;
   final String? hintText;
   final TextStyle hintStyle;
 
@@ -34,8 +34,8 @@ class _SimpleSearchBarState extends State<SimpleSearchBar> {
   void initState() {
     super.initState();
     //> if controller is passed, use it, otherwise create a new one
-    if (widget.controller != null) {
-      _searchController = widget.controller!;
+    if (widget.searchController != null) {
+      _searchController = widget.searchController!;
     } else {
       _searchController = TextEditingController();
     }
@@ -43,7 +43,7 @@ class _SimpleSearchBarState extends State<SimpleSearchBar> {
 
   @override
   void dispose() {
-    if (widget.controller == null) {
+    if (widget.searchController == null) {
       _searchController.dispose();
     }
     super.dispose();
@@ -86,10 +86,14 @@ class _SimpleSearchBarState extends State<SimpleSearchBar> {
 
                         final searchResult = await showSearch<SearchHistoryEntity>(
                           context: context,
-                          delegate: CustomerSearchDelegate(searchList: searchHistories),
+                          delegate: CustomerSearchDelegate(
+                            searchList: searchHistories,
+                            initialQuery: _searchController.text,
+                          ),
                         );
 
                         if (searchResult != null) {
+                          _searchController.text = searchResult.search;
                           _handleSubmitted(searchResult.search);
                         }
                       },

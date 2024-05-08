@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/customer_order_detail_page.dart';
@@ -165,6 +167,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   builder: (context) {
                     return VoucherPage(
                       returnValue: true,
+                      title: 'Voucher của ${_orderDetail.order.shop.name}',
                       future: sl<VoucherRepository>().listOnShop(_orderDetail.order.shop.shopId),
                     );
                   },
@@ -219,8 +222,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
                   builder: (context) {
                     return VoucherPage(
+                      title: 'Voucher của bạn',
                       returnValue: true,
-                      future: sl<VoucherRepository>().listOnSystem(),
+                      future: sl<VoucherRepository>().customerVoucherList(),
                     );
                   },
                 ));
@@ -244,8 +248,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
             // _buildLoyaltyPoint(),
             OrderSectionLoyaltyPoint(
                 totalPoint: _orderDetail.totalPoint!,
-                isUsingLoyaltyPoint: widget.isCreateWithCart,
+                isUsingLoyaltyPoint: widget.isCreateWithCart
+                    ? _placeOrderWithCartParam.useLoyaltyPoint
+                    : _placeOrderWithVariantParam.useLoyaltyPoint,
                 onChanged: (value) {
+                  log('value: $value');
                   if (widget.isCreateWithCart) {
                     updateOrderWithCart(
                       _placeOrderWithCartParam.copyWith(useLoyaltyPoint: value),

@@ -23,4 +23,19 @@ class VoucherRepositoryImpl extends VoucherRepository {
   FRespData<List<VoucherEntity>> listOnSystem() async {
     return handleDataResponseFromDataSource(dataCallback: () => _voucherDataSource.listOnSystem());
   }
+
+  @override
+  FRespData<VoucherEntity> customerVoucherDelete(int voucherId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _voucherDataSource.customerVoucherDelete(voucherId));
+  }
+
+  @override
+  FRespData<List<VoucherEntity>> customerVoucherList() async {
+    return handleDataResponseFromDataSource(dataCallback: () => _voucherDataSource.customerVoucherList());
+  }
+
+  @override
+  FRespData<VoucherEntity> customerVoucherSave(int voucherId) async {
+    return handleDataResponseFromDataSource(dataCallback: () => _voucherDataSource.customerVoucherSave(voucherId));
+  }
 }

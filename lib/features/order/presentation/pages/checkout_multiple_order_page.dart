@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -84,12 +83,13 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
 
       respEither.fold(
         (error) {
+          context.read<CartBloc>().add(const FetchCart()); // refresh cart even if error
           showDialogToAlert(context, title: const Text('Đặt hàng thất bại'), children: [
             Text(error.message ?? 'Đã xảy ra lỗi khi đặt hàng'),
           ]);
         },
         (ok) async {
-          context.read<CartBloc>().add(const FetchCart());
+          context.read<CartBloc>().add(const FetchCart()); // refresh cart
           //! Online Payment
           if (_multipleOrderRequestParam.paymentMethod != PaymentTypes.COD) {
             final String? uriPayment = await sl<OrderRepository>().createPaymentForMultiOrder(ok.data!.cardIds).then(
@@ -122,7 +122,8 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
                 confirmText: 'Xác nhận',
                 children: [
                   const Text('Các đơn hàng của bạn đã được đặt thành công'),
-                  const Text('Trong quá trình thanh toán đã xảy ra lỗi, quý khách hãy vào mục "Đơn hàng đang chờ" để thanh toán lại'),
+                  const Text(
+                      'Trong quá trình thanh toán đã xảy ra lỗi, quý khách hãy vào mục "Đơn hàng đang chờ" để thanh toán lại'),
                 ],
               );
             }
