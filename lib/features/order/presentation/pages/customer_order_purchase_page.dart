@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
+import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
 import '../../../home/presentation/pages/shop_page.dart';
 import '../../domain/repository/order_repository.dart';
@@ -42,7 +43,7 @@ class CustomerOrderPurchasePage extends StatelessWidget {
       },
       customerItemBuilder: (order, onReceivedCallback) => OrderPurchaseItem(
         order: order,
-        onPressed: () => navigateToOrderDetailPage(context, order, onReceivedCallback),
+        onPressed: () => CustomerHandler.navigateToOrderDetailPage(context, order.orderId!, onReceivedCallback),
         onShopPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
         actionBuilder: (status) => _buildOrderStatusAction(
           context,
@@ -73,17 +74,17 @@ Widget _buildOrderStatusAction(
   return const SizedBox.shrink();
 }
 
-Future<void> navigateToOrderDetailPage(
-  BuildContext context,
-  OrderEntity order,
-  void Function(OrderDetailEntity) onReceivedCallback, //use when user tap completed order in OrderDetailPage
-) async {
-  final respEither = await sl<OrderRepository>().getOrderDetail(order.orderId!);
-  respEither.fold(
-    (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
-    (ok) async {
-      final completedOrder = await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: ok.data);
-      if (completedOrder != null) onReceivedCallback(completedOrder);
-    },
-  );
-}
+// Future<void> navigateToOrderDetailPage(
+//   BuildContext context,
+//   OrderEntity order,
+//   void Function(OrderDetailEntity)? onReceivedCallback, //use when user tap completed order in OrderDetailPage
+// ) async {
+//   final respEither = await sl<OrderRepository>().getOrderDetail(order.orderId!);
+//   respEither.fold(
+//     (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra'),
+//     (ok) async {
+//       final completedOrder = await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: ok.data);
+//       if (completedOrder != null && onReceivedCallback != null) onReceivedCallback(completedOrder);
+//     },
+//   );
+// }

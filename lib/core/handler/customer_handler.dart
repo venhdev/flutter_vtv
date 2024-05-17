@@ -1,17 +1,43 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/order.dart';
 
 import '../../features/home/domain/repository/product_repository.dart';
 import '../../features/order/domain/dto/webview_payment_param.dart';
 import '../../features/order/domain/repository/order_repository.dart';
+import '../../features/order/presentation/pages/customer_order_detail_page.dart';
 import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../service_locator.dart';
 
 /// Quick Handler for customer actions (common use function in multi page)
 class CustomerHandler {
+  //# Redirect
+  static Future<void> navigateToOrderDetailPage(
+    BuildContext context,
+    String orderId,
+    void Function(OrderDetailEntity)? onReceivedCallback, //use when user tap completed order in OrderDetailPage
+  ) async {
+    showDialogToLoading(context);
+
+    final respEither = await sl<OrderRepository>().getOrderDetail(orderId);
+    final OrderDetailEntity? navigationOrder = respEither.fold(
+      (error) => null, // Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra')
+      (ok) => ok.data!,
+    );
+
+    if (!context.mounted) return;
+    context.pop(); // close loading dialog
+
+    final completedOrder = await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: navigationOrder);
+
+    // when user tap completed order in OrderDetailPage
+    if (completedOrder != null && onReceivedCallback != null) onReceivedCallback(completedOrder);
+  }
+
   //# Follow Shop
   static Future<int?> handleFollowShop(int shopId) async {
     final rsEither = await sl<ProductRepository>().followedShopAdd(shopId);

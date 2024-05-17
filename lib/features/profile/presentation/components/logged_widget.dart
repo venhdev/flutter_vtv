@@ -73,7 +73,7 @@ class _LoggedViewState extends State<LoggedView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //# My voucher
+              //# My Voucher + Customer Wallet
               _customerWidgets(context),
 
               //# My Purchase
@@ -300,37 +300,42 @@ class _LoggedViewState extends State<LoggedView> {
   }
 
   Widget _customerWidgets(BuildContext context) {
-    return Row(
+    return Wrap(
       children: [
+        //# voucher
         IconTextButton(
           onPressed: () {
             context.go(MyVoucherPage.path);
           },
+          padding: const EdgeInsets.all(16),
           reverseDirection: true,
           label: 'Kho Voucher',
           fontSize: 13,
           iconSize: 32,
           leadingIcon: Icons.card_giftcard,
           iconColor: Colors.orange,
-          style: ButtonStyle(
+          buttonStyle: ButtonStyle(
             padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-            backgroundColor: MaterialStateProperty.all(Colors.white),
+            // backgroundColor: MaterialStateProperty.all(Colors.white),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
           ),
         ),
+
+        //# wallet
         IconTextButton(
           onPressed: () {
             context.go(CustomerWalletHistoryPage.path);
           },
+          padding: const EdgeInsets.all(16),
           reverseDirection: true,
           label: 'Ví VTV',
           fontSize: 13,
           iconSize: 32,
           leadingIcon: Icons.account_balance_wallet,
           iconColor: Colors.green,
-          style: ButtonStyle(
+          buttonStyle: ButtonStyle(
             padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-            backgroundColor: MaterialStateProperty.all(Colors.white),
+            // backgroundColor: MaterialStateProperty.all(Colors.white),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
           ),
         ),

@@ -541,11 +541,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onPressed: () {
                 // open chat
               },
-              style: IconButton.styleFrom(
+              buttonStyle: IconButton.styleFrom(
                 backgroundColor: Colors.grey[200],
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: EdgeInsets.zero,
               ),
               leadingIcon: Icons.chat_outlined,
               // backgroundColor: Colors.grey[200],
@@ -570,11 +570,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   },
                 );
               },
-              style: IconButton.styleFrom(
+              buttonStyle: IconButton.styleFrom(
                 backgroundColor: Theme.of(context).buttonTheme.colorScheme?.tertiaryContainer,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: EdgeInsets.zero,
               ),
               // backgroundColor: Theme.of(context).buttonTheme.colorScheme?.tertiaryContainer,
               leadingIcon: Icons.shopping_cart_outlined,
@@ -599,7 +599,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   },
                 );
               },
-              style: IconButton.styleFrom(
+              buttonStyle: IconButton.styleFrom(
                 backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,

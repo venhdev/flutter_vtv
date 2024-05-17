@@ -39,9 +39,9 @@ class ReviewBtn extends StatelessWidget {
                     child: const Text('Xem đánh giá'),
                   )
                 : IconTextButton(
-                    style: IconButton.styleFrom(
+                    buttonStyle: IconButton.styleFrom(
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: const RoundedRectangleBorder(),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                     ),
                     // child: Text('Đánh giá sản phẩm'),
                     label: labelNotReview ?? 'Đánh giá sản phẩm',

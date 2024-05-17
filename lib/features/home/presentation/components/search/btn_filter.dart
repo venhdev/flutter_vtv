@@ -31,18 +31,20 @@ class BtnFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconTextButton(
-      leadingIcon: Icons.filter_alt_outlined,
-      label: 'Lọc',
-      style: IconButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        backgroundColor: isFiltering ? Colors.green[300] : Colors.grey.shade300,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: IconTextButton(
+        leadingIcon: Icons.filter_alt_outlined,
+        label: 'Lọc',
+        padding: const EdgeInsets.all(12),
+        buttonStyle: IconButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          backgroundColor: isFiltering ? Colors.green.shade300 : null,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
+        // backgroundColor: isFiltering ? Colors.blue[300] : null,
+        onPressed: () async => await handleBottomSheetFilter(),
       ),
-      // backgroundColor: isFiltering ? Colors.blue[300] : null,
-      onPressed: () async => await handleBottomSheetFilter(),
     );
   }
 

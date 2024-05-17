@@ -51,8 +51,7 @@ class SettingsPage extends StatelessWidget {
 
   AppBar _buildAppBarSetting(BuildContext context) {
     return AppBar(
-      title: const Text('Settings'),
-      centerTitle: true,
+      title: const Text('Cài đặt'),
       actions: [
         // dev page button
         IconButton(
@@ -73,6 +72,14 @@ class SettingsPage extends StatelessWidget {
             Icon(Icons.light_mode),
             Icon(Icons.dark_mode),
           ],
+        ),
+
+        //# app info
+        IconButton(
+          onPressed: () {
+            showCrossPlatformAboutDialog(context: context);
+          },
+          icon: const Icon(Icons.info),
         ),
       ],
     );
