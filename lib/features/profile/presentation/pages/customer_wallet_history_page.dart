@@ -12,8 +12,13 @@ class CustomerWalletHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TransactionHistoryPage(
-      dataCallback: sl<OrderRepository>().getWalletTransactionHistory(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Lịch sử điểm thưởng'),
+      ),
+      body: TransactionHistory(
+        dataCallback: sl<OrderRepository>().getWalletTransactionHistory(),
+      ),
     );
   }
 }

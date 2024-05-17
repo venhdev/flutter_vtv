@@ -71,7 +71,7 @@ class _MyVoucherPageState extends State<MyVoucherPage> {
                                   direction: DismissDirection.endToStart,
                                   onDismissed: (direction) {
                                     sl<VoucherRepository>()
-                                        .customerVoucherDelete(voucherList[index].voucherId)
+                                        .customerVoucherDelete(voucherList[index].voucherId!)
                                         .then((respEither) {
                                       log(respEither.toString());
                                       respEither.fold(

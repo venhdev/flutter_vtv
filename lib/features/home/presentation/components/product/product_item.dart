@@ -133,7 +133,7 @@ class _ProductItemState extends State<ProductItem> {
                   children: [
                     // Price
                     Text(
-                      StringHelper.formatCurrency(_product.cheapestPrice),
+                      StringUtils.formatCurrency(_product.cheapestPrice),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: widget.fontSizePrice,

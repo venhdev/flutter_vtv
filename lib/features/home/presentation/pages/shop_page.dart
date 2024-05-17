@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/home.dart';
-import 'package:vtv_common/order.dart';
 import 'package:vtv_common/shop.dart';
 
 import '../../../../core/handler/customer_handler.dart';
@@ -39,7 +38,7 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late LazyController<ProductEntity> _lazyController;
+  late LazyListController<ProductEntity> _lazyController;
   late FilterParams _filterParams;
   late TextEditingController _searchController;
   String _keywords = '';
@@ -134,7 +133,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
       sortType: 'newest',
       isFilterWithPriceRange: true,
     );
-    _lazyController = LazyController<ProductEntity>(
+    _lazyController = LazyListController<ProductEntity>(
       paginatedData: _paginatedData,
       items: [],
     );

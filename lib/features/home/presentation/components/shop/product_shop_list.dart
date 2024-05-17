@@ -13,7 +13,7 @@ class ProductShopList extends StatefulWidget {
     required this.lazyController,
   });
 
-  final LazyController<ProductEntity> lazyController;
+  final LazyListController<ProductEntity> lazyController;
 
   @override
   State<ProductShopList> createState() => _ProductShopListState();
@@ -27,7 +27,7 @@ class _ProductShopListState extends State<ProductShopList> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: LazyLoadBuilder<ProductEntity>(
+          child: LazyListBuilder<ProductEntity>(
             lazyController: widget.lazyController,
             itemBuilder: (context, index, data) => ProductItem(
               product: data,

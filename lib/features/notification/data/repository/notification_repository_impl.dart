@@ -10,21 +10,21 @@ class NotificationRepositoryImpl extends NotificationRepository {
   final NotificationDataSource _dataSource;
 
   @override
-  FRespData<NotificationResp> getPageNotifications(int page, int size) async {
+  FRespData<NotificationPageResp> getPageNotifications(int page, int size) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () => _dataSource.getPageNotifications(page, size),
     );
   }
 
   @override
-  FRespData<NotificationResp> markAsRead(String id) async {
+  FRespData<NotificationPageResp> markAsRead(String id) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () => _dataSource.markAsRead(id),
     );
   }
 
   @override
-  FRespData<NotificationResp> deleteNotification(String id) async {
+  FRespData<NotificationPageResp> deleteNotification(String id) async {
     return await handleDataResponseFromDataSource(
       dataCallback: () => _dataSource.deleteNotification(id),
     );

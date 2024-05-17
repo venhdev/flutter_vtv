@@ -24,7 +24,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeLocator();
-  sl<LocalNotificationUtils>().init();
+  sl<LocalNotificationHelper>().init();
   sl<FirebaseCloudMessagingManager>().init();
 
   final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());

@@ -51,7 +51,7 @@ class CartItem extends StatelessWidget {
             ),
             overflow: TextOverflow.ellipsis,
           ),
-          Text(StringHelper.formatCurrency(cart.productVariant.price),
+          Text(StringUtils.formatCurrency(cart.productVariant.price),
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.orange,

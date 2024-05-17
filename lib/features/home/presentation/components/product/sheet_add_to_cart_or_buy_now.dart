@@ -33,12 +33,12 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
 
   String priceString() {
     if (_variant != null) {
-      return StringHelper.formatCurrency(_variant!.price);
+      return StringUtils.formatCurrency(_variant!.price);
     }
     if (widget.product.cheapestPrice == widget.product.mostExpensivePrice) {
-      return StringHelper.formatCurrency(widget.product.cheapestPrice);
+      return StringUtils.formatCurrency(widget.product.cheapestPrice);
     }
-    return '${StringHelper.formatCurrency(widget.product.cheapestPrice)} - ${StringHelper.formatCurrency(widget.product.mostExpensivePrice)}';
+    return '${StringUtils.formatCurrency(widget.product.cheapestPrice)} - ${StringUtils.formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
   void handlePressedAddToCartOrBuyNow() async {

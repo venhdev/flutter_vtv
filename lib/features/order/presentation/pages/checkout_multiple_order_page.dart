@@ -285,7 +285,7 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
             children: [
               const Text('Tổng thanh toán: '),
               Text(
-                StringHelper.formatCurrency(_multiOrderResp.totalPayment),
+                StringUtils.formatCurrency(_multiOrderResp.totalPayment),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
               ),
               const SizedBox(width: 8),

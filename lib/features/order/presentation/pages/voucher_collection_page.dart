@@ -39,7 +39,7 @@ class VoucherCollectionPage extends StatelessWidget {
                           voucher: ok.data![index],
                           actionLabel: 'Lưu',
                           onActionPressed: (voucher) {
-                            sl<VoucherRepository>().customerVoucherSave(voucher.voucherId).then((respEither) {
+                            sl<VoucherRepository>().customerVoucherSave(voucher.voucherId!).then((respEither) {
                               respEither.fold(
                                 (error) => Fluttertoast.showToast(msg: error.message ?? 'Lưu thất bại'),
                                 (ok) => Fluttertoast.showToast(msg: ok.message ?? 'Lưu thành công'),

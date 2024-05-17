@@ -378,6 +378,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           color: Colors.grey[300],
           centerText: true,
         ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '# Phân loại: ${_productDetail.categoryName}',
+          ),
+        ), //category
         Text(
           _productDetail.product.information,
           maxLines: _isShowMoreInformation ? null : 4,
@@ -436,8 +442,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       alignment: Alignment.centerLeft,
       child: Text(
         _productDetail.product.cheapestPrice != _productDetail.product.mostExpensivePrice
-            ? '${StringHelper.formatCurrency(_productDetail.product.cheapestPrice)} - ${StringHelper.formatCurrency(_productDetail.product.mostExpensivePrice)}'
-            : StringHelper.formatCurrency(_productDetail.product.cheapestPrice),
+            ? '${StringUtils.formatCurrency(_productDetail.product.cheapestPrice)} - ${StringUtils.formatCurrency(_productDetail.product.mostExpensivePrice)}'
+            : StringUtils.formatCurrency(_productDetail.product.cheapestPrice),
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500,

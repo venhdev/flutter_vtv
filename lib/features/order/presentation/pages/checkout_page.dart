@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/customer_order_detail_page.dart';
-import 'package:flutter_vtv/features/order/presentation/pages/voucher_collection_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
@@ -299,7 +298,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         children: [
           const Text('Tổng thanh toán: '),
           Text(
-            StringHelper.formatCurrency(_orderDetail.order.paymentTotal),
+            StringUtils.formatCurrency(_orderDetail.order.paymentTotal),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
           ),
           const SizedBox(width: 8),

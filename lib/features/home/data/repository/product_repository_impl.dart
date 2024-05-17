@@ -1,12 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/features/home/domain/dto/comment_param.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 
 import '../../../order/domain/dto/review_param.dart';
 import '../../domain/repository/product_repository.dart';
-import '../data_sources/category_data_source.dart';
 import '../data_sources/local_product_data_source.dart';
 import '../data_sources/product_data_source.dart';
 import '../data_sources/review_data_source.dart';
@@ -15,14 +15,14 @@ import '../data_sources/customer_shop_data_source.dart';
 class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl(
     this._productDataSource,
-    this._categoryDataSource,
+    this._guestDataSource,
     this._localProductDataSource,
     this._reviewDataSource,
     this._shopDataSource,
   );
 
   final ProductDataSource _productDataSource;
-  final CategoryDataSource _categoryDataSource;
+  final GuestDataSource _guestDataSource;
   final LocalProductDataSource _localProductDataSource;
   final ReviewDataSource _reviewDataSource;
   final CustomerShopDataSource _shopDataSource;
@@ -70,7 +70,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   FRespData<List<CategoryEntity>> getAllParentCategories() async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => _categoryDataSource.getAllParentCategories(),
+      dataCallback: () async => _guestDataSource.getAllParentCategory(),
     );
   }
 

@@ -44,18 +44,18 @@ class VoucherItem extends StatelessWidget {
               ),
               Text(
                 // voucher.description,
-                "Loại: ${StringHelper.getVoucherName(voucher.type)}",
+                "Loại: ${StringUtils.getVoucherName(voucher.type.name)}",
                 style: const TextStyle(fontSize: 16.0),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    StringHelper.getVoucherDiscount(type: voucher.type, discount: voucher.discount),
+                    StringUtils.getVoucherDiscount(type: voucher.type.name, discount: voucher.discount),
                     style: const TextStyle(fontSize: 16.0, color: Colors.red, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Còn lại ${voucher.quantity - voucher.quantityUsed} voucher",
+                    "Còn lại ${voucher.quantity - voucher.quantityUsed!} voucher",
                     style: const TextStyle(fontSize: 16.0),
                   ),
                 ],
@@ -111,7 +111,7 @@ class VoucherItemV2 extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      StringHelper.getVoucherName(voucher.type, lineBreak: true),
+                      StringUtils.getVoucherName(voucher.type.name, lineBreak: true),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.ribeye(
                         fontSize: 24,
@@ -149,20 +149,20 @@ class VoucherItemV2 extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          StringHelper.getVoucherDiscount(type: voucher.type, discount: voucher.discount),
+                          StringUtils.getVoucherDiscount(type: voucher.type.name, discount: voucher.discount),
                           style: const TextStyle(fontSize: 16.0, color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
 
                     LinearProgressIndicator(
-                      value: voucher.quantityUsed / voucher.quantity,
+                      value: voucher.quantityUsed! / voucher.quantity,
                       backgroundColor: Colors.grey[300],
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
                       semanticsLabel: "Voucher Progress Bar",
                     ),
                     Text(
-                      'Đã dùng ${(voucher.quantityUsed / voucher.quantity * 100).toInt()}%',
+                      'Đã dùng ${(voucher.quantityUsed! / voucher.quantity * 100).toInt()}%',
                       style: VTVTheme.hintTextStyle,
                       textAlign: TextAlign.end,
                     ),
@@ -226,7 +226,7 @@ class VoucherDetailDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Loại: ${StringHelper.getVoucherName(voucher.type)} - ${StringHelper.getVoucherTypeName(voucher.type)}',
+              'Loại: ${StringUtils.getVoucherName(voucher.type.name)} - ${StringUtils.getVoucherTypeName(voucher.type)}',
               style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 8.0),
@@ -246,17 +246,17 @@ class VoucherDetailDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Giảm giá: ${StringHelper.getVoucherDiscount(type: voucher.type, discount: voucher.discount)}',
+              'Giảm giá: ${StringUtils.getVoucherDiscount(type: voucher.type.name, discount: voucher.discount)}',
               style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Ngày bắt đầu: ${StringHelper.convertDateTimeToString(voucher.startDate)}',
+              'Ngày bắt đầu: ${StringUtils.convertDateTimeToString(voucher.startDate)}',
               style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Ngày kết thúc: ${StringHelper.convertDateTimeToString(voucher.endDate)}',
+              'Ngày kết thúc: ${StringUtils.convertDateTimeToString(voucher.endDate)}',
               style: const TextStyle(fontSize: 16.0),
             ),
           ],

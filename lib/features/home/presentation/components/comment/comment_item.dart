@@ -41,7 +41,7 @@ class CommentItem extends StatelessWidget {
 
           // date
           Text(
-            StringHelper.convertDateTimeToString(
+            StringUtils.convertDateTimeToString(
               comment.createDate,
               pattern: 'dd/MM/yyyy hh:mm aa',
             ),

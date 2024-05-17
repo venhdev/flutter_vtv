@@ -7,6 +7,7 @@ import 'package:vtv_common/order.dart';
 import '../../../../service_locator.dart';
 import '../../../home/presentation/pages/shop_page.dart';
 import '../../domain/repository/order_repository.dart';
+import '../components/btn/review_btn.dart';
 import 'customer_order_detail_page.dart';
 
 class CustomerOrderPurchasePage extends StatelessWidget {
@@ -66,6 +67,8 @@ Widget _buildOrderStatusAction(
         completeOrder(context, order.orderId!, inOrderDetailPage: false, onReceived: onReceivedPressed);
       },
     );
+  } else if (order.status == OrderStatus.COMPLETED) {
+    return ReviewBtn(order: order);
   }
   return const SizedBox.shrink();
 }

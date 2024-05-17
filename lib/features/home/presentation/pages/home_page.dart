@@ -1,7 +1,5 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/features/order/domain/repository/voucher_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
@@ -10,8 +8,6 @@ import 'package:vtv_common/home.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../../../order/presentation/components/voucher_item.dart';
-import '../../../order/presentation/pages/voucher_collection_page.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/category/category_list.dart';
 import '../components/product/best_selling_product_list.dart';
@@ -173,64 +169,64 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class GlobalSystemVoucherPageView extends StatefulWidget {
-  const GlobalSystemVoucherPageView({super.key});
+// class GlobalSystemVoucherPageView extends StatefulWidget {
+//   const GlobalSystemVoucherPageView({super.key});
 
-  @override
-  State<GlobalSystemVoucherPageView> createState() => _GlobalSystemVoucherPageViewState();
-}
+//   @override
+//   State<GlobalSystemVoucherPageView> createState() => _GlobalSystemVoucherPageViewState();
+// }
 
-class _GlobalSystemVoucherPageViewState extends State<GlobalSystemVoucherPageView> {
-  // late PageController _pageViewController;
+// class _GlobalSystemVoucherPageViewState extends State<GlobalSystemVoucherPageView> {
+//   // late PageController _pageViewController;
 
-  @override
-  void initState() {
-    super.initState();
-    // _pageViewController = PageController();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     // _pageViewController = PageController();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
+//   @override
+//   Widget build(BuildContext context) {
+//     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        if (state.status == AuthStatus.authenticated) {
-          return FutureBuilder(
-            future: sl<VoucherRepository>().listOnSystem(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return snapshot.data!.fold(
-                  (error) => MessageScreen.error(error.message),
-                  (ok) {
-                    if (ok.data!.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-                    return CarouselSlider.builder(
-                      options: CarouselOptions(height: 150, enableInfiniteScroll: false),
-                      itemCount: ok.data!.length,
-                      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => VoucherItemV2(
-                        voucher: ok.data![itemIndex],
-                        onPressed: (_) {
-                          context.go(VoucherCollectionPage.path);
-                        },
-                        actionLabel: 'Sử\ndụng',
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return MessageScreen.error(snapshot.error.toString());
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-}
+//     return BlocBuilder<AuthCubit, AuthState>(
+//       builder: (context, state) {
+//         if (state.status == AuthStatus.authenticated) {
+//           return FutureBuilder(
+//             future: sl<VoucherRepository>().listOnSystem(),
+//             builder: (context, snapshot) {
+//               if (snapshot.hasData) {
+//                 return snapshot.data!.fold(
+//                   (error) => MessageScreen.error(error.message),
+//                   (ok) {
+//                     if (ok.data!.isEmpty) {
+//                       return const SizedBox.shrink();
+//                     }
+//                     return CarouselSlider.builder(
+//                       options: CarouselOptions(height: 150, enableInfiniteScroll: false),
+//                       itemCount: ok.data!.length,
+//                       itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => VoucherItemV2(
+//                         voucher: ok.data![itemIndex],
+//                         onPressed: (_) {
+//                           context.go(VoucherCollectionPage.path);
+//                         },
+//                         actionLabel: 'Sử\ndụng',
+//                       ),
+//                     );
+//                   },
+//                 );
+//               } else if (snapshot.hasError) {
+//                 return MessageScreen.error(snapshot.error.toString());
+//               }
+//               return const Center(
+//                 child: CircularProgressIndicator(),
+//               );
+//             },
+//           );
+//         } else {
+//           return const SizedBox.shrink();
+//         }
+//       },
+//     );
+//   }
+// }

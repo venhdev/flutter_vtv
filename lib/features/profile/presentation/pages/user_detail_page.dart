@@ -31,7 +31,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     super.initState();
     _fullNameController.text = widget.userInfo.fullName!;
     _emailController.text = widget.userInfo.email!;
-    _dobController.text = StringHelper.convertDateTimeToString(widget.userInfo.birthday!);
+    _dobController.text = StringUtils.convertDateTimeToString(widget.userInfo.birthday!);
     _genderController.text = widget.userInfo.gender! ? 'Nam' : 'Nữ';
     _dob = widget.userInfo.birthday;
     _gender = widget.userInfo.gender;
@@ -64,27 +64,27 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 // Text('gender: ${userInfo.gender}'),
                 // Text('Email: ${userInfo.email}'),
                 // Text('birthday: ${userInfo.birthday}'),
-                TextFieldCustom(
+                OutlineTextField(
                   controller: _fullNameController,
                   label: 'Họ và tên',
-                  hint: 'Nhập họ và tên',
+                  hintText: 'Nhập họ và tên',
                   prefixIcon: const Icon(Icons.badge),
                   isRequired: false,
                 ),
-                TextFieldCustom(
+                OutlineTextField(
                   controller: _emailController,
                   label: 'Email',
-                  hint: 'Nhập email',
+                  hintText: 'Nhập email',
                   prefixIcon: const Icon(Icons.email),
                   isRequired: false,
                   readOnly: true,
                   enabledBorderColor: Colors.grey.shade300,
                   focusedBorderColor: Colors.grey.shade300,
                 ),
-                TextFieldCustom(
+                OutlineTextField(
                   controller: _genderController,
                   label: 'Giới tính',
-                  hint: 'Chọn giới tính của bạn',
+                  hintText: 'Chọn giới tính của bạn',
                   readOnly: true,
                   isRequired: false,
                   onTap: () async {
@@ -123,11 +123,11 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   },
                   prefixIcon: const Icon(Icons.wc),
                 ),
-                TextFieldCustom(
+                OutlineTextField(
                   controller: _dobController,
                   readOnly: true,
                   label: 'Ngày sinh',
-                  hint: 'Chọn ngày sinh của bạn',
+                  hintText: 'Chọn ngày sinh của bạn',
                   prefixIcon: const Icon(Icons.cake),
                   isRequired: false,
                   onTap: () async {
@@ -142,7 +142,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     );
 
                     if (pickedDate != null) {
-                      _dobController.text = StringHelper.convertDateTimeToString(pickedDate);
+                      _dobController.text = StringUtils.convertDateTimeToString(pickedDate);
                       _dob = pickedDate;
                     }
                   },
