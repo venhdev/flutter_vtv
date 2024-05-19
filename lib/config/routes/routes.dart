@@ -32,6 +32,7 @@ import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../features/order/presentation/pages/voucher_collection_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
+import '../../features/profile/presentation/components/logged_widget.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/customer_wallet_history_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';
@@ -89,6 +90,12 @@ class AppRoutes {
       GoRoute(
         path: '/dev', // DevPage.routeName, // '/dev'
         builder: (context, state) => DevPage(sl: sl, onBackPressed: () => context.go('/home')),
+      ),
+      GoRoute(
+        path: '/dev-string', // DevPage.routeName, // '/dev'
+        builder: (context, state) => DevPageWithString(
+          string: state.extra as String?,
+        ),
       ),
     ],
   );

@@ -84,9 +84,6 @@ class _LoggedViewState extends State<LoggedView> {
 
               //# Recent Product Viewed
               _buildRecentProduct(),
-
-              //! DEV
-              // _buildDEV(context),
             ],
           ),
         ),
@@ -340,6 +337,27 @@ class _LoggedViewState extends State<LoggedView> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class DevPageWithString extends StatelessWidget {
+  const DevPageWithString({
+    super.key,
+    required this.string,
+  });
+
+  final String? string;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Result'),
+      ),
+      body: Center(
+        child: Text(string ?? 'null'),
+      ),
     );
   }
 }

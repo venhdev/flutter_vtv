@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -45,12 +43,8 @@ class CustomerOrderPurchasePage extends StatelessWidget {
       },
       customerItemBuilder: (order, onRefresh) => OrderPurchaseItem(
         order: order,
-        onPressed: () async {
-          final orderDetail = await CustomerHandler.navigateToOrderDetailPage(context, orderId: order.orderId!);
-          if (orderDetail != null && context.mounted) {
-            onRefresh();
-            CustomerHandler.navigateToOrderDetailPage(context, orderDetail: orderDetail);
-          }
+        onPressed: () {
+          CustomerHandler.navigateToOrderDetailPage(context, orderId: order.orderId!);
         },
         onShopPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
         actionBuilder: (status) => _buildOrderStatusAction(

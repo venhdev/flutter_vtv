@@ -36,7 +36,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
     final respEither = await showDialogToPerform(
       context,
       dataCallback: () => sl<OrderRepository>().getOrderDetail(_orderDetail.order.orderId!),
-      onCloseDialog: (context, result) => context.pop(result),
+      closeBy: (context, result) => context.pop(result),
     );
 
     respEither?.fold(
@@ -49,6 +49,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
   Widget build(BuildContext context) {
     return OrderDetailPage.customer(
       orderDetail: _orderDetail,
+      onBack: () => context.pop(),
       onPayPressed: (orderId) => CustomerHandler.processSingleOrderPaymentByVNPay(context, orderId),
       onRePurchasePressed: (orderItems) => _rePurchaseOrder(context, orderItems),
       onCancelOrderPressed: (orderId) => _cancelOrder(context, orderId),
@@ -56,7 +57,8 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         final respEither = await completeOrder(context, orderId);
         respEither?.fold(
           (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi hoàn tất đơn hàng!'),
-          (ok) => context.go(CustomerOrderDetailPage.path, extra: ok.data!),
+          // (ok) => context.go(CustomerOrderDetailPage.path, extra: ok.data!),
+          (ok) => setState(() => _orderDetail = ok.data!),
         );
       },
       customerReviewBtn: (order) => CustomerReviewButton(order: order),
@@ -97,7 +99,7 @@ Future<RespData<OrderDetailEntity>?> completeOrder(
     return await showDialogToPerform(
       context,
       dataCallback: () => sl<OrderRepository>().completeOrder(orderId),
-      onCloseDialog: (context, result) => context.pop(result),
+      closeBy: (context, result) => context.pop(result),
     );
   }
   return null;
