@@ -8,8 +8,8 @@ import '../../../../home/domain/repository/product_repository.dart';
 import '../../pages/order_reviews_page.dart';
 import '../../pages/add_review_page.dart';
 
-class ReviewBtn extends StatelessWidget {
-  const ReviewBtn({
+class CustomerReviewButton extends StatelessWidget {
+  const CustomerReviewButton({
     super.key,
     required this.order,
     this.labelNotReview,

@@ -37,8 +37,9 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   NotificationItem notificationItem(NotificationEntity data, int index) {
-    void handleRead(notificationId) async {
-      final resultEither = await sl<NotificationRepository>().markAsRead(notificationId);
+    void handleRead() async {
+      if (data.seen) return; // Already read
+      final resultEither = await sl<NotificationRepository>().markAsRead(data.notificationId);
 
       resultEither.fold(
         (error) {
@@ -54,9 +55,9 @@ class _NotificationPageState extends State<NotificationPage> {
     return NotificationItem(
       notification: data,
       onPressed: (notificationId) {
-        handleRead(notificationId);
+        handleRead();
         final orderId = ConversionUtils.extractUUID(data.body);
-        if (orderId != null) CustomerHandler.navigateToOrderDetailPage(context, orderId, null);
+        if (orderId != null) CustomerHandler.navigateToOrderDetailPage(context, orderId: orderId);
       },
       onExpandPressed: handleRead,
       onConfirmDismiss: (notificationId) async {

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
@@ -40,14 +43,21 @@ class CustomerOrderPurchasePage extends StatelessWidget {
         }
         return sl<OrderRepository>().getListOrdersByStatus(status.name);
       },
-      customerItemBuilder: (order, onReceivedCallback) => OrderPurchaseItem(
+      customerItemBuilder: (order, onRefresh) => OrderPurchaseItem(
         order: order,
-        onPressed: () => CustomerHandler.navigateToOrderDetailPage(context, order.orderId!, onReceivedCallback),
+        onPressed: () async {
+          final orderDetail = await CustomerHandler.navigateToOrderDetailPage(context, orderId: order.orderId!);
+          if (orderDetail != null && context.mounted) {
+            onRefresh();
+            CustomerHandler.navigateToOrderDetailPage(context, orderDetail: orderDetail);
+          }
+        },
         onShopPressed: () => context.push('${ShopPage.path}/${order.shop.shopId}'),
         actionBuilder: (status) => _buildOrderStatusAction(
           context,
           order: order,
-          onReceivedPressed: onReceivedCallback,
+          onRefresh: onRefresh,
+          // onReceivedPressed: onReceivedCallback,
         ),
       ),
     );
@@ -57,18 +67,25 @@ class CustomerOrderPurchasePage extends StatelessWidget {
 Widget _buildOrderStatusAction(
   BuildContext context, {
   required OrderEntity order,
-  required Function(OrderDetailEntity completedOrder) onReceivedPressed,
+  required VoidCallback onRefresh,
 }) {
   if (order.status == OrderStatus.DELIVERED) {
     return OrderPurchaseItemAction(
       label: 'Bạn đã nhận được hàng chưa?',
       buttonLabel: 'Đã nhận',
-      onPressed: () {
-        completeOrder(context, order.orderId!, inOrderDetailPage: false, onReceived: onReceivedPressed);
+      onPressed: () async {
+        final resultEither = await completeOrder(context, order.orderId!);
+        resultEither?.fold(
+          (error) {
+            Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi hoàn tất đơn hàng!');
+            onRefresh(); // maybe old data
+          },
+          (ok) => onRefresh(),
+        );
       },
     );
   } else if (order.status == OrderStatus.COMPLETED) {
-    return ReviewBtn(order: order);
+    return CustomerReviewButton(order: order);
   }
   return const SizedBox.shrink();
 }

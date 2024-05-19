@@ -11,7 +11,7 @@ import '../../domain/repository/order_repository.dart';
 import '../components/btn/review_btn.dart';
 import 'checkout_page.dart';
 
-class CustomerOrderDetailPage extends StatelessWidget {
+class CustomerOrderDetailPage extends StatefulWidget {
   const CustomerOrderDetailPage({super.key, required this.orderDetail});
 
   final OrderDetailEntity orderDetail;
@@ -20,18 +20,51 @@ class CustomerOrderDetailPage extends StatelessWidget {
   static const String path = '/user/purchase/order-detail';
 
   @override
+  State<CustomerOrderDetailPage> createState() => _CustomerOrderDetailPageState();
+}
+
+class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
+  late OrderDetailEntity _orderDetail;
+
+  @override
+  void initState() {
+    super.initState();
+    _orderDetail = widget.orderDetail;
+  }
+
+  void fetchOrderDetail() async {
+    final respEither = await showDialogToPerform(
+      context,
+      dataCallback: () => sl<OrderRepository>().getOrderDetail(_orderDetail.order.orderId!),
+      onCloseDialog: (context, result) => context.pop(result),
+    );
+
+    respEither?.fold(
+      (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi tải thông tin đơn hàng!'),
+      (ok) => setState(() => _orderDetail = ok.data!),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return OrderDetailPage.customer(
-      orderDetail: orderDetail,
+      orderDetail: _orderDetail,
       onPayPressed: (orderId) => CustomerHandler.processSingleOrderPaymentByVNPay(context, orderId),
       onRePurchasePressed: (orderItems) => _rePurchaseOrder(context, orderItems),
       onCancelOrderPressed: (orderId) => _cancelOrder(context, orderId),
-      onCompleteOrderPressed: (orderId) => completeOrder(context, orderId, inOrderDetailPage: true),
-      customerReviewBtn: (order) => ReviewBtn(order: order),
+      onCompleteOrderPressed: (orderId) async {
+        final respEither = await completeOrder(context, orderId);
+        respEither?.fold(
+          (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi hoàn tất đơn hàng!'),
+          (ok) => context.go(CustomerOrderDetailPage.path, extra: ok.data!),
+        );
+      },
+      customerReviewBtn: (order) => CustomerReviewButton(order: order),
       onOrderItemPressed: (orderItem) => context.push(
         ProductDetailPage.path,
         extra: orderItem.productVariant.productId,
       ),
+      onRefresh: () async => fetchOrderDetail(),
     );
   }
 }
@@ -39,14 +72,15 @@ class CustomerOrderDetailPage extends StatelessWidget {
 //*-------------------------------------------------completeOrder---------------------------------------------------*//
 /// - in [OrderDetailPage] >> pop with [OrderDetailEntity] means order is completed >> then update by [onReceived]
 /// - in [OrderPurchasePage] >> update & navigate to [OrderDetailPage] by [onReceived]
-Future<void> completeOrder(
+Future<RespData<OrderDetailEntity>?> completeOrder(
   BuildContext context,
-  String orderId, {
-  bool inOrderDetailPage = false,
-  void Function(OrderDetailEntity)? onReceived,
-}) async {
-  assert(inOrderDetailPage || (onReceived != null && !inOrderDetailPage),
-      'When in [OrderPurchasePage], [onReceived] must be provided!');
+  String orderId,
+  // bool inOrderDetailPage = false,
+  // required VoidCallback? onRefresh,
+  // void Function(OrderDetailEntity)? onReceived,
+) async {
+  // assert(inOrderDetailPage || (onReceived != null && !inOrderDetailPage),
+  //     'When in [OrderPurchasePage], [onReceived] must be provided!');
 
   final isConfirm = await showDialogToConfirm<bool?>(
     context: context,
@@ -59,25 +93,49 @@ Future<void> completeOrder(
     dismissText: 'Thoát',
   );
 
-  if (isConfirm ?? false) {
-    final respEither = await sl<OrderRepository>().completeOrder(orderId);
-    respEither.fold(
-      (error) {
-        Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra');
-      },
-      (ok) {
-        if (inOrderDetailPage) {
-          // navigate to [OrderDetailPage] with new [OrderDetailEntity]
-          context.go(CustomerOrderDetailPage.path, extra: ok.data!);
-        } else {
-          // [onReceived]: this call back defined in [OrderPurchasePage]
-          // - 1. update order list in [OrderPurchasePage]
-          // - 2. navigate to [OrderDetailPage] with new [OrderDetailEntity]
-          onReceived?.call(ok.data!);
-        }
-      },
+  if ((isConfirm ?? false) && context.mounted) {
+    return await showDialogToPerform(
+      context,
+      dataCallback: () => sl<OrderRepository>().completeOrder(orderId),
+      onCloseDialog: (context, result) => context.pop(result),
     );
   }
+  return null;
+  // final respEither = await sl<OrderRepository>().completeOrder(orderId);
+  // respEither.fold(
+  //   (error) {
+  //     Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra');
+  //   },
+  //   (ok) {
+  //     if (inOrderDetailPage) {
+  //       // navigate to [OrderDetailPage] with new [OrderDetailEntity]
+  //       context.go(CustomerOrderDetailPage.path, extra: ok.data!);
+  //     } else {
+  //       // [onReceived]: this call back defined in [OrderPurchasePage]
+  //       // - 1. update order list in [OrderPurchasePage]
+  //       // - 2. navigate to [OrderDetailPage] with new [OrderDetailEntity]
+  //       onReceived?.call(ok.data!);
+  //     }
+  //   },
+  // );
+
+  // if (respEither == null) return;
+  // respEither.fold(
+  //   (error) {
+  //     showDialogToAlert(context, title: Text(error.message ?? 'Có lỗi xảy ra'));
+  //   },
+  //   (ok) {
+  //     context.go(CustomerOrderDetailPage.path, extra: ok.data!);
+  //     // if (inOrderDetailPage) {
+  //     //   // navigate to [OrderDetailPage] with new [OrderDetailEntity]
+  //     // } else {
+  //     //   // [onReceived]: this call back defined in [OrderPurchasePage]
+  //     //   // - 1. update order list in [OrderPurchasePage]
+  //     //   // - 2. navigate to [OrderDetailPage] with new [OrderDetailEntity]
+  //     //   onRefresh();
+  //     // }
+  //   },
+  // );
 }
 
 //*-------------------------------------------------cancelOrder---------------------------------------------------*//

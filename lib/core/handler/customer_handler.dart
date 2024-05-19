@@ -15,26 +15,37 @@ import '../../service_locator.dart';
 /// Quick Handler for customer actions (common use function in multi page)
 class CustomerHandler {
   //# Redirect
-  static Future<void> navigateToOrderDetailPage(
-    BuildContext context,
-    String orderId,
-    void Function(OrderDetailEntity)? onReceivedCallback, //use when user tap completed order in OrderDetailPage
-  ) async {
-    showDialogToLoading(context);
+  static Future<OrderDetailEntity?> navigateToOrderDetailPage(
+    BuildContext context, {
+    String? orderId,
+    OrderDetailEntity? orderDetail,
+    // void Function(OrderDetailEntity)? onReceivedCallback, //use when user tap completed order in OrderDetailPage
+  }) async {
+    assert((orderDetail != null && orderId == null) || (orderDetail == null && orderId != null));
 
-    final respEither = await sl<OrderRepository>().getOrderDetail(orderId);
-    final OrderDetailEntity? navigationOrder = respEither.fold(
-      (error) => null, // Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra')
-      (ok) => ok.data!,
-    );
+    if (orderId != null) {
+      final respEither = await showDialogToPerform(
+        context,
+        dataCallback: () => sl<OrderRepository>().getOrderDetail(orderId),
+        onCloseDialog: (context, result) => context.pop(result),
+      );
+      if (!context.mounted || respEither == null) return null;
 
-    if (!context.mounted) return;
-    context.pop(); // close loading dialog
+      final OrderDetailEntity? navigationOrder = respEither.fold(
+        (error) => null, // Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra')
+        (ok) => ok.data!,
+      );
 
-    final completedOrder = await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: navigationOrder);
-
-    // when user tap completed order in OrderDetailPage
-    if (completedOrder != null && onReceivedCallback != null) onReceivedCallback(completedOrder);
+      // this maybe use for navigate/refresh [CustomerOrderDetailPage]
+      //1. navigate from [CustomerOrderPurchasePage] -> [CustomerOrderDetailPage]
+      //2. refresh current [CustomerOrderDetailPage] << receive/cancel/return an order
+      return await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: navigationOrder);
+    } else if (orderDetail != null) {
+      // no loading
+      return await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: orderDetail);
+    } else {
+      return null;
+    }
   }
 
   //# Follow Shop
