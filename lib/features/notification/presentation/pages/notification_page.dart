@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/notification.dart';
 
@@ -33,7 +35,11 @@ class _NotificationPageState extends State<NotificationPage> {
       scrollController: ScrollController(),
       itemBuilder: (_, index, data) => notificationItem(data, index),
       showLoadingIndicator: true,
-    )..init();
+    );
+
+    // when user is authenticated, init the lazy list
+    // else it will be init when user login (see [NotificationList])
+    if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) _lazyListController.init();
   }
 
   NotificationItem notificationItem(NotificationEntity data, int index) {
