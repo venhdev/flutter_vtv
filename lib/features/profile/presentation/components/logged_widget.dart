@@ -9,6 +9,7 @@ import 'package:vtv_common/order.dart';
 
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
+import '../../../chat/presentation/pages/customer_chat_room_page.dart';
 import '../../../home/domain/repository/product_repository.dart';
 import '../../../home/presentation/components/product/product_page_builder.dart';
 import '../../../home/presentation/pages/favorite_products_page.dart';
@@ -84,6 +85,11 @@ class _LoggedViewState extends State<LoggedView> {
 
               //# Recent Product Viewed
               _buildRecentProduct(),
+
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: const Icon(Icons.logo_dev),
+              // )
             ],
           ),
         ),
@@ -165,7 +171,18 @@ class _LoggedViewState extends State<LoggedView> {
       SliverAppBar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
         actions: [
+          //# chat
+          IconButton(
+            onPressed: () {
+              context.go(CustomerChatRoomPage.path);
+            },
+            icon: const Icon(Icons.chat_bubble_outline),
+          ),
+
+          //# cart
           const CartBadge(),
+
+          //# setting
           IconButton(
             onPressed: () => context.go('/user/settings'),
             icon: const Icon(Icons.settings_outlined),

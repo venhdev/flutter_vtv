@@ -29,7 +29,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
   ProfileDataSourceImpl(this._client, this._secureStorageHelper, this._dio);
   @override
   Future<SuccessResponse<List<AddressEntity>>> getAllAddress() async {
-    final url = baseUri(path: kAPIAddressAllURL);
+    final url = uriBuilder(path: kAPIAddressAllURL);
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -48,7 +48,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<SuccessResponse<AddressEntity>> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
-    final url = baseUri(path: kAPIAddressAddURL);
+    final url = uriBuilder(path: kAPIAddressAddURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -74,7 +74,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
       "status": "ACTIVE",
     };
 
-    final url = baseUri(path: kAPIAddressUpdateStatusURL);
+    final url = uriBuilder(path: kAPIAddressUpdateStatusURL);
 
     final response = await _client.patch(
       url,
@@ -90,7 +90,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<SuccessResponse<AddressEntity>> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam) async {
-    final url = baseUri(path: kAPIAddressUpdateURL);
+    final url = uriBuilder(path: kAPIAddressUpdateURL);
     final response = await _client.put(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -106,7 +106,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<SuccessResponse<LoyaltyPointEntity>> getLoyaltyPoint() async {
-    final url = baseUri(path: kAPILoyaltyPointGetURL);
+    final url = uriBuilder(path: kAPILoyaltyPointGetURL);
 
     final response = await _dio.getUri(url);
 
@@ -119,7 +119,7 @@ class ProfileDataSourceImpl extends ProfileDataSource {
 
   @override
   Future<SuccessResponse<List<LoyaltyPointHistoryEntity>>> getLoyaltyPointHistory(int loyaltyPointId) async {
-    final url = baseUri(path: '$kAPILoyaltyPointHistoryGetListURL/$loyaltyPointId');
+    final url = uriBuilder(path: '$kAPILoyaltyPointHistoryGetListURL/$loyaltyPointId');
 
     final response = await _dio.getUri(url);
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
@@ -31,9 +32,13 @@ class CustomerHandler {
       if (!context.mounted || respEither == null) return;
 
       final OrderDetailEntity? navigationOrder = respEither.fold(
-        (error) => null, // Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra')
-        (ok) => ok.data!,
+        (error) {
+          Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra');
+          return null;
+        },
+        (ok) => ok.data,
       );
+      if (navigationOrder == null) return;
 
       // this maybe use for navigate/refresh [CustomerOrderDetailPage]
       //1. navigate from [CustomerOrderPurchasePage] -> [CustomerOrderDetailPage]

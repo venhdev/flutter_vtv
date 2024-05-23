@@ -164,9 +164,11 @@ class VNPayWebView extends StatelessWidget {
 
     webViewController.setNavigationDelegate(navigationDelegate);
 
-    return Scaffold(
-      body: WebViewWidget(
-        controller: webViewController,
+    return SafeArea(
+      child: Scaffold(
+        body: WebViewWidget(
+          controller: webViewController,
+        ),
       ),
     );
   }

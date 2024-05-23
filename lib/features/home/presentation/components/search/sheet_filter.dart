@@ -284,8 +284,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Từ: ${StringUtils.formatCurrency(_currentRangeValues.start.round())}'),
-                  Text('Đến: ${StringUtils.formatCurrency(_currentRangeValues.end.round())}'),
+                  Text('Từ: ${ConversionUtils.formatCurrency(_currentRangeValues.start.round())}'),
+                  Text('Đến: ${ConversionUtils.formatCurrency(_currentRangeValues.end.round())}'),
                 ],
               ),
               const SizedBox(height: 10),
@@ -295,8 +295,8 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                 max: _maxRange,
                 divisions: widget.divisions,
                 labels: RangeLabels(
-                  StringUtils.formatCurrency(_currentRangeValues.start.round()),
-                  StringUtils.formatCurrency(_currentRangeValues.end.round()),
+                  ConversionUtils.formatCurrency(_currentRangeValues.start.round()),
+                  ConversionUtils.formatCurrency(_currentRangeValues.end.round()),
                 ),
                 onChanged: (RangeValues values) {
                   setState(() {

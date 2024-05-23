@@ -31,7 +31,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
   @override
   Future<SuccessResponse<ProductPageResp>> searchProductSort(int page, int size, String keyword, String sort) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: kAPISearchProductSortURL,
       queryParameters: {
         'page': page.toString(),
@@ -79,7 +79,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     int minPrice,
     int maxPrice,
   ) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: kAPISearchProductPriceRangeSortURL,
       queryParameters: {
         'page': page,
@@ -130,7 +130,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     int maxPrice,
     int shopId,
   ) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: kAPISearchProductShopPriceRangeSortURL,
       queryParameters: {
         'page': page,
@@ -163,7 +163,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
     String sort,
     int shopId,
   ) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: kAPISearchProductShopSortURL,
       queryParameters: {
         'page': page.toString(),
@@ -188,7 +188,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
   @override
   Future<SuccessResponse<Object?>> searchHistoryAdd(String query) async {
-    final url = baseUri(path: kAPISearchHistoryAddURL);
+    final url = uriBuilder(path: kAPISearchHistoryAddURL);
     final response = await _dio.postUri(url, data: query);
 
     return handleDioResponse<Object?, Map<String, dynamic>>(response, url, hasData: false);
@@ -196,7 +196,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
   @override
   Future<SuccessResponse<Object?>> searchHistoryDelete(String searchHistoryId) async {
-    final url = baseUri(path: kAPISearchHistoryDeleteURL);
+    final url = uriBuilder(path: kAPISearchHistoryDeleteURL);
 
     final response = await _dio.deleteUri(url, data: searchHistoryId);
 
@@ -205,7 +205,7 @@ class SearchProductDataSourceImpl implements SearchProductDataSource {
 
   @override
   Future<SuccessResponse<SearchHistoryResp>> searchHistoryGetPage(int page, int size) async {
-    final url = baseUri(path: kAPISearchHistoryGetPageURL, pathVariables: {
+    final url = uriBuilder(path: kAPISearchHistoryGetPageURL, pathVariables: {
       'page': page.toString(),
       'size': size.toString(),
     });

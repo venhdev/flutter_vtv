@@ -442,8 +442,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       alignment: Alignment.centerLeft,
       child: Text(
         _productDetail.product.cheapestPrice != _productDetail.product.mostExpensivePrice
-            ? '${StringUtils.formatCurrency(_productDetail.product.cheapestPrice)} - ${StringUtils.formatCurrency(_productDetail.product.mostExpensivePrice)}'
-            : StringUtils.formatCurrency(_productDetail.product.cheapestPrice),
+            ? '${ConversionUtils.formatCurrency(_productDetail.product.cheapestPrice)} - ${ConversionUtils.formatCurrency(_productDetail.product.mostExpensivePrice)}'
+            : ConversionUtils.formatCurrency(_productDetail.product.cheapestPrice),
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500,

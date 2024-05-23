@@ -119,7 +119,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
       final products = await Future.wait(
         recentProductIds.map((productId) async {
-          final product = await _productDataSource.getProductDetailById(int.parse(productId));
+          final product = await _guestDataSource.getProductDetailById(int.parse(productId));
           return product.data!;
         }),
       );
@@ -143,7 +143,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   FRespData<ProductDetailResp> getProductDetailById(int productId) async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => _productDataSource.getProductDetailById(productId),
+      dataCallback: () async => _guestDataSource.getProductDetailById(productId),
     );
   }
 
@@ -246,7 +246,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   FRespData<int> getProductCountFavorite(int productId) async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => _productDataSource.getProductCountFavorite(productId),
+      dataCallback: () async => _guestDataSource.getProductCountFavorite(productId),
     );
   }
 

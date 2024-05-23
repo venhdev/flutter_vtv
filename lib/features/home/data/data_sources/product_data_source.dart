@@ -30,9 +30,9 @@ abstract class ProductDataSource {
   Future<SuccessResponse> favoriteProductDelete(int favoriteProductId);
   Future<SuccessResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId);
 
-  //# product-controller
-  Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId);
-  Future<SuccessResponse<int>> getProductCountFavorite(int productId);
+  // //# product-controller
+  // Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId);
+  // Future<SuccessResponse<int>> getProductCountFavorite(int productId);
 
   //# product-page-controller
   Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
@@ -48,7 +48,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomly(int page, int size) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: kAPISuggestionProductPageRandomlyURL,
       queryParameters: {
         'page': page.toString(),
@@ -75,7 +75,7 @@ class ProductDataSourceImpl implements ProductDataSource {
     required int maxPrice,
     required String filter,
   }) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIProductFilterPriceRangeURL/$filter',
       queryParameters: {
         'page': page.toString(),
@@ -98,7 +98,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse<ProductPageResp>> getProductFilter(int page, int size, String sortType) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIProductFilterURL/$sortType',
       queryParameters: {
         'page': page.toString(),
@@ -119,7 +119,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse<FavoriteProductEntity>> favoriteProductAdd(int productId) async {
-    final url = baseUri(path: '$kAPIFavoriteProductAddURL/$productId');
+    final url = uriBuilder(path: '$kAPIFavoriteProductAddURL/$productId');
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -134,7 +134,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse<List<FavoriteProductEntity>>> favoriteProductList() async {
-    final url = baseUri(path: kAPIFavoriteProductListURL);
+    final url = uriBuilder(path: kAPIFavoriteProductListURL);
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -149,7 +149,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse> favoriteProductDelete(int favoriteProductId) async {
-    final url = baseUri(path: '$kAPIFavoriteProductDeleteURL/$favoriteProductId');
+    final url = uriBuilder(path: '$kAPIFavoriteProductDeleteURL/$favoriteProductId');
     final response = await _client.delete(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -163,7 +163,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse<FavoriteProductEntity?>> favoriteProductCheckExist(int productId) async {
-    final url = baseUri(path: '$kAPIFavoriteProductCheckExistURL/$productId');
+    final url = uriBuilder(path: '$kAPIFavoriteProductCheckExistURL/$productId');
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -178,7 +178,7 @@ class ProductDataSourceImpl implements ProductDataSource {
 
   @override
   Future<SuccessResponse<FavoriteProductResp>> favoriteProductDetail(int favoriteProductId) async {
-    final url = baseUri(path: '$kAPIFavoriteProductDetailURL/$favoriteProductId');
+    final url = uriBuilder(path: '$kAPIFavoriteProductDetailURL/$favoriteProductId');
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -191,24 +191,24 @@ class ProductDataSourceImpl implements ProductDataSource {
     );
   }
 
-  @override
-  Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId) async {
-    final url = baseUri(path: '$kAPIProductDetailURL/$productId');
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(),
-    );
+  // @override
+  // Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId) async {
+  //   final url = uriBuilder(path: '$kAPIProductDetailURL/$productId');
+  //   final response = await _client.get(
+  //     url,
+  //     headers: baseHttpHeaders(),
+  //   );
 
-    return handleResponseWithData<ProductDetailResp>(
-      response,
-      url,
-      (jsonMap) => ProductDetailResp.fromMap(jsonMap),
-    );
-  }
+  //   return handleResponseWithData<ProductDetailResp>(
+  //     response,
+  //     url,
+  //     (jsonMap) => ProductDetailResp.fromMap(jsonMap),
+  //   );
+  // }
 
   @override
   Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIProductPageCategoryURL/$categoryId',
       queryParameters: {
         'page': page,
@@ -230,7 +230,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   @override
   Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(
       int page, int size, int productId, bool inShop) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPISuggestionProductPageRandomlyByAlikeProductURL/$productId',
       queryParameters: {
         'page': page,
@@ -250,24 +250,24 @@ class ProductDataSourceImpl implements ProductDataSource {
     );
   }
 
-  @override
-  Future<SuccessResponse<int>> getProductCountFavorite(int productId) async {
-    final url = baseUri(path: '$kAPIProductCountFavoriteURL/$productId');
+  // @override
+  // Future<SuccessResponse<int>> getProductCountFavorite(int productId) async {
+  //   final url = uriBuilder(path: '$kAPIProductCountFavoriteURL/$productId');
 
-    final response = await _dio.getUri(
-      url,
-    );
+  //   final response = await _dio.getUri(
+  //     url,
+  //   );
 
-    return handleDioResponse<int, int>(
-      response,
-      url,
-      parse: (count) => count,
-    );
-  }
+  //   return handleDioResponse<int, int>(
+  //     response,
+  //     url,
+  //     parse: (count) => count,
+  //   );
+  // }
 
   @override
   Future<SuccessResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIProductPageShopURL/$shopId',
       queryParameters: {
         'page': page,

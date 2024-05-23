@@ -36,7 +36,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse<ReviewResp>> getProductReviews(int productId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIReviewProductURL/$productId',
     );
     final response = await _dio.getUri(url);
@@ -63,7 +63,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
       'hasImage': params.hasImage,
     });
 
-    final url = baseUri(path: kAPIReviewAddURL);
+    final url = uriBuilder(path: kAPIReviewAddURL);
 
     final response = await _dio.postUri(
       url,
@@ -85,7 +85,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse<bool>> checkExistReview(String orderItemId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIReviewExistByOrderItemURL/$orderItemId',
     );
     final response = await _dio.getUri(
@@ -102,7 +102,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse> deleteReview(String reviewId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIReviewDeleteURL/$reviewId',
     );
     final response = await _dio.deleteUri(
@@ -114,7 +114,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse<ReviewEntity>> getReviewDetailByOrderItemId(String orderItemId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPIReviewDetailByOrderItemURL/$orderItemId',
     );
     final response = await _dio.getUri(url);
@@ -128,7 +128,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse<CommentEntity>> addCustomerComment(CommentParam param) async {
-    final url = baseUri(path: kAPICommentAddURL);
+    final url = uriBuilder(path: kAPICommentAddURL);
     final response = await _dio.postUri(
       url,
       data: param.toMap(),
@@ -143,7 +143,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse<Object?>> deleteCustomerComment(String commentId) async {
-    final url = baseUri(path: '$kAPICommentDeleteURL/$commentId');
+    final url = uriBuilder(path: '$kAPICommentDeleteURL/$commentId');
     final response = await _dio.patchUri(url);
 
     return handleDioResponse<Object?, Map<String, dynamic>>(
@@ -156,7 +156,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
   @override
   Future<SuccessResponse<List<CommentEntity>>> getReviewComments(String reviewId) async {
     // OK_TODO: implement getReviewComments (API not available)
-    final url = baseUri(path: '$kAPICommentGetURL/$reviewId');
+    final url = uriBuilder(path: '$kAPICommentGetURL/$reviewId');
 
     final response = await _dio.getUri(url);
 
@@ -173,7 +173,7 @@ class ReviewDataSourceImpl implements ReviewDataSource {
 
   @override
   Future<SuccessResponse<ReviewEntity>> getReviewDetailByReviewId(String reviewId) async {
-    final url = baseUri(path: '$kAPIReviewDetailURL/$reviewId');
+    final url = uriBuilder(path: '$kAPIReviewDetailURL/$reviewId');
 
     final response = await _dio.getUri(url);
 

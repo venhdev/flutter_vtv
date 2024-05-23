@@ -251,12 +251,12 @@ class VoucherDetailDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Ngày bắt đầu: ${StringUtils.convertDateTimeToString(voucher.startDate)}',
+              'Ngày bắt đầu: ${ConversionUtils.convertDateTimeToString(voucher.startDate)}',
               style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Ngày kết thúc: ${StringUtils.convertDateTimeToString(voucher.endDate)}',
+              'Ngày kết thúc: ${ConversionUtils.convertDateTimeToString(voucher.endDate)}',
               style: const TextStyle(fontSize: 16.0),
             ),
           ],

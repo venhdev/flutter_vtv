@@ -62,7 +62,7 @@ class _VoucherPageState extends State<VoucherPage> {
                     return widget.canFindMore
                         ? MessageScreen(
                             message: 'Không tìm thấy voucher nào!',
-                            text: 'Tìm thêm voucher',
+                            buttonLabel: 'Tìm thêm voucher',
                             onPressed: () async {
                               await Navigator.of(context).push(
                                 MaterialPageRoute(
@@ -79,7 +79,7 @@ class _VoucherPageState extends State<VoucherPage> {
                           )
                         : MessageScreen(
                             message: 'Không tìm thấy voucher nào!',
-                            text: 'Quay lại',
+                            buttonLabel: 'Quay lại',
                             onPressed: () => Navigator.of(context).pop(),
                           );
                   }

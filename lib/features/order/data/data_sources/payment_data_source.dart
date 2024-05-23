@@ -19,7 +19,7 @@ class PaymentDataSourceImpl implements PaymentDataSource {
   PaymentDataSourceImpl(this._dio);
   @override
   Future<SuccessResponse<String>> createPaymentForSingleOrder(String orderId) async {
-    final url = baseUri(path: '$kAPIVnPayCreatePaymentURL/$orderId');
+    final url = uriBuilder(path: '$kAPIVnPayCreatePaymentURL/$orderId');
 
     final response = await _dio.postUri(url);
 
@@ -32,7 +32,7 @@ class PaymentDataSourceImpl implements PaymentDataSource {
 
   @override
   Future<SuccessResponse<String>> createPaymentForMultiOrder(List<String> orderIds) async {
-    final url = baseUri(path: kAPIVnPayCreatePaymentMultipleOrderURL);
+    final url = uriBuilder(path: kAPIVnPayCreatePaymentMultipleOrderURL);
 
     final response = await _dio.postUri(url, data: orderIds);
 
@@ -45,7 +45,7 @@ class PaymentDataSourceImpl implements PaymentDataSource {
 
   @override
   Future<SuccessResponse<WalletEntity>> getWalletTransactionHistory() async {
-    final url = baseUri(path: kAPIWalletGetURL);
+    final url = uriBuilder(path: kAPIWalletGetURL);
 
     final response = await _dio.getUri(url);
 

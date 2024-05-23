@@ -11,7 +11,7 @@ class CustomerAuthInterceptor extends QueuedInterceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     //> add accessToken if needed
-    if (options.path.contains('/customer') || options.path.contains('/vnpay')) {
+    if (options.path.contains('/customer') || options.path.contains('/vnpay') || options.path.contains('/chat')) {
       final token = await sl<SecureStorageHelper>().accessToken;
       options.headers.addAll(baseHttpHeaders(accessToken: token));
     } else {
@@ -70,7 +70,7 @@ class CustomerAuthInterceptor extends QueuedInterceptor {
   }
 
   Future<String> getNewAccessToken(String refreshToken) async {
-    final url = baseUri(path: kAPIAuthRefreshTokenURL);
+    final url = uriBuilder(path: kAPIAuthRefreshTokenURL);
     final resp = await _innerDio.postUri(
       url,
       options: Options(

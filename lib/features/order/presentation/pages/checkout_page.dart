@@ -298,7 +298,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         children: [
           const Text('Tổng thanh toán: '),
           Text(
-            StringUtils.formatCurrency(_orderDetail.order.paymentTotal),
+            ConversionUtils.formatCurrency(_orderDetail.order.paymentTotal),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
           ),
           const SizedBox(width: 8),

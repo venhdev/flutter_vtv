@@ -11,8 +11,6 @@ import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/notification_repository.dart';
 
-const int _notificationPerPage = 20;
-
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
 
@@ -31,10 +29,11 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
     _lazyListController = LazyListController<NotificationEntity>.sliver(
       items: [],
-      paginatedData: (page) => sl<NotificationRepository>().getPageNotifications(page, _notificationPerPage),
+      paginatedData: (page, size) => sl<NotificationRepository>().getPageNotifications(page, size),
       scrollController: ScrollController(),
       itemBuilder: (_, index, data) => notificationItem(data, index),
       showLoadingIndicator: true,
+      lastPageMessage: 'Không có thông báo nào',
     );
 
     // when user is authenticated, init the lazy list
@@ -42,7 +41,7 @@ class _NotificationPageState extends State<NotificationPage> {
     if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) _lazyListController.init();
   }
 
-  NotificationItem notificationItem(NotificationEntity data, int index) {
+  Widget notificationItem(NotificationEntity data, int index) {
     void handleRead() async {
       if (data.seen) return; // Already read
       final resultEither = await sl<NotificationRepository>().markAsRead(data.notificationId);
@@ -58,28 +57,44 @@ class _NotificationPageState extends State<NotificationPage> {
       );
     }
 
-    return NotificationItem(
-      notification: data,
-      onPressed: (notificationId) {
-        handleRead();
-        final orderId = ConversionUtils.extractUUID(data.body);
-        if (orderId != null) CustomerHandler.navigateToOrderDetailPage(context, orderId: orderId);
-      },
-      onExpandPressed: handleRead,
-      onConfirmDismiss: (notificationId) async {
-        final resultEither = await sl<NotificationRepository>().deleteNotification(notificationId);
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.all(4.0),
+      decoration: BoxDecoration(
+        color: !data.seen ? Colors.orangeAccent.shade100 : Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.grey.shade200),
+        // boxShadow: const [
+        //   BoxShadow(
+        //     color: Colors.black26,
+        //     blurRadius: 5.0,
+        //     offset: Offset(0, 2),
+        //   ),
+        // ],
+      ),
+      child: NotificationItem(
+        notification: data,
+        onPressed: (notificationId) {
+          handleRead();
+          final orderId = ConversionUtils.extractUUID(data.body);
+          if (orderId != null) CustomerHandler.navigateToOrderDetailPage(context, orderId: orderId);
+        },
+        onExpandPressed: handleRead,
+        onConfirmDismiss: (notificationId) async {
+          final resultEither = await sl<NotificationRepository>().deleteNotification(notificationId);
 
-        return resultEither.fold(
-          (error) {
-            return false;
-          },
-          (ok) {
-            log('${ok.message}');
-            _lazyListController.removeAt(index);
-            return true;
-          },
-        );
-      },
+          return resultEither.fold(
+            (error) {
+              return false;
+            },
+            (ok) {
+              log('${ok.message}');
+              _lazyListController.removeAt(index);
+              return true;
+            },
+          );
+        },
+      ),
     );
   }
 

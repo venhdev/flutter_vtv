@@ -48,7 +48,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> createByCartIds(List<String> cartIds) async {
-    final url = baseUri(path: kAPIOrderCreateByCartIdsURL);
+    final url = uriBuilder(path: kAPIOrderCreateByCartIdsURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -64,7 +64,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> createUpdateWithCart(OrderRequestWithCartParam params) async {
-    final url = baseUri(path: kAPIOrderCreateUpdateWithCartURL);
+    final url = uriBuilder(path: kAPIOrderCreateUpdateWithCartURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -80,7 +80,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> placeOrderWithCart(OrderRequestWithCartParam params) async {
-    final url = baseUri(path: kAPIOrderAddWithCartURL);
+    final url = uriBuilder(path: kAPIOrderAddWithCartURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -96,7 +96,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<MultiOrderEntity>> getListOrders() async {
-    final url = baseUri(path: kAPIOrderListURL);
+    final url = uriBuilder(path: kAPIOrderListURL);
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -111,7 +111,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<MultiOrderEntity>> getListOrdersByStatus(String status) async {
-    final url = baseUri(path: '$kAPIOrderListByStatusURL/$status');
+    final url = uriBuilder(path: '$kAPIOrderListByStatusURL/$status');
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -126,7 +126,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> createByProductVariant(Map<int, int> mapParam) async {
-    final url = baseUri(path: kAPIOrderCreateByProductVariantURL);
+    final url = uriBuilder(path: kAPIOrderCreateByProductVariantURL);
     // final body = {
     //   productVariantId.toString(): quantity.toString(),
     // };
@@ -147,7 +147,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> createUpdateWithVariant(OrderRequestWithVariantParam params) async {
-    final url = baseUri(path: kAPIOrderCreateUpdateWithProductVariantURL);
+    final url = uriBuilder(path: kAPIOrderCreateUpdateWithProductVariantURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -163,7 +163,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> placeOrderWithVariant(OrderRequestWithVariantParam params) async {
-    final url = baseUri(path: kAPIOrderAddWithProductVariantURL);
+    final url = uriBuilder(path: kAPIOrderAddWithProductVariantURL);
     final response = await _client.post(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -179,7 +179,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> getOrderDetail(String orderId) async {
-    final url = baseUri(path: '$kAPIOrderDetailURL/$orderId');
+    final url = uriBuilder(path: '$kAPIOrderDetailURL/$orderId');
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -194,7 +194,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> cancelOrder(String orderId) async {
-    final url = baseUri(path: '$kAPIOrderCancelURL/$orderId');
+    final url = uriBuilder(path: '$kAPIOrderCancelURL/$orderId');
     final response = await _client.patch(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -209,7 +209,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId) async {
-    final url = baseUri(path: '$kAPIOrderCompleteURL/$orderId');
+    final url = uriBuilder(path: '$kAPIOrderCompleteURL/$orderId');
     final response = await _client.patch(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -224,7 +224,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<MultipleOrderResp>> createMultiOrderByCartIds(List<String> cartIds) async {
-    final url = baseUri(path: kAPIOrderCreateMultipleByCartIdsURL);
+    final url = uriBuilder(path: kAPIOrderCreateMultipleByCartIdsURL);
     final response = await _dio.postUri(
       url,
       data: cartIds,
@@ -239,7 +239,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<MultipleOrderResp>> createMultiOrderByRequest(MultipleOrderRequestParam params) async {
-    final url = baseUri(path: kAPIOrderCreateMultipleByRequestURL);
+    final url = uriBuilder(path: kAPIOrderCreateMultipleByRequestURL);
     final response = await _dio.postUri(
       url,
       data: params.toMap(),
@@ -254,7 +254,7 @@ class OrderDataSourceImpl extends OrderDataSource {
 
   @override
   Future<SuccessResponse<MultipleOrderResp>> placeMultiOrderByRequest(MultipleOrderRequestParam params) async {
-    final url = baseUri(path: kAPIOrderAddMultipleByRequestURL);
+    final url = uriBuilder(path: kAPIOrderAddMultipleByRequestURL);
     final response = await _dio.postUri(
       url,
       data: params.toMap(),

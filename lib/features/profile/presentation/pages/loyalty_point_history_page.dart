@@ -80,7 +80,7 @@ class LoyaltyPointHistoryItem extends StatelessWidget {
         style: ListTileStyle.list,
         title: Text(getTypeName(loyaltyPointHistoryEntity.type)),
         subtitle: Text(
-            StringUtils.convertDateTimeToString(
+            ConversionUtils.convertDateTimeToString(
               loyaltyPointHistoryEntity.createAt!,
               pattern: 'dd/MM/yyyy hh:mm aa',
             ),

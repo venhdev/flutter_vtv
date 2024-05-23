@@ -31,7 +31,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     super.initState();
     _fullNameController.text = widget.userInfo.fullName!;
     _emailController.text = widget.userInfo.email!;
-    _dobController.text = StringUtils.convertDateTimeToString(widget.userInfo.birthday!);
+    _dobController.text = ConversionUtils.convertDateTimeToString(widget.userInfo.birthday!);
     _genderController.text = widget.userInfo.gender! ? 'Nam' : 'Nữ';
     _dob = widget.userInfo.birthday;
     _gender = widget.userInfo.gender;
@@ -64,88 +64,100 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 // Text('gender: ${userInfo.gender}'),
                 // Text('Email: ${userInfo.email}'),
                 // Text('birthday: ${userInfo.birthday}'),
-                OutlineTextField(
-                  controller: _fullNameController,
-                  label: 'Họ và tên',
-                  hintText: 'Nhập họ và tên',
-                  prefixIcon: const Icon(Icons.badge),
-                  isRequired: false,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlineTextField(
+                    controller: _fullNameController,
+                    label: 'Họ và tên',
+                    hintText: 'Nhập họ và tên',
+                    prefixIcon: const Icon(Icons.badge),
+                    isRequired: false,
+                  ),
                 ),
-                OutlineTextField(
-                  controller: _emailController,
-                  label: 'Email',
-                  hintText: 'Nhập email',
-                  prefixIcon: const Icon(Icons.email),
-                  isRequired: false,
-                  readOnly: true,
-                  enabledBorderColor: Colors.grey.shade300,
-                  focusedBorderColor: Colors.grey.shade300,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlineTextField(
+                    controller: _emailController,
+                    label: 'Email',
+                    hintText: 'Nhập email',
+                    prefixIcon: const Icon(Icons.email),
+                    isRequired: false,
+                    readOnly: true,
+                    enabledBorderColor: Colors.grey.shade300,
+                    focusedBorderColor: Colors.grey.shade300,
+                  ),
                 ),
-                OutlineTextField(
-                  controller: _genderController,
-                  label: 'Giới tính',
-                  hintText: 'Chọn giới tính của bạn',
-                  readOnly: true,
-                  isRequired: false,
-                  onTap: () async {
-                    // show dialog to choose gender
-                    final result = await showDialog(
-                      context: context,
-                      builder: (context) => SimpleDialog(
-                        title: const Text('Chọn giới tính'),
-                        children: <Widget>[
-                          SimpleDialogOption(
-                            onPressed: () {
-                              Navigator.pop(context, true);
-                            },
-                            child: const Text('Nam', style: TextStyle(fontSize: 16)),
-                          ),
-                          SimpleDialogOption(
-                            onPressed: () {
-                              Navigator.pop(context, false);
-                            },
-                            child: const Text('Nữ', style: TextStyle(fontSize: 16)),
-                          ),
-                        ],
-                      ),
-                    );
-
-                    setState(() {
-                      _gender = result as bool?;
-                      if (_gender == null) {
-                        _genderController.clear();
-                      } else if (_gender == true) {
-                        _genderController.text = 'Nam';
-                      } else {
-                        _genderController.text = 'Nữ';
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlineTextField(
+                    controller: _genderController,
+                    label: 'Giới tính',
+                    hintText: 'Chọn giới tính của bạn',
+                    readOnly: true,
+                    isRequired: false,
+                    onTap: () async {
+                      // show dialog to choose gender
+                      final result = await showDialog(
+                        context: context,
+                        builder: (context) => SimpleDialog(
+                          title: const Text('Chọn giới tính'),
+                          children: <Widget>[
+                            SimpleDialogOption(
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text('Nam', style: TextStyle(fontSize: 16)),
+                            ),
+                            SimpleDialogOption(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text('Nữ', style: TextStyle(fontSize: 16)),
+                            ),
+                          ],
+                        ),
+                      );
+                  
+                      setState(() {
+                        _gender = result as bool?;
+                        if (_gender == null) {
+                          _genderController.clear();
+                        } else if (_gender == true) {
+                          _genderController.text = 'Nam';
+                        } else {
+                          _genderController.text = 'Nữ';
+                        }
+                      });
+                    },
+                    prefixIcon: const Icon(Icons.wc),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OutlineTextField(
+                    controller: _dobController,
+                    readOnly: true,
+                    label: 'Ngày sinh',
+                    hintText: 'Chọn ngày sinh của bạn',
+                    prefixIcon: const Icon(Icons.cake),
+                    isRequired: false,
+                    onTap: () async {
+                      final pickedDate = await showDatePicker(
+                        fieldLabelText: 'Ngày sinh',
+                        helpText: 'Chọn ngày sinh của bạn',
+                        cancelText: 'Hủy',
+                        confirmText: 'Chọn',
+                        context: context,
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
+                      );
+                  
+                      if (pickedDate != null) {
+                        _dobController.text = ConversionUtils.convertDateTimeToString(pickedDate);
+                        _dob = pickedDate;
                       }
-                    });
-                  },
-                  prefixIcon: const Icon(Icons.wc),
-                ),
-                OutlineTextField(
-                  controller: _dobController,
-                  readOnly: true,
-                  label: 'Ngày sinh',
-                  hintText: 'Chọn ngày sinh của bạn',
-                  prefixIcon: const Icon(Icons.cake),
-                  isRequired: false,
-                  onTap: () async {
-                    final pickedDate = await showDatePicker(
-                      fieldLabelText: 'Ngày sinh',
-                      helpText: 'Chọn ngày sinh của bạn',
-                      cancelText: 'Hủy',
-                      confirmText: 'Chọn',
-                      context: context,
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
-                    );
-
-                    if (pickedDate != null) {
-                      _dobController.text = StringUtils.convertDateTimeToString(pickedDate);
-                      _dob = pickedDate;
-                    }
-                  },
+                    },
+                  ),
                 ),
 
                 const SizedBox(height: 12),

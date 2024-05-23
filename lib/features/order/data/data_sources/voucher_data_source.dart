@@ -29,7 +29,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<SuccessResponse<List<VoucherEntity>>> listAll() async {
-    final url = baseUri(path: kAPIVoucherListAllURL);
+    final url = uriBuilder(path: kAPIVoucherListAllURL);
     final response = await _dio.getUri(url);
 
     return handleDioResponse<List<VoucherEntity>, Map<String, dynamic>>(
@@ -41,7 +41,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<SuccessResponse<List<VoucherEntity>>> listOnShop(int shopId) async {
-    final url = baseUri(path: '$kAPIVoucherListOnShopURL/$shopId');
+    final url = uriBuilder(path: '$kAPIVoucherListOnShopURL/$shopId');
     final response = await _dio.getUri(url);
 
     return handleDioResponse<List<VoucherEntity>, Map<String, dynamic>>(
@@ -53,7 +53,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<SuccessResponse<List<VoucherEntity>>> listOnSystem() async {
-    final url = baseUri(path: kAPIVoucherListOnSystemURL);
+    final url = uriBuilder(path: kAPIVoucherListOnSystemURL);
     final response = await _dio.getUri(url);
 
     return handleDioResponse<List<VoucherEntity>, Map<String, dynamic>>(
@@ -65,7 +65,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<SuccessResponse<VoucherEntity>> customerVoucherDelete(int voucherId) async {
-    final url = baseUri(path: '$kAPICustomerVoucherDeleteURL/$voucherId');
+    final url = uriBuilder(path: '$kAPICustomerVoucherDeleteURL/$voucherId');
 
     final response = await _dio.deleteUri(url);
 
@@ -78,7 +78,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<SuccessResponse<List<VoucherEntity>>> customerVoucherList() async {
-    final url = baseUri(path: kAPICustomerVoucherListURL);
+    final url = uriBuilder(path: kAPICustomerVoucherListURL);
     final response = await _dio.getUri(url);
 
     return handleDioResponse<List<VoucherEntity>, Map<String, dynamic>>(
@@ -90,7 +90,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
 
   @override
   Future<SuccessResponse<VoucherEntity>> customerVoucherSave(int voucherId) async {
-    final url = baseUri(path: '$kAPICustomerVoucherSaveURL/$voucherId');
+    final url = uriBuilder(path: '$kAPICustomerVoucherSaveURL/$voucherId');
     final response = await _dio.postUri(url);
 
     return handleDioResponse<VoucherEntity, Map<String, dynamic>>(

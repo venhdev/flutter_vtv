@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/auth.dart';
 
 import '../../../features/cart/presentation/components/cart_badge.dart';
+import '../../../features/chat/presentation/pages/customer_chat_room_page.dart';
 import '../../../features/home/presentation/components/search/simple_search_bar.dart';
 import '../../../features/home/presentation/pages/search_page.dart';
 
@@ -50,7 +53,24 @@ AppBar buildAppBar(
           ),
         ),
       // icon cart badge (number of items in cart)
-      const CartBadge(),
+      BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state.status != AuthStatus.authenticated) return const SizedBox.shrink();
+
+          return Row(
+            children: [
+              // chat icon
+              IconButton(
+                onPressed: () => context.push(CustomerChatRoomPage.path),
+                icon: const Icon(Icons.chat_outlined),
+              ),
+
+              // cart icon
+              const CartBadge(),
+            ],
+          );
+        },
+      ),
 
       // icon settings
       if (showSettingButton)

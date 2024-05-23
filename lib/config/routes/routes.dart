@@ -14,6 +14,8 @@ import '../../features/auth/presentation/customer_forgot_password_page.dart';
 import '../../features/auth/presentation/customer_login_page.dart';
 import '../../features/auth/presentation/customer_register_page.dart';
 import '../../features/cart/presentation/pages/cart_page.dart';
+import '../../features/chat/presentation/pages/customer_chat_page.dart';
+import '../../features/chat/presentation/pages/customer_chat_room_page.dart';
 import '../../features/home/presentation/pages/category_page.dart';
 import '../../features/home/presentation/pages/favorite_products_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
@@ -110,6 +112,27 @@ class AppRoutes {
             return const UserPage(); // contain login page
           },
           routes: [
+            // chat room
+            GoRoute(
+                path: CustomerChatRoomPage.routeName, // '/user/chat-room'
+                name: CustomerChatRoomPage.routeName, // chat-room
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) => const CustomerChatRoomPage(),
+                routes: [
+                  GoRoute(
+                    path: CustomerChatPage.routeName, // '/user/chat-room/chat' ?roomChatId=...&receiverUsername=...
+                    name: CustomerChatPage.routeName, // chat
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) {
+                      // final roomChatId = state.pathParameters['roomChatId']!;
+                      // final receiverUsername = state.pathParameters['receiverUsername']!;
+                      final roomChatId = state.uri.queryParameters['roomChatId']!;
+                      final receiverUsername = state.uri.queryParameters['receiverUsername']!;
+                      return CustomerChatPage(roomChatId: roomChatId, receiverUsername: receiverUsername);
+                    },
+                  ),
+                ]),
+
             // login
             GoRoute(
                 // path: LoginPage.routeName, // '/user/login'

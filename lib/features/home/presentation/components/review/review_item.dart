@@ -66,7 +66,7 @@ class ReviewItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              StringUtils.convertDateTimeToString(
+              ConversionUtils.convertDateTimeToString(
                 (review.createdAt).toLocal(),
                 pattern: 'dd-MM-yyyy hh:mm aa',
               ),

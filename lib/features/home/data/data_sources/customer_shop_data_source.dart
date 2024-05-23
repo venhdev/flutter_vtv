@@ -37,7 +37,7 @@ class ShopDataSourceImpl implements CustomerShopDataSource {
 
   @override
   Future<SuccessResponse<FollowedShopEntity>> followedShopAdd(int shopId) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: kAPIFollowedShopAddURL,
       queryParameters: {'shopId': shopId.toString()},
     );
@@ -55,7 +55,7 @@ class ShopDataSourceImpl implements CustomerShopDataSource {
 
   @override
   Future<SuccessResponse> followedShopDelete(int followedShopId) async {
-    final url = baseUri(path: '$kAPIFollowedShopDeleteURL/$followedShopId');
+    final url = uriBuilder(path: '$kAPIFollowedShopDeleteURL/$followedShopId');
 
     final response = await _dio.deleteUri(
       url,
@@ -70,7 +70,7 @@ class ShopDataSourceImpl implements CustomerShopDataSource {
 
   @override
   Future<SuccessResponse<List<FollowedShopEntity>>> followedShopList() async {
-    final url = baseUri(path: kAPIFollowedShopListURL);
+    final url = uriBuilder(path: kAPIFollowedShopListURL);
 
     final response = await _dio.getUri(url);
 

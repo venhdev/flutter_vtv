@@ -22,7 +22,7 @@ import '../components/shop/product_shop_list.dart';
 // - Follow/Unfollow a shop
 //! because cannot pass scrollController to LazyLoadBuilder, cannot load more page when scroll to the end
 //> for the first load all products of a shop >> [_productPerPage] really large //? server limit 200
-const int _productPerPage = 200;
+// const int _productPerPage = 200; >> config in LazyListController
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key, required this.shopId});
@@ -49,12 +49,12 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
   // control state
   int? _followedShopId;
 
-  FRespData<ProductPageResp> _paginatedData(int page) async {
+  FRespData<ProductPageResp> _paginatedData(int page, int size) async {
     if (_filterParams.isFiltering && _keywords.isNotEmpty) {
       if (_filterParams.isFilterWithPriceRange) {
         return sl<SearchProductRepository>().searchProductShopPriceRangeSort(
           page,
-          _productPerPage,
+          size,
           _keywords,
           _filterParams.sortType,
           _filterParams.minPrice,
@@ -64,14 +64,14 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
       } else {
         return sl<SearchProductRepository>().searchProductShopSort(
           page,
-          _productPerPage,
+          size,
           _keywords,
           _filterParams.sortType,
           _shopDetail.shop.shopId,
         );
       }
     }
-    return sl<ProductRepository>().getProductPageByShop(page, _productPerPage, widget.shopId);
+    return sl<ProductRepository>().getProductPageByShop(page, size, widget.shopId);
   }
 
   void checkFollowedShop(int shopId) async {
@@ -202,7 +202,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return ShopInfoDetailPage(shopDetail: _shopDetail);
+              return ShopDetailPage(shopDetail: _shopDetail);
             },
           ),
         );

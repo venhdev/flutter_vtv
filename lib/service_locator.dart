@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/guest.dart';
 
@@ -80,6 +81,7 @@ Future<void> initializeLocator() async {
 
   //! Data source
   sl.registerSingleton<GuestDataSource>(GuestDataSourceImpl(sl()));
+  sl.registerSingleton<ChatDataSource>(ChatDataSourceImpl(sl()));
   sl.registerSingleton<AuthDataSource>(AuthDataSourceImpl(sl(), sl(), sl(), sl()));
   sl.registerSingleton<ProfileDataSource>(ProfileDataSourceImpl(sl(), sl(), sl()));
 
@@ -98,6 +100,7 @@ Future<void> initializeLocator() async {
 
   //! Repository
   sl.registerSingleton<GuestRepository>(GuestRepositoryImpl(sl())); // vtv_common
+  sl.registerSingleton<ChatRepository>(ChatRepositoryImpl(sl())); // vtv_common
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl(), sl()));
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl(sl()));
 

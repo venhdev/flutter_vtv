@@ -187,11 +187,11 @@ class _CartPageState extends State<CartPage> {
                   child: Text('Tổng cộng:'),
                 ),
                 Text(
-                  // StringUtils.formatCurrency(ok.data!.order.totalPrice),
-                  // StringUtils.formatCurrency(
+                  // ConversionUtils.formatCurrency(ok.data!.order.totalPrice),
+                  // ConversionUtils.formatCurrency(
                   //   ok.data!.fold(0, (previousValue, element) => previousValue + element.order.totalPrice),
                   // ),
-                  StringUtils.formatCurrency(ok.data!.totalPayment),
+                  ConversionUtils.formatCurrency(ok.data!.totalPayment),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Padding(
@@ -235,7 +235,7 @@ class _CartPageState extends State<CartPage> {
   //                 child: Text('Tổng cộng:'),
   //               ),
   //               Text(
-  //                 StringUtils.formatCurrency(ok.data!.order.totalPrice),
+  //                 ConversionUtils.formatCurrency(ok.data!.order.totalPrice),
   //                 style: const TextStyle(fontWeight: FontWeight.bold),
   //               ),
   //               Padding(

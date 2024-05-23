@@ -22,7 +22,7 @@ class CartDataSourceImpl extends CartDataSource {
 
   @override
   Future<SuccessResponse<CartResp>> getCarts() async {
-    final url = baseUri(path: kAPICartGetListURL);
+    final url = uriBuilder(path: kAPICartGetListURL);
     final response = await _client.get(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -42,7 +42,7 @@ class CartDataSourceImpl extends CartDataSource {
       'quantity': quantity.toString(),
     };
 
-    final url = baseUri(path: kAPICartAddURL);
+    final url = uriBuilder(path: kAPICartAddURL);
 
     final response = await _client.post(
       url,
@@ -58,7 +58,7 @@ class CartDataSourceImpl extends CartDataSource {
 
   @override
   Future<SuccessResponse> deleteToCart(String cartId) async {
-    final url = baseUri(path: '$kAPICartDeleteURL/$cartId');
+    final url = uriBuilder(path: '$kAPICartDeleteURL/$cartId');
     final response = await _client.delete(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -72,7 +72,7 @@ class CartDataSourceImpl extends CartDataSource {
 
   @override
   Future<SuccessResponse> deleteToCartByShopId(String shopId) async {
-    final url = baseUri(path: '$kAPICartDeleteByShopIdURL/$shopId');
+    final url = uriBuilder(path: '$kAPICartDeleteByShopIdURL/$shopId');
     final response = await _client.delete(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
@@ -86,7 +86,7 @@ class CartDataSourceImpl extends CartDataSource {
 
   @override
   Future<SuccessResponse> updateCart(String cartId, int quantity) async {
-    final url = baseUri(
+    final url = uriBuilder(
       path: '$kAPICartUpdateURL/$cartId',
       queryParameters: {
         'quantity': quantity.toString(),

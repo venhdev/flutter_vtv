@@ -59,6 +59,7 @@ dependencies:
 
   # dev
   logger: ^2.0.2+1
+  stomp_dart_client: ^2.0.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
