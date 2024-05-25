@@ -28,12 +28,7 @@ class CustomerChatRoomPage extends StatelessWidget {
     return ChatRoomItem(
       room: room,
       onPressed: () {
-        context.go(
-          BuilderUtils.uriPath(
-            path: CustomerChatPage.path,
-            queryParameters: {'roomChatId': room.romChatId, 'receiverUsername': room.receiverUsername},
-          ),
-        );
+        context.go(CustomerChatPage.path, extra: room);
       },
     );
   }

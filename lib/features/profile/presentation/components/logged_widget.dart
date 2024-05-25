@@ -176,7 +176,7 @@ class _LoggedViewState extends State<LoggedView> {
             onPressed: () {
               context.go(CustomerChatRoomPage.path);
             },
-            icon: const Icon(Icons.chat_bubble_outline),
+            icon: const Icon(Icons.chat),
           ),
 
           //# cart

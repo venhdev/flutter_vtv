@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
@@ -63,6 +64,9 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'WebViewPaymentExtra') {
       return WebViewPaymentExtra.fromJson(inputAsList[1] as String);
     }
+    if (inputAsList[0] == 'ChatRoomEntity') {
+      return ChatRoomEntity.fromJson(inputAsList[1] as String);
+    }
     throw FormatException('Unable to parse input: $input');
   }
 }
@@ -120,6 +124,11 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case WebViewPaymentExtra _:
         return <Object?>[
           'WebViewPaymentExtra',
+          (input).toJson(),
+        ];
+      case ChatRoomEntity _:
+        return <Object?>[
+          'ChatRoomEntity',
           (input).toJson(),
         ];
       default:

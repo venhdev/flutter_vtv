@@ -34,8 +34,8 @@ abstract class ProductDataSource {
   // Future<SuccessResponse<ProductDetailResp>> getProductDetailById(int productId);
   // Future<SuccessResponse<int>> getProductCountFavorite(int productId);
 
-  //# product-page-controller
-  Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
+  //# product-page-controller *Guest
+  // Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId);
   Future<SuccessResponse<ProductPageResp>> getProductPageByShop(int page, int size, int shopId);
 }
 
@@ -206,26 +206,7 @@ class ProductDataSourceImpl implements ProductDataSource {
   //   );
   // }
 
-  @override
-  Future<SuccessResponse<ProductPageResp>> getProductPageByCategory(int page, int size, int categoryId) async {
-    final url = uriBuilder(
-      path: '$kAPIProductPageCategoryURL/$categoryId',
-      queryParameters: {
-        'page': page,
-        'size': size,
-      }.map((key, value) => MapEntry(key, value.toString())),
-    );
-    final response = await _client.get(
-      url,
-      headers: baseHttpHeaders(),
-    );
-
-    return handleResponseWithData<ProductPageResp>(
-      response,
-      url,
-      (jsonMap) => ProductPageResp.fromMap(jsonMap),
-    );
-  }
+  
 
   @override
   Future<SuccessResponse<ProductPageResp>> getSuggestionProductsRandomlyByAlikeProduct(

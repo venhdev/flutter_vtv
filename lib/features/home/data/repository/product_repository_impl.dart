@@ -150,7 +150,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId) async {
     return await handleDataResponseFromDataSource(
-      dataCallback: () async => _productDataSource.getProductPageByCategory(page, size, categoryId),
+      dataCallback: () async => _guestDataSource.getProductPageByCategory(page, size, categoryId),
     );
   }
 

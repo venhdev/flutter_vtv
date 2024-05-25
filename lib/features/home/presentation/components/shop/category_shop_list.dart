@@ -13,7 +13,6 @@ class ShopCategoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: sl<GuestRepository>().getCategoryShopByShopId(shopId),
-      // future: getCategoryShopByShopId(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return snapshot.data!.fold(

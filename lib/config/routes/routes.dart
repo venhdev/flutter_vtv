@@ -3,6 +3,7 @@ import 'package:flutter_vtv/config/routes/extra_codec.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
+import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/dev.dart';
 import 'package:vtv_common/home.dart';
@@ -99,6 +100,14 @@ class AppRoutes {
           string: state.extra as String?,
         ),
       ),
+      GoRoute(
+      path: '/:any',
+      // builder: (context, state) => Container(color: AppColors.pageBackground),
+      redirect: (context, state) {
+        // Unsupported path, we redirect it to /, which redirects it to /line
+        return '/';
+      },
+    ),
     ],
   );
 
@@ -124,11 +133,8 @@ class AppRoutes {
                     name: CustomerChatPage.routeName, // chat
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (context, state) {
-                      // final roomChatId = state.pathParameters['roomChatId']!;
-                      // final receiverUsername = state.pathParameters['receiverUsername']!;
-                      final roomChatId = state.uri.queryParameters['roomChatId']!;
-                      final receiverUsername = state.uri.queryParameters['receiverUsername']!;
-                      return CustomerChatPage(roomChatId: roomChatId, receiverUsername: receiverUsername);
+                      final room = state.extra as ChatRoomEntity;
+                      return CustomerChatPage(room: room);
                     },
                   ),
                 ]),
