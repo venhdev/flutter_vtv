@@ -46,3 +46,7 @@ app.*.map.json
 .markdownlint.json
 PRIVATE.txt
 GIT.txt
+
+# Sensitivity related
+/.env
+firebase_options.dart
