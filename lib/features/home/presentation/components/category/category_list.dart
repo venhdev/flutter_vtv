@@ -7,9 +7,7 @@ import '../../pages/category_page.dart';
 import 'category_item.dart';
 
 class CategoryList extends StatelessWidget {
-  const CategoryList({
-    super.key,
-  });
+  const CategoryList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,27 +54,6 @@ class CategoryList extends StatelessWidget {
                                 '${CategoryPage.path}/${category.categoryId}',
                                 extra: category.name,
                               );
-                              // Navigator.of(context).push(
-                              //   MaterialPageRoute(
-                              //     builder: (context) {
-                              //       return Scaffold(
-                              //         appBar: AppBar(
-                              //           title: Text(category.name),
-                              //         ),
-                              //         
-                              //         body: LazyProductListBuilder(
-                              //           dataCallback: (page) {
-                              //             return sl<ProductRepository>().getProductPageByCategory(
-                              //               page,
-                              //               8,
-                              //               category.categoryId,
-                              //             );
-                              //           },
-                              //         ),
-                              //       );
-                              //     },
-                              //   ),
-                              // );
                             },
                           ),
                         )

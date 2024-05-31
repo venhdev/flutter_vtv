@@ -28,13 +28,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _productPerPage = 6; //! page size
-  final lazyController = LazyLoadController<ProductEntity>(
-    scrollController: ScrollController(),
-    items: [],
-    useGrid: true,
-    // showIndicator: true,
-  );
+  late LazyListController<ProductEntity> lazyProductListController;
+  late LazyListController<ProductEntity> lazyBestSellingListController;
 
   // filter & sort
   FilterParams currentFilter = FilterParams(
@@ -48,18 +43,64 @@ class _HomePageState extends State<HomePage> {
   bool isRefreshing = false;
   int crossAxisCount = 2;
 
-  Future<void> _refresh() async {
-    setState(() {
-      lazyController.reload();
-      if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
-        context.read<CartBloc>().add(InitialCart());
-      }
-    });
-  }
-
   @override
   void initState() {
     super.initState();
+    lazyProductListController = LazyListController(
+        items: [],
+        scrollController: ScrollController(),
+        lastPageMessage: 'Đã hiển thị tất cả sản phẩm',
+        paginatedData: (page, size) async {
+          if (currentFilter.isFiltering) {
+            if (currentFilter.isFilterWithPriceRange) {
+              return sl<ProductRepository>().getProductFilterByPriceRange(
+                page,
+                size,
+                currentFilter.minPrice,
+                currentFilter.maxPrice,
+                currentFilter.sortType,
+              );
+            } else {
+              return sl<ProductRepository>().getProductFilter(
+                page,
+                size,
+                currentFilter.sortType,
+              );
+            }
+          }
+          return sl<ProductRepository>().getSuggestionProductsRandomly(page, size);
+        },
+        itemBuilder: (context, index, data) {
+          return ProductItem(
+            product: data,
+            onPressed: () {
+              context.push(ProductDetailPage.path, extra: data.productId);
+            },
+          );
+        })
+      ..init()
+      ..scrollController!.addListener(() {
+        if (lazyProductListController.scrollController!.position.pixels ==
+            lazyProductListController.scrollController!.position.maxScrollExtent) {
+          lazyProductListController.loadNextPage();
+        }
+      });
+
+    lazyBestSellingListController = LazyListController(
+        items: [],
+        scrollDirection: Axis.horizontal,
+        useGrid: false,
+        paginatedData: (_, __) => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
+        itemBuilder: (context, index, product) => ProductItem(
+              onPressed: () => context.go(ProductDetailPage.path, extra: product.productId),
+              product: product,
+              height: 140,
+              width: 140,
+            ),
+        showLoadingIndicator: true)
+      ..init()
+      ..setDebugLabel('BestSellingList');
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       sl<FirebaseCloudMessagingManager>().runWhenContainInitialMessage(
         (remoteMessage) {
@@ -71,7 +112,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    lazyController.scrollController.dispose();
+    lazyProductListController.dispose();
+    lazyBestSellingListController.dispose();
     super.dispose();
   }
 
@@ -88,18 +130,23 @@ class _HomePageState extends State<HomePage> {
       appBar: buildAppBar(context, clearOnSubmit: true),
       body: RefreshIndicator(
         onRefresh: () async {
-          _refresh(); // Remove all widget and re-render due to call API
+          // _refresh(); // Remove all widget and re-render due to call API
+          lazyProductListController.refresh();
+          lazyBestSellingListController.refresh();
+          if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
+            context.read<CartBloc>().add(InitialCart());
+          }
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView(
-            controller: lazyController.scrollController,
+            controller: lazyProductListController.scrollController,
             children: [
               //# Category
               const CategoryList(),
               //# Best selling
               BestSellingProductListBuilder(
-                future: () => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
+                lazyListController: lazyBestSellingListController,
               ),
               // const GlobalSystemVoucherPageView(),
               //# Product list with filter
@@ -113,40 +160,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildLazyProducts() {
-    return NestedLazyLoadBuilder<ProductEntity>(
-      controller: lazyController,
-      crossAxisCount: 2,
-      dataCallback: (page) async {
-        if (currentFilter.isFiltering) {
-          if (currentFilter.isFilterWithPriceRange) {
-            return sl<ProductRepository>().getProductFilterByPriceRange(
-              page,
-              _productPerPage,
-              currentFilter.minPrice,
-              currentFilter.maxPrice,
-              currentFilter.sortType,
-            );
-          } else {
-            return sl<ProductRepository>().getProductFilter(
-              page,
-              _productPerPage,
-              currentFilter.sortType,
-            );
-          }
-        }
-        return sl<ProductRepository>().getSuggestionProductsRandomly(page, _productPerPage);
-      },
-      itemBuilder: (context, index, data) {
-        return ProductItem(
-          product: lazyController.items[index],
-          onPressed: () {
-            context.push(
-              ProductDetailPage.path,
-              extra: lazyController.items[index].productId,
-            );
-          },
-        );
-      },
+    return LazyListBuilder(
+      lazyController: lazyProductListController,
+      itemBuilder: (BuildContext context, int index, _) => lazyProductListController.build(context, index),
     );
   }
 
@@ -156,10 +172,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         const Text(
           'Danh sách sản phẩm',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         BtnFilter(
           context,
@@ -172,7 +185,7 @@ class _HomePageState extends State<HomePage> {
             if (filterParams != null) {
               setState(() {
                 currentFilter = filterParams;
-                lazyController.reload();
+                lazyProductListController.refresh();
               });
             }
           },
@@ -181,65 +194,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// class GlobalSystemVoucherPageView extends StatefulWidget {
-//   const GlobalSystemVoucherPageView({super.key});
-
-//   @override
-//   State<GlobalSystemVoucherPageView> createState() => _GlobalSystemVoucherPageViewState();
-// }
-
-// class _GlobalSystemVoucherPageViewState extends State<GlobalSystemVoucherPageView> {
-//   // late PageController _pageViewController;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // _pageViewController = PageController();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final TextTheme textTheme = Theme.of(context).textTheme;
-
-//     return BlocBuilder<AuthCubit, AuthState>(
-//       builder: (context, state) {
-//         if (state.status == AuthStatus.authenticated) {
-//           return FutureBuilder(
-//             future: sl<VoucherRepository>().listOnSystem(),
-//             builder: (context, snapshot) {
-//               if (snapshot.hasData) {
-//                 return snapshot.data!.fold(
-//                   (error) => MessageScreen.error(error.message),
-//                   (ok) {
-//                     if (ok.data!.isEmpty) {
-//                       return const SizedBox.shrink();
-//                     }
-//                     return CarouselSlider.builder(
-//                       options: CarouselOptions(height: 150, enableInfiniteScroll: false),
-//                       itemCount: ok.data!.length,
-//                       itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => VoucherItemV2(
-//                         voucher: ok.data![itemIndex],
-//                         onPressed: (_) {
-//                           context.go(VoucherCollectionPage.path);
-//                         },
-//                         actionLabel: 'Sử\ndụng',
-//                       ),
-//                     );
-//                   },
-//                 );
-//               } else if (snapshot.hasError) {
-//                 return MessageScreen.error(snapshot.error.toString());
-//               }
-//               return const Center(
-//                 child: CircularProgressIndicator(),
-//               );
-//             },
-//           );
-//         } else {
-//           return const SizedBox.shrink();
-//         }
-//       },
-//     );
-//   }
-// }
