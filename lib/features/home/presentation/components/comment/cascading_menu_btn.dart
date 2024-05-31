@@ -27,7 +27,7 @@ class _CascadingMenuBtnState extends State<CascadingMenuBtn> {
     return MenuAnchor(
       childFocusNode: _buttonFocusNode,
       style: MenuStyle(
-        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
       ),
       menuChildren: <Widget>[
         MenuItemButton(

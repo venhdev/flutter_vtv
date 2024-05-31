@@ -56,10 +56,10 @@ class IntroPage extends StatelessWidget {
     return IconButton(
       onPressed: () async => await Provider.of<AppState>(context, listen: false).started(),
       style: ButtonStyle(
-        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(horizontal: 16)),
+        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(horizontal: 16)),
         shape:
-            MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-        backgroundColor: MaterialStateProperty.all<Color>(const Color(0xffffc600)),
+            WidgetStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+        backgroundColor: WidgetStateProperty.all<Color>(const Color(0xffffc600)),
       ),
       icon: Container(
         height: 52,

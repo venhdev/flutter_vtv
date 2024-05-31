@@ -258,7 +258,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
 
   SliverAppBar _sliverAppBar(BuildContext context, bool innerBoxIsScrolled) {
     return SliverAppBar(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       titleSpacing: 0,
       // forceElevated: innerBoxIsScrolled,
       floating: true,
@@ -297,7 +297,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
         child: Column(
           children: [
             Wrapper(
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               useBoxShadow: false,
               border: Border(
                 bottom: BorderSide(

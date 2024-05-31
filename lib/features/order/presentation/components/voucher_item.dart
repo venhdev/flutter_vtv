@@ -22,7 +22,7 @@ class VoucherItem extends StatelessWidget {
           onSelected?.call(voucher);
         },
         splashColor: Colors.red.withOpacity(0.2),
-        overlayColor: MaterialStateProperty.all(Colors.grey.withOpacity(0.2)),
+        overlayColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.2)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

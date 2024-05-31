@@ -135,9 +135,9 @@ class _SheetAddOrUpdateReviewState extends State<SheetAddOrUpdateReview> {
                         )
                       : IconButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.white),
-                            padding: MaterialStateProperty.all(const EdgeInsets.all(0)),
-                            shape: MaterialStateProperty.all(const RoundedRectangleBorder()),
+                            backgroundColor: WidgetStateProperty.all(Colors.white),
+                            padding: WidgetStateProperty.all(const EdgeInsets.all(0)),
+                            shape: WidgetStateProperty.all(const RoundedRectangleBorder()),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           onPressed: () {

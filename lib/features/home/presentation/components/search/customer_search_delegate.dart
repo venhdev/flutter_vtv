@@ -182,7 +182,7 @@ class CustomerSearchDelegate extends SearchDelegate<SearchHistoryEntity> {
   ThemeData appBarTheme(BuildContext context) {
     return super.appBarTheme(context).copyWith(
           appBarTheme: Theme.of(context).appBarTheme.copyWith(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
               ),
         );
   }

@@ -208,7 +208,7 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Container(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           height: double.infinity,
           width: double.infinity,
           child: Align(

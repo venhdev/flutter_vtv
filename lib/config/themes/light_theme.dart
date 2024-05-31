@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   colorScheme: const ColorScheme.light(
-    background: Color(0xFFFFFDF5),
+    surface: Color(0xFFFFFDF5),
     primary: Colors.black87,
     primaryContainer: Color(0xFFFFC600),
   ),
@@ -17,7 +17,7 @@ ThemeData lightTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      shape: MaterialStateProperty.all(
+      shape: WidgetStateProperty.all(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),

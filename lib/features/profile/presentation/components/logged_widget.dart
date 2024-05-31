@@ -329,9 +329,9 @@ class _LoggedViewState extends State<LoggedView> {
           leadingIcon: Icons.card_giftcard,
           iconColor: Colors.orange,
           buttonStyle: ButtonStyle(
-            padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-            // backgroundColor: MaterialStateProperty.all(Colors.white),
-            shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+            padding: WidgetStateProperty.all(const EdgeInsets.all(16)),
+            // backgroundColor: WidgetStateProperty.all(Colors.white),
+            shape: WidgetStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
           ),
         ),
 
@@ -348,9 +348,9 @@ class _LoggedViewState extends State<LoggedView> {
           leadingIcon: Icons.account_balance_wallet,
           iconColor: Colors.green,
           buttonStyle: ButtonStyle(
-            padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
-            // backgroundColor: MaterialStateProperty.all(Colors.white),
-            shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+            padding: WidgetStateProperty.all(const EdgeInsets.all(16)),
+            // backgroundColor: WidgetStateProperty.all(Colors.white),
+            shape: WidgetStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
           ),
         ),
       ],

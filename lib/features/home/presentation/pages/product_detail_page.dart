@@ -264,7 +264,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         },
         icon: const Icon(Icons.arrow_back),
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.white24),
+          backgroundColor: WidgetStateProperty.all(Colors.white24),
         ),
       ),
       actions: const [
@@ -493,7 +493,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 left: 16,
                 child: IconButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
+                    backgroundColor: WidgetStateProperty.all(
                       Colors.white.withOpacity(0.6),
                     ),
                   ),
@@ -509,7 +509,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               //   right: 16,
               //   child: IconButton(
               //     style: ButtonStyle(
-              //       backgroundColor: MaterialStateProperty.all(
+              //       backgroundColor: WidgetStateProperty.all(
               //         Colors.white.withOpacity(0.6),
               //       ),
               //     ),

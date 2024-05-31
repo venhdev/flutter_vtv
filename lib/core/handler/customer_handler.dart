@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -12,10 +13,20 @@ import '../../features/order/domain/repository/order_repository.dart';
 import '../../features/order/presentation/pages/customer_order_detail_page.dart';
 import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../service_locator.dart';
+import '../constants/global_variables.dart';
 
 /// Quick Handler for customer actions (common use function in multi page)
 class CustomerHandler {
   //# Redirect
+  static void navigateToOrderDetailPageViaRemoteMessage(RemoteMessage? remoteMessage) {
+    if (remoteMessage?.notification?.body == null || GlobalVariables.navigatorState.currentContext == null) return;
+
+    final uuid = ConversionUtils.extractUUID(remoteMessage!.notification!.body!);
+    if (uuid != null) {
+      navigateToOrderDetailPage(GlobalVariables.navigatorState.currentContext!, orderId: uuid);
+    }
+  }
+
   static void navigateToOrderDetailPage(
     BuildContext context, {
     String? orderId,

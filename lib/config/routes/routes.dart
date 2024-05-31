@@ -9,6 +9,7 @@ import 'package:vtv_common/dev.dart';
 import 'package:vtv_common/home.dart';
 import 'package:vtv_common/order.dart';
 
+import '../../core/constants/global_variables.dart';
 import '../../core/presentation/pages/intro_page.dart';
 import '../../features/auth/presentation/customer_change_password_page.dart';
 import '../../features/auth/presentation/customer_forgot_password_page.dart';
@@ -49,7 +50,8 @@ import 'scaffold_with_navbar.dart';
 
 //! config bottom navigation bar in '/lib/config/routes/scaffold_with_navbar.dart'
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+// final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalVariables.navigatorState;
 final GlobalKey<NavigatorState> _sectionHomeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'sectionHomeNav');
 // final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
@@ -101,13 +103,13 @@ class AppRoutes {
         ),
       ),
       GoRoute(
-      path: '/:any',
-      // builder: (context, state) => Container(color: AppColors.pageBackground),
-      redirect: (context, state) {
-        // Unsupported path, we redirect it to /, which redirects it to /line
-        return '/';
-      },
-    ),
+        path: '/:any',
+        // builder: (context, state) => Container(color: AppColors.pageBackground),
+        redirect: (context, state) {
+          // Unsupported path, we redirect it to /, which redirects it to /line
+          return '/';
+        },
+      ),
     ],
   );
 

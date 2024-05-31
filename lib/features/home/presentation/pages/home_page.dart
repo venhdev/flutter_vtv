@@ -5,6 +5,7 @@ import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
 
+import '../../../../core/handler/customer_handler.dart';
 import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -53,6 +54,18 @@ class _HomePageState extends State<HomePage> {
       if (context.read<AuthCubit>().state.status == AuthStatus.authenticated) {
         context.read<CartBloc>().add(InitialCart());
       }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sl<FirebaseCloudMessagingManager>().runWhenContainInitialMessage(
+        (remoteMessage) {
+          CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+        },
+      );
     });
   }
 
