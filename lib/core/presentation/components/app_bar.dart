@@ -13,6 +13,7 @@ AppBar buildAppBar(
   Widget? title,
   bool showSettingButton = false,
   bool showSearchBar = true,
+  bool showChat = false,
   TextEditingController? searchController,
   Widget? leading,
   void Function(String)? onSearchSubmitted,
@@ -60,10 +61,11 @@ AppBar buildAppBar(
           return Row(
             children: [
               // chat icon
-              IconButton(
-                onPressed: () => context.push(CustomerChatRoomPage.path),
-                icon: const Icon(Icons.chat_outlined),
-              ),
+              if (showChat)
+                IconButton(
+                  onPressed: () => context.push(CustomerChatRoomPage.path),
+                  icon: const Icon(Icons.chat_outlined),
+                ),
 
               // cart icon
               const CartBadge(),

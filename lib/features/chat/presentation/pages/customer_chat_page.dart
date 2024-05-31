@@ -22,12 +22,13 @@ class CustomerChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final lazyListController = LazyListController<MessageEntity>(
       items: [],
-      paginatedData: (page, size) => sl<ChatRepository>().getPageChatMessageByRoomId(page, size, room.roomChatId),
+      paginatedData: (page, size) => sl<ChatRepository>().getPaginatedChatMessageByRoomId(page, size, room.roomChatId),
       itemBuilder: (context, index, data) => ChatItem(chat: data),
       useGrid: false,
       auto: true,
       scrollController: ScrollController(),
       reverse: true,
+      lastPageMessage: 'Không có tin nhắn nào!',
       size: 20,
     );
 

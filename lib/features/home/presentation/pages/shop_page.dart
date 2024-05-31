@@ -194,6 +194,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
           _followedShopId = followedShopId;
         });
       },
+      onChatPressed: () async => await CustomerHandler.navigateToChatPageViaShopId(context, widget.shopId),
       showFollowedCount: true,
       padding: const EdgeInsets.only(left: 8, right: 4),
       showShopDetail: true,
@@ -216,7 +217,15 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Từ khóa tìm kiếm: $_keywords'),
+          Expanded(
+            child: Text.rich(
+              TextSpan(style: VTVTheme.hintTextStyle, text: 'Từ khóa tìm kiếm:', children: [
+                TextSpan(
+                    text: ' $_keywords',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 14)),
+              ]),
+            ),
+          ),
           Row(
             children: [
               // no filter button

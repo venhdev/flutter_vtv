@@ -61,6 +61,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
           (ok) => setState(() => _orderDetail = ok.data!),
         );
       },
+      onChatPressed: () async => await CustomerHandler.navigateToChatPageViaShopId(context, _orderDetail.order.shop.shopId),
       customerReviewBtn: (order) => CustomerReviewButton(order: order),
       onOrderItemPressed: (orderItem) => context.push(
         ProductDetailPage.path,

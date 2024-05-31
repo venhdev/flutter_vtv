@@ -56,12 +56,12 @@ Future<void> initializeLocator() async {
   dio.interceptors.addAll(
     [
       // LogInterceptor(
-      //   // request: true,
-      //   // requestBody: true,
-      //   // responseBody: true,
-      //   // requestHeader: true,
-      //   // responseHeader: true,
-      //   // error: true,
+      //   request: true,
+      //   requestBody: true,
+      //   responseBody: true,
+      //   requestHeader: true,
+      //   responseHeader: true,
+      //   error: true,
       // ),
       CustomerAuthInterceptor(),
       ErrorInterceptor(),

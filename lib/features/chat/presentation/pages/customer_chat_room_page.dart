@@ -16,9 +16,10 @@ class CustomerChatRoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final lazyListController = LazyListController<ChatRoomEntity>(
       items: [],
-      paginatedData: sl<ChatRepository>().getPageRoomChat,
+      paginatedData: sl<ChatRepository>().getPaginatedChatRoom,
       itemBuilder: (context, index, data) => chatRoomItem(context, data),
       useGrid: false,
+      lastPageMessage: 'Không có cuộc trò chuyện nào!',
     )..init();
 
     return ChatRoomPage(lazyListController: lazyListController);

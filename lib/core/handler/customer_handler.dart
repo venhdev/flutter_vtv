@@ -4,9 +4,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/order.dart';
 
+import '../../features/chat/presentation/pages/customer_chat_page.dart';
 import '../../features/home/domain/repository/product_repository.dart';
 import '../../features/order/domain/dto/webview_payment_param.dart';
 import '../../features/order/domain/repository/order_repository.dart';
@@ -17,7 +20,7 @@ import '../constants/global_variables.dart';
 
 /// Quick Handler for customer actions (common use function in multi page)
 class CustomerHandler {
-  //# Redirect
+  //## Redirect
   static void navigateToOrderDetailPageViaRemoteMessage(RemoteMessage? remoteMessage) {
     if (remoteMessage?.notification?.body == null || GlobalVariables.navigatorState.currentContext == null) return;
 
@@ -58,6 +61,35 @@ class CustomerHandler {
     } else if (orderDetail != null) {
       // no loading
       await context.push<OrderDetailEntity>(CustomerOrderDetailPage.path, extra: orderDetail);
+    }
+  }
+
+  static Future<void> navigateToChatPageViaShopId(BuildContext context, int shopId) async {
+    final room = await showDialogToPerform(
+      context,
+      dataCallback: () async {
+        final shopDetail = await sl<GuestRepository>().getShopDetailById(shopId).then((respEither) {
+          return respEither.fold(
+            (error) => null,
+            (ok) => ok.data!,
+          );
+        });
+        if (shopDetail == null) return null;
+
+        final room = await sl<ChatRepository>().getOrCreateChatRoom(shopDetail.shopUsername).then((respEither) {
+          return respEither.fold(
+            (error) => null,
+            (ok) => ok.data!,
+          );
+        });
+
+        return room;
+      },
+      closeBy: (context, result) => context.pop(result),
+    );
+
+    if (room != null && context.mounted) {
+      GoRouter.of(context).push(CustomerChatPage.path, extra: room);
     }
   }
 
