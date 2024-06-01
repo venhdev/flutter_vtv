@@ -194,7 +194,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
           _followedShopId = followedShopId;
         });
       },
-      onChatPressed: () async => await CustomerHandler.navigateToChatPageViaShopId(context, widget.shopId),
+      onChatPressed: () async => await CustomerHandler.navigateToChatPage(context, shopId: widget.shopId),
       showFollowedCount: true,
       padding: const EdgeInsets.only(left: 8, right: 4),
       showShopDetail: true,

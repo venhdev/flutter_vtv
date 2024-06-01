@@ -117,7 +117,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                           ],
                         ),
                       );
-                  
+
                       setState(() {
                         _gender = result as bool?;
                         if (_gender == null) {
@@ -151,7 +151,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                         firstDate: DateTime(1900),
                         lastDate: DateTime(DateTime.now().year - 12), // least 12 years old
                       );
-                  
+
                       if (pickedDate != null) {
                         _dobController.text = ConversionUtils.convertDateTimeToString(pickedDate);
                         _dob = pickedDate;
@@ -183,8 +183,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         ),
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            // add event to bloc
-            await context.read<AuthCubit>().editUserProfile(
+            context.read<AuthCubit>().editUserProfile(
                     newInfo: UserInfoEntity(
                   customerId: null,
                   username: widget.userInfo.username!,

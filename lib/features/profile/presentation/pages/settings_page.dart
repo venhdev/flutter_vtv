@@ -98,10 +98,8 @@ class SettingsPage extends StatelessWidget {
         dismissText: 'Thoát',
         onConfirm: () async {
           final refreshToken = context.read<AuthCubit>().state.auth!.refreshToken;
-          await context.read<AuthCubit>().logout(refreshToken).then((_) {
-            // redirect to user home
-            GoRouter.of(context).go('/user');
-          });
+          context.read<AuthCubit>().logout(refreshToken);
+          // GoRouter.of(context).go('/user');
         },
       );
     });

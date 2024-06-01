@@ -538,7 +538,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Expanded(
             flex: 2,
             child: IconTextButton(
-              onPressed: () async => await CustomerHandler.navigateToChatPageViaShopId(context, _productDetail.shopId),
+              onPressed: () async => await CustomerHandler.navigateToChatPage(context, shopId: _productDetail.shopId),
               buttonStyle: IconButton.styleFrom(
                 backgroundColor: Colors.grey[200],
                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),

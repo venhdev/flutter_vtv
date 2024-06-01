@@ -14,6 +14,7 @@ import 'package:vtv_common/guest.dart';
 import 'config/dio/customer_auth_interceptor.dart';
 import 'config/dio/dio_options.dart';
 import 'config/dio/error_interceptor.dart';
+import 'core/handler/customer_redirect.dart';
 import 'features/cart/data/data_sources/cart_data_source.dart';
 import 'features/cart/data/repository/cart_repository_impl.dart';
 import 'features/cart/domain/repository/cart_repository.dart';
@@ -118,7 +119,13 @@ Future<void> initializeLocator() async {
   sl.registerLazySingleton<CheckTokenUC>(() => CheckTokenUC(sl()));
 
   //! Bloc
-  sl.registerFactory(() => AuthCubit(sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => AuthCubit(
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        CustomerRedirect(),
+      ));
   sl.registerFactory(() => CartBloc(sl(), sl()));
 }
 

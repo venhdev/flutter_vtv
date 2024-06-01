@@ -46,6 +46,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    //# App is opened by terminated state via notification
+    CustomerHandler.openMessageOnTerminatedApp();
+
     lazyProductListController = LazyListController(
         items: [],
         scrollController: ScrollController(),
@@ -100,14 +103,6 @@ class _HomePageState extends State<HomePage> {
         showLoadingIndicator: true)
       ..init()
       ..setDebugLabel('BestSellingList');
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      sl<FirebaseCloudMessagingManager>().runWhenContainInitialMessage(
-        (remoteMessage) {
-          CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
-        },
-      );
-    });
   }
 
   @override

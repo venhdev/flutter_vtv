@@ -8,13 +8,10 @@ class AppState extends ChangeNotifier {
 
   AppState(this._prefHelper, this._connectivity);
 
-  late bool _isFirstRun;
-  late bool hasConnection;
-
   /// Initializes the app state.
   /// - Checks if the app is the first run.
   /// - Checks if the device has an internet connection.
-  /// - Subscribes to the connectivity stream. (If lost connection will show a snackbar)
+  // [REMOVED] - Subscribes to the connectivity stream. (If lost connection will show a snackbar)
   Future<void> init() async {
     _isFirstRun = _prefHelper.isFirstRun;
     // hasConnection = await _connectivity.checkConnectivity() != ConnectivityResult.none;
@@ -24,7 +21,7 @@ class AppState extends ChangeNotifier {
     subscribeConnection();
   }
 
-  // //.---------------------Bottom Navigation Visibility-----------------------
+  //*---------------------Bottom Navigation Visibility-----------------------
   // bool _isBottomNavigationVisible = true;
 
   // bool get isBottomNavigationVisible => _isBottomNavigationVisible;
@@ -46,7 +43,8 @@ class AppState extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  //.---------------------Connectivity-----------------------
+  //*---------------------Connectivity-----------------------
+  late bool hasConnection;
   Stream<List<ConnectivityResult>> get connectionStream => _connectivity.onConnectivityChanged;
 
   // subscribe to the connectivity stream
@@ -56,9 +54,9 @@ class AppState extends ChangeNotifier {
       notifyListeners();
     });
   }
-  //.---------------------Connectivity-----------------------
 
-  //.---------------------First run-----------------------
+  //*---------------------First run-----------------------
+  late bool _isFirstRun;
   bool get isFirstRun => _isFirstRun;
 
   /// Sets the app as started. (Not the first run)
@@ -67,5 +65,4 @@ class AppState extends ChangeNotifier {
     await _prefHelper.setStarted(false);
     notifyListeners();
   }
-  //.---------------------First run-----------------------
 }

@@ -57,11 +57,11 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
         final respEither = await completeOrder(context, orderId);
         respEither?.fold(
           (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi hoàn tất đơn hàng!'),
-          // (ok) => context.go(CustomerOrderDetailPage.path, extra: ok.data!),
           (ok) => setState(() => _orderDetail = ok.data!),
         );
       },
-      onChatPressed: () async => await CustomerHandler.navigateToChatPageViaShopId(context, _orderDetail.order.shop.shopId),
+      onChatPressed: () async =>
+          await CustomerHandler.navigateToChatPage(context, shopUsername: _orderDetail.order.shop.shopUsername),
       customerReviewBtn: (order) => CustomerReviewButton(order: order),
       onOrderItemPressed: (orderItem) => context.push(
         ProductDetailPage.path,

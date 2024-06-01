@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vtv/app_state.dart';
 import 'package:flutter_vtv/config/routes/extra_codec.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
@@ -62,6 +64,14 @@ class AppRoutes {
     navigatorKey: _rootNavigatorKey,
     extraCodec: const MyExtraCodec(),
     initialLocation: '/home',
+    // log the new route
+    observers: [
+      CustomRouteObserver(
+        onRouteChanged: (newRoute, previousRoute) {
+          GlobalVariables.currentRoute = newRoute?.settings.name;
+        },
+      )
+    ],
     routes: <RouteBase>[
       GoRoute(
         path: '/',

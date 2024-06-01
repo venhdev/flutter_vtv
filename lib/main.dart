@@ -13,8 +13,10 @@ import 'app.dart';
 import 'app_state.dart';
 import 'config/firebase_options.dart';
 import 'config/themes/theme_provider.dart';
+import 'core/constants/global_variables.dart';
 import 'core/handler/customer_handler.dart';
 import 'features/cart/presentation/bloc/cart_bloc.dart';
+import 'features/chat/presentation/pages/customer_chat_page.dart';
 import 'service_locator.dart';
 
 void main() async {
@@ -31,19 +33,26 @@ void main() async {
 
   sl<FirebaseCloudMessagingManager>().requestPermission();
   sl<FirebaseCloudMessagingManager>().listen(
+    //> firebase does not show notification when app is in foreground >> show it manually by local notification
     onForegroundMessageReceived: (remoteMessage) {
       if (remoteMessage == null) return;
+
+      //> should show new chat notification
+      if (remoteMessage.type == NotificationType.NEW_MESSAGE.name &&
+          GlobalVariables.currentRoute == CustomerChatPage.routeName &&
+          GlobalVariables.currentChatRoomId == remoteMessage.data['roomChatId']) return;
+
       localNotificationHelper.showRemoteMessageNotification(remoteMessage);
     },
     onTapMessageOpenedApp: (remoteMessage) {
-      CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+      CustomerHandler.processOpenRemoteMessage(remoteMessage);
     },
   );
   sl<LocalNotificationHelper>().initializePluginAndHandler(
     onDidReceiveNotificationResponse: (notification) {
       if (notification.payload == null) return;
       final RemoteMessage remoteMessage = RemoteMessageSerialization.fromJson(notification.payload!);
-      CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+      CustomerHandler.processOpenRemoteMessage(remoteMessage);
     },
   );
 

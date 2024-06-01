@@ -16,7 +16,7 @@ class CustomerLoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LoginPage(
       onLoginPressed: (username, password) async {
-        await context.read<AuthCubit>().loginWithUsernameAndPassword(username: username, password: password);
+        context.read<AuthCubit>().loginWithUsernameAndPassword(username: username, password: password);
       },
       onRegisterPressed: () => context.go(CustomerRegisterPage.path),
       onForgotPasswordPressed: () => context.go(CustomerForgotPasswordPage.path),

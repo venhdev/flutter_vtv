@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/order.dart';
+import 'package:provider/provider.dart';
 
 import '../../features/chat/presentation/pages/customer_chat_page.dart';
 import '../../features/home/domain/repository/product_repository.dart';
@@ -20,6 +23,46 @@ import '../constants/global_variables.dart';
 
 /// Quick Handler for customer actions (common use function in multi page)
 class CustomerHandler {
+  //# Open Message (Notification)
+  static void processOpenRemoteMessage(RemoteMessage? remoteMessage) {
+    try {
+      Fluttertoast.showToast(msg: '${GlobalVariables.currentRoute}');
+      // Fluttertoast.showToast(
+      //     msg: '${GlobalVariables.navigatorState.currentContext != null}: '
+      //         '${GoRouterState.of(GlobalVariables.navigatorState.currentContext!).uri.toString()}');
+    } catch (e) {
+      log(e.toString());
+    }
+    if (remoteMessage == null) return;
+    final currentUsername = GlobalVariables.navigatorState.currentContext?.read<AuthCubit>().state.currentUsername;
+    if (currentUsername == null) return;
+
+    if (remoteMessage.data['type'] == 'NEW_MESSAGE') {
+      CustomerHandler.navigateToChatPage(
+        GlobalVariables.navigatorState.currentContext!,
+        shopUsername: currentUsername == remoteMessage.data['sender']
+            ? remoteMessage.data['recipient'] // customer is the sender (first message sent by customer)
+            : remoteMessage.data['sender'], // customer is the recipient (first message sent by shop)
+      );
+    } else if (remoteMessage.data['type'] == 'ORDER') {
+      CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+    } else {
+      CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+    }
+  }
+
+  /// Call this function on first screen
+  static void openMessageOnTerminatedApp() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentUsername = GlobalVariables.navigatorState.currentContext?.read<AuthCubit>().state.currentUsername;
+      if (currentUsername == null) return;
+
+      sl<FirebaseCloudMessagingManager>().runWhenContainInitialMessage(
+        (remoteMessage) => processOpenRemoteMessage(remoteMessage),
+      );
+    });
+  }
+
   //## Redirect
   static void navigateToOrderDetailPageViaRemoteMessage(RemoteMessage? remoteMessage) {
     if (remoteMessage?.notification?.body == null || GlobalVariables.navigatorState.currentContext == null) return;
@@ -64,26 +107,33 @@ class CustomerHandler {
     }
   }
 
-  static Future<void> navigateToChatPageViaShopId(BuildContext context, int shopId) async {
+  /// [shopId] or [shopUsername] must be provided, if both are provided, [shopUsername] will be used
+  static Future<void> navigateToChatPage(BuildContext context, {int? shopId, String? shopUsername}) async {
+    assert(shopId != null || shopUsername != null, 'shopId or shopUsername must be provided');
+
     final room = await showDialogToPerform(
       context,
       dataCallback: () async {
-        final shopDetail = await sl<GuestRepository>().getShopDetailById(shopId).then((respEither) {
+        final String? recipientUsername;
+
+        if (shopUsername == null) {
+          recipientUsername = await sl<GuestRepository>().getShopDetailById(shopId!).then((respEither) {
+            return respEither.fold(
+              (error) => null,
+              (ok) => ok.data!.shop.shopUsername,
+            );
+          });
+          if (recipientUsername == null) return null;
+        } else {
+          recipientUsername = shopUsername;
+        }
+
+        return await sl<ChatRepository>().getOrCreateChatRoom(recipientUsername).then((respEither) {
           return respEither.fold(
             (error) => null,
             (ok) => ok.data!,
           );
         });
-        if (shopDetail == null) return null;
-
-        final room = await sl<ChatRepository>().getOrCreateChatRoom(shopDetail.shopUsername).then((respEither) {
-          return respEither.fold(
-            (error) => null,
-            (ok) => ok.data!,
-          );
-        });
-
-        return room;
       },
       closeBy: (context, result) => context.pop(result),
     );
@@ -144,7 +194,6 @@ class CustomerHandler {
   }
 
   //# Auth
-
   // static Future<bool> sendCodeForResetPassword(String username) async {
   //   return sl<AuthRepository>().sendOTPForResetPassword(username).then((resultEither) {
   //     return resultEither.fold(
@@ -188,7 +237,6 @@ class CustomerHandler {
   // }
 
   //# Order
-
   /// - in [OrderDetailPage] >> pop with [OrderDetailEntity] means order is completed >> then update by [onReceived]
   /// - in [OrderPurchasePage] >> update & navigate to [OrderDetailPage] by [onReceived]
   // static Future<void> completeOrder(

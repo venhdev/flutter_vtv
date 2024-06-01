@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:vtv_common/auth.dart';
 
-import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../components/logged_widget.dart';
 import '../components/not_logged_widget.dart';
 
@@ -25,17 +23,6 @@ class UserPage extends StatelessWidget {
             ..showSnackBar(
               SnackBar(content: Text(state.message!)),
             );
-        }
-        if (state.status == AuthStatus.unauthenticated) {
-          context.read<CartBloc>().add(EmptyCart());
-          if (state.code == 200 && state.redirectTo != null) {
-            context.go(state.redirectTo!);
-          }
-        } else if (state.status == AuthStatus.authenticated) {
-          context.read<CartBloc>().add(InitialCart());
-          if (state.code == 200 && state.redirectTo != null) {
-            context.go(state.redirectTo!);
-          }
         }
       },
       builder: (context, state) {
