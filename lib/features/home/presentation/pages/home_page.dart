@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
       );
     }
     return Scaffold(
-      appBar: buildAppBar(context, clearOnSubmit: true),
+      appBar: appBarBuilder(context, clearOnSubmit: true),
       body: RefreshIndicator(
         onRefresh: () async {
           // _refresh(); // Remove all widget and re-render due to call API
@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildLazyProducts() {
     return LazyListBuilder(
-      lazyController: lazyProductListController,
+      lazyListController: lazyProductListController,
       itemBuilder: (BuildContext context, int index, _) => lazyProductListController.build(context, index),
     );
   }

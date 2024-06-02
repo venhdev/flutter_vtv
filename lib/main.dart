@@ -29,7 +29,8 @@ void main() async {
 
   // get singleton instance from service locator
   final localNotificationHelper = sl<LocalNotificationHelper>();
-  final authCubit = sl<AuthCubit>()..onStarted();
+  final authCubit = sl<AuthCubit>();
+  await authCubit.onStarted();
 
   sl<FirebaseCloudMessagingManager>().requestPermission();
   sl<FirebaseCloudMessagingManager>().listen(
@@ -45,7 +46,7 @@ void main() async {
       localNotificationHelper.showRemoteMessageNotification(remoteMessage);
     },
     onTapMessageOpenedApp: (remoteMessage) {
-      CustomerHandler.processOpenRemoteMessage(remoteMessage);
+      if (remoteMessage != null) CustomerHandler.processOpenRemoteMessage(remoteMessage);
     },
   );
   sl<LocalNotificationHelper>().initializePluginAndHandler(

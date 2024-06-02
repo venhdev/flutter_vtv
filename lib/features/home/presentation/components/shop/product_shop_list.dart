@@ -28,7 +28,7 @@ class _ProductShopListState extends State<ProductShopList> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: LazyListBuilder<ProductEntity>(
-            lazyController: widget.lazyController,
+            lazyListController: widget.lazyController,
             itemBuilder: (context, index, data) => ProductItem(
               product: data,
               onPressed: () {

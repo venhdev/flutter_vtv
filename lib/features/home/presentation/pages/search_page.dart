@@ -73,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(
+      appBar: appBarBuilder(
         context,
         searchController: searchController,
         onSearchSubmitted: (text) {

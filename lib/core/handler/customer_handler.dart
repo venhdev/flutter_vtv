@@ -1,16 +1,15 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/order.dart';
-import 'package:provider/provider.dart';
 
 import '../../features/chat/presentation/pages/customer_chat_page.dart';
 import '../../features/home/domain/repository/product_repository.dart';
@@ -24,27 +23,18 @@ import '../constants/global_variables.dart';
 /// Quick Handler for customer actions (common use function in multi page)
 class CustomerHandler {
   //# Open Message (Notification)
-  static void processOpenRemoteMessage(RemoteMessage? remoteMessage) {
-    try {
-      Fluttertoast.showToast(msg: '${GlobalVariables.currentRoute}');
-      // Fluttertoast.showToast(
-      //     msg: '${GlobalVariables.navigatorState.currentContext != null}: '
-      //         '${GoRouterState.of(GlobalVariables.navigatorState.currentContext!).uri.toString()}');
-    } catch (e) {
-      log(e.toString());
-    }
-    if (remoteMessage == null) return;
+  static void processOpenRemoteMessage(RemoteMessage remoteMessage) {
     final currentUsername = GlobalVariables.navigatorState.currentContext?.read<AuthCubit>().state.currentUsername;
     if (currentUsername == null) return;
 
-    if (remoteMessage.data['type'] == 'NEW_MESSAGE') {
+    if (remoteMessage.type == NotificationType.NEW_MESSAGE.name) {
       CustomerHandler.navigateToChatPage(
         GlobalVariables.navigatorState.currentContext!,
         shopUsername: currentUsername == remoteMessage.data['sender']
             ? remoteMessage.data['recipient'] // customer is the sender (first message sent by customer)
             : remoteMessage.data['sender'], // customer is the recipient (first message sent by shop)
       );
-    } else if (remoteMessage.data['type'] == 'ORDER') {
+    } else if (remoteMessage.type == NotificationType.ORDER.name) {
       CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
     } else {
       CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
@@ -54,9 +44,6 @@ class CustomerHandler {
   /// Call this function on first screen
   static void openMessageOnTerminatedApp() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final currentUsername = GlobalVariables.navigatorState.currentContext?.read<AuthCubit>().state.currentUsername;
-      if (currentUsername == null) return;
-
       sl<FirebaseCloudMessagingManager>().runWhenContainInitialMessage(
         (remoteMessage) => processOpenRemoteMessage(remoteMessage),
       );

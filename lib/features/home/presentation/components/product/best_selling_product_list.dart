@@ -28,7 +28,7 @@ class BestSellingProductListBuilder extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: lazyListController.scrollDirection,
             child: LazyListBuilder(
-              lazyController: lazyListController,
+              lazyListController: lazyListController,
               itemBuilder: (BuildContext context, int index, _) => lazyListController.build(context, index),
               separatorBuilder: (context, index) => const SizedBox(width: 4.0),
             ),

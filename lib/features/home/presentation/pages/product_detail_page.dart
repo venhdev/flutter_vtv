@@ -40,7 +40,8 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  late LazyLoadController<ProductEntity> _lazyController;
+  // late LazyLoadController<ProductEntity> _lazyController;
+  late LazyListController<ProductEntity> _lazyListController;
   bool _isShowMoreDescription = false;
   bool _isShowMoreInformation = false;
 
@@ -48,7 +49,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   late ProductDetailResp _productDetail;
 
   // others state
-  // int? _favoriteProductId;
   int? _followedShopId;
 
   void fetchProductDetail(int id) async {
@@ -97,7 +97,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   void cacheRecentView() async {
     final respEither = await sl<ProductRepository>().cacheRecentViewedProductId(
-      // _productDetail.product.productId.toString(),
       widget.productId ?? widget.productDetail!.product.productId,
     );
 
@@ -126,19 +125,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   @override
-  void dispose() {
-    _lazyController.scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
-    _lazyController = LazyLoadController(
-      scrollController: ScrollController(),
+    _lazyListController = LazyListController(
       items: [],
-      useGrid: true,
-      emptyMessage: 'Không tìm thấy sản phẩm tương tự',
+      paginatedData: (page, size) => sl<ProductRepository>()
+          .getSuggestionProductsRandomlyByAlikeProduct(page, size, _productDetail.product.productId, false),
+      scrollController: ScrollController()
+        ..addListener(() {
+          if (_lazyListController.scrollController!.position.pixels ==
+              _lazyListController.scrollController!.position.maxScrollExtent) {
+            _lazyListController.loadNextPage();
+          }
+        }),
     );
     if (widget.productId != null) {
       fetchProductDetail(widget.productId!);
@@ -147,7 +146,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       checkFollowedShop(_productDetail.shopId);
       _isInitializing = false;
     }
-    // checkIsFavorite();
     cacheRecentView();
   }
 
@@ -165,14 +163,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onRefresh: () async {
                 fetchProductDetail(_productDetail.product.productId);
               },
-              child: _buildBody(context),
+              child: _build(context),
             ),
     );
   }
 
-  CustomScrollView _buildBody(BuildContext context) {
+  Widget _build(BuildContext context) {
     return CustomScrollView(
-      controller: _lazyController.scrollController,
+      controller: _lazyListController.scrollController,
       slivers: <Widget>[
         //# image
         _buildSliverAppBar(context),
@@ -619,36 +617,41 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildSuggestionProducts() {
     return Column(
       children: [
-        DividerWithText(
+        const DividerWithText(
           text: 'Sản phẩm tương tự',
-          color: Colors.grey[300],
+          color: Colors.grey,
           centerText: true,
         ),
-        NestedLazyLoadBuilder<ProductEntity>(
-          controller: _lazyController,
-          crossAxisCount: 2,
-          itemBuilder: (context, __, data) {
-            return ProductItem(
-              // product: _lazyController.items[index],
-              product: data,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ProductDetailPage(productId: data.productId);
-                    },
-                  ),
-                );
-              },
-            );
-          },
-          dataCallback: (page) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
-            page,
-            6,
-            _productDetail.product.productId,
-            false,
-          ),
-        ),
+        LazyListBuilder(
+            lazyListController: _lazyListController,
+            itemBuilder: (context, index, data) => ProductItem(
+                  product: data,
+                  onPressed: () => context.push(ProductDetailPage.path, extra: data.productId),
+                )),
+        // NestedLazyLoadBuilder<ProductEntity>(
+        //   controller: _lazyController,
+        //   crossAxisCount: 2,
+        //   itemBuilder: (context, __, data) {
+        //     return ProductItem(
+        //       product: data,
+        //       onPressed: () {
+        //         Navigator.of(context).push(
+        //           MaterialPageRoute(
+        //             builder: (context) {
+        //               return ProductDetailPage(productId: data.productId);
+        //             },
+        //           ),
+        //         );
+        //       },
+        //     );
+        //   },
+        //   dataCallback: (page) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
+        //     page,
+        //     6,
+        //     _productDetail.product.productId,
+        //     false,
+        //   ),
+        // ),
       ],
     );
   }

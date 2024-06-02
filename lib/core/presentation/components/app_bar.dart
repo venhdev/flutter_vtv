@@ -8,7 +8,7 @@ import '../../../features/chat/presentation/pages/customer_chat_room_page.dart';
 import '../../../features/home/presentation/components/search/simple_search_bar.dart';
 import '../../../features/home/presentation/pages/search_page.dart';
 
-AppBar buildAppBar(
+AppBar appBarBuilder(
   BuildContext context, {
   Widget? title,
   bool showSettingButton = false,

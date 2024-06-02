@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vtv_common/auth.dart';
 
-import '../components/logged_widget.dart';
-import '../components/not_logged_widget.dart';
+import '../../../../core/presentation/components/app_bar.dart';
+import '../components/logged_view.dart';
+import '../components/not_logged_view.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
@@ -27,7 +28,7 @@ class UserPage extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.status == AuthStatus.unauthenticated) {
-          return const NotLoggedView();
+          return NotLoggedView(appBar: appBarBuilder(context, showSettingButton: true, showSearchBar: false));
         } else if (state.status == AuthStatus.authenticated) {
           return LoggedView(auth: state.auth!);
         } else {

@@ -73,7 +73,7 @@ class _ShopCategoryListState extends State<ShopCategoryList> {
                       ),
                       body: ok.data!.products!.isNotEmpty
                           ? LazyListBuilder(
-                              lazyController: LazyListController<ProductEntity>.static(items: ok.data!.products!),
+                              lazyListController: LazyListController<ProductEntity>.static(items: ok.data!.products!),
                               itemBuilder: (context, index, data) => ProductItem(
                                   product: data,
                                   onPressed: () {

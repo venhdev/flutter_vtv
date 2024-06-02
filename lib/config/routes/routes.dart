@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vtv/app_state.dart';
 import 'package:flutter_vtv/config/routes/extra_codec.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:vtv_common/auth.dart';
 import 'package:vtv_common/chat.dart';
 import 'package:vtv_common/core.dart';
@@ -38,7 +36,7 @@ import '../../features/order/presentation/pages/order_reviews_page.dart';
 import '../../features/order/presentation/pages/vnpay_webview.dart';
 import '../../features/order/presentation/pages/voucher_collection_page.dart';
 import '../../features/order/presentation/pages/voucher_page.dart';
-import '../../features/profile/presentation/components/logged_widget.dart';
+import '../../features/profile/presentation/components/logged_view.dart';
 import '../../features/profile/presentation/pages/address_page.dart';
 import '../../features/profile/presentation/pages/customer_wallet_history_page.dart';
 import '../../features/profile/presentation/pages/followed_shop_page.dart';

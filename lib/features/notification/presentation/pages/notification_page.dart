@@ -8,7 +8,9 @@ import 'package:vtv_common/core.dart';
 import 'package:vtv_common/notification.dart';
 
 import '../../../../core/handler/customer_handler.dart';
+import '../../../../core/presentation/components/app_bar.dart';
 import '../../../../service_locator.dart';
+import '../../../profile/presentation/components/not_logged_view.dart';
 import '../../domain/repository/notification_repository.dart';
 
 class NotificationPage extends StatefulWidget {
@@ -101,7 +103,11 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NotificationList(lazyListController: _lazyListController),
+      body: NotificationList(
+        lazyListController: _lazyListController,
+        noPermissionWidget:
+            NotLoggedView(appBar: appBarBuilder(context, showSearchBar: false)),
+      ),
     );
   }
 }
