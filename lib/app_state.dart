@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:vtv_common/core.dart';
 
+import 'core/constants/global_variables.dart';
+
 class AppState extends ChangeNotifier {
   final SharedPreferencesHelper _prefHelper;
   final Connectivity _connectivity;
@@ -11,6 +13,10 @@ class AppState extends ChangeNotifier {
 
   bool? _isServerDown;
   bool? get isServerDown => _isServerDown;
+
+  // control overlay when no wifi connection
+  // the overlay builder in "scaffold_with_navbar.dart"
+  final OverlayPortalController overlayController = OverlayPortalController();
 
   /// Initializes the app state.
   /// - Checks if the app is the first run.
@@ -33,7 +39,7 @@ class AppState extends ChangeNotifier {
     _isServerDown = null;
     notifyListeners();
 
-    final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 10)));
+    final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 2)));
     await dio.getUri(uriBuilder(path: '/')).then(
       (_) {},
       onError: (e) {
@@ -75,6 +81,7 @@ class AppState extends ChangeNotifier {
   // }
 
   //*---------------------Connectivity-----------------------
+
   late bool hasConnection;
   Stream<List<ConnectivityResult>> get connectionStream => _connectivity.onConnectivityChanged;
 
@@ -82,6 +89,13 @@ class AppState extends ChangeNotifier {
   void subscribeConnection() {
     _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> connection) {
       hasConnection = connection[0] != ConnectivityResult.none;
+
+      if (!hasConnection) {
+        overlayController.show();
+      } else if (hasConnection) {
+        overlayController.hide();
+      }
+      
       notifyListeners();
     });
   }

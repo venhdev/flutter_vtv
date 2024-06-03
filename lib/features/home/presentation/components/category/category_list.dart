@@ -12,19 +12,9 @@ class CategoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Danh mục',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+        const Text('Danh mục', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         FutureBuilder(
           future: sl<ProductRepository>().getAllParentCategories(),
           builder: (context, snapshot) {

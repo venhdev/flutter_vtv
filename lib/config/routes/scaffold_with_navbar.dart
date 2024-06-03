@@ -43,7 +43,30 @@ class ScaffoldWithNavBar extends StatelessWidget {
           );
         } else if (appState.isServerDown == false) {
           return Scaffold(
-            body: navigationShell,
+            body: OverlayPortal(
+              controller: appState.overlayController,
+              overlayChildBuilder: (context) => Center(
+                child: Scaffold(
+                  backgroundColor: Colors.grey.withOpacity(0.4),
+                  body: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      height: 150,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Stack(alignment: Alignment.center, children: [
+                        Center(child: Image.asset('assets/images/loading.gif', height: 50, width: 50)),
+                        const Positioned(bottom: 0, child: Text('Không có kết nối', textAlign: TextAlign.center)),
+                      ]),
+                    ),
+                  ),
+                ),
+              ),
+              child: navigationShell,
+            ),
             bottomNavigationBar: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
