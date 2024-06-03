@@ -139,7 +139,7 @@ class VoucherItemV2 extends StatelessWidget {
                     const SizedBox(height: 4.0),
                     Text(
                       voucher.description,
-                      style: VTVTheme.hintTextStyle.copyWith(fontSize: 13.0),
+                      style: VTVTheme.hintText12.copyWith(fontSize: 13.0),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -163,7 +163,7 @@ class VoucherItemV2 extends StatelessWidget {
                     ),
                     Text(
                       'Đã dùng ${(voucher.quantityUsed! / voucher.quantity * 100).toInt()}%',
-                      style: VTVTheme.hintTextStyle,
+                      style: VTVTheme.hintText12,
                       textAlign: TextAlign.end,
                     ),
                   ],

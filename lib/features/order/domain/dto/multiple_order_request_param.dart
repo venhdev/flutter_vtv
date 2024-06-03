@@ -11,7 +11,7 @@ class MultipleOrderRequestParam {
     required this.orderRequestWithCarts,
     String? systemVoucherCode,
     int? loyaltyPointIndex,
-    required PaymentTypes paymentMethod,
+    required PaymentType paymentMethod,
   })  : _systemVoucherCode = systemVoucherCode,
         _loyaltyPointIndex = loyaltyPointIndex,
         _paymentMethod = paymentMethod;
@@ -39,9 +39,9 @@ class MultipleOrderRequestParam {
   }
 
   // control payment method
-  PaymentTypes _paymentMethod;
-  PaymentTypes get paymentMethod => _paymentMethod;
-  set paymentMethod(PaymentTypes method) {
+  PaymentType _paymentMethod;
+  PaymentType get paymentMethod => _paymentMethod;
+  set paymentMethod(PaymentType method) {
     _paymentMethod = method;
     for (var i = 0; i < orderRequestWithCarts.length; i++) {
       orderRequestWithCarts[i] = orderRequestWithCarts[i].copyWith(paymentMethod: method);

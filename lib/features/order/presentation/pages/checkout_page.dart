@@ -6,6 +6,7 @@ import 'package:flutter_vtv/features/order/presentation/pages/customer_order_det
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
 
@@ -189,7 +190,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 8),
 
             //# shipping method
-            OrderSectionShippingMethod(order: _orderDetail.order),
+            OrderSectionShippingMethod(
+              orderShippingMethod: widget.isCreateWithCart
+                  ? _placeOrderWithCartParam.shippingMethod
+                  : _placeOrderWithVariantParam.shippingMethod,
+              orderShippingFee: _orderDetail.order.shippingFee,
+              estimatedDeliveryDate: _orderDetail.shipping.estimatedDeliveryTime,
+              selectable: true,
+              futureData: sl<GuestRepository>().getTransportProviders(
+                _orderDetail.order.address.wardCode, // ward customer
+                _orderDetail.order.shop.wardCode, // ward shop
+              ),
+              onSelected: (transport) {
+                // check if value need to update
+                if (transport.transportProviderShortName == _orderDetail.order.shippingMethod) {
+                  log('[NO NEED TO UPDATE SHIPPING METHOD]');
+                  return;
+                }
+                if (widget.isCreateWithCart) {
+                  updateOrderWithCart(
+                    _placeOrderWithCartParam.copyWith(shippingMethod: transport.transportProviderShortName),
+                  );
+                } else {
+                  updateOrderWithVariant(
+                    _placeOrderWithVariantParam.copyWith(shippingMethod: transport.transportProviderShortName),
+                  );
+                }
+              },
+            ),
             const SizedBox(height: 8),
 
             //# payment method
@@ -198,7 +226,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     ? _placeOrderWithCartParam.paymentMethod
                     : _placeOrderWithVariantParam.paymentMethod,
                 balance: widget.orderDetail.balance,
+                totalPayment: widget.orderDetail.order.paymentTotal,
                 onChanged: (value) {
+                  // check if value need to update
+                  if (value == _orderDetail.order.paymentMethod) {
+                    log('[NO NEED TO UPDATE PAYMENT METHOD]');
+                    return;
+                  }
+
                   if (widget.isCreateWithCart) {
                     updateOrderWithCart(
                       _placeOrderWithCartParam.copyWith(paymentMethod: value),
@@ -222,7 +257,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 final voucher = await Navigator.of(context).push<VoucherEntity>(MaterialPageRoute(
                   builder: (context) {
                     return VoucherPage(
-                      title: 'Voucher của bạn',
+                      title: 'Voucher đã lưu',
                       returnValue: true,
                       future: sl<VoucherRepository>().customerVoucherList(),
                       canFindMore: true,

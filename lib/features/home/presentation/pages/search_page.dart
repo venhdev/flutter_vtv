@@ -32,7 +32,7 @@ class _SearchPageState extends State<SearchPage> {
     isFiltering: false,
     minPrice: 0,
     maxPrice: 10000000,
-    sortType: SortTypes.newest,
+    sortType: SortType.newest,
     isFilterWithPriceRange: true,
   );
 
@@ -59,7 +59,7 @@ class _SearchPageState extends State<SearchPage> {
             currentPage,
             _pageSize,
             currentSearchText,
-            SortTypes.random,
+            SortType.random,
           );
   }
 

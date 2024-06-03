@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         items: [],
         scrollDirection: Axis.horizontal,
         useGrid: false,
-        paginatedData: (_, __) => sl<ProductRepository>().getProductFilter(1, 10, SortTypes.bestSelling),
+        paginatedData: (_, __) => sl<ProductRepository>().getProductFilter(1, 10, SortType.bestSelling),
         itemBuilder: (context, index, product) => ProductItem(
               onPressed: () => context.go(ProductDetailPage.path, extra: product.productId),
               product: product,

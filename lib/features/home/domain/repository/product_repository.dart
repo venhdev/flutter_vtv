@@ -10,9 +10,9 @@ abstract class ProductRepository {
   FResult<void> cacheRecentViewedProductId(int productId);
   FResult<List<ProductDetailResp>> getRecentViewedProducts();
 
-  //# product-controller
-  FRespData<ProductDetailResp> getProductDetailById(int productId);
-  FRespData<int> getProductCountFavorite(int productId);
+  // //# product-controller
+  // FRespData<ProductDetailResp> getProductDetailById(int productId);
+  // FRespData<int> getProductCountFavorite(int productId);
 
   //# product-suggestion-controller
   FRespData<ProductPageResp> getSuggestionProductsRandomly(int page, int size);

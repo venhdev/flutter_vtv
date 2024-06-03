@@ -36,23 +36,23 @@ class _BtnDropdownSortTypesState extends State<BtnDropdownSortTypes> {
       },
       items: const [
         DropdownMenuItem(
-          value: SortTypes.newest,
+          value: SortType.newest,
           child: Text('Mới nhất'),
         ),
         DropdownMenuItem(
-          value: SortTypes.bestSelling,
+          value: SortType.bestSelling,
           child: Text('Bán chạy'),
         ),
         DropdownMenuItem(
-          value: SortTypes.priceAsc,
+          value: SortType.priceAsc,
           child: Text('Giá tăng dần'),
         ),
         DropdownMenuItem(
-          value: SortTypes.priceDesc,
+          value: SortType.priceDesc,
           child: Text('Giá giảm dần'),
         ),
         DropdownMenuItem(
-          value: SortTypes.random,
+          value: SortType.random,
           child: Text('Ngẫu nhiên'),
         ),
       ],

@@ -140,12 +140,12 @@ class ProductRepositoryImpl implements ProductRepository {
     }
   }
 
-  @override
-  FRespData<ProductDetailResp> getProductDetailById(int productId) async {
-    return await handleDataResponseFromDataSource(
-      dataCallback: () async => _guestDataSource.getProductDetailById(productId),
-    );
-  }
+  // @override
+  // FRespData<ProductDetailResp> getProductDetailById(int productId) async {
+  //   return await handleDataResponseFromDataSource(
+  //     dataCallback: () async => _guestDataSource.getProductDetailById(productId),
+  //   );
+  // }
 
   @override
   FRespData<ProductPageResp> getProductPageByCategory(int page, int size, int categoryId) async {
@@ -243,12 +243,12 @@ class ProductRepositoryImpl implements ProductRepository {
     }
   }
 
-  @override
-  FRespData<int> getProductCountFavorite(int productId) async {
-    return await handleDataResponseFromDataSource(
-      dataCallback: () async => _guestDataSource.getProductCountFavorite(productId),
-    );
-  }
+  // @override
+  // FRespData<int> getProductCountFavorite(int productId) async {
+  //   return await handleDataResponseFromDataSource(
+  //     dataCallback: () async => _guestDataSource.getProductCountFavorite(productId),
+  //   );
+  // }
 
   @override
   FRespData<ProductPageResp> getProductPageByShop(int page, int size, int shopId) {

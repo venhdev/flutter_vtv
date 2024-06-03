@@ -129,9 +129,9 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
     _filterParams = FilterParams(
       isFiltering: false,
       minPrice: 0,
-      maxPrice: 10000000,
+      maxPrice: 100000000,
       sortType: 'newest',
-      isFilterWithPriceRange: true,
+      isFilterWithPriceRange: false,
     );
     _lazyController = LazyListController<ProductEntity>(
       paginatedData: _paginatedData,
@@ -219,7 +219,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
         children: [
           Expanded(
             child: Text.rich(
-              TextSpan(style: VTVTheme.hintTextStyle, text: 'Từ khóa tìm kiếm:', children: [
+              TextSpan(style: VTVTheme.hintText12, text: 'Từ khóa tìm kiếm:', children: [
                 TextSpan(
                     text: ' $_keywords',
                     style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 14)),
@@ -228,7 +228,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
           ),
           Row(
             children: [
-              // no filter button
+              //# no filter button
               if (_filterParams.isFiltering || _keywords.isNotEmpty)
                 IconButton(
                     onPressed: () {
@@ -241,7 +241,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
                     },
                     icon: const Icon(Icons.filter_alt_off)),
 
-              // Filter button
+              //# Filter button
               BtnFilter(
                 context,
                 isFiltering: _filterParams.isFiltering,
@@ -276,9 +276,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
         searchController: _searchController,
         clearOnSubmit: false,
         hintText: 'Tìm sản phẩm trong Shop',
-        // hintStyle: const TextStyle(fontSize: 14),
         onSubmitted: (text) {
-          log('Search: ${_searchController.text}');
           setState(() {
             _keywords = text;
             _filterParams.isFiltering = true;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/home.dart';
 
 import '../../../../../service_locator.dart';
-import '../../../domain/repository/product_repository.dart';
 import '../../pages/product_detail_page.dart';
 
 //! Best height & width is equal
@@ -45,7 +45,7 @@ class _ProductItemState extends State<ProductItem> {
   late ProductEntity _product;
 
   void fetchProductById(int id) async {
-    final respEither = await sl<ProductRepository>().getProductDetailById(id);
+    final respEither = await sl<GuestRepository>().getProductDetailById(id);
     final product = respEither.fold<ProductEntity?>(
       (error) => null,
       (ok) => ok.data!.product,

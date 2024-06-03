@@ -5,16 +5,16 @@ import 'btn_filter.dart';
 import 'btn_dropdown_sort_types.dart';
 
 class BottomSheetFilter extends StatefulWidget {
-  /// default range is 0 - 10tr
+  /// default range is 0 - 100tr
   const BottomSheetFilter({
     super.key,
     required this.context,
     required this.minPrice,
     required this.maxPrice,
     required this.sortType,
-    this.minRange = 0,
-    this.maxRange = 10000000, // 10tr
-    this.divisions = 100,
+    this.maxRange = FilterConfig.maxRange, // 100tr
+    this.minRange = FilterConfig.minRange,
+    this.divisions = FilterConfig.divisions,
     this.filterPriceRange = true,
   });
   // required

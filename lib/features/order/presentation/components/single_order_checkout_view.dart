@@ -65,7 +65,7 @@ class SingleOrderCheckoutView extends StatelessWidget {
         const SizedBox(height: 8),
 
         //! shipping method
-        OrderSectionShippingMethod(order: _order),
+        OrderSectionShippingMethod(orderShippingMethod: orderDetail.order.shippingMethod, orderShippingFee: orderDetail.order.shippingFee),
         const SizedBox(height: 8),
 
         //! loyalty point

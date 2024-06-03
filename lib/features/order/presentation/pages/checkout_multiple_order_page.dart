@@ -91,13 +91,13 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
         (ok) async {
           context.read<CartBloc>().add(const FetchCart()); // refresh cart
           //! Online Payment
-          if (_multipleOrderRequestParam.paymentMethod != PaymentTypes.COD) {
+          if (_multipleOrderRequestParam.paymentMethod != PaymentType.COD) {
             //# VNPay
-            if (_multipleOrderRequestParam.paymentMethod == PaymentTypes.VNPay) {
+            if (_multipleOrderRequestParam.paymentMethod == PaymentType.VNPay) {
               await handleVNPay(ok);
-            } else if (_multipleOrderRequestParam.paymentMethod == PaymentTypes.Wallet) {
+            } else if (_multipleOrderRequestParam.paymentMethod == PaymentType.Wallet) {
               if (ok.data!.orderDetails.every((orderDetail) => (orderDetail.order.status == OrderStatus.PENDING &&
-                  orderDetail.order.paymentMethod == PaymentTypes.Wallet))) {
+                  orderDetail.order.paymentMethod == PaymentType.Wallet))) {
                 showDialogToAlert(
                   context,
                   title: Text('Bạn đã đặt thành công ${_multiOrderResp.count} đơn hàng'),

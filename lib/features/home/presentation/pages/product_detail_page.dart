@@ -52,7 +52,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int? _followedShopId;
 
   void fetchProductDetail(int id) async {
-    final respEither = await sl<ProductRepository>().getProductDetailById(id);
+    final respEither = await sl<GuestRepository>().getProductDetailById(id);
 
     respEither.fold(
       (error) => log('Error: ${error.message}'),
@@ -153,8 +153,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget build(BuildContext context) {
     log('(ProductDetailPage) build with productId: ${widget.productId}');
     return Scaffold(
-      // bottomSheet: _showBottomSheet ? _buildBottomActionBar(context) : null,
-      bottomSheet: _buildBottomActionBar(context),
+      bottomSheet: context.read<AuthCubit>().state.isAuthenticated ? _buildBottomActionBar(context) : null,
       body: _isInitializing
           ? const Center(
               child: CircularProgressIndicator(),
@@ -205,8 +204,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ],
                 ),
               ),
+              const SizedBox(height: 8),
 
-              const SizedBox(height: 56),
+              if (context.read<AuthCubit>().state.isAuthenticated) const SizedBox(height: 56), // bottom action bar
             ],
           ),
         ),
@@ -313,7 +313,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 endIndent: 12,
               ),
               FutureBuilder(
-                future: sl<ProductRepository>().getProductCountFavorite(_productDetail.product.productId),
+                future: sl<GuestRepository>().getProductCountFavorite(_productDetail.product.productId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final resultEither = snapshot.data!;

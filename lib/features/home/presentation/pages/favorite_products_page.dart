@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
+import 'package:vtv_common/guest.dart';
 
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
@@ -36,7 +37,7 @@ class FavoriteProductsPage extends StatelessWidget {
                           return ProductItem(
                             productId: f.productId,
                             onPressed: () async {
-                              final productResp = await sl<ProductRepository>().getProductDetailById(f.productId);
+                              final productResp = await sl<GuestRepository>().getProductDetailById(f.productId);
                               productResp.fold(
                                 (error) => MessageScreen.error(error.message),
                                 (ok) {
