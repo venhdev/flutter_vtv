@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:vtv_common/core.dart';
 
 import '../../app_state.dart';
 import '../../core/presentation/pages/intro_page.dart';
@@ -24,34 +25,56 @@ class ScaffoldWithNavBar extends StatelessWidget {
         // the first run of the app
         if (appState.isFirstRun == true) {
           return const IntroPage();
+        } else if (appState.isServerDown == null) {
+          return Scaffold(
+            body: MessageScreen(
+              message: 'Đang kiểm tra kết nối đến máy chủ...',
+              icon: Image.asset('assets/images/loading.gif', height: 100, width: 100),
+            ),
+          );
+        } else if (appState.isServerDown == true) {
+          return Scaffold(
+            body: MessageScreen(
+              message: 'Không thể kết nối đến máy chủ...',
+              icon: const Icon(Icons.wifi_off),
+              onPressed: () => appState.retryConnection(),
+              onIconLongPressed: () => context.push('/dev'),
+            ),
+          );
+        } else if (appState.isServerDown == false) {
+          return Scaffold(
+            body: navigationShell,
+            bottomNavigationBar: BottomNavigationBar(
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.shopping_cart),
+                  tooltip: 'Trang chủ',
+                  label: 'Trang chủ', // index => 0
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.notifications),
+                  tooltip: 'Thông báo',
+                  label: 'Thông báo', // index => 1
+                  backgroundColor: Colors.blue,
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  tooltip: 'Tài khoản',
+                  label: 'Tài khoản', // index => 2
+                  backgroundColor: Colors.blue,
+                ),
+              ],
+              currentIndex: navigationShell.currentIndex,
+              onTap: (int index) => _onTap(context, index),
+            ),
+          );
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: Text('Đã xảy ra lỗi không xác định...'),
+            ),
+          );
         }
-
-        return Scaffold(
-          body: navigationShell,
-          bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart),
-                tooltip: 'Trang chủ',
-                label: 'Trang chủ', // index => 0
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.notifications),
-                tooltip: 'Thông báo',
-                label: 'Thông báo', // index => 1
-                backgroundColor: Colors.blue,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                tooltip: 'Tài khoản',
-                label: 'Tài khoản', // index => 2
-                backgroundColor: Colors.blue,
-              ),
-            ],
-            currentIndex: navigationShell.currentIndex,
-            onTap: (int index) => _onTap(context, index),
-          ),
-        );
       },
     );
   }

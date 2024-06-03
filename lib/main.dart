@@ -58,7 +58,7 @@ void main() async {
   );
 
   final appState = AppState(sl<SharedPreferencesHelper>(), sl<Connectivity>());
-  await appState.init();
+  appState.init();
 
   // NOTE: dev
   final savedHost = sl<SharedPreferencesHelper>().I.getString('host');

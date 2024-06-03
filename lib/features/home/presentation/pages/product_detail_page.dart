@@ -129,8 +129,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     super.initState();
     _lazyListController = LazyListController(
       items: [],
-      paginatedData: (page, size) => sl<ProductRepository>()
-          .getSuggestionProductsRandomlyByAlikeProduct(page, size, _productDetail.product.productId, false),
+      size: 6,
+      paginatedData: (page, size) => sl<ProductRepository>().getSuggestionProductsRandomlyByAlikeProduct(
+          page, size, widget.productId != null ? widget.productId! : widget.productDetail!.product.productId, false),
       scrollController: ScrollController()
         ..addListener(() {
           if (_lazyListController.scrollController!.position.pixels ==
@@ -138,7 +139,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             _lazyListController.loadNextPage();
           }
         }),
-    );
+    )..init();
     if (widget.productId != null) {
       fetchProductDetail(widget.productId!);
     } else {

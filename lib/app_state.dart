@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:vtv_common/core.dart';
 
@@ -7,6 +8,9 @@ class AppState extends ChangeNotifier {
   final Connectivity _connectivity;
 
   AppState(this._prefHelper, this._connectivity);
+
+  bool? _isServerDown;
+  bool? get isServerDown => _isServerDown;
 
   /// Initializes the app state.
   /// - Checks if the app is the first run.
@@ -18,7 +22,34 @@ class AppState extends ChangeNotifier {
     hasConnection = await _connectivity.checkConnectivity().then((connection) {
       return connection[0] != ConnectivityResult.none;
     });
+
+    await _checkServerConnection();
+
     subscribeConnection();
+  }
+
+  //*---------------------Server Connection-----------------------*//
+  Future<void> _checkServerConnection() async {
+    _isServerDown = null;
+    notifyListeners();
+
+    final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 10)));
+    await dio.getUri(uriBuilder(path: '/')).then(
+      (_) {},
+      onError: (e) {
+        if ((e as DioException).response != null) {
+          _isServerDown = false;
+        } else {
+          _isServerDown = true;
+        }
+        notifyListeners();
+      },
+    );
+  }
+
+  // retry connection to the server
+  Future<void> retryConnection() async {
+    await _checkServerConnection();
   }
 
   //*---------------------Bottom Navigation Visibility-----------------------
