@@ -1,9 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:vtv_common/constant.dart';
 import 'package:vtv_common/core.dart';
-
-import 'core/constants/global_variables.dart';
 
 class AppState extends ChangeNotifier {
   final SharedPreferencesHelper _prefHelper;
@@ -39,7 +38,7 @@ class AppState extends ChangeNotifier {
     _isServerDown = null;
     notifyListeners();
 
-    final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 2)));
+    final dio = Dio(BaseOptions(connectTimeout: VTVConstant.serverCheckConnectTimeout));
     await dio.getUri(uriBuilder(path: '/')).then(
       (_) {},
       onError: (e) {
@@ -95,7 +94,7 @@ class AppState extends ChangeNotifier {
       } else if (hasConnection) {
         overlayController.hide();
       }
-      
+
       notifyListeners();
     });
   }

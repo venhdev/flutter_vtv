@@ -46,7 +46,7 @@ import '../../features/profile/presentation/pages/settings_page.dart';
 import '../../features/profile/presentation/pages/user_detail_page.dart';
 import '../../features/profile/presentation/pages/user_page.dart';
 import '../../service_locator.dart';
-import 'scaffold_with_navbar.dart';
+import 'customer_app_scaffold.dart';
 
 //! config bottom navigation bar in '/lib/config/routes/scaffold_with_navbar.dart'
 
@@ -81,7 +81,7 @@ class AppRoutes {
           // using a BottomNavigationBar). The StatefulNavigationShell is passed
           // to be able access the state of the shell and to navigate to other
           // branches in a stateful way.
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
+          return CustomerAppScaffold(navigationShell: navigationShell);
         },
         branches: <StatefulShellBranch>[
           //! Home Route

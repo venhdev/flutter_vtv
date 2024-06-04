@@ -8,9 +8,10 @@ import '../../core/presentation/pages/intro_page.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
-class ScaffoldWithNavBar extends StatelessWidget {
-  /// Constructs an [ScaffoldWithNavBar].
-  const ScaffoldWithNavBar({
+// old name: ScaffoldWithNavBar
+class CustomerAppScaffold extends StatelessWidget {
+  /// Constructs an [CustomerAppScaffold].
+  const CustomerAppScaffold({
     required this.navigationShell,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
@@ -45,26 +46,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
           return Scaffold(
             body: OverlayPortal(
               controller: appState.overlayController,
-              overlayChildBuilder: (context) => Center(
-                child: Scaffold(
-                  backgroundColor: Colors.grey.withOpacity(0.4),
-                  body: Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      height: 150,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Stack(alignment: Alignment.center, children: [
-                        Center(child: Image.asset('assets/images/loading.gif', height: 50, width: 50)),
-                        const Positioned(bottom: 0, child: Text('Không có kết nối', textAlign: TextAlign.center)),
-                      ]),
-                    ),
-                  ),
-                ),
-              ),
+              overlayChildBuilder: (context) => const NoConnectionOverlay(imagePath: 'assets/images/loading.gif'),
               child: navigationShell,
             ),
             bottomNavigationBar: BottomNavigationBar(
