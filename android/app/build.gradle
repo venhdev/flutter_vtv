@@ -71,7 +71,28 @@ android {
             // signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
         }
-        
+    }
+
+    // <product-flavor><Build-Type>
+    flavorDimensions "mode"
+    productFlavors {
+        dev {
+            dimension "mode"
+            resValue "string", "app_name", "[dev] VTV"
+            applicationIdSuffix ".dev"
+        }
+
+        staging {
+            dimension "mode"
+            resValue "string", "app_name", "[stg] VTV"
+            applicationIdSuffix ".stg"
+        }
+
+        product {
+            dimension "mode"
+            resValue "string", "app_name", "VTV"
+            // applicationIdSuffix ".prod"
+        }
     }
 }
 
@@ -81,4 +102,12 @@ flutter {
 
 dependencies {
     implementation 'com.google.android.material:material:1.11.0'
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:33.1.0')
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }
