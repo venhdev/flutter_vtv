@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_vtv/features/profile/domain/repository/profile_repository.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/profile.dart';
@@ -48,5 +49,18 @@ class ProfileRepositoryImpl extends ProfileRepository {
     return await handleDataResponseFromDataSource(
       dataCallback: () async => await _profileDataSource.getLoyaltyPointHistory(loyaltyPointId),
     );
+  }
+
+  @override
+  FRespData<bool> hasAddress() async {
+    final response = await _profileDataSource.getAllAddress();
+
+    if (response.data?.isNotEmpty == true) {
+      return const Right(SuccessResponse(data: true));
+    } else if (response.data?.isEmpty == true) {
+      return const Right(SuccessResponse(data: false));
+    } else {
+      return Left(UnexpectedError(message: response.message));
+    }
   }
 }

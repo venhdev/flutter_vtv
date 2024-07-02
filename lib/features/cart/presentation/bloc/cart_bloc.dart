@@ -15,7 +15,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<FetchCart>(_onFetchCart);
     on<AddToCart>(_onAddToCart);
     on<UpdateCart>(_onUpdateCart);
-    on<DeleteCart>(_onRemoveCart);
+    on<DeleteCart>(_onDeleteCart);
     on<DeleteCartByShopId>(_onDeleteCartByShopId);
     on<SelectCart>(_onSelectCart);
     on<UnSelectCart>(_onUnSelectCart);
@@ -85,6 +85,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                     (c) {
                       if (c.cartId == event.cartId) {
                         // only one item in cart, remove it -> fetch cart
+                        //? check if there is only one item in cart and user decrease quantity
                         if (c.quantity == 1 && event.quantity == -1) {
                           add(const FetchCart()); // fetch cart
                         } else {
@@ -105,7 +106,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
-  void _onRemoveCart(DeleteCart event, Emitter<CartState> emit) async {
+  void _onDeleteCart(DeleteCart event, Emitter<CartState> emit) async {
     // emit(CartLoading());
 
     final prevState = state as CartLoaded;

@@ -6,6 +6,7 @@ import 'package:vtv_common/profile.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/profile_repository.dart';
 
+/// This page will pop an [AddressEntity] when add success
 class AddOrUpdateAddressPage extends StatefulWidget {
   const AddOrUpdateAddressPage({super.key, this.address});
 
@@ -14,8 +15,6 @@ class AddOrUpdateAddressPage extends StatefulWidget {
 
   // static const routeNameUpdate = 'update-address';
   // static const pathUpdate = '/user/settings/address/update-address';
-
-  // using Navigator to push this page
 
   final AddressEntity? address;
 

@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vtv/features/order/presentation/pages/checkout_multiple_order_page.dart';
@@ -53,13 +52,7 @@ class _CartPageState extends State<CartPage> {
             return NestedScrollView(
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
-                  SliverAppBar(
-                    title: Text('Giỏ hàng (${state.cart.count})'),
-                    floating: true,
-                    backgroundColor: Colors.transparent,
-                    // BUG: rebuild Address when scroll
-                    bottom: _buildAddress(context),
-                  ),
+                  _buildAppBarAddress(state, context),
                 ];
               },
               body: RefreshIndicator(
@@ -97,7 +90,7 @@ class _CartPageState extends State<CartPage> {
             );
           } else if (state is CartError) {
             return Center(
-              child: Text('Error: ${state.message}'),
+              child: Text('Lỗi: ${state.message}'),
             );
           }
           return const Center(
@@ -108,6 +101,42 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  SliverAppBar _buildAppBarAddress(CartLoaded state, BuildContext context) {
+    return SliverAppBar(
+        title: Text('Giỏ hàng (${state.cart.count})'),
+        floating: true,
+        backgroundColor: Colors.transparent,
+        // bottom: _buildAddress(context), fixed_BUG: rebuild Address when scroll
+        bottom: _defaultAddress == null
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(120),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DeliveryAddress(
+                    address: _defaultAddress!,
+                    onTap: () async {
+                      final isChangeSuccess = await Navigator.of(context).push<bool>(
+                        MaterialPageRoute(
+                          builder: (context) => const AddressPage(willPopOnChanged: true),
+                        ),
+                      );
+                  
+                      if (isChangeSuccess ?? false) {
+                        setState(() {
+                          fetchDefaultAddress();
+                        });
+                      }
+                    },
+                    prefixIcon: Icons.location_on,
+                    padding: const EdgeInsets.all(8),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ));
+  }
+
   Center _buildEmptyCart(BuildContext context) {
     return Center(
       child: Column(
@@ -115,7 +144,7 @@ class _CartPageState extends State<CartPage> {
         children: [
           // icon empty cart
           const Icon(
-            Icons.remove_shopping_cart_rounded,
+            Icons.shopping_cart_outlined,
             size: 50,
           ),
           const Text('Giỏ hàng trống'),
@@ -134,11 +163,11 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Widget _buildBottomSummaryCheckout() {
+  Widget? _buildBottomSummaryCheckout() {
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
         if (state is CartLoaded) {
-          if (state.selectedCartIds.isEmpty) {
+          if (state.selectedCartIds.isEmpty || _defaultAddress == null) {
             return const SizedBox();
           }
 
@@ -147,29 +176,17 @@ class _CartPageState extends State<CartPage> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: const BoxDecoration(
               color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 5.0,
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5.0)],
             ),
-            child: _defaultAddress != null
-                // ? _singleShop(state)
-                ? _multiShop(state)
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+            child: _multiShopOrderSummary(state),
           );
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
 
-  Widget _multiShop(CartLoaded state) {
+  Widget _multiShopOrderSummary(CartLoaded state) {
     return FutureBuilder(
       future: sl<OrderRepository>().createMultiOrderByCartIds(state.selectedCartIds),
       builder: (context, snapshot) {
@@ -187,10 +204,6 @@ class _CartPageState extends State<CartPage> {
                   child: Text('Tổng cộng:'),
                 ),
                 Text(
-                  // ConversionUtils.formatCurrency(ok.data!.order.totalPrice),
-                  // ConversionUtils.formatCurrency(
-                  //   ok.data!.fold(0, (previousValue, element) => previousValue + element.order.totalPrice),
-                  // ),
                   ConversionUtils.formatCurrency(ok.data!.totalPayment),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
@@ -261,71 +274,74 @@ class _CartPageState extends State<CartPage> {
   //   );
   // }
 
-  PreferredSize? _buildAddress(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(120),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder(
-            future: sl<ProfileRepository>().getAllAddress(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                // find the default address has "status": "ACTIVE",
-                final respEither = snapshot.data!;
-                return respEither.fold(
-                  (error) => MessageScreen.error(error.toString()),
-                  (ok) {
-                    if (ok.data!.isEmpty) {
-                      return SizedBox(
-                        height: 120,
-                        child: Center(
-                          child: Text.rich(
-                            textAlign: TextAlign.center,
-                            TextSpan(
-                              text: 'Chưa có địa chỉ giao hàng\n',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                              children: [
-                                TextSpan(
-                                  text: 'Thêm địa chỉ',
-                                  style: const TextStyle(color: Colors.blue),
-                                  recognizer: TapGestureRecognizer()..onTap = () => context.go(AddressPage.path),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    final defaultAddress = ok.data!.firstWhere((element) => element.status == 'ACTIVE');
-                    return Address(
-                      address: defaultAddress,
-                      onTap: () async {
-                        // GoRouter.of(context).go(AddressPage.path);
-                        final isChangeSuccess = await Navigator.of(context).push<bool>(
-                          MaterialPageRoute(
-                            builder: (context) => const AddressPage(willPopOnChanged: true),
-                          ),
-                        );
+  // PreferredSize? _buildAddress(BuildContext context) {
+  //   return PreferredSize(
+  //     preferredSize: const Size.fromHeight(120),
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: FutureBuilder(
+  //           future: sl<ProfileRepository>().getAllAddress(),
+  //           builder: (context, snapshot) {
+  //             if (snapshot.hasData) {
+  //               final respEither = snapshot.data!;
+  //               return respEither.fold(
+  //                 (error) => MessageScreen.error(error.toString()),
+  //                 (ok) {
+  //                   if (ok.data!.isEmpty) {
+  //                     return SizedBox(
+  //                       height: 120,
+  //                       child: Center(
+  //                         child: Text.rich(
+  //                           textAlign: TextAlign.center,
+  //                           TextSpan(
+  //                             text: 'Chưa có địa chỉ giao hàng\n',
+  //                             style: const TextStyle(fontWeight: FontWeight.bold),
+  //                             children: [
+  //                               TextSpan(
+  //                                 text: 'Thêm địa chỉ',
+  //                                 style: const TextStyle(color: Colors.blue),
+  //                                 recognizer: TapGestureRecognizer()
+  //                                   ..onTap = () async {
+  //                                     await Navigator.of(context).push(MaterialPageRoute(
+  //                                       builder: (context) => const AddressPage(willPopOnChanged: true),
+  //                                     ));
+  //                                   },
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     );
+  //                   }
+  //                   final defaultAddress = ok.data!.firstWhere((element) => element.status == 'ACTIVE');
+  //                   return Address(
+  //                     address: defaultAddress,
+  //                     onTap: () async {
+  //                       final isChangeSuccess = await Navigator.of(context).push<bool>(
+  //                         MaterialPageRoute(
+  //                           builder: (context) => const AddressPage(willPopOnChanged: true),
+  //                         ),
+  //                       );
 
-                        if (isChangeSuccess ?? false) {
-                          setState(() {
-                            fetchDefaultAddress();
-                          });
-                        }
-                      },
-                      prefixIcon: Icons.location_on,
-                      padding: const EdgeInsets.all(8),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    );
-                  },
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }),
-      ),
-    );
-  }
+  //                       if (isChangeSuccess ?? false) {
+  //                         setState(() {
+  //                           fetchDefaultAddress();
+  //                         });
+  //                       }
+  //                     },
+  //                     prefixIcon: Icons.location_on,
+  //                     padding: const EdgeInsets.all(8),
+  //                     maxLines: 2,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   );
+  //                 },
+  //               );
+  //             }
+  //             return const Center(
+  //               child: CircularProgressIndicator(),
+  //             );
+  //           }),
+  //     ),
+  //   );
+  // }
 }

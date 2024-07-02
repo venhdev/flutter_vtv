@@ -9,7 +9,7 @@ import '../../../../service_locator.dart';
 import '../../../home/presentation/pages/product_detail_page.dart';
 import '../../domain/repository/order_repository.dart';
 import '../components/btn/review_btn.dart';
-import 'checkout_page.dart';
+import 'checkout_single_order_page.dart';
 
 class CustomerOrderDetailPage extends StatefulWidget {
   const CustomerOrderDetailPage({super.key, required this.orderDetail});
@@ -188,7 +188,7 @@ Future<void> _rePurchaseOrder(BuildContext context, List<OrderItemEntity> orderI
     },
     (ok) {
       context.push(
-        Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
+        Uri(path: CheckoutSingleOrderPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
         extra: ok.data!,
       );
     },

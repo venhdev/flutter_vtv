@@ -13,7 +13,8 @@ class AddressPage extends StatefulWidget {
   static const routeName = 'address';
   static const path = '/user/settings/address';
 
-  final bool willPopOnChanged;
+  /// pop the page when default address is changed
+  final bool willPopOnChanged; 
 
   @override
   State<AddressPage> createState() => _AddressPageState();
@@ -115,7 +116,7 @@ class _AddressPageState extends State<AddressPage> {
                 ],
               ),
               Expanded(
-                child: Address(
+                child: DeliveryAddress(
                   address: address,
                   suffixIcon: Icons.edit,
                   onTap: () async {

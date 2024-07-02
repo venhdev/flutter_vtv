@@ -293,7 +293,7 @@ class _LoggedViewState extends State<LoggedView> {
                             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
                           ),
                           onPressed: () {
-                            context.push(LoyaltyPointHistoryPage.path, extra: ok.data!.loyaltyPointId);
+                            context.push(CustomerLoyaltyPointHistoryPage.path, extra: ok.data!.loyaltyPointId);
                           },
                           child: Text(
                             'Điểm thưởng ${ok.data!.totalPoint}',
@@ -350,6 +350,33 @@ class _LoggedViewState extends State<LoggedView> {
           buttonStyle: ButtonStyle(
             padding: WidgetStateProperty.all(const EdgeInsets.all(16)),
             // backgroundColor: WidgetStateProperty.all(Colors.white),
+            shape: WidgetStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+          ),
+        ),
+
+        //# Loyalty Point
+        IconTextButton(
+          onPressed: () async {
+            // context.go(CustomerLoyaltyPointHistoryPage.path);
+
+            // get loyalty point id
+            await sl<ProfileRepository>().getLoyaltyPoint().then((respEither) {
+              respEither.fold(
+                (error) =>
+                    Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi lấy thông tin điểm thành viên'),
+                (ok) => context.go(CustomerLoyaltyPointHistoryPage.path, extra: ok.data!.loyaltyPointId),
+              );
+            });
+          },
+          padding: const EdgeInsets.all(16),
+          reverseDirection: true,
+          label: 'Điểm thành viên',
+          fontSize: 13,
+          iconSize: 32,
+          leadingIcon: Icons.card_membership,
+          iconColor: Colors.green,
+          buttonStyle: ButtonStyle(
+            padding: WidgetStateProperty.all(const EdgeInsets.all(16)),
             shape: WidgetStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
           ),
         ),

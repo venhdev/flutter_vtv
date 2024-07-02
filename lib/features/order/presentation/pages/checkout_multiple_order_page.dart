@@ -98,13 +98,15 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
             } else if (_multipleOrderRequestParam.paymentMethod == PaymentType.Wallet) {
               if (ok.data!.orderDetails.every((orderDetail) => (orderDetail.order.status == OrderStatus.PENDING &&
                   orderDetail.order.paymentMethod == PaymentType.Wallet))) {
-                showDialogToAlert(
+                await showDialogToAlert(
                   context,
-                  title: Text('Bạn đã đặt thành công ${_multiOrderResp.count} đơn hàng'),
+                  title: const Text('Đặt hàng thành công', textAlign: TextAlign.center),
                   children: [
-                    const Text('Vui lòng chờ xác nhận từ cửa hàng'),
+                    Text('Bạn đã đặt thành công ${_multiOrderResp.count} đơn hàng, Vui lòng chờ xác nhận từ cửa hàng'),
                   ],
-                ).then((_) => context.go(OrderPurchasePage.path));
+                ).then((_) {
+                  if (mounted) context.go(OrderPurchasePage.path);
+                });
               } else {
                 showDialogToAlert(
                   context,
@@ -112,7 +114,9 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
                   children: [
                     const Text('Vui lòng xem chi tiết trong mục "Đơn hàng đang chờ"'),
                   ],
-                ).then((_) => context.go(OrderPurchasePage.path));
+                ).then((_) {
+                  if (mounted) context.go(OrderPurchasePage.path);
+                });
               }
             }
           } else {
@@ -123,7 +127,9 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
               children: [
                 const Text('Vui lòng chờ xác nhận từ cửa hàng'),
               ],
-            ).then((_) => context.go(OrderPurchasePage.path));
+            ).then((_) {
+              if (mounted) context.go(OrderPurchasePage.path);
+            });
           }
         },
       );
@@ -221,6 +227,7 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
               handleChangedOrderRequest(_multipleOrderRequestParam);
             },
             balance: _multiOrderResp.orderDetails.first.balance,
+            totalPayment: _multiOrderResp.totalPayment,
           ),
           const SizedBox(height: 4),
 
@@ -258,7 +265,7 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
   Widget _address(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-      child: Address(
+      child: DeliveryAddress(
         address: _multiOrderResp.orderDetails.first.order.address,
         onTap: () => showDialogToChangeAddress(context, (address) {
           if (address.addressId != _multipleOrderRequestParam.addressId) {
@@ -266,6 +273,8 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
             handleChangedOrderRequest(_multipleOrderRequestParam);
           }
         }),
+        maxLines: 2, //> prevent when changed address that longer/shorter make UI broken
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

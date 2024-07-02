@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vtv/features/order/presentation/pages/customer_order_detail_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
@@ -17,10 +16,11 @@ import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
 import '../components/dialog_to_confirm_checkout.dart';
+import 'customer_order_detail_page.dart';
 import 'voucher_page.dart';
 
-class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({super.key, required this.orderDetail, this.isCreateWithCart = true});
+class CheckoutSingleOrderPage extends StatefulWidget {
+  const CheckoutSingleOrderPage({super.key, required this.orderDetail, this.isCreateWithCart = true});
 
   static const String routeName = 'checkout';
   static const String path = '/home/cart/checkout';
@@ -33,10 +33,10 @@ class CheckoutPage extends StatefulWidget {
   final bool isCreateWithCart;
 
   @override
-  State<CheckoutPage> createState() => _CheckoutPageState();
+  State<CheckoutSingleOrderPage> createState() => _CheckoutSingleOrderPageState();
 }
 
-class _CheckoutPageState extends State<CheckoutPage> {
+class _CheckoutSingleOrderPageState extends State<CheckoutSingleOrderPage> {
   late AddressEntity _address; // just ID
   late OrderDetailEntity _orderDetail;
   // Properties sent to the server
@@ -150,9 +150,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: ListView(
           children: [
             //# address
-            Address(
+            DeliveryAddress(
               address: _address,
               onTap: () => showDialogToChangeAddress(context),
+              maxLines: 2, //> prevent when changed address that longer/shorter make UI broken
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 8),
 
@@ -198,8 +200,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
               estimatedDeliveryDate: _orderDetail.shipping.estimatedDeliveryTime,
               selectable: true,
               futureData: sl<GuestRepository>().getTransportProviders(
-                _orderDetail.order.address.wardCode, // ward customer
-                _orderDetail.order.shop.wardCode, // ward shop
+                _orderDetail.order.address.wardCode, // customer's ward code
+                _orderDetail.order.shop.wardCode, // shop's ward code
               ),
               onSelected: (transport) {
                 // check if value need to update
@@ -215,6 +217,43 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   updateOrderWithVariant(
                     _placeOrderWithVariantParam.copyWith(shippingMethod: transport.transportProviderShortName),
                   );
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+
+            //! loyalty point
+            OrderSectionLoyaltyPoint(
+                totalPoint: _orderDetail.totalPoint!,
+                isUsingLoyaltyPoint: widget.isCreateWithCart
+                    ? _placeOrderWithCartParam.useLoyaltyPoint
+                    : _placeOrderWithVariantParam.useLoyaltyPoint,
+                onChanged: (value) {
+                  log('value: $value');
+                  if (widget.isCreateWithCart) {
+                    updateOrderWithCart(
+                      _placeOrderWithCartParam.copyWith(useLoyaltyPoint: value),
+                    );
+                  } else {
+                    updateOrderWithVariant(
+                      _placeOrderWithVariantParam.copyWith(useLoyaltyPoint: value),
+                    );
+                  }
+                }),
+            const SizedBox(height: 8),
+
+            //! total price
+            OrderSectionSingleOrderPayment(order: _orderDetail.order),
+            const SizedBox(height: 8),
+
+            //! note
+            OrderSectionNote(
+              note: widget.isCreateWithCart ? _placeOrderWithCartParam.note : _placeOrderWithVariantParam.note,
+              onChanged: (value) {
+                if (widget.isCreateWithCart) {
+                  _placeOrderWithCartParam = _placeOrderWithCartParam.copyWith(note: value);
+                } else {
+                  _placeOrderWithVariantParam = _placeOrderWithVariantParam.copyWith(note: value);
                 }
               },
             ),
@@ -275,46 +314,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       _placeOrderWithVariantParam.copyWith(systemVoucherCode: voucher.code),
                     );
                   }
-                }
-              },
-            ),
-            const SizedBox(height: 8),
-
-            //! loyalty point
-            // _buildLoyaltyPoint(),
-            OrderSectionLoyaltyPoint(
-                totalPoint: _orderDetail.totalPoint!,
-                isUsingLoyaltyPoint: widget.isCreateWithCart
-                    ? _placeOrderWithCartParam.useLoyaltyPoint
-                    : _placeOrderWithVariantParam.useLoyaltyPoint,
-                onChanged: (value) {
-                  log('value: $value');
-                  if (widget.isCreateWithCart) {
-                    updateOrderWithCart(
-                      _placeOrderWithCartParam.copyWith(useLoyaltyPoint: value),
-                    );
-                  } else {
-                    updateOrderWithVariant(
-                      _placeOrderWithVariantParam.copyWith(useLoyaltyPoint: value),
-                    );
-                  }
-                }),
-            const SizedBox(height: 8),
-
-            //! total price
-            // _singleOrderTotalPrice(),
-            OrderSectionSingleOrderPayment(order: _orderDetail.order),
-            const SizedBox(height: 8),
-
-            //! note
-            // _buildNote(),
-            OrderSectionNote(
-              note: widget.isCreateWithCart ? _placeOrderWithCartParam.note : _placeOrderWithVariantParam.note,
-              onChanged: (value) {
-                if (widget.isCreateWithCart) {
-                  _placeOrderWithCartParam = _placeOrderWithCartParam.copyWith(note: value);
-                } else {
-                  _placeOrderWithVariantParam = _placeOrderWithVariantParam.copyWith(note: value);
                 }
               },
             ),

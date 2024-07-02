@@ -5,6 +5,7 @@ abstract class ProfileRepository {
   //! address-controller
   FRespEither updateAddressStatus(int addressId);
   FRespData<List<AddressEntity>> getAllAddress();
+  FRespData<bool> hasAddress();
   FRespData<AddressEntity> addAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
   FRespData<AddressEntity> updateAddress(AddOrUpdateAddressParam addOrUpdateAddressParam);
 

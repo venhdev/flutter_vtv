@@ -2,15 +2,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vtv/features/profile/domain/repository/profile_repository.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
+import 'package:vtv_common/profile.dart';
 
 import '../../../../../service_locator.dart';
 import '../../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../../order/domain/repository/order_repository.dart';
-import '../../../../order/presentation/pages/checkout_page.dart';
+import '../../../../order/presentation/pages/checkout_single_order_page.dart';
+import '../../../../profile/presentation/pages/add_address_page.dart';
 
 class SheetAddToCartOrBuyNow extends StatefulWidget {
   const SheetAddToCartOrBuyNow({
@@ -44,24 +47,41 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
   void handlePressedAddToCartOrBuyNow() async {
     // check if variant is selected
     if (_variant != null) {
-      // ? create temp order and navigate to checkout page || else just add to cart
       if (widget.isBuyNow) {
-        final respEither = await sl<OrderRepository>().createByProductVariant({_variant!.productVariantId: _quantity});
+        final bool? hasDeliveryAddress = await sl<ProfileRepository>().hasAddress().then(
+          (respEither) {
+            return respEither.fold(
+              (error) {
+                Fluttertoast.showToast(msg: error.message!);
+                return null;
+              },
+              (ok) => ok.data!,
+            );
+          },
+        );
+        if (hasDeliveryAddress == null || hasDeliveryAddress == false) {
+          Fluttertoast.showToast(msg: 'Vui lòng thêm địa chỉ giao hàng trước khi mua hàng');
+          if (!mounted) return;
+          final newAddr = await Navigator.of(context).push<AddressEntity>(
+            MaterialPageRoute(
+              builder: (context) {
+                return const AddOrUpdateAddressPage();
+              },
+            ),
+          );
+          if (newAddr == null) return; // user cancel adding address >> do nothing
+        }
 
+        // ? create temp order and navigate to checkout page || else just add to cart
+        final respEither = await sl<OrderRepository>().createByProductVariant({_variant!.productVariantId: _quantity});
         respEither.fold(
           (error) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(error.message!),
-                ),
-              );
+            Fluttertoast.showToast(msg: error.message!);
           },
           (ok) {
             context.pop(); // pop out the bottom sheet
             context.push(
-              Uri(path: CheckoutPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
+              Uri(path: CheckoutSingleOrderPage.path, queryParameters: {'isCreateWithCart': 'false'}).toString(),
               extra: ok.data!,
             );
           },

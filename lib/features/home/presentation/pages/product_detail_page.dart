@@ -598,9 +598,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               },
               buttonStyle: IconButton.styleFrom(
                 backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               ),
               // backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer,
               leadingIcon: Icons.attach_money_outlined,

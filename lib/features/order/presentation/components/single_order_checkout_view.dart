@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vtv_common/guest.dart';
 import 'package:vtv_common/order.dart';
 import 'package:vtv_common/profile.dart';
 
@@ -65,7 +66,21 @@ class SingleOrderCheckoutView extends StatelessWidget {
         const SizedBox(height: 8),
 
         //! shipping method
-        OrderSectionShippingMethod(orderShippingMethod: orderDetail.order.shippingMethod, orderShippingFee: orderDetail.order.shippingFee),
+        OrderSectionShippingMethod(
+          orderShippingMethod: orderDetail.order.shippingMethod,
+          orderShippingFee: orderDetail.order.shippingFee,
+          estimatedDeliveryDate: orderDetail.shipping.estimatedDeliveryTime,
+          selectable: true,
+          futureData: sl<GuestRepository>().getTransportProviders(
+            orderDetail.order.address.wardCode, // customer's ward code
+            orderDetail.order.shop.wardCode, // shop's ward code
+          ),
+          onSelected: (transport) {
+            onOrderRequestChanged(
+              _placeOrderWithCartParam.copyWith(shippingMethod: transport.transportProviderShortName),
+            );
+          },
+        ),
         const SizedBox(height: 8),
 
         //! loyalty point

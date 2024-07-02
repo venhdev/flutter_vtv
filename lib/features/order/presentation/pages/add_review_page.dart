@@ -98,7 +98,9 @@ class ReviewAddPage extends StatelessWidget {
                     ));
                   },
                 );
-                Navigator.of(context).pop();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               });
             },
             style: ElevatedButton.styleFrom(

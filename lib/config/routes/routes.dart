@@ -29,7 +29,7 @@ import '../../features/home/presentation/pages/shop_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/order/domain/dto/webview_payment_param.dart';
 import '../../features/order/presentation/pages/add_review_page.dart';
-import '../../features/order/presentation/pages/checkout_page.dart';
+import '../../features/order/presentation/pages/checkout_single_order_page.dart';
 import '../../features/order/presentation/pages/customer_order_detail_page.dart';
 import '../../features/order/presentation/pages/customer_order_purchase_page.dart';
 import '../../features/order/presentation/pages/order_reviews_page.dart';
@@ -185,12 +185,12 @@ class AppRoutes {
             ),
             // loyalty point history
             GoRoute(
-              path: LoyaltyPointHistoryPage.routeName, // '/user/loyalty-point-history'
-              name: LoyaltyPointHistoryPage.routeName, // loyalty-point-history
+              path: CustomerLoyaltyPointHistoryPage.routeName, // '/user/loyalty-point-history'
+              name: CustomerLoyaltyPointHistoryPage.routeName, // loyalty-point-history
               parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state) {
-                final loyaltyPointId = state.extra as int;
-                return LoyaltyPointHistoryPage(loyaltyPointId: loyaltyPointId);
+                // final loyaltyPointId = state.extra as int?;
+                return const CustomerLoyaltyPointHistoryPage();
               },
             ),
             // followed shop
@@ -455,15 +455,15 @@ class AppRoutes {
                     ],
                   ),
                   GoRoute(
-                    path: CheckoutPage.routeName, // '/home/cart/checkout' ?isCreateWithCart=true|false
-                    name: CheckoutPage.routeName,
+                    path: CheckoutSingleOrderPage.routeName, // '/home/cart/checkout' ?isCreateWithCart=true|false
+                    name: CheckoutSingleOrderPage.routeName,
                     parentNavigatorKey: _rootNavigatorKey,
                     builder: (context, state) {
                       final orderDetail = state.extra as OrderDetailEntity;
                       final String? type = state.uri.queryParameters['isCreateWithCart'];
                       //! if isCreateWithCart is null => true
                       final bool isCreateWithCart = type == null ? true : type == 'true';
-                      return CheckoutPage(orderDetail: orderDetail, isCreateWithCart: isCreateWithCart);
+                      return CheckoutSingleOrderPage(orderDetail: orderDetail, isCreateWithCart: isCreateWithCart);
                     },
                     routes: [
                       GoRoute(

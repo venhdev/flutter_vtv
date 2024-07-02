@@ -5,10 +5,9 @@ import 'package:vtv_common/profile.dart';
 import '../../../../service_locator.dart';
 import '../../domain/repository/profile_repository.dart';
 
-class LoyaltyPointHistoryPage extends StatelessWidget {
-  const LoyaltyPointHistoryPage({super.key, required this.loyaltyPointId});
+class CustomerLoyaltyPointHistoryPage extends StatelessWidget {
+  const CustomerLoyaltyPointHistoryPage({super.key});
 
-  final int loyaltyPointId;
   static const routeName = 'loyalty-point-history';
   static const path = '/user/loyalty-point-history';
 
@@ -19,43 +18,74 @@ class LoyaltyPointHistoryPage extends StatelessWidget {
         title: const Text('Lịch sử điểm thưởng'),
       ),
       body: FutureBuilder(
-        future: sl<ProfileRepository>().getLoyaltyPointHistory(loyaltyPointId),
+        future: sl<ProfileRepository>().getLoyaltyPoint(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final resultEither = snapshot.data!;
-            return resultEither.fold(
+            return snapshot.data!.fold(
               (error) => MessageScreen.error(error.message),
-              (ok) => Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Mô tả'),
-                        Text('Biến động điểm'),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: ok.data!.length,
-                      itemBuilder: (context, index) =>
-                          LoyaltyPointHistoryItem(loyaltyPointHistoryEntity: ok.data![index]),
-                    ),
-                  ),
-                ],
-              ),
+              (ok) => _build(ok.data!.loyaltyPointId, ok.data!.totalPoint),
             );
-          } else if (snapshot.hasError) {
-            return MessageScreen.error(snapshot.error.toString());
+          } else {
+            return const Text(
+              'Đang tải...',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54),
+            );
           }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
         },
       ),
+    );
+  }
+
+  FutureBuilder<RespData<List<LoyaltyPointHistoryEntity>>> _build(int loyaltyPointId, int totalPoint) {
+    return FutureBuilder(
+      future: sl<ProfileRepository>().getLoyaltyPointHistory(loyaltyPointId),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final resultEither = snapshot.data!;
+          return resultEither.fold(
+            (error) => MessageScreen.error(error.message),
+            (ok) => Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Điểm thành viên'),
+                      Text('${totalPoint.toString()} điểm', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Mô tả'),
+                      Text('Biến động điểm'),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: ok.data!.length,
+                    itemBuilder: (context, index) =>
+                        LoyaltyPointHistoryItem(loyaltyPointHistoryEntity: ok.data![index]),
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return MessageScreen.error(snapshot.error.toString());
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }
