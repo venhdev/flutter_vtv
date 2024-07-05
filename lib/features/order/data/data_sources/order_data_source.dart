@@ -32,6 +32,7 @@ abstract class OrderDataSource {
   Future<SuccessResponse<MultiOrderEntity>> getListOrdersByStatus(String status);
   Future<SuccessResponse<OrderDetailEntity>> getOrderDetail(String orderId);
   Future<SuccessResponse<OrderDetailEntity>> cancelOrder(String orderId);
+  Future<SuccessResponse<OrderDetailEntity>> returnOrder(String orderId);
   Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId);
 }
 
@@ -264,6 +265,22 @@ class OrderDataSourceImpl extends OrderDataSource {
       response,
       url,
       parse: (dataMap) => MultipleOrderResp.fromMap(dataMap),
+    );
+  }
+  
+  @override
+  Future<SuccessResponse<OrderDetailEntity>> returnOrder(String orderId) async {
+    final url = uriBuilder(path: '$kAPIOrderReturnURL/$orderId');
+    final response = await _client.patch(
+      url,
+      headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
+      body: orderId, //REVIEW: why the body is text?
+    );
+
+    return handleResponseWithData<OrderDetailEntity>(
+      response,
+      url,
+      (dataMap) => OrderDetailEntity.fromMap(dataMap),
     );
   }
 }

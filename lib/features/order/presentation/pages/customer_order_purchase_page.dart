@@ -23,10 +23,11 @@ class CustomerOrderPurchasePage extends StatelessWidget {
       pageController: OrderPurchasePageController(tapPages: [
         OrderStatus.PENDING,
         OrderStatus.PROCESSING,
-        OrderStatus.SHIPPING,
-        OrderStatus.DELIVERED,
+        OrderStatus.SHIPPING, 
+        // OrderStatus.DELIVERED, //-- combine with SHIPPING
         OrderStatus.COMPLETED,
         OrderStatus.WAITING,
+        OrderStatus.RETURNED,
         OrderStatus.CANCEL,
       ]),
       // dataCallback: CustomerHandler.dataCallOrderPurchasePage,
@@ -38,6 +39,8 @@ class CustomerOrderPurchasePage extends StatelessWidget {
           return sl<OrderRepository>().getListOrdersByStatusProcessingAndPickupPending();
         } else if (status == OrderStatus.WAITING) {
           return sl<OrderRepository>().getListOrdersByMultiStatus([OrderStatus.UNPAID, OrderStatus.WAITING]);
+        } else if (status == OrderStatus.SHIPPING) {
+          return sl<OrderRepository>().getListOrdersByMultiStatus([OrderStatus.SHIPPING, OrderStatus.DELIVERED]);
         }
         return sl<OrderRepository>().getListOrdersByStatus(status.name);
       },
@@ -66,7 +69,7 @@ Widget _buildOrderStatusAction(
   if (order.status == OrderStatus.DELIVERED) {
     return OrderPurchaseItemAction(
       label: 'Bạn đã nhận được hàng chưa?',
-      buttonLabel: 'Đã nhận',
+      buttonLabel: 'Đã nhận hàng',
       onPressed: () async {
         final resultEither = await completeOrder(context, order.orderId!);
         resultEither?.fold(

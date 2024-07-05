@@ -45,6 +45,7 @@ const String kAPIOrderListByStatusURL = '/customer/order/list/status'; // GET /{
 const String kAPIOrderCompleteURL = '/customer/order/complete'; // PATCH /{orderId}
 const String kAPIOrderDetailURL = '/customer/order/detail'; // GET /{orderId}
 const String kAPIOrderCancelURL = '/customer/order/cancel'; // PATCH /{orderId}
+const String kAPIOrderReturnURL = '/customer/order/return'; // PATCH /{orderId}
 
 //# voucher-controller
 const String kAPIVoucherListAllURL = '/voucher/list-all'; // POST /place order

@@ -60,6 +60,7 @@ class _CustomerOrderDetailPageState extends State<CustomerOrderDetailPage> {
           (ok) => setState(() => _orderDetail = ok.data!),
         );
       },
+      onReturnOrderPressed: (orderId) => _returnOrder(context, orderId),
       onChatPressed: () async =>
           await CustomerHandler.navigateToChatPage(context, shopUsername: _orderDetail.order.shop.shopUsername),
       customerReviewBtn: (order) => CustomerReviewButton(order: order),
@@ -139,6 +140,31 @@ Future<RespData<OrderDetailEntity>?> completeOrder(
   //     // }
   //   },
   // );
+}
+
+//*-------------------------------------------------returnOrder---------------------------------------------------*//
+Future<void> _returnOrder(BuildContext context, String orderId) async {
+  final isConfirm = await showDialogToConfirm<bool?>(
+    context: context,
+    title: 'Bạn muốn\ntrả hàng/hoàn tiền?',
+    titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    content:
+        'Sau khi yêu trả đơn hàng, shipper sẽ liên hệ để nhận hàng và sau khi đơn trả về shop hoàn tất thì số tiền sẽ được gửi vào ví của bạn.',
+    confirmText: 'Trả hàng',
+    confirmBackgroundColor: Colors.red.shade300,
+    dismissText: 'Thoát',
+  );
+
+  if (isConfirm ?? false) {
+    final respEither = await sl<OrderRepository>().returnOrder(orderId);
+    respEither.fold(
+      (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi trả đơn hàng!'),
+      (ok) {
+        showDialogToAlert(context, title: const Text('Trả đơn hàng thành công!'));
+        context.go(CustomerOrderDetailPage.path, extra: ok.data!);
+      },
+    );
+  }
 }
 
 //*-------------------------------------------------cancelOrder---------------------------------------------------*//

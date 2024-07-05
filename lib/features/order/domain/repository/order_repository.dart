@@ -36,6 +36,7 @@ abstract class OrderRepository {
   /// Get order detail by orderId
   FRespData<OrderDetailEntity> getOrderDetail(String orderId);
   FRespData<OrderDetailEntity> cancelOrder(String orderId);
+  FRespData<OrderDetailEntity> returnOrder(String orderId);
   FRespData<OrderDetailEntity> completeOrder(String orderId);
 
   // custom to check order status (multi order) when process payment
