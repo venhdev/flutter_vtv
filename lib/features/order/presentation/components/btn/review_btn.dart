@@ -13,10 +13,12 @@ class CustomerReviewButton extends StatelessWidget {
     super.key,
     required this.order,
     this.labelNotReview,
+    this.hideReviewed = false,
   });
 
   final OrderEntity order;
   final String? labelNotReview;
+  final bool hideReviewed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +29,19 @@ class CustomerReviewButton extends StatelessWidget {
           return snapshot.data!.fold(
             (error) => MessageScreen.error(error.message),
             (ok) => ok
-                ? ElevatedButton(
-                    onPressed: () {
-                      context.push(OrderReviewsPage.path, extra: order);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: const RoundedRectangleBorder(),
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                    child: const Text('Xem đánh giá'),
-                  )
+                ? hideReviewed
+                    ? const SizedBox.shrink() // hide button if reviewed
+                    : ElevatedButton(
+                        onPressed: () {
+                          context.push(OrderReviewsPage.path, extra: order);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: const RoundedRectangleBorder(),
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                        child: const Text('Xem đánh giá'),
+                      )
                 : IconTextButton(
                     buttonStyle: IconButton.styleFrom(
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,

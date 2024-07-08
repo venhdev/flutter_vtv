@@ -11,7 +11,7 @@ class VTVApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'VTV Shop',
+      title: 'VTV - Mua sắm trực tuyến',
       routerConfig: AppRoutes.router,
       theme: Provider.of<ThemeProvider>(context).themeData,
     );

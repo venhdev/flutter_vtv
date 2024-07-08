@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.3]
+
+- return order
+- chat
+- check server connection
+- UX: redirect
+- search
+- other stuff...
+
 ## Added
 
 - Use loyalty point
@@ -83,7 +92,8 @@ All notable changes to this project will be documented in this file.
 
 - Initial App
 
-[unreleased]: https://github.com/venhha/flutter_vtv/compare/v0.0.8-pre...HEAD
+[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.3...HEAD
+[1.0.3]: https://github.com/venhha/flutter_vtv/compare/v0.0.8-pre...1.0.3
 [v0.0.8-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.7-pre...v0.0.8-pre
 [v0.0.7-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.5-pre...v0.0.7-pre
 [v0.0.5-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.4-pre...v0.0.5-pre

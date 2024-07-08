@@ -23,11 +23,11 @@ class CustomerOrderPurchasePage extends StatelessWidget {
       pageController: OrderPurchasePageController(tapPages: [
         OrderStatus.PENDING,
         OrderStatus.PROCESSING,
-        OrderStatus.SHIPPING, 
+        OrderStatus.SHIPPING,
         // OrderStatus.DELIVERED, //-- combine with SHIPPING
         OrderStatus.COMPLETED,
         OrderStatus.WAITING,
-        OrderStatus.RETURNED,
+        OrderStatus.RETURNED, // combine with REFUNDED
         OrderStatus.CANCEL,
       ]),
       // dataCallback: CustomerHandler.dataCallOrderPurchasePage,
@@ -41,6 +41,8 @@ class CustomerOrderPurchasePage extends StatelessWidget {
           return sl<OrderRepository>().getListOrdersByMultiStatus([OrderStatus.UNPAID, OrderStatus.WAITING]);
         } else if (status == OrderStatus.SHIPPING) {
           return sl<OrderRepository>().getListOrdersByMultiStatus([OrderStatus.SHIPPING, OrderStatus.DELIVERED]);
+        } else if (status == OrderStatus.RETURNED) {
+          return sl<OrderRepository>().getListOrdersByMultiStatus([OrderStatus.RETURNED, OrderStatus.REFUNDED]);
         }
         return sl<OrderRepository>().getListOrdersByStatus(status.name);
       },
@@ -82,7 +84,7 @@ Widget _buildOrderStatusAction(
       },
     );
   } else if (order.status == OrderStatus.COMPLETED) {
-    return CustomerReviewButton(order: order);
+    return CustomerReviewButton(order: order, hideReviewed: true);
   }
   return const SizedBox.shrink();
 }
