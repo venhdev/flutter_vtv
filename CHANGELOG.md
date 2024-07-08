@@ -4,9 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [1.0.3]
+## [1.0.5] 08/07/2024
+
+- add permission.AD_ID
+
+## [1.0.4] 08/07/2024
 
 - return order
+
+## [1.0.3]
+
 - chat
 - check server connection
 - UX: redirect
