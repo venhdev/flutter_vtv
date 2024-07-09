@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
@@ -72,8 +73,6 @@ class _VoucherPageState extends State<VoucherPage> {
                                 ),
                               );
 
-                              log('VoucherCollectionPage pop');
-
                               setState(() {});
                             },
                           )
@@ -94,7 +93,13 @@ class _VoucherPageState extends State<VoucherPage> {
                         return VoucherItemV2(
                           voucher: ok.data![index],
                           onPressed: (voucher) {
-                            if (widget.returnValue) Navigator.of(context).pop(voucher);
+                            if (voucher.quantityUsed != null) {
+                              if ((voucher.quantityUsed! < voucher.quantity)) {
+                                if (widget.returnValue) Navigator.of(context).pop(voucher);
+                              } else {
+                                Fluttertoast.showToast(msg: 'Voucher đã hết lượt sử dụng!');
+                              }
+                            }
                           },
                           actionLabel: 'Sử dụng',
                           // onActionPressed: (voucher) {

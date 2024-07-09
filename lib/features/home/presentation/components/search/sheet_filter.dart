@@ -141,7 +141,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.grey[300],
                 ),
-                child: const Center(child: Text('Hủy lọc')),
+                child: const Center(child: Text('Mặc định')),
               ),
             ),
             InkWell(

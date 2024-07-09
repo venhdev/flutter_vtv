@@ -9,7 +9,7 @@ import '../components/product/product_page_builder.dart';
 import '../components/search/btn_filter.dart';
 
 //! SearchPage show search result of products
-const int _pageSize = 4; //! Number of products per page
+const int _pageSize = 6; //! Number of products per page
 
 class SearchPage extends StatefulWidget {
   static const String routeName = 'search';

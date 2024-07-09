@@ -151,6 +151,7 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
               'Các đơn hàng của bạn đã được đặt thành công với phương thức thanh toán ${_multipleOrderRequestParam.paymentMethod.name}\n'),
           const Text('Bạn sẽ được chuyển đến trang thanh toán'),
         ],
+        confirmText: 'Tiếp tục',
       );
 
       if (mounted) {

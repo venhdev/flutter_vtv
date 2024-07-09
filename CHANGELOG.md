@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- update UI
+- prevent use Expired voucher
+
 ## [1.0.5] 08/07/2024
 
 - add permission.AD_ID

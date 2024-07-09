@@ -13,11 +13,17 @@ class SettingsPage extends StatelessWidget {
   static const String routeName = 'settings';
   static const String path = '/user/settings';
 
-  Widget _buildButton(BuildContext context, {required String title, required void Function()? onPressed}) {
+  Widget _buildButton(
+    BuildContext context, {
+    required String title,
+    required void Function()? onPressed,
+    Color? backgroundColor,
+  }) {
     return TextButton(
       onPressed: onPressed,
       style: TextButton.styleFrom(
-        backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primaryContainer.withOpacity(0.6),
+        backgroundColor:
+            backgroundColor ?? Theme.of(context).buttonTheme.colorScheme?.primaryContainer.withOpacity(0.6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Text(
@@ -41,7 +47,10 @@ class SettingsPage extends StatelessWidget {
             children: [
               _buildAddress(context),
               _buildChangePassword(context),
+              _buildIntroduction(context),
+              const Spacer(),
               _buildLogout(context),
+              const SizedBox(height: 8),
             ],
           );
         },
@@ -73,20 +82,12 @@ class SettingsPage extends StatelessWidget {
             Icon(Icons.dark_mode),
           ],
         ),
-
-        //# app info
-        IconButton(
-          onPressed: () {
-            showCrossPlatformAboutDialog(context: context);
-          },
-          icon: const Icon(Icons.info),
-        ),
       ],
     );
   }
 
   Widget _buildLogout(BuildContext context) {
-    return _buildButton(context, title: 'Đăng xuất', onPressed: () {
+    return _buildButton(context, backgroundColor: Colors.red.shade200, title: 'Đăng xuất', onPressed: () {
       showDialogToConfirm(
         context: context,
         title: 'Đăng xuất',
@@ -102,6 +103,12 @@ class SettingsPage extends StatelessWidget {
           // GoRouter.of(context).go('/user');
         },
       );
+    });
+  }
+
+  Widget _buildIntroduction(BuildContext context) {
+    return _buildButton(context, title: 'Giới thiệu', onPressed: () {
+      showCrossPlatformAboutDialog(context: context);
     });
   }
 

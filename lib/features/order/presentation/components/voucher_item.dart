@@ -94,6 +94,10 @@ class VoucherItemV2 extends StatelessWidget {
                   context: context,
                   builder: (context) => VoucherDetailDialog(voucher: voucher),
                 ),
+        onLongPress: () => showDialog(
+          context: context,
+          builder: (context) => VoucherDetailDialog(voucher: voucher),
+        ),
         borderRadius: BorderRadius.circular(4.0),
         child: SizedBox(
           height: 100.0,
