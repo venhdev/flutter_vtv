@@ -4,11 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.6] 10/07/2024
+
 - update UI
 - prevent use Expired voucher
-
-## [1.0.5] 08/07/2024
-
 - add permission.AD_ID
 
 ## [1.0.4] 08/07/2024
@@ -102,7 +101,8 @@ All notable changes to this project will be documented in this file.
 
 - Initial App
 
-[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.3...HEAD
+[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.6...HEAD
+[1.0.6]: https://github.com/venhha/flutter_vtv/compare/1.0.3...1.0.6
 [1.0.3]: https://github.com/venhha/flutter_vtv/compare/v0.0.8-pre...1.0.3
 [v0.0.8-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.7-pre...v0.0.8-pre
 [v0.0.7-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.5-pre...v0.0.7-pre

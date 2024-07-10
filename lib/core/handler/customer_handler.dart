@@ -158,7 +158,7 @@ class CustomerHandler {
     if (uriPayment != null && context.mounted) {
       await showDialogToAlert(
         context,
-        confirmText: 'Đồng ý',
+        confirmText: 'Tiếp tục',
         title: const Text('Tạo đơn thanh toán thành công', textAlign: TextAlign.center),
         titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87),
         children: [Text('Bạn sẽ được chuyển đến trang thanh toán để hoàn tất đơn hàng $orderId')],
