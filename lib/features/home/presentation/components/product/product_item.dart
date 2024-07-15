@@ -99,70 +99,75 @@ class _ProductItemState extends State<ProductItem> {
   }
 
   Widget _buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        //# Image
-        Expanded(
-          child: ImageCacheable(
-            _product.image,
-            fit: BoxFit.cover,
-          ),
-        ),
-        //# Name
-        Text(
-          _product.name,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: widget.fontSizeName,
-          ),
-        ),
-        //# Price & Rating & Sold
-        SizedBox(
-          height: widget.height * 0.2,
-          child: FittedBox(
-            fit: BoxFit.fitWidth,
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Price
-                    Text(
-                      ConversionUtils.formatCurrency(_product.cheapestPrice),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: widget.fontSizePrice,
-                        color: Colors.red,
-                      ),
-                    ),
-                    SizedBox(width: (widget.width / 4) / widget.scaleBottom),
-                    // Rating & Sold
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // rating
-                        Row(
-                          children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 16),
-                            Text(_product.rating, style: const TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                        // sold
-                        Text('Đã bán ${_product.sold}', style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+    return Badge(
+      isLabelVisible: _product.largestDiscount == '0%' ? false : true,
+      offset: const Offset(-10, 0),
+      label: Text(_product.largestDiscount),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          //# Image
+          Expanded(
+            child: ImageCacheable(
+              _product.image,
+              fit: BoxFit.cover,
             ),
           ),
-        ),
-      ],
+          //# Name
+          Text(
+            _product.name,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: widget.fontSizeName,
+            ),
+          ),
+          //# Price & Rating & Sold
+          SizedBox(
+            height: widget.height * 0.2,
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Price
+                      Text(
+                        ConversionUtils.formatCurrency(_product.cheapestPrice),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: widget.fontSizePrice,
+                          color: Colors.red,
+                        ),
+                      ),
+                      SizedBox(width: (widget.width / 4) / widget.scaleBottom),
+                      // Rating & Sold
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // rating
+                          Row(
+                            children: [
+                              const Icon(Icons.star, color: Colors.amber, size: 16),
+                              Text(_product.rating, style: const TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                          // sold
+                          Text('Đã bán ${_product.sold}', style: const TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

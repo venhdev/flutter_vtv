@@ -44,6 +44,17 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
     return '${ConversionUtils.formatCurrency(widget.product.cheapestPrice)} - ${ConversionUtils.formatCurrency(widget.product.mostExpensivePrice)}';
   }
 
+  String originPriceString() {
+    if (_variant != null) {
+      if (_variant?.originalPrice == _variant?.price) {
+        return '';
+        // return ConversionUtils.formatCurrency(_variant!.originalPrice!);
+      }
+      return ConversionUtils.formatCurrency(_variant!.originalPrice!);
+    }
+    return '';
+  }
+
   void handlePressedAddToCartOrBuyNow() async {
     // check if variant is selected
     if (_variant != null) {
@@ -364,9 +375,14 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
           children: [
             // Variant name
             if (_variant != null)
-              Text(
-                _variant!.sku,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              Badge(
+                label: Text(_variant!.discountPercent),
+                offset: const Offset(15, -15),
+                isLabelVisible: _variant!.discountPercent != '0%',
+                child: Text(
+                  _variant!.sku,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
 
             if (!widget.product.inStock)
@@ -388,6 +404,15 @@ class _SheetAddToCartOrBuyNowState extends State<SheetAddToCartOrBuyNow> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
+                    ),
+                  ),
+                  const TextSpan(text: ' '),
+                  TextSpan(
+                    text: originPriceString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough,
                     ),
                   ),
                 ],

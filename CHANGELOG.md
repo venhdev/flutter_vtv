@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.7] - 15/07/2024
+
+- filter search products
+- add badge in product item & sheet add/buy now
+- load more in shop page
+
 ## [1.0.6] 10/07/2024
 
 - update UI
@@ -101,7 +107,8 @@ All notable changes to this project will be documented in this file.
 
 - Initial App
 
-[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.6...HEAD
+[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.7...HEAD
+[1.0.7]: https://github.com/venhha/flutter_vtv/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/venhha/flutter_vtv/compare/1.0.3...1.0.6
 [1.0.3]: https://github.com/venhha/flutter_vtv/compare/v0.0.8-pre...1.0.3
 [v0.0.8-pre]: https://github.com/venhha/flutter_vtv/compare/v0.0.7-pre...v0.0.8-pre

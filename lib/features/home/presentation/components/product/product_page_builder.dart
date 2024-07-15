@@ -144,49 +144,58 @@ class ProductPageBuilder extends StatelessWidget {
             (errorResp) => Center(
               child: Text('Error: ${errorResp.message}', style: const TextStyle(color: Colors.red)),
             ),
-            (dataResp) => Builder(builder: (context) {
-              if (dataResp.data!.items.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'Không tìm thấy sản phẩm phù hợp',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                );
-              }
-              return Column(
-                children: [
-                  GridView.count(
-                    crossAxisCount: crossAxisCount,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: dataResp.data!.items
-                        .map(
-                          (product) => ProductItem(
-                            product: product,
-                            onPressed: () {
-                              context.push(
-                                ProductDetailPage.path,
-                                extra: product.productId,
-                              );
-                            },
-                          ),
-                        )
-                        .toList(),
-                  ),
+            (dataResp) {
+              final filteredProducts = dataResp.data!.items.where((p) => p.status == Status.ACTIVE.name).toList();
 
-                  // Show page number component at the bottom
-                  if (showPageNumber) ...[
-                    PageNumber(
-                      currentPage: currentPage ?? 1,
-                      totalPages: dataResp.data!.totalPage!,
-                      onPageChanged: (page) {
-                        onPageChanged?.call(page);
-                      },
+              return Builder(builder: (context) {
+                if (filteredProducts.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Không tìm thấy sản phẩm phù hợp',
+                      style: TextStyle(color: Colors.red),
                     ),
+                  );
+                }
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: GridView.count(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: filteredProducts
+                            .map(
+                              (product) => ProductItem(
+                                product: product,
+                                onPressed: () {
+                                  context.push(
+                                    ProductDetailPage.path,
+                                    extra: product.productId,
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+
+                    // Show page number component at the bottom
+                    if (showPageNumber) ...[
+                      PageNumber(
+                        currentPage: currentPage ?? 1,
+                        totalPages: dataResp.data!.totalPage!,
+                        onPageChanged: (page) {
+                          onPageChanged?.call(page);
+                        },
+                      ),
+                    ],
                   ],
-                ],
-              );
-            }),
+                );
+              });
+            },
           );
         }
 

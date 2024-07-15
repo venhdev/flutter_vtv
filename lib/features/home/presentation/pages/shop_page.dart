@@ -136,6 +136,7 @@ class _ShopPageState extends State<ShopPage> with SingleTickerProviderStateMixin
     _lazyController = LazyListController<ProductEntity>(
       paginatedData: _paginatedData,
       items: [],
+      size: 200, // load all shop's products once
     );
     fetchShopDetailData();
     checkFollowedShop(widget.shopId);
