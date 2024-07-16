@@ -22,6 +22,10 @@ class CustomerReviewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (order.orderDate.difference(DateTime.now()).inDays > 7) {
+      //? not allow to review after 7 days
+      return const SizedBox.shrink();
+    }
     return FutureBuilder(
       future: sl<ProductRepository>().isOrderReviewed(order),
       builder: (context, snapshot) {

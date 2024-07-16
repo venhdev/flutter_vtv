@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- increase product info in product detail page
+- redirect to home when logout
+
 ## [1.0.7] - 15/07/2024
 
 - filter search products

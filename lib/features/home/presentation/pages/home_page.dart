@@ -138,11 +138,10 @@ class _HomePageState extends State<HomePage> {
             controller: lazyProductListController.scrollController,
             children: [
               //# Category
-              const CategoryList(),
+              // ignore: prefer_const_constructors
+              CategoryList(),
               //# Best selling
-              BestSellingProductListBuilder(
-                lazyListController: lazyBestSellingListController,
-              ),
+              BestSellingProductListBuilder(lazyListController: lazyBestSellingListController),
               // const GlobalSystemVoucherPageView(),
               //# Product list with filter
               _buildProductListActionBar(context), // BUG turn off filter by price --> ERROR

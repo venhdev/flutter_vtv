@@ -385,13 +385,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ), //category
         Text(
           _productDetail.product.information,
-          maxLines: _isShowMoreInformation ? null : 4,
+          maxLines: _isShowMoreInformation ? null : 6,
           overflow: _isShowMoreInformation ? null : TextOverflow.ellipsis,
           style: const TextStyle(
             fontSize: 14,
           ),
         ),
-        if (_productDetail.product.description.length > 100)
+        if (_productDetail.product.description.length > 120)
           TextButton(
             onPressed: () {
               setState(() {
@@ -412,13 +412,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         Text(
           _productDetail.product.description,
-          maxLines: _isShowMoreDescription ? null : 4,
+          maxLines: _isShowMoreDescription ? null : 6,
           overflow: _isShowMoreDescription ? null : TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontSize: 16),
         ),
-        if (_productDetail.product.description.length > 100)
+        if (_productDetail.product.description.length > 120)
           TextButton(
             onPressed: () {
               setState(() {

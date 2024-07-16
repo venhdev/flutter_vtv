@@ -15,7 +15,7 @@ class CustomerRedirect extends BaseRedirect {
               GlobalVariables.navigatorState.currentContext?.go('/home');
             },
             AuthRedirect.logoutSuccess: () {
-              GlobalVariables.navigatorState.currentContext?.go(CustomerLoginPage.path);
+              GlobalVariables.navigatorState.currentContext?.go('/home');
             },
             AuthRedirect.registerSuccess: () {
               GlobalVariables.navigatorState.currentContext?.go(CustomerLoginPage.path);
