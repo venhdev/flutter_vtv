@@ -37,7 +37,8 @@ class CustomerHandler {
     } else if (remoteMessage.type == NotificationType.ORDER.name) {
       CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
     } else {
-      CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+      // CustomerHandler.navigateToOrderDetailPageViaRemoteMessage(remoteMessage);
+      return;
     }
   }
 

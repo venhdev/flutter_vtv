@@ -14,7 +14,7 @@ import '../../../../core/handler/customer_handler.dart';
 import '../../../../service_locator.dart';
 import '../../../cart/presentation/components/cart_badge.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product/product_item.dart';
+import '../components/product/product_card_item.dart';
 import '../components/product/sheet_add_to_cart_or_buy_now.dart';
 import '../components/review/review_item.dart';
 import 'product_reviews_page.dart';
@@ -621,7 +621,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         LazyListBuilder(
             lazyListController: _lazyListController,
-            itemBuilder: (context, index, data) => ProductItem(
+            itemBuilder: (context, index, data) => ProductCardItem(
                   product: data,
                   onPressed: () => context.push(ProductDetailPage.path, extra: data.productId),
                 )),

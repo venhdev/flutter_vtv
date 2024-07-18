@@ -5,7 +5,7 @@ import 'package:vtv_common/home.dart';
 
 import '../../pages/product_detail_page.dart';
 import 'page_number.dart';
-import 'product_item.dart';
+import 'product_card_item.dart';
 
 class ProductDetailListBuilder extends StatelessWidget {
   const ProductDetailListBuilder({
@@ -49,7 +49,7 @@ class ProductDetailListBuilder extends StatelessWidget {
               physics: scrollDirection == Axis.vertical ? const NeverScrollableScrollPhysics() : null,
               children: [
                 for (var i = 0; i < productDetails.length; i++)
-                  ProductItem(
+                  ProductCardItem(
                     product: productDetails[i].product,
                     margin: const EdgeInsets.all(2.0),
                     scaleBottom: 1.5,
@@ -168,7 +168,7 @@ class ProductPageBuilder extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         children: filteredProducts
                             .map(
-                              (product) => ProductItem(
+                              (product) => ProductCardItem(
                                 product: product,
                                 onPressed: () {
                                   context.push(

@@ -12,7 +12,7 @@ import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/repository/product_repository.dart';
 import '../components/category/category_list.dart';
 import '../components/product/best_selling_product_list.dart';
-import '../components/product/product_item.dart';
+import '../components/product/product_card_item.dart';
 import '../components/search/btn_filter.dart';
 import 'product_detail_page.dart';
 
@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           return sl<ProductRepository>().getSuggestionProductsRandomly(page, size);
         },
         itemBuilder: (context, index, data) {
-          return ProductItem(
+          return ProductCardItem(
             product: data,
             onPressed: () {
               context.push(ProductDetailPage.path, extra: data.productId);
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         scrollDirection: Axis.horizontal,
         useGrid: false,
         paginatedData: (_, __) => sl<ProductRepository>().getProductFilter(1, 10, SortType.bestSelling),
-        itemBuilder: (context, index, product) => ProductItem(
+        itemBuilder: (context, index, product) => ProductCardItem(
               onPressed: () => context.go(ProductDetailPage.path, extra: product.productId),
               product: product,
               height: 140,

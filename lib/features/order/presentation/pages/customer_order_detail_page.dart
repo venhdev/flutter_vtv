@@ -105,41 +105,6 @@ Future<RespData<OrderDetailEntity>?> completeOrder(
     );
   }
   return null;
-  // final respEither = await sl<OrderRepository>().completeOrder(orderId);
-  // respEither.fold(
-  //   (error) {
-  //     Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra');
-  //   },
-  //   (ok) {
-  //     if (inOrderDetailPage) {
-  //       // navigate to [OrderDetailPage] with new [OrderDetailEntity]
-  //       context.go(CustomerOrderDetailPage.path, extra: ok.data!);
-  //     } else {
-  //       // [onReceived]: this call back defined in [OrderPurchasePage]
-  //       // - 1. update order list in [OrderPurchasePage]
-  //       // - 2. navigate to [OrderDetailPage] with new [OrderDetailEntity]
-  //       onReceived?.call(ok.data!);
-  //     }
-  //   },
-  // );
-
-  // if (respEither == null) return;
-  // respEither.fold(
-  //   (error) {
-  //     showDialogToAlert(context, title: Text(error.message ?? 'Có lỗi xảy ra'));
-  //   },
-  //   (ok) {
-  //     context.go(CustomerOrderDetailPage.path, extra: ok.data!);
-  //     // if (inOrderDetailPage) {
-  //     //   // navigate to [OrderDetailPage] with new [OrderDetailEntity]
-  //     // } else {
-  //     //   // [onReceived]: this call back defined in [OrderPurchasePage]
-  //     //   // - 1. update order list in [OrderPurchasePage]
-  //     //   // - 2. navigate to [OrderDetailPage] with new [OrderDetailEntity]
-  //     //   onRefresh();
-  //     // }
-  //   },
-  // );
 }
 
 //*-------------------------------------------------returnOrder---------------------------------------------------*//
@@ -155,9 +120,12 @@ Future<void> _returnOrder(BuildContext context, String orderId) async {
     dismissText: 'Thoát',
   );
 
-  if (isConfirm ?? false) {
-    final respEither = await sl<OrderRepository>().returnOrder(orderId);
-    respEither.fold(
+  if ((isConfirm ?? false) && context.mounted) {
+    final respEither = await showDialogToPerform<RespData<OrderDetailEntity>>(context,
+        dataCallback: () async => await sl<OrderRepository>().returnOrder(orderId),
+        closeBy: (context, result) => context.pop(result));
+
+    respEither?.fold(
       (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi trả đơn hàng!'),
       (ok) {
         showDialogToAlert(context, title: const Text('Trả đơn hàng thành công!'));
@@ -180,9 +148,14 @@ Future<void> _cancelOrder(BuildContext context, String orderId) async {
     dismissText: 'Thoát',
   );
 
-  if (isConfirm ?? false) {
-    final respEither = await sl<OrderRepository>().cancelOrder(orderId);
-    respEither.fold(
+  if ((isConfirm ?? false) && context.mounted) {
+    final respEither = await showDialogToPerform<RespData<OrderDetailEntity>>(context,
+        dataCallback: () async => await sl<OrderRepository>().cancelOrder(orderId),
+        closeBy: (context, result) => context.pop(result),
+        message: 'Đang hủy đơn hàng...');
+
+    // final respEither = await sl<OrderRepository>().cancelOrder(orderId);
+    respEither?.fold(
       (error) => Fluttertoast.showToast(msg: error.message ?? 'Có lỗi xảy ra khi hủy đơn hàng!'),
       (ok) {
         showDialogToAlert(context, title: const Text('Hủy đơn hàng thành công!'));
@@ -200,9 +173,14 @@ Future<void> _rePurchaseOrder(BuildContext context, List<OrderItemEntity> orderI
     rePurchaseItems.addAll({item.productVariant.productVariantId: item.quantity});
   }
 
-  final respEither = await sl<OrderRepository>().createByProductVariant(rePurchaseItems);
+  // final respEither = await sl<OrderRepository>().createByProductVariant(rePurchaseItems);
 
-  respEither.fold(
+  if (!context.mounted) return;
+  final respEither = await showDialogToPerform<RespData<OrderDetailEntity>>(context,
+      dataCallback: () async => await sl<OrderRepository>().createByProductVariant(rePurchaseItems),
+      closeBy: (context, result) => context.pop(result));
+
+  respEither?.fold(
     (error) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()

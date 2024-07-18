@@ -15,7 +15,7 @@ import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/components/dialog_choose_address.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
-import '../components/dialog_to_confirm_checkout.dart';
+import '../components/dialog/dialog_to_confirm_checkout.dart';
 import 'customer_order_detail_page.dart';
 import 'voucher_page.dart';
 
@@ -343,12 +343,20 @@ class _CheckoutSingleOrderPageState extends State<CheckoutSingleOrderPage> {
             onPressed: () async {
               final isConfirmed = await showDialogToConfirmCheckout<bool>(context);
 
-              if (isConfirmed ?? false) {
-                final respEither = widget.isCreateWithCart
-                    ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
-                    : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
+              if ((isConfirmed ?? false) && mounted) {
+                // final respEither = widget.isCreateWithCart
+                //     ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
+                //     : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam);
+                final respEither = await showDialogToPerform<RespData<OrderDetailEntity>>(
+                  context,
+                  dataCallback: () async => widget.isCreateWithCart
+                      ? await sl<OrderRepository>().placeOrderWithCart(_placeOrderWithCartParam)
+                      : await sl<OrderRepository>().placeOrderWithVariant(_placeOrderWithVariantParam),
+                  closeBy: (context, result) => context.pop(result),
+                  message: 'Đang đặt hàng...',
+                );
 
-                respEither.fold(
+                respEither?.fold(
                   (error) {
                     showDialogToAlert(
                       context,

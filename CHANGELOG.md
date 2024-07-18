@@ -4,8 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.8] - 19/07/2024
+
 - increase product info in product detail page
 - redirect to home when logout
+- show loading dialog when action
+- add RESET_POINT to loyalty history
+- fix voucher render, wallet history COMPLETED_ORDER_COD_SYSTEM
+- rename product_item --> product_card_item
 
 ## [1.0.7] - 15/07/2024
 
@@ -110,7 +116,8 @@ All notable changes to this project will be documented in this file.
 
 - Initial App
 
-[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.7...HEAD
+[unreleased]: https://github.com/venhha/flutter_vtv/compare/1.0.8...HEAD
+[1.0.8]: https://github.com/venhha/flutter_vtv/compare/1.0.7...1.0.8
 [1.0.7]: https://github.com/venhha/flutter_vtv/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/venhha/flutter_vtv/compare/1.0.3...1.0.6
 [1.0.3]: https://github.com/venhha/flutter_vtv/compare/v0.0.8-pre...1.0.3

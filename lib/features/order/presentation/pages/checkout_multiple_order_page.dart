@@ -12,7 +12,7 @@ import '../../domain/dto/multiple_order_request_param.dart';
 import '../../domain/dto/webview_payment_param.dart';
 import '../../domain/repository/order_repository.dart';
 import '../../domain/repository/voucher_repository.dart';
-import '../components/dialog_to_confirm_checkout.dart';
+import '../components/dialog/dialog_to_confirm_checkout.dart';
 import '../components/single_order_checkout_view.dart';
 import 'vnpay_webview.dart';
 import 'voucher_page.dart';
@@ -78,10 +78,16 @@ class _CheckoutMultipleOrderPageState extends State<CheckoutMultipleOrderPage> {
   void handlePlaceMultiOrder() async {
     final isConfirmed = await showDialogToConfirmCheckout<bool>(context);
 
-    if (isConfirmed ?? false) {
-      final respEither = await sl<OrderRepository>().placeMultiOrderByRequest(_multipleOrderRequestParam);
+    if ((isConfirmed ?? false) && mounted) {
+      // final respEither = await sl<OrderRepository>().placeMultiOrderByRequest(_multipleOrderRequestParam);
+      final respEither = await showDialogToPerform<RespData<MultipleOrderResp>>(
+        context,
+        dataCallback: () async => await sl<OrderRepository>().placeMultiOrderByRequest(_multipleOrderRequestParam),
+        closeBy: (context, result) => context.pop(result),
+        message: 'Đang đặt hàng...',
+      );
 
-      respEither.fold(
+      respEither?.fold(
         (error) {
           context.read<CartBloc>().add(const FetchCart()); // refresh cart even if error
           showDialogToAlert(context, title: const Text('Đặt hàng thất bại'), children: [

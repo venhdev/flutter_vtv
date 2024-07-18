@@ -30,7 +30,7 @@ class VNPayWebView extends StatelessWidget {
     //> show dialog to inform user that order is being processed
     _showFullScreenDialog(context, const Text('Đơn hàng đang được xử lý', textAlign: TextAlign.center), []);
 
-    await Future.delayed(const Duration(seconds: 1)); //> await for server to update order status
+    await Future.delayed(const Duration(seconds: 5)); //> await for server to update order status
     //> use custom repository method to get multi order detail from ids
     final respEither = await sl<OrderRepository>().getMultiOrderDetailForCheckPayment(extra.orderIds);
 
@@ -49,8 +49,8 @@ class VNPayWebView extends StatelessWidget {
               const Icon(Icons.check_circle, color: Colors.green, size: 50), // icon check
               Text('${extra.orderIds.length} Đơn hàng của bạn đã được thanh toán thành công'),
             ] else ...[
-              const Icon(Icons.access_time, color: Colors.orangeAccent, size: 50), // icon time
-              const Text('Đơn hàng của bạn đang được xử lý'),
+              const Icon(Icons.error, color: Colors.redAccent, size: 50), // icon time
+              const Text('Đơn hàng của bạn chưa thanh toán hoặc có lỗi xảy ra'),
             ],
             const SizedBox(height: 20),
 
@@ -68,9 +68,9 @@ class VNPayWebView extends StatelessWidget {
                 children: [
                   Text('${orderDetail.order.orderId}'),
                   Text(
-                    orderDetail.order.status == OrderStatus.PENDING ? 'Thành công' : 'Đang xử lý',
+                    orderDetail.order.status == OrderStatus.PENDING ? 'Thành công' : 'Thất bại',
                     style: TextStyle(
-                      color: orderDetail.order.status == OrderStatus.PENDING ? Colors.green : Colors.orangeAccent,
+                      color: orderDetail.order.status == OrderStatus.PENDING ? Colors.green : Colors.redAccent,
                     ),
                   ),
                 ],

@@ -8,8 +8,8 @@ import '../../../../../service_locator.dart';
 import '../../pages/product_detail_page.dart';
 
 //! Best height & width is equal
-class ProductItem extends StatefulWidget {
-  const ProductItem({
+class ProductCardItem extends StatefulWidget {
+  const ProductCardItem({
     super.key,
     this.product,
     this.productId,
@@ -37,10 +37,10 @@ class ProductItem extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
 
   @override
-  State<ProductItem> createState() => _ProductItemState();
+  State<ProductCardItem> createState() => _ProductCardItemState();
 }
 
-class _ProductItemState extends State<ProductItem> {
+class _ProductCardItemState extends State<ProductCardItem> {
   bool _isLoading = true;
   late ProductEntity _product;
 
@@ -101,7 +101,7 @@ class _ProductItemState extends State<ProductItem> {
   Widget _buildContent() {
     return Badge(
       isLabelVisible: _product.largestDiscount == '0%' ? false : true,
-      offset: const Offset(-10, 0),
+      offset: const Offset(-15, 0),
       label: Text(_product.largestDiscount),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

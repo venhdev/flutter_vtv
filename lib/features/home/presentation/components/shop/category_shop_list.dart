@@ -7,7 +7,7 @@ import 'package:vtv_common/shop.dart';
 
 import '../../../../../service_locator.dart';
 import '../../pages/product_detail_page.dart';
-import '../product/product_item.dart';
+import '../product/product_card_item.dart';
 
 class ShopCategoryList extends StatefulWidget {
   const ShopCategoryList({super.key, required this.shopId});
@@ -74,7 +74,7 @@ class _ShopCategoryListState extends State<ShopCategoryList> {
                       body: ok.data!.products!.isNotEmpty
                           ? LazyListBuilder(
                               lazyListController: LazyListController<ProductEntity>.static(items: ok.data!.products!),
-                              itemBuilder: (context, index, data) => ProductItem(
+                              itemBuilder: (context, index, data) => ProductCardItem(
                                   product: data,
                                   onPressed: () {
                                     GoRouter.of(context).push(ProductDetailPage.path, extra: data.productId);

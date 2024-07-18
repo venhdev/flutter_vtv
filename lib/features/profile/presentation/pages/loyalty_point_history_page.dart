@@ -143,6 +143,8 @@ String getTypeName(String? type) {
       return 'Thanh toán đơn hàng';
     case 'REFUND':
       return 'Hoàn tiền';
+    case 'RESET_POINT':
+      return 'Reset điểm';
     default:
       return type ?? 'Khác';
   }

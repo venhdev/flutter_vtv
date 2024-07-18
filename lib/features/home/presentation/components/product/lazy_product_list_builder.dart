@@ -7,7 +7,7 @@ import 'package:vtv_common/core.dart';
 import 'package:vtv_common/home.dart';
 
 import '../../pages/product_detail_page.dart';
-import 'product_item.dart';
+import 'product_card_item.dart';
 
 const bool _showIndicator = false;
 
@@ -161,7 +161,7 @@ class _LazyProductListBuilderState extends State<LazyProductListBuilder> {
                     : Text('$_message'),
           );
         } else {
-          return ProductItem(
+          return ProductCardItem(
             product: _products[index],
             onPressed: () {
               context.push(ProductDetailPage.path, extra: _products[index].productId);

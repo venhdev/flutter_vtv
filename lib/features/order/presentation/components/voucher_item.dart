@@ -3,70 +3,70 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vtv_common/core.dart';
 import 'package:vtv_common/order.dart';
 
-class VoucherItem extends StatelessWidget {
-  const VoucherItem({
-    super.key,
-    required this.voucher,
-    this.onSelected,
-  });
+// class VoucherItem extends StatelessWidget {
+//   const VoucherItem({
+//     super.key,
+//     required this.voucher,
+//     this.onSelected,
+//   });
 
-  final VoucherEntity voucher;
-  final void Function(VoucherEntity voucher)? onSelected;
+//   final VoucherEntity voucher;
+//   final void Function(VoucherEntity voucher)? onSelected;
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: () {
-          // Navigator.of(context).pop(voucher);
-          onSelected?.call(voucher);
-        },
-        splashColor: Colors.red.withOpacity(0.2),
-        overlayColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.2)),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Mã: ${voucher.code}',
-                style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Tên: ${voucher.name}',
-                style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4.0),
-              Text(
-                // voucher.description,
-                "Mô tả: ${voucher.description}",
-                style: const TextStyle(fontSize: 16.0),
-              ),
-              Text(
-                // voucher.description,
-                "Loại: ${StringUtils.getVoucherName(voucher.type.name)}",
-                style: const TextStyle(fontSize: 16.0),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    StringUtils.getVoucherDiscount(type: voucher.type.name, discount: voucher.discount),
-                    style: const TextStyle(fontSize: 16.0, color: Colors.red, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Còn lại ${voucher.quantity - voucher.quantityUsed!} voucher",
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       child: InkWell(
+//         onTap: () {
+//           // Navigator.of(context).pop(voucher);
+//           onSelected?.call(voucher);
+//         },
+//         splashColor: Colors.red.withOpacity(0.2),
+//         overlayColor: WidgetStateProperty.all(Colors.grey.withOpacity(0.2)),
+//         child: Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: <Widget>[
+//               Text(
+//                 'Mã: ${voucher.code}',
+//                 style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+//               ),
+//               Text(
+//                 'Tên: ${voucher.name}',
+//                 style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+//               ),
+//               const SizedBox(height: 4.0),
+//               Text(
+//                 // voucher.description,
+//                 "Mô tả: ${voucher.description}",
+//                 style: const TextStyle(fontSize: 16.0),
+//               ),
+//               Text(
+//                 // voucher.description,
+//                 "Loại: ${StringUtils.getVoucherName(voucher.type.name)}",
+//                 style: const TextStyle(fontSize: 16.0),
+//               ),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: <Widget>[
+//                   Text(
+//                     StringUtils.getVoucherDiscount(type: voucher.type.name, discount: voucher.discount),
+//                     style: const TextStyle(fontSize: 16.0, color: Colors.red, fontWeight: FontWeight.bold),
+//                   ),
+//                   Text(
+//                     "Còn lại ${voucher.quantity - voucher.quantityUsed!} voucher",
+//                     style: const TextStyle(fontSize: 16.0),
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class VoucherItemV2 extends StatelessWidget {
   const VoucherItemV2({
@@ -100,7 +100,7 @@ class VoucherItemV2 extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(4.0),
         child: SizedBox(
-          height: 100.0,
+          // height: 100.0, //! if the height is fixed, the content will be cut off (overflow)
           child: Row(
             children: [
               //# voucher type

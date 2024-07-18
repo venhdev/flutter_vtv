@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vtv_common/core.dart';
@@ -101,7 +99,7 @@ class _VoucherPageState extends State<VoucherPage> {
                               }
                             }
                           },
-                          actionLabel: 'Sử dụng',
+                          actionLabel: 'Áp dụng',
                           // onActionPressed: (voucher) {
                           //   if (returnValue) Navigator.of(context).pop(voucher);
                           // },

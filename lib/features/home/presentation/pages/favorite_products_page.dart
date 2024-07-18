@@ -5,7 +5,7 @@ import 'package:vtv_common/guest.dart';
 
 import '../../../../service_locator.dart';
 import '../../domain/repository/product_repository.dart';
-import '../components/product/product_item.dart';
+import '../components/product/product_card_item.dart';
 import 'product_detail_page.dart';
 
 //! Show all customer's favorite products
@@ -34,7 +34,7 @@ class FavoriteProductsPage extends StatelessWidget {
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                         children: ok.data!.map((f) {
-                          return ProductItem(
+                          return ProductCardItem(
                             productId: f.productId,
                             onPressed: () async {
                               final productResp = await sl<GuestRepository>().getProductDetailById(f.productId);
