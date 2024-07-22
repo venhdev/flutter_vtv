@@ -32,7 +32,7 @@ abstract class OrderDataSource {
   Future<SuccessResponse<MultiOrderEntity>> getListOrdersByStatus(String status);
   Future<SuccessResponse<OrderDetailEntity>> getOrderDetail(String orderId);
   Future<SuccessResponse<OrderDetailEntity>> cancelOrder(String orderId);
-  Future<SuccessResponse<OrderDetailEntity>> returnOrder(String orderId);
+  Future<SuccessResponse<OrderDetailEntity>> returnOrder(String orderId, String reason);
   Future<SuccessResponse<OrderDetailEntity>> completeOrder(String orderId);
 }
 
@@ -269,12 +269,12 @@ class OrderDataSourceImpl extends OrderDataSource {
   }
   
   @override
-  Future<SuccessResponse<OrderDetailEntity>> returnOrder(String orderId) async {
+  Future<SuccessResponse<OrderDetailEntity>> returnOrder(String orderId, String reason) async {
     final url = uriBuilder(path: '$kAPIOrderReturnURL/$orderId');
     final response = await _client.patch(
       url,
       headers: baseHttpHeaders(accessToken: await _secureStorageHelper.accessToken),
-      body: orderId, //REVIEW: why the body is text?
+      body: reason, //REVIEW: why the body is text?
     );
 
     return handleResponseWithData<OrderDetailEntity>(

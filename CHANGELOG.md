@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- add reason when return an order
+- update README
+
 ## [1.0.8] - 19/07/2024
 
 - increase product info in product detail page

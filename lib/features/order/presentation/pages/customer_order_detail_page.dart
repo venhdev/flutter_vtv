@@ -109,20 +109,28 @@ Future<RespData<OrderDetailEntity>?> completeOrder(
 
 //*-------------------------------------------------returnOrder---------------------------------------------------*//
 Future<void> _returnOrder(BuildContext context, String orderId) async {
-  final isConfirm = await showDialogToConfirm<bool?>(
+  // final isConfirm = await showDialogToConfirm<bool?>(
+  //   context: context,
+  //   title: 'Bạn muốn\ntrả hàng/hoàn tiền?',
+  //   titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+  //   content:
+  //       'Sau khi yêu trả đơn hàng, shipper sẽ liên hệ để nhận hàng và sau khi đơn trả về shop hoàn tất thì số tiền sẽ được gửi vào ví của bạn.',
+  //   confirmText: 'Trả hàng',
+  //   confirmBackgroundColor: Colors.red.shade300,
+  //   dismissText: 'Thoát',
+  // );
+
+  final reason = await showDialogWithTextField<String?>(
     context: context,
     title: 'Bạn muốn\ntrả hàng/hoàn tiền?',
-    titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    content:
-        'Sau khi yêu trả đơn hàng, shipper sẽ liên hệ để nhận hàng và sau khi đơn trả về shop hoàn tất thì số tiền sẽ được gửi vào ví của bạn.',
-    confirmText: 'Trả hàng',
-    confirmBackgroundColor: Colors.red.shade300,
-    dismissText: 'Thoát',
+    titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+    submitButtonText: 'Yêu cầu trả hàng',
+    hintText: 'Lý do trả hàng',
   );
 
-  if ((isConfirm ?? false) && context.mounted) {
+  if ((reason != null) && context.mounted) {
     final respEither = await showDialogToPerform<RespData<OrderDetailEntity>>(context,
-        dataCallback: () async => await sl<OrderRepository>().returnOrder(orderId),
+        dataCallback: () async => await sl<OrderRepository>().returnOrder(orderId, reason.isEmpty ? 'Khác' : reason),
         closeBy: (context, result) => context.pop(result));
 
     respEither?.fold(
